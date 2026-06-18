@@ -23,7 +23,7 @@ kotlin {
 }
 
 android {
-    namespace = "com.viewsonic.classswift.feature.playground.ui"
+    namespace = "com.viewsonic.classswift.feature.quizcollection.ui"
     compileSdk = 35
     defaultConfig {
         minSdk = 28

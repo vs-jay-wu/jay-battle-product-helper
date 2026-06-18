@@ -13,7 +13,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(compose.runtime)
-            implementation(project(":feature:playground:ui"))
+            implementation(project(":feature:quizcollection:ui"))
         }
     }
 }
