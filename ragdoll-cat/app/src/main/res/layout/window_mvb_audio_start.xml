@@ -1,0 +1,589 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:padding="@dimen/mvb_spacing_300"
+    tools:ignore="ContentDescription">
+
+    <FrameLayout
+        android:layout_width="@dimen/quiz_mvb_poll_start_window_width"
+        android:layout_height="@dimen/quiz_mvb_poll_start_window_height"
+        android:background="@drawable/bg_cs_window_no_border_radius800"
+        android:clipToOutline="true"
+        android:elevation="@dimen/mvb_spacing_200"
+        android:outlineProvider="background">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <!-- Header -->
+            <FrameLayout
+                android:id="@+id/fl_header"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/quiz_mvb_header_height"
+                android:background="@color/neutral_0"
+                android:paddingHorizontal="@dimen/mvb_spacing_400">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="start|center_vertical"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="@dimen/mvb_spacing_800"
+                        android:layout_height="@dimen/mvb_spacing_800"
+                        android:layout_marginEnd="@dimen/mvb_spacing_200"
+                        android:src="@drawable/ic_mvb_quizzing_header"
+                        tools:ignore="UseAppTint" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif"
+                        android:text="@string/quiz_title"
+                        android:textColor="@color/neutral_900"
+                        android:textSize="@dimen/quiz_mvb_text_md"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="end|center_vertical"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/iv_minimize_window"
+                        android:layout_width="@dimen/quiz_mvb_icon_size_sm"
+                        android:layout_height="@dimen/quiz_mvb_icon_size_sm"
+                        android:layout_marginEnd="@dimen/mvb_spacing_400"
+                        android:src="@drawable/ic_minus_32dp"
+                        android:background="@drawable/ripple_neutral300_oval"
+                        android:visibility="gone"
+                        app:tint="@color/neutral_900"
+                        tools:ignore="UseAppTint" />
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/iv_toolbar_bring_to_front"
+                        android:layout_width="@dimen/quiz_mvb_icon_size_sm"
+                        android:layout_height="@dimen/quiz_mvb_icon_size_sm"
+                        android:layout_marginEnd="@dimen/mvb_spacing_300"
+                        android:src="@drawable/ic_toolbar_bring_to_front_64dp"
+                        android:background="@drawable/ripple_neutral300_oval"
+                        android:visibility="gone"
+                        app:tint="@color/neutral_900"
+                        tools:ignore="UseAppTint" />
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/iv_close"
+                        android:layout_width="@dimen/quiz_mvb_icon_size_sm"
+                        android:layout_height="@dimen/quiz_mvb_icon_size_sm"
+                        android:src="@drawable/ic_close_64dp"
+                        android:background="@drawable/ripple_neutral300_oval"
+                        app:tint="@color/neutral_900"
+                        tools:ignore="UseAppTint" />
+                </LinearLayout>
+            </FrameLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/quiz_mvb_header_divider_height"
+                android:background="@color/color_E6E6E6" />
+
+            <!-- Body: left (question + options) + right (responses) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@color/neutral_0"
+                android:orientation="horizontal">
+
+                <!-- Left column -->
+                <LinearLayout
+                    android:layout_width="@dimen/quiz_mvb_panel_left_width"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="@dimen/mvb_spacing_600"
+                    android:paddingVertical="@dimen/mvb_spacing_600">
+
+                    <!-- Audio label + stopwatch -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:layout_width="@dimen/quiz_mvb_icon_size_sm"
+                            android:layout_height="@dimen/quiz_mvb_icon_size_sm"
+                            android:layout_marginEnd="@dimen/mvb_spacing_100"
+                            android:src="@drawable/ic_toolbar_irs_audio"
+                            app:tint="@color/neutral_900"
+                            tools:ignore="UseAppTint" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif"
+                            android:text="@string/quiz_types_audio"
+                            android:textColor="@color/neutral_900"
+                            android:textSize="@dimen/quiz_mvb_text_md"
+                            android:textStyle="bold" />
+
+                        <Space
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_weight="1" />
+
+                        <LinearLayout
+                            android:id="@+id/ll_stopwatch_group"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:layout_width="@dimen/quiz_mvb_icon_size_sm"
+                                android:layout_height="@dimen/quiz_mvb_icon_size_sm"
+                                android:layout_marginEnd="@dimen/mvb_spacing_100"
+                                android:src="@drawable/ic_mvb_quizzing_stopwatch"
+                                tools:ignore="UseAppTint" />
+
+                            <TextView
+                                android:id="@+id/tv_stopwatch"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="sans-serif-medium"
+                                android:text="@string/quiz_mvb_quizzing_stopwatch_default"
+                                android:textColor="@color/neutral_500"
+                                android:textSize="@dimen/quiz_mvb_text_lg" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- Screenshot preview. Padding = stroke width so ImageUploadView's
+                         match_parent fill doesn't overdraw the parent's stroke. -->
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="169dp"
+                        android:layout_marginTop="@dimen/mvb_spacing_400"
+                        android:background="@drawable/bg_neutral0_radius600_line_neutral300_border200"
+                        android:clipToOutline="true"
+                        android:padding="@dimen/border_200">
+
+                        <com.viewsonic.classswift.ui.widget.quiz.ImageUploadView
+                            android:id="@+id/cs_screenshot_image"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+                    </FrameLayout>
+
+                    <!-- Result-only: Options bar (Submitted / Not submitted) -->
+                    <LinearLayout
+                        android:id="@+id/ll_result_options_area"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone"
+                        tools:visibility="visible">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/mvb_spacing_400"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:layout_width="@dimen/quiz_mvb_icon_size_sm"
+                                android:layout_height="@dimen/quiz_mvb_icon_size_sm"
+                                android:layout_marginEnd="@dimen/mvb_spacing_100"
+                                android:src="@drawable/ic_mvb_quizzing_options"
+                                tools:ignore="UseAppTint" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="sans-serif"
+                                android:text="@string/quiz_mvb_quizzing_options_title"
+                                android:textColor="@color/neutral_900"
+                                android:textSize="@dimen/quiz_mvb_text_md"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/mvb_spacing_200"
+                                android:fontFamily="sans-serif-medium"
+                                android:text="@string/quiz_mvb_result_click_to_highlight"
+                                android:textColor="@color/neutral_900"
+                                android:textSize="@dimen/quiz_mvb_text_xs" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/ll_result_bars_container"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/mvb_spacing_200"
+                            android:orientation="vertical" />
+                    </LinearLayout>
+
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <!-- End and Review button (quizzing only) -->
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/button_end_and_review"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/mvb_spacing_1400"
+                        android:layout_marginTop="@dimen/mvb_spacing_400"
+                        android:background="@drawable/bg_mvb_quizzing_end_review_button"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="@string/quiz_mvb_quizzing_end_and_review"
+                        android:textAllCaps="false"
+                        android:textColor="@color/color_DB0025"
+                        android:textSize="@dimen/quiz_mvb_text_lg" />
+                </LinearLayout>
+
+                <!-- Right column -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="@dimen/mvb_spacing_600"
+                    android:paddingVertical="@dimen/mvb_spacing_600">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_neutral100_radius800"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="@dimen/mvb_spacing_400"
+                        android:paddingVertical="@dimen/mvb_spacing_400">
+
+                        <!-- Header row: Responses + Refresh (quizzing only) + count -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:layout_width="@dimen/quiz_mvb_icon_size_sm"
+                                android:layout_height="@dimen/quiz_mvb_icon_size_sm"
+                                android:layout_marginEnd="@dimen/mvb_spacing_100"
+                                android:src="@drawable/ic_mvb_quizzing_responses"
+                                tools:ignore="UseAppTint" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="sans-serif"
+                                android:text="@string/quiz_mvb_quizzing_responses_title"
+                                android:textColor="@color/neutral_900"
+                                android:textSize="@dimen/quiz_mvb_text_md"
+                                android:textStyle="bold" />
+
+                            <LinearLayout
+                                android:id="@+id/ll_refresh_button"
+                                android:layout_width="wrap_content"
+                                android:layout_height="@dimen/mvb_spacing_800"
+                                android:layout_marginStart="@dimen/mvb_spacing_400"
+                                android:background="@drawable/selector_bg_mvb_refresh_button"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:gravity="center"
+                                android:orientation="horizontal"
+                                android:paddingHorizontal="@dimen/mvb_spacing_300">
+
+                                <androidx.appcompat.widget.AppCompatImageView
+                                    android:layout_width="@dimen/mvb_spacing_400"
+                                    android:layout_height="@dimen/mvb_spacing_400"
+                                    android:layout_marginEnd="@dimen/mvb_spacing_100"
+                                    android:src="@drawable/ic_arrow_clockwise_16"
+                                    app:tint="@color/neutral_900"
+                                    tools:ignore="UseAppTint" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="sans-serif-medium"
+                                    android:text="@string/quiz_mvb_quizzing_refresh"
+                                    android:textColor="@color/neutral_900"
+                                    android:textSize="@dimen/quiz_mvb_text_sm" />
+                            </LinearLayout>
+
+                            <Space
+                                android:layout_width="0dp"
+                                android:layout_height="0dp"
+                                android:layout_weight="1" />
+
+                            <TextView
+                                android:id="@+id/tv_response_count"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="sans-serif"
+                                android:textColor="@color/neutral_900"
+                                android:textSize="@dimen/quiz_mvb_text_md"
+                                tools:text="21 / 30" />
+                        </LinearLayout>
+
+                        <!-- Result-only: Tab bar (Overview / Student responses) -->
+                        <LinearLayout
+                            android:id="@+id/ll_result_tabs"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/mvb_spacing_200"
+                            android:orientation="horizontal"
+                            android:visibility="gone"
+                            tools:visibility="visible">
+
+                            <LinearLayout
+                                android:id="@+id/ll_result_tab_overview"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:orientation="vertical"
+                                android:paddingHorizontal="@dimen/mvb_spacing_400"
+                                android:paddingTop="@dimen/mvb_spacing_200">
+
+                                <TextView
+                                    android:id="@+id/tv_result_tab_overview"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="sans-serif-medium"
+                                    android:text="@string/quiz_mvb_result_tab_overview"
+                                    android:textColor="@color/color_4848F0"
+                                    android:textSize="@dimen/quiz_mvb_text_sm" />
+
+                                <View
+                                    android:id="@+id/v_result_tab_indicator_overview"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="@dimen/quiz_mvb_tab_indicator_height"
+                                    android:layout_marginTop="@dimen/mvb_spacing_200"
+                                    android:background="@color/color_4848F0" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:id="@+id/ll_result_tab_student"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/mvb_spacing_400"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:orientation="vertical"
+                                android:paddingHorizontal="@dimen/mvb_spacing_400"
+                                android:paddingTop="@dimen/mvb_spacing_200">
+
+                                <TextView
+                                    android:id="@+id/tv_result_tab_student"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="sans-serif-medium"
+                                    android:text="@string/quiz_mvb_result_tab_student_responses"
+                                    android:textColor="@color/neutral_900"
+                                    android:textSize="@dimen/quiz_mvb_text_sm" />
+
+                                <View
+                                    android:id="@+id/v_result_tab_indicator_student"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="@dimen/quiz_mvb_tab_indicator_height"
+                                    android:layout_marginTop="@dimen/mvb_spacing_200"
+                                    android:background="@color/color_4848F0"
+                                    android:visibility="invisible" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <!-- Result + Student responses tab: Show students' name toggle -->
+                        <LinearLayout
+                            android:id="@+id/ll_show_students_name"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/mvb_spacing_400"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:visibility="gone"
+                            tools:visibility="visible">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="sans-serif-medium"
+                                android:text="@string/quiz_mvb_show_students_name"
+                                android:textColor="@color/neutral_900"
+                                android:textSize="@dimen/quiz_mvb_text_sm" />
+
+                            <androidx.appcompat.widget.SwitchCompat
+                                android:id="@+id/sw_show_students_name"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/mvb_spacing_200"
+                                android:background="@null"
+                                android:checked="true"
+                                android:switchMinWidth="40dp"
+                                android:thumb="@drawable/selector_mvb_audio_switch_thumb"
+                                app:track="@drawable/selector_mvb_audio_switch_track" />
+                        </LinearLayout>
+
+                        <!-- Student grid: shown in Quizzing OR (Result + Student responses tab) -->
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rv_student_list"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_marginTop="@dimen/mvb_spacing_400"
+                            android:layout_weight="1"
+                            android:clipToPadding="false" />
+
+                        <!-- Result + Overview tab: stat chips + pie chart + legend -->
+                        <ScrollView
+                            android:id="@+id/sv_result_overview_content"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_marginTop="@dimen/mvb_spacing_400"
+                            android:layout_weight="1"
+                            android:visibility="gone"
+                            tools:visibility="gone">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:paddingHorizontal="@dimen/mvb_spacing_600"
+                                android:paddingVertical="@dimen/mvb_spacing_400">
+
+                                <!-- 2 analytic chips row (Submitted / Not submitted) -->
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:background="@drawable/bg_transparent_radius800_line_neutral300_border400"
+                                    android:orientation="horizontal"
+                                    android:paddingVertical="@dimen/mvb_spacing_400">
+
+                                    <com.viewsonic.classswift.ui.widget.quiz.result.CSResultAnalyticChip
+                                        android:id="@+id/csrac_submitted"
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1" />
+
+                                    <View
+                                        android:layout_width="@dimen/quiz_mvb_divider_thickness"
+                                        android:layout_height="45dp"
+                                        android:layout_gravity="center_vertical"
+                                        android:background="@color/neutral_300" />
+
+                                    <com.viewsonic.classswift.ui.widget.quiz.result.CSResultAnalyticChip
+                                        android:id="@+id/csrac_not_submitted"
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1" />
+                                </LinearLayout>
+
+                                <com.viewsonic.classswift.ui.widget.quiz.result.CSAnswerPieChart
+                                    android:id="@+id/csapc_result_pie_chart"
+                                    android:layout_width="160dp"
+                                    android:layout_height="160dp"
+                                    android:layout_gravity="center_horizontal"
+                                    android:layout_marginTop="@dimen/mvb_spacing_600" />
+
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_horizontal"
+                                    android:layout_marginTop="@dimen/mvb_spacing_600"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:id="@+id/tv_result_legend_submitted"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:drawableStart="@drawable/shape_result_legend_dot_correct"
+                                        android:drawablePadding="@dimen/mvb_spacing_200"
+                                        android:fontFamily="sans-serif"
+                                        android:gravity="center_vertical"
+                                        android:textColor="@color/neutral_900"
+                                        android:textSize="@dimen/quiz_mvb_text_sm"
+                                        tools:text="Submitted 33%" />
+
+                                    <TextView
+                                        android:id="@+id/tv_result_legend_not_submitted"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginStart="@dimen/mvb_spacing_400"
+                                        android:drawableStart="@drawable/shape_result_legend_dot_no_answer"
+                                        android:drawablePadding="@dimen/mvb_spacing_200"
+                                        android:fontFamily="sans-serif"
+                                        android:gravity="center_vertical"
+                                        android:textColor="@color/neutral_900"
+                                        android:textSize="@dimen/quiz_mvb_text_sm"
+                                        tools:text="Not submitted 33%" />
+                                </LinearLayout>
+                            </LinearLayout>
+                        </ScrollView>
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <com.viewsonic.classswift.ui.widget.MvbToast
+            android:id="@+id/mt_close_error_toast"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginBottom="@dimen/mvb_spacing_400"
+            android:visibility="gone"
+            app:mtHasActionButton="false"
+            app:mtHasCloseButton="false"
+            app:mtToastLevel="level_danger" />
+
+        <FrameLayout
+            android:id="@+id/fl_close_loading_overlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/black_a35"
+            android:clickable="true"
+            android:focusable="true"
+            android:visibility="gone">
+
+            <FrameLayout
+                android:layout_width="@dimen/quiz_mvb_loading_size"
+                android:layout_height="@dimen/quiz_mvb_loading_size"
+                android:layout_gravity="center"
+                android:background="@drawable/bg_neutral0_radius800"
+                android:padding="@dimen/mvb_spacing_200">
+
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/lav_loading"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:lottie_autoPlay="false"
+                    app:lottie_fileName="ani_loading.json"
+                    app:lottie_loop="true" />
+            </FrameLayout>
+        </FrameLayout>
+
+        <com.viewsonic.classswift.ui.widget.dialog.MvbSystemDialogView
+            android:id="@+id/msdv_close_confirm"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <com.viewsonic.classswift.ui.widget.CSSnackbar
+            android:id="@+id/cs_snackbar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginBottom="@dimen/mvb_spacing_400"
+            android:visibility="gone" />
+    </FrameLayout>
+</FrameLayout>

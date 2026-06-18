@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:cardBackgroundColor="@color/transparent_color">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cv_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:cardBackgroundColor="@color/neutral_0"
+        app:cardCornerRadius="@dimen/mvb_radius_400"
+        app:cardElevation="0dp"
+        app:cardMaxElevation="0dp">
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lav_loading"
+            android:layout_width="@dimen/quiz_mvb_icon_size_md"
+            android:layout_height="@dimen/quiz_mvb_icon_size_md"
+            android:layout_gravity="center"
+            app:lottie_autoPlay="false"
+            app:lottie_fileName="ani_loading.json"
+            app:lottie_loop="true" />
+    </androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

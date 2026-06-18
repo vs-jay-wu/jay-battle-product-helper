@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/account_into_drop_spinner_background_color"/>
+    <stroke android:width="0.66dp"
+        android:color="@color/brand_blue" />
+    <corners android:radius="5.33dp" />
+</shape>

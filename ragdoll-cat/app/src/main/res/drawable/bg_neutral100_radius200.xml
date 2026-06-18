@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- VSFT-8453 Sketch Response pagination placeholder chip (Sprint 20)。 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/neutral_100" />
+    <corners android:radius="@dimen/radius_200" />
+</shape>

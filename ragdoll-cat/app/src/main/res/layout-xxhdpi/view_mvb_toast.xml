@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:minHeight="25.33dp"
+    android:background="@drawable/bg_neutral0_radius400_commonstrokecolor_border200"
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_icon"
+        android:layout_width="13.33dp"
+        android:layout_height="13.33dp"
+        android:layout_marginVertical="@dimen/mvb_spacing_200"
+        android:layout_marginStart="@dimen/mvb_spacing_400"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/tv_message"
+        app:srcCompat="@drawable/ic_circle_letter_i"/>
+
+    <TextView
+        android:id="@+id/tv_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/mvb_spacing_200"
+        android:layout_marginStart="@dimen/mvb_spacing_200"
+        android:layout_marginEnd="@dimen/mvb_spacing_900"
+        android:textSize="9.33sp"
+        android:textColor="@color/neutral_900"
+        android:maxLines="1"
+        android:ellipsize="end"
+        app:layout_goneMarginEnd="@dimen/mvb_spacing_400"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/iv_icon"
+        app:layout_constraintEnd_toStartOf="@id/cslb_action"
+        tools:text="Save successed" />
+
+    <com.viewsonic.classswift.ui.widget.ClassSwiftLoadingButton
+        android:id="@+id/cslb_action"
+        android:layout_width="wrap_content"
+        android:layout_height="21.33dp"
+        android:layout_marginVertical="@dimen/mvb_spacing_200"
+        android:clickable="true"
+        android:paddingHorizontal="@dimen/mvb_spacing_300"
+        app:layout_goneMarginEnd="@dimen/mvb_spacing_400"
+        app:layout_constraintStart_toEndOf="@id/tv_message"
+        app:layout_constraintEnd_toStartOf="@id/iv_close"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:lbBackgroundColor="@color/neutral_0"
+        app:lbClickedBackgroundColor="@color/neutral_0"
+        app:lbBorderColor="@color/neutral_300"
+        app:lbClickedBorderColor="@color/neutral_300"
+        app:lbRadius="@dimen/mvb_radius_100"
+        app:lbText="@string/common_clear"
+        app:lbTextColor="@color/neutral_900"
+        app:lbClickedTextColor="@color/neutral_900"
+        app:lbTextSize="12sp"
+        tools:visibility="visible"/>
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_close"
+        android:layout_width="21.33dp"
+        android:layout_height="21.33dp"
+        android:layout_marginVertical="@dimen/mvb_spacing_200"
+        android:padding="@dimen/mvb_spacing_200"
+        android:layout_marginEnd="@dimen/mvb_spacing_300"
+        app:layout_constraintStart_toEndOf="@id/cslb_action"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:srcCompat="@drawable/ic_cross"
+        tools:visibility="visible"/>
+
+</merge>

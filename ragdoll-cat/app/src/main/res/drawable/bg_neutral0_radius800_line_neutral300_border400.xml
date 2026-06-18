@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ VSFT-8453 Sketch Response 大數字 box bg.
+  ~ Figma stroke 1px / ÷1.5 = 0.66dp 渲染後看不到，改用 border_400 (1.33dp) 確保可見。
+  -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/neutral_0" />
+    <corners android:radius="@dimen/radius_800" />
+    <stroke
+        android:width="@dimen/border_400"
+        android:color="@color/neutral_300" />
+</shape>

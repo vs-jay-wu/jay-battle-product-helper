@@ -1,0 +1,229 @@
+name: JIRA — Auto-transition to PR MERGED
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [develop]
+
+permissions:
+  contents: read
+
+jobs:
+  transition-jira-tickets:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          # Full history is required so `git log BASE_SHA..MERGE_SHA` can
+          # walk back to the base commit. Default shallow clone breaks the range.
+          fetch-depth: 0
+
+      - name: Extract VSFT ticket IDs from PR commits
+        id: jira-tickets
+        run: |
+          set -euo pipefail
+
+          BASE_SHA="${{ github.event.pull_request.base.sha }}"
+          MERGE_SHA="${{ github.event.pull_request.merge_commit_sha }}"
+          echo "Scanning commits: ${BASE_SHA}..${MERGE_SHA}"
+
+          COMMIT_COUNT=$(git log "${BASE_SHA}..${MERGE_SHA}" --format="%s" | wc -l | tr -d ' ')
+          echo "Commits in range: ${COMMIT_COUNT}"
+
+          echo "::group::Commit subjects scanned"
+          git log "${BASE_SHA}..${MERGE_SHA}" --format="  %s" || true
+          echo "::endgroup::"
+
+          TICKET_IDS=$(git log "${BASE_SHA}..${MERGE_SHA}" --format="%s" \
+            | grep -E '^[a-z]+[[(]VSFT-[0-9]+' \
+            | sed -E 's/^[a-z]+[[(]([^])]+)[])]:.*/\1/' \
+            | grep -oE 'VSFT-[0-9]+' \
+            | sort -u) || TICKET_IDS=""
+
+          if [ -z "$TICKET_IDS" ]; then
+            echo "No VSFT tickets found in PR commits."
+            echo "ticket_ids=" >> "$GITHUB_OUTPUT"
+          else
+            TICKET_COUNT=$(echo "$TICKET_IDS" | grep -c .)
+            echo "Extracted ${TICKET_COUNT} unique VSFT ticket(s):"
+            echo "$TICKET_IDS"
+            {
+              echo "ticket_ids<<EOF"
+              echo "$TICKET_IDS"
+              echo "EOF"
+            } >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Transition tickets toward PR MERGED
+        if: steps.jira-tickets.outputs.ticket_ids != ''
+        env:
+          JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
+          JIRA_USER: ${{ vars.JIRA_USER }}
+          JIRA_BASE_URL: ${{ vars.JIRA_BASE_URL }}
+          TICKET_IDS: ${{ steps.jira-tickets.outputs.ticket_ids }}
+        run: |
+          # Note: no `set -e` — we explicitly handle per-ticket failures and
+          # continue with the next ticket. The workflow should not turn red
+          # because a single JIRA transition failed; the PR is already merged.
+          set -uo pipefail
+
+          if [ -z "${JIRA_TOKEN:-}" ] || [ -z "${JIRA_USER:-}" ] || [ -z "${JIRA_BASE_URL:-}" ]; then
+            echo "::error::missing JIRA_TOKEN, JIRA_USER, or JIRA_BASE_URL"
+            exit 1
+          fi
+
+          # `-w 0` (GNU base64) prevents line wrapping; required on Linux runners.
+          AUTH=$(printf '%s:%s' "$JIRA_USER" "$JIRA_TOKEN" | base64 -w 0)
+
+          TOTAL_TICKETS=$(echo "${TICKET_IDS}" | grep -c .)
+          echo "Processing ${TOTAL_TICKETS} ticket(s)"
+          echo ""
+
+          # Outcome counters (updated inside process_ticket via globals).
+          COUNT_REACHED_PR_MERGED=0
+          COUNT_ALREADY_DONE=0
+          COUNT_SKIPPED_WARNING=0
+          COUNT_FAILED=0
+          TICKET_INDEX=0
+
+          WALK_PATH=("IN PROGRESS" "IN CODE REVIEW" "PR MERGED")
+
+          TERMINAL_STATUSES=(
+            "PR MERGED"
+            "STAGE READY (READY FOR QA)"
+            "QA ACCEPTED"
+            "QA REJECT"
+            "TRACKING BY QA"
+            "PRODUCTION READY"
+            "CLOSED"
+            "DONE"
+          )
+
+          # Status-name comparisons are case-insensitive. JIRA's API returns
+          # canonical names in mixed case (e.g. "In Progress") while the UI
+          # displays them uppercase via CSS, so we normalize both sides.
+          start_index_for_status() {
+            case "${1,,}" in
+              "ready for dev") echo 0 ;;
+              "in progress") echo 1 ;;
+              "in code review") echo 2 ;;
+              *) echo -1 ;;
+            esac
+          }
+
+          is_terminal() {
+            local needle="${1,,}"
+            local s
+            for s in "${TERMINAL_STATUSES[@]}"; do
+              if [ "${s,,}" = "$needle" ]; then return 0; fi
+            done
+            return 1
+          }
+
+          jira_get() {
+            curl -sS \
+              -H "Authorization: Basic ${AUTH}" \
+              -H "Accept: application/json" \
+              "$@"
+          }
+
+          process_ticket() {
+            local ticket="$1"
+            TICKET_INDEX=$((TICKET_INDEX + 1))
+            echo "------------------------------------------------"
+            echo "[${TICKET_INDEX}/${TOTAL_TICKETS}] Processing ${ticket}"
+
+            local status_url="${JIRA_BASE_URL}/rest/api/3/issue/${ticket}?fields=status"
+            echo "::debug::[${ticket}] GET ${status_url}"
+
+            local current
+            current=$(jira_get "${status_url}" | jq -r '.fields.status.name // empty')
+
+            if [ -z "$current" ]; then
+              echo "::warning::[${ticket}] could not fetch current status — skipping"
+              COUNT_SKIPPED_WARNING=$((COUNT_SKIPPED_WARNING + 1))
+              return 0
+            fi
+            echo "[${ticket}] current status: \"${current}\""
+
+            if is_terminal "$current"; then
+              echo "[${ticket}] already at/past PR MERGED — skipping"
+              COUNT_ALREADY_DONE=$((COUNT_ALREADY_DONE + 1))
+              return 0
+            fi
+
+            local start_idx
+            start_idx=$(start_index_for_status "$current")
+            if [ "$start_idx" -lt 0 ]; then
+              echo "::warning::[${ticket}] status \"${current}\" is outside the walkable range (READY FOR DEV / IN PROGRESS / IN CODE REVIEW) — manual action required, skipping"
+              COUNT_SKIPPED_WARNING=$((COUNT_SKIPPED_WARNING + 1))
+              return 0
+            fi
+
+            local i target tid resp_file http_code
+            local transitions_url="${JIRA_BASE_URL}/rest/api/3/issue/${ticket}/transitions"
+            local transitions_json
+
+            for (( i=start_idx; i<${#WALK_PATH[@]}; i++ )); do
+              target="${WALK_PATH[$i]}"
+              echo "[${ticket}] → \"${target}\""
+
+              echo "::debug::[${ticket}] GET ${transitions_url}"
+              transitions_json=$(jira_get "${transitions_url}")
+
+              tid=$(echo "${transitions_json}" \
+                | jq -r --arg t "$target" \
+                    '.transitions[] | select((.to.name | ascii_downcase) == ($t | ascii_downcase)) | .id' \
+                | head -1)
+
+              if [ -z "$tid" ]; then
+                echo "::error::[${ticket}] no available transition to \"${target}\" from current state — stopping walk for this ticket"
+                echo "[${ticket}] available transitions from here:"
+                echo "${transitions_json}" \
+                  | jq -r '.transitions[] | "  - \(.name) (id=\(.id)) → \(.to.name)"' || true
+                COUNT_FAILED=$((COUNT_FAILED + 1))
+                return 0
+              fi
+              echo "::debug::[${ticket}] resolved transition id=${tid} for target \"${target}\""
+
+              resp_file=$(mktemp)
+              echo "::debug::[${ticket}] POST ${transitions_url} body={\"transition\":{\"id\":\"${tid}\"}}"
+              http_code=$(curl -sS -o "$resp_file" -w "%{http_code}" \
+                -X POST \
+                -H "Authorization: Basic ${AUTH}" \
+                -H "Content-Type: application/json" \
+                -d "{\"transition\":{\"id\":\"${tid}\"}}" \
+                "${transitions_url}" || echo "000")
+
+              if [ "${http_code}" -ge 200 ] && [ "${http_code}" -lt 300 ]; then
+                echo "[${ticket}]   ✓ transitioned to \"${target}\" (HTTP ${http_code})"
+              else
+                echo "::error::[${ticket}] transition to \"${target}\" failed (HTTP ${http_code})"
+                echo "::error::[${ticket}] response body:"
+                cat "$resp_file" || true
+                rm -f "$resp_file"
+                COUNT_FAILED=$((COUNT_FAILED + 1))
+                return 0
+              fi
+              rm -f "$resp_file"
+            done
+
+            echo "[${ticket}] ✓ reached PR MERGED"
+            COUNT_REACHED_PR_MERGED=$((COUNT_REACHED_PR_MERGED + 1))
+          }
+
+          while IFS= read -r TICKET_ID; do
+            [ -z "$TICKET_ID" ] && continue
+            process_ticket "$TICKET_ID"
+          done <<< "${TICKET_IDS}"
+
+          echo "================================================"
+          echo "Summary:"
+          echo "  Total tickets:           ${TOTAL_TICKETS}"
+          echo "  Reached PR MERGED:       ${COUNT_REACHED_PR_MERGED}"
+          echo "  Already done (skipped):  ${COUNT_ALREADY_DONE}"
+          echo "  Skipped with warning:    ${COUNT_SKIPPED_WARNING}"
+          echo "  Failed mid-walk:         ${COUNT_FAILED}"

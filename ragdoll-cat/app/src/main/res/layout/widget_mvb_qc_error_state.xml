@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:parentTag="android.widget.LinearLayout">
+
+    <ImageView
+        android:id="@+id/iv_mqcer_illustration"
+        android:layout_width="@dimen/quiz_mvb_qc_state_illustration_size"
+        android:layout_height="@dimen/quiz_mvb_qc_state_illustration_size"
+        android:layout_gravity="center_horizontal"
+        android:contentDescription="@null"
+        android:src="@drawable/img_mvb_qc_error" />
+
+    <TextView
+        android:id="@+id/tv_mqcer_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/mvb_spacing_300"
+        android:fontFamily="sans-serif"
+        android:includeFontPadding="false"
+        android:text="@string/mvb_qc_error_state_title"
+        android:textColor="@color/neutral_900"
+        android:textSize="@dimen/quiz_mvb_text_xl"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tv_mqcer_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/mvb_spacing_150"
+        android:fontFamily="sans-serif"
+        android:includeFontPadding="false"
+        android:text="@string/mvb_qc_error_state_message"
+        android:textColor="@color/neutral_900"
+        android:textSize="@dimen/quiz_mvb_text_lg" />
+
+    <TextView
+        android:id="@+id/tv_mqcer_btn_refresh"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/quiz_mvb_qc_refresh_button_height"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/mvb_spacing_900"
+        android:background="@drawable/bg_mvb_qc_btn_refresh"
+        android:clickable="true"
+        android:focusable="true"
+        android:fontFamily="sans-serif-medium"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:paddingStart="@dimen/mvb_spacing_900"
+        android:paddingEnd="@dimen/mvb_spacing_900"
+        android:text="@string/mvb_qc_btn_refresh"
+        android:textColor="@color/neutral_0"
+        android:textSize="@dimen/quiz_mvb_text_md" />
+</merge>

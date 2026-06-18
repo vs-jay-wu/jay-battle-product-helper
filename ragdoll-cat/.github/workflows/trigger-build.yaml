@@ -1,0 +1,39 @@
+name: Trigger deploy
+on:
+  push:
+    tags:
+      - v[0-9]+.[0-9]+.[0-9]+.[0-9]+
+  workflow_dispatch: {}
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  github:
+    name: Check github context
+    runs-on:
+      group: Default
+    timeout-minutes: 5
+    continue-on-error: true
+    env:
+      GITHUB_CONTEXT: ${{ toJSON(github) }}
+    steps:
+      - run: echo "${GITHUB_CONTEXT}"
+
+  build:
+    name: Build
+    runs-on:
+      group: Android
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create keystore file
+        run: |
+          echo "${{ secrets.JKS_BASE64 }}" | base64 -d > MVBA_PlatForm.jks
+          echo "${{ secrets.KEYSTORE_PROPERTY_BASE64 }}" | base64 -d > keystore.properties
+          echo "${{ secrets.CS_RELEASE_KEYSTORE_BASE64 }}" | base64 -d > cs_release.keystore
+
+          ./gradlew buildAllApkAndBundleFiles -PoutputDir=~/Apks
+
+          ls

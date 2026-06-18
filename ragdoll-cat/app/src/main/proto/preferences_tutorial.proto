@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+option java_package = "com.viewsonic.classswift";
+option java_multiple_files = true;
+
+message TutorialPreferences {
+    map<string, bool> class_page_phase_completion = 1;
+    map<string, bool> student_page_phase_completion = 2;
+}

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_disclose_checkmark"
+        android:layout_width="@dimen/mvb_spacing_600"
+        android:layout_height="@dimen/mvb_spacing_600"
+        android:layout_marginEnd="@dimen/mvb_spacing_100"
+        android:src="@drawable/ic_checkmark"
+        app:layout_constraintBottom_toBottomOf="@id/button_suggested_answer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/button_suggested_answer"
+        app:tint="@color/neutral_900"
+        tools:ignore="UseAppTint" />
+
+    <TextView
+        android:id="@+id/tv_disclose_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/mvb_spacing_100"
+        android:fontFamily="sans-serif"
+        android:text="@string/quiz_disclose_select_the_correct_answer"
+        android:textColor="@color/neutral_900"
+        android:textSize="10.66sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/button_suggested_answer"
+        app:layout_constraintStart_toEndOf="@id/iv_disclose_checkmark"
+        app:layout_constraintTop_toTopOf="@id/button_suggested_answer" />
+
+    <com.viewsonic.classswift.ui.widget.ClassSwiftLoadingButton
+        android:id="@+id/button_suggested_answer"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/mvb_spacing_900"
+        android:layout_marginStart="@dimen/mvb_spacing_400"
+        android:clickable="true"
+        android:paddingHorizontal="@dimen/mvb_spacing_300"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:lbBackgroundColor="@color/neutral_0"
+        app:lbBorderColor="@color/violet_500"
+        app:lbClickedBackgroundColor="@color/violet_600"
+        app:lbClickedBorderColor="@color/violet_600"
+        app:lbClickedIconTint="@color/neutral_0"
+        app:lbClickedTextColor="@color/neutral_0"
+        app:lbDisableBackgroundColor="@color/neutral_0"
+        app:lbDisableBorderColor="@color/neutral_200"
+        app:lbDisableIconTint="@color/neutral_500"
+        app:lbDisableTextColor="@color/neutral_500"
+        app:lbIconHeight="@dimen/mvb_spacing_400"
+        app:lbIconMarginEnd="@dimen/mvb_spacing_100"
+        app:lbIconWidth="@dimen/mvb_spacing_400"
+        app:lbImgSrc="@drawable/ic_sparkles"
+        app:lbRadius="@dimen/mvb_radius_200"
+        app:lbText="@string/mvb_text_true_false_suggested_answer"
+        app:lbTextColor="@color/violet_500"
+        app:lbTextSize="9.33sp"
+        app:lbButtonState="enable"/>
+
+    <com.viewsonic.classswift.ui.widget.quizcollection.mvb.MvbTextQuizDiscloseOption
+        android:id="@+id/mvb_disclose_option_1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10.66dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/button_suggested_answer" />
+
+    <com.viewsonic.classswift.ui.widget.quizcollection.mvb.MvbTextQuizDiscloseOption
+        android:id="@+id/mvb_disclose_option_2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10.66dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/mvb_disclose_option_1" />
+
+</merge>

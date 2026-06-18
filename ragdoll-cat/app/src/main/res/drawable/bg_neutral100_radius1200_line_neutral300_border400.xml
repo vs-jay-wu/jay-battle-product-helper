@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ VSFT-8453 Sketch Response Overview tab 大數字 box 底色 + 框線。
+  ~ Figma 視覺：surface-200 (#F6F6F6) + rounded-[24px] + outline #E5E5E5。
+  ~ radius_1200=16dp 對應 Figma 24px ÷ 1.5；border_400=1.33dp 確保 mVB IFP 實機渲染可見。
+  -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/neutral_100" />
+    <corners android:radius="@dimen/radius_1200" />
+    <stroke
+        android:width="@dimen/border_400"
+        android:color="@color/neutral_300" />
+</shape>

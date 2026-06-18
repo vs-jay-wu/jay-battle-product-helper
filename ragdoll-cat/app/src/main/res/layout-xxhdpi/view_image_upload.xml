@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    tools:parentTag="android.widget.FrameLayout">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_screenshot_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/placeholder_1920x1080"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:scrCompat="@drawable/placeholder_1920x1080"
+            tools:ignore="ContentDescription" />
+
+        <com.viewsonic.classswift.ui.widget.quiz.MaskView
+            android:id="@+id/cs_mask_view"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="invisible"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.viewsonic.classswift.ui.widget.quiz.CircleProgressBar
+            android:id="@+id/cs_circle_progress_bar"
+            android:layout_width="46.3dp"
+            android:layout_height="46.3dp"
+            app:progress="0"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_upload_failed_container"
+        android:visibility="gone"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/iv_upload_failed"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:src="@drawable/ic_upload_failed"
+            app:layout_constraintBottom_toTopOf="@+id/button_upload_again"
+            app:layout_constraintStart_toStartOf="@+id/button_upload_again"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            android:id="@+id/tv_upload_failed"
+            android:layout_width="wrap_content"
+            android:layout_height="25dp"
+            android:gravity="center_vertical"
+            android:text="@string/common_upload_failed"
+            android:textColor="@color/label_failed_to_upload"
+            app:layout_constraintBottom_toBottomOf="@+id/iv_upload_failed"
+            app:layout_constraintStart_toEndOf="@+id/iv_upload_failed"
+            app:layout_constraintTop_toTopOf="@+id/iv_upload_failed" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/button_upload_again"
+            android:layout_width="134.9dp"
+            android:layout_height="32dp"
+            android:clickable="true"
+            app:cardBackgroundColor="@color/brand_blue"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="0dp"
+            app:layout_constraintTop_toBottomOf="@+id/tv_upload_failed"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                tools:ignore="UseCompoundDrawables">
+
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_marginStart="8dp"
+                    android:src="@drawable/ic_upload_again"
+                    tools:ignore="ContentDescription" />
+
+                <TextView
+                    android:id="@+id/tv_Text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4.66dp"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:textColor="@color/white"
+                    android:text="@string/common_upload_again" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</merge>

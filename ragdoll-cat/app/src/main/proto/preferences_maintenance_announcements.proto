@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+option java_package = "com.viewsonic.classswift";
+option java_multiple_files = true;
+
+message MaintenanceAnnouncementsPreferences {
+    map<string, bool> two_days_before_announcement_viewed = 1;
+}

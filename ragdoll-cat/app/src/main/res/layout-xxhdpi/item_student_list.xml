@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mcv_root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="6dp"
+    android:theme="@style/Theme.MaterialComponents.Bridge"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="5dp"
+    app:cardElevation="0dp"
+    app:strokeColor="@color/color_0A8CF0"
+    app:strokeWidth="0.8dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_number"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_student_number"
+            android:paddingVertical="3dp"
+            android:paddingHorizontal="4dp"
+            android:includeFontPadding="false"
+            android:gravity="center"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textColor="@color/white"
+            android:textSize="14.4sp"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            tools:text="01"/>
+
+        <View
+            android:id="@+id/view_top_divider"
+            android:layout_width="0dp"
+            android:layout_height="0.8dp"
+            android:background="@color/color_0A8CF0"
+            app:layout_constraintTop_toBottomOf="@id/tv_number"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_name"
+            android:layout_width="0dp"
+            android:layout_height="42.6dp"
+            android:paddingHorizontal="4dp"
+            android:includeFontPadding="false"
+            android:gravity="center"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textColor="@color/color_2E3133"
+            android:textSize="16.8sp"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintTop_toBottomOf="@id/view_top_divider"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            tools:text="布蘭登王"/>
+
+        <View
+            android:id="@+id/view_bottom_divider"
+            android:layout_width="0dp"
+            android:layout_height="0.8dp"
+            android:background="@color/color_0A8CF0"
+            app:layout_constraintTop_toBottomOf="@id/tv_name"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"/>
+        
+        <LinearLayout
+            android:id="@+id/ll_score_container"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintTop_toBottomOf="@id/view_bottom_divider"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_decrease_point"
+                android:layout_width="24.7dp"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="3.6dp"
+                android:layout_marginStart="4.2dp"
+                android:layout_gravity="center_vertical"
+                android:paddingVertical="1dp"
+                android:gravity="center"
+                android:background="@drawable/bg_window_prompt"
+                android:backgroundTint="@color/selector_student_list_decrease_point"
+                android:textSize="10.8sp"
+                android:textColor="@color/white"
+                android:text="- 1"
+                tools:ignore="HardcodedText,SmallSp" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_score"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginVertical="3.6dp"
+                android:layout_marginHorizontal="4.2dp"
+                android:layout_gravity="center_vertical"
+                android:paddingVertical="1dp"
+                android:gravity="center"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:textSize="14.4sp"
+                android:textColor="@color/color_2E3133"
+                tools:text="5"
+                tools:ignore="HardcodedText" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_increase_point"
+                android:layout_width="24.7dp"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="3.6dp"
+                android:layout_marginEnd="4.2dp"
+                android:layout_gravity="center_vertical"
+                android:paddingVertical="1dp"
+                android:gravity="center"
+                android:background="@drawable/bg_window_prompt"
+                android:backgroundTint="@color/selector_student_list_increase_point"
+                android:textSize="10.8sp"
+                android:textColor="@color/white"
+                android:text="+ 1"
+                tools:ignore="HardcodedText,SmallSp" />
+
+        </LinearLayout>
+        
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_remove"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:padding="3.3dp"
+            app:srcCompat="@drawable/selector_student_removal"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constrainedWidth="true"
+            app:layout_constrainedHeight="true"
+            app:layout_constraintTop_toTopOf="@id/ll_score_container"
+            app:layout_constraintBottom_toBottomOf="@id/ll_score_container"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

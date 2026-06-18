@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_selected_count"
+        android:layout_width="wrap_content"
+        android:layout_height="28dp"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:text="@string/quiz_collection_quiz_selected"
+        android:textSize="13.3sp"
+        android:textColor="@color/neutral_900"
+        app:layout_constraintTop_toTopOf="@id/cslb_start_batch_quiz"
+        app:layout_constraintBottom_toBottomOf="@id/cslb_start_batch_quiz"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <com.viewsonic.classswift.ui.widget.ClassSwiftLoadingButton
+        android:id="@+id/cslb_select_all"
+        android:layout_width="70dp"
+        android:layout_height="28dp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintTop_toTopOf="@id/cslb_start_batch_quiz"
+        app:layout_constraintBottom_toBottomOf="@id/cslb_start_batch_quiz"
+        app:layout_constraintStart_toEndOf="@id/tv_selected_count"
+        app:lbButtonState="enable"
+        app:lbText="@string/common_all"
+        app:lbTextColor="@color/color_0A8CF0"
+        app:lbTextSize="13.3sp"
+        app:lbBackgroundColor="@color/neutral_0"
+        app:lbBorderColor="@color/color_0A8CF0"
+        app:lbDisableTextColor="@color/neutral_450"
+        app:lbDisableBackgroundColor="@color/neutral_0"
+        app:lbDisableBorderColor="@color/neutral_450"/>
+
+    <com.viewsonic.classswift.ui.widget.ClassSwiftLoadingButton
+        android:id="@+id/cslb_clear_all"
+        android:layout_width="70dp"
+        android:layout_height="28dp"
+        android:layout_marginStart="8dp"
+        app:layout_constraintTop_toTopOf="@id/cslb_start_batch_quiz"
+        app:layout_constraintBottom_toBottomOf="@id/cslb_start_batch_quiz"
+        app:layout_constraintStart_toEndOf="@id/cslb_select_all"
+        app:lbButtonState="disable"
+        app:lbText="@string/common_clear"
+        app:lbTextColor="@color/color_0A8CF0"
+        app:lbTextSize="13.3sp"
+        app:lbBackgroundColor="@color/neutral_0"
+        app:lbBorderColor="@color/color_0A8CF0"
+        app:lbDisableTextColor="@color/neutral_450"
+        app:lbDisableBackgroundColor="@color/neutral_0"
+        app:lbDisableBorderColor="@color/neutral_450"/>
+
+    <com.viewsonic.classswift.ui.widget.ClassSwiftLoadingButton
+        android:id="@+id/cslb_start_batch_quiz"
+        android:layout_width="94.66dp"
+        android:layout_height="32dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:lbButtonState="disable"
+        app:lbText="@string/common_start_quiz"
+        app:lbTextColor="@color/neutral_100"
+        app:lbTextSize="12sp"
+        app:lbBackgroundColor="@color/color_0A8CF0"
+        app:lbDisableTextColor="@color/neutral_100"
+        app:lbDisableBackgroundColor="@color/color_C3C7C7"
+        app:lbProgressIndicatorColor="@color/progressing_loading_white"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_batch_quizzes"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:paddingTop="5.33dp"
+        android:paddingBottom="@dimen/border_200"
+        android:paddingHorizontal="10.66dp"
+        android:background="@drawable/bg_neutral0_radius800_line_neutral_500_border200"
+        android:orientation="vertical"
+        app:fastScrollEnabled="true"
+        app:fastScrollHorizontalThumbDrawable="@drawable/selector_student_list_scroll_thumb"
+        app:fastScrollHorizontalTrackDrawable="@drawable/selector_student_list_scroll_track"
+        app:fastScrollVerticalThumbDrawable="@drawable/selector_student_list_scroll_thumb"
+        app:fastScrollVerticalTrackDrawable="@drawable/selector_student_list_scroll_track"
+        app:layout_constraintTop_toBottomOf="@id/cslb_start_batch_quiz"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:listitem="@layout/item_quiz_collection_folder"/>
+
+    <LinearLayout
+        android:id="@+id/ll_loading"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="@drawable/bg_neutral0_radius800_line_neutral_500_border200"
+        app:layout_constraintTop_toTopOf="@id/rv_batch_quizzes"
+        app:layout_constraintBottom_toBottomOf="@id/rv_batch_quizzes"
+        app:layout_constraintStart_toStartOf="@id/rv_batch_quizzes"
+        app:layout_constraintEnd_toEndOf="@id/rv_batch_quizzes"
+        tools:visibility="gone">
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lav_loading_animation"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            app:lottie_autoPlay="true"
+            app:lottie_fileName="animation_record_loading.json"
+            app:lottie_loop="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="@string/common_loading"
+            android:textColor="@color/neutral_900"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_empty_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:visibility="gone"
+        android:background="@drawable/bg_neutral0_radius800_line_neutral_500_border200"
+        app:layout_constraintTop_toTopOf="@id/rv_batch_quizzes"
+        app:layout_constraintBottom_toBottomOf="@id/rv_batch_quizzes"
+        app:layout_constraintStart_toStartOf="@id/rv_batch_quizzes"
+        app:layout_constraintEnd_toEndOf="@id/rv_batch_quizzes"
+        tools:visibility="gone">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_bookshelf"
+            android:layout_width="171.66dp"
+            android:layout_height="120dp"
+            app:srcCompat="@drawable/ic_bookshelf" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:text="@string/quiz_collection_home_no_quizzes_title"
+            android:textColor="@color/neutral_900"
+            android:textSize="16sp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="5.33dp"
+            android:gravity="center"
+            android:text="@string/quiz_collection_home_no_quizzes_message"
+            android:textColor="@color/neutral_900"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_retry"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:visibility="gone"
+        android:background="@drawable/bg_neutral0_radius800_line_neutral_500_border200"
+        app:layout_constraintTop_toTopOf="@id/rv_batch_quizzes"
+        app:layout_constraintBottom_toBottomOf="@id/rv_batch_quizzes"
+        app:layout_constraintStart_toStartOf="@id/rv_batch_quizzes"
+        app:layout_constraintEnd_toEndOf="@id/rv_batch_quizzes"
+        tools:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:text="@string/quiz_collection_failed_to_load"
+            android:textColor="@color/neutral_900"
+            android:textSize="16sp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="5.33dp"
+            android:gravity="center"
+            android:text="@string/common_try_to_refresh_page"
+            android:textColor="@color/neutral_900"
+            android:textSize="12sp" />
+
+        <com.viewsonic.classswift.ui.widget.ClassSwiftLoadingButton
+            android:id="@+id/cslb_refresh"
+            android:layout_width="120dp"
+            android:layout_height="32dp"
+            android:layout_marginTop="16dp"
+            app:lbText="@string/dialog_refresh_page_btn"
+            app:lbTextColor="@color/neutral_0"
+            app:lbTextSize="13.3sp"
+            app:lbBackgroundColor="@color/color_0A8CF0"
+            app:lbLoadingBackground="@color/color_0A8CF0"
+            app:lbProgressIndicatorColor="@color/neutral_0"/>
+
+    </LinearLayout>
+
+</merge>

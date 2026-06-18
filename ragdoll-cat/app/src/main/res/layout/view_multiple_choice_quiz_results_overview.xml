@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
+
+    <TextView
+        android:id="@+id/tv_correct_answer_title"
+        android:layout_width="wrap_content"
+        android:layout_height="21.3dp"
+        android:text="@string/quiz_info_correct_answer"
+        android:textColor="@color/color_2E3133"
+        android:textSize="16sp"
+        android:gravity="center_vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/layout_correct_answer"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        app:layout_constraintStart_toEndOf="@id/tv_correct_answer_title"
+        app:layout_constraintBottom_toBottomOf="@id/tv_correct_answer_title"
+        app:layout_constraintTop_toTopOf="@id/tv_correct_answer_title" >
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_correct_answer_placeholder_1"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:layout_marginEnd="5dp"
+            tools:src="@drawable/ic_answer_1"/>
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_correct_answer_placeholder_2"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:layout_marginEnd="5dp"
+            tools:src="@drawable/ic_answer_2"/>
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_correct_answer_placeholder_3"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:layout_marginEnd="5dp"
+            tools:src="@drawable/ic_answer_3"/>
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_correct_answer_placeholder_4"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:layout_marginEnd="5dp"
+            tools:src="@drawable/ic_answer_4"/>
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_correct_answer_placeholder_5"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:layout_marginEnd="5dp"
+            tools:src="@drawable/ic_answer_5"/>
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_correct_answer_placeholder_6"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            tools:src="@drawable/ic_answer_6"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_correct_title"
+        android:layout_width="wrap_content"
+        android:layout_height="21.3dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/common_correct"
+        android:textColor="@color/color_78CB3D"
+        android:textSize="16sp"
+        android:gravity="center_vertical"
+        app:layout_constraintBottom_toTopOf="@id/tv_incorrect_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_correct_answer_title" />
+
+    <TextView
+        android:id="@+id/tv_correct_count"
+        android:layout_width="wrap_content"
+        android:layout_height="21.3dp"
+        android:layout_marginStart="5dp"
+        android:textColor="@color/color_2E3133"
+        android:textSize="16sp"
+        android:gravity="center_vertical"
+        app:layout_constraintStart_toEndOf="@id/tv_correct_title"
+        app:layout_constraintTop_toTopOf="@id/tv_correct_title"
+        tools:text="12 participants" />
+
+    <TextView
+        android:id="@+id/tv_incorrect_title"
+        android:layout_width="wrap_content"
+        android:layout_height="21.3dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/common_incorrect"
+        android:textColor="@color/color_F04869"
+        android:textSize="16sp"
+        android:gravity="center_vertical"
+        app:layout_constraintBottom_toTopOf="@id/tv_no_answer_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_correct_title" />
+
+    <TextView
+        android:id="@+id/tv_incorrect_count"
+        android:layout_width="wrap_content"
+        android:layout_height="21.3dp"
+        android:layout_marginStart="5dp"
+        android:textColor="@color/color_2E3133"
+        android:textSize="16sp"
+        android:gravity="center_vertical"
+        app:layout_constraintStart_toEndOf="@id/tv_incorrect_title"
+        app:layout_constraintTop_toTopOf="@id/tv_incorrect_title"
+        tools:text="10 participants" />
+
+    <TextView
+        android:id="@+id/tv_no_answer_title"
+        android:layout_width="wrap_content"
+        android:layout_height="21.3dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/common_no_answer"
+        android:textColor="@color/color_C3C7C7"
+        android:textSize="16sp"
+        android:gravity="center_vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_incorrect_title" />
+
+    <TextView
+        android:id="@+id/tv_no_answer_count"
+        android:layout_width="wrap_content"
+        android:layout_height="21.3dp"
+        android:layout_marginStart="5dp"
+        android:textColor="@color/color_2E3133"
+        android:textSize="16sp"
+        android:gravity="center_vertical"
+        app:layout_constraintStart_toEndOf="@id/tv_no_answer_title"
+        app:layout_constraintTop_toTopOf="@id/tv_no_answer_title"
+        tools:text="8 participants" />
+</merge>

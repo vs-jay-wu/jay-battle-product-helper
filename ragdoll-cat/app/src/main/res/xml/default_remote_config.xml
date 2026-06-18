@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<defaultsMap>
+    <entry>
+        <key>key_download_and_update_timeout_in_seconds</key>
+        <value>40</value>
+    </entry>
+</defaultsMap>

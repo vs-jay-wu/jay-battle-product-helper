@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Detail page chip background — solid blue rounded square (Figma 'tools 48*48' simplified, 30×30 = 20dp). -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/color_4848F0" />
+    <corners android:radius="@dimen/radius_400" />
+</shape>

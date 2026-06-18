@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="LoadingButton">
+        <attr name="lbText" format="string" />
+        <attr name="lbFontFamily" format="string" />
+        <attr name="lbRadius" format="dimension" />
+        <attr name="lbTextColor" format="color" />
+        <attr name="lbTextSize" format="dimension" />
+        <attr name="lbImgSrc" format="reference" />
+        <attr name="lbIconTint" format="color" />
+        <attr name="lbProgressIndicatorColor" format="color" />
+        <attr name="lbBackgroundColor" format="color" />
+        <attr name="lbBorderColor" format="color" />
+        <attr name="lbBorderWidth" format="dimension" />
+        <attr name="lbDisableTextColor" format="color" />
+        <attr name="lbDisableBackgroundColor" format="color" />
+        <attr name="lbDisableBorderColor" format="color" />
+        <attr name="lbDisableIconTint" format="color" />
+        <attr name="lbClickedTextColor" format="color" />
+        <attr name="lbClickedBackgroundColor" format="color" />
+        <attr name="lbClickedBorderColor" format="color" />
+        <attr name="lbClickedIconTint" format="color" />
+        <attr name="lbLoadingBackground" format="color" />
+        <attr name="lbLoadingBorderColor" format="color" />
+        <attr name="lbIconWidth" format="dimension" />
+        <attr name="lbIconHeight" format="dimension" />
+        <attr name="lbIconMarginEnd" format="dimension" />
+        <attr name="lbAlertBackgroundColor" format="color" />
+        <attr name="lbAlertBorderColor" format="color" />
+        <attr name="lbAlertText" format="string" />
+        <attr name="lbAlertTextColor" format="color" />
+        <attr name="lbAlertIconTint" format="color" />
+        <attr name="lbButtonState" format="enum">
+            <enum name="loading" value="0" />
+            <enum name="disable" value="1" />
+            <enum name="enable" value="2" />
+            <enum name="alert" value="3" />
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="SignInLoadingButton">
+        <attr name="ilbText" format="string" />
+        <attr name="ilbIconSrc" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name="MvbToast">
+        <attr name="mtText" format="string" />
+        <attr name="mtIconSrc" format="reference" />
+        <attr name="mtActionTitle" format="string" />
+        <attr name="mtHasActionButton" format="boolean" />
+        <attr name="mtHasCloseButton" format="boolean" />
+        <attr name="mtToastLevel" format="enum">
+            <enum name="level_default" value="0" />
+            <enum name="level_neutral" value="1" />
+            <enum name="level_info" value="2" />
+            <enum name="level_success" value="3" />
+            <enum name="level_warning" value="4" />
+            <enum name="level_danger" value="5" />
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="MvbTextQuizOptionRadioButton">
+        <attr name="android:checked" />
+    </declare-styleable>
+
+    <declare-styleable name="ClassSwiftToast">
+        <attr name="cstText" format="string" />
+        <attr name="cstActionTitle" format="string" />
+        <attr name="successStatus" format="boolean" />
+        <attr name="hasAction" format="boolean" />
+    </declare-styleable>
+
+    <attr name="iconSrc" format="reference" />
+
+    <declare-styleable name="CSToolbarIconButton">
+        <attr name="iconSrc" />
+        <attr name="buttonState" format="enum">
+            <enum name="active" value="0" />
+            <enum name="disabled" value="1" />
+            <enum name="selected" value="2" />
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="CSToolbarActionButton">
+        <attr name="cstabTitle" format="string" />
+        <attr name="cstabIconSrc" format="reference" />
+        <attr name="cstabBackgroundColor" format="color" />
+        <attr name="cstabBorderColor" format="color" />
+        <attr name="cstabTextColor" format="color" />
+        <attr name="cstabIconTintColor" format="color" />
+        <attr name="cstabPressedBackgroundColor" format="color" />
+        <attr name="cstabPressedBorderColor" format="color" />
+        <attr name="cstabPressedTextColor" format="color" />
+        <attr name="cstabPressedIconTintColor" format="color" />
+        <attr name="cstabLoadingProgressColor" format="color" />
+        <attr name="cstabLoadingBorderColor" format="color" />
+        <attr name="cstabLoadingBackgroundColor" format="color" />
+        <attr name="cstabItemState" format="enum">
+            <enum name="active" value="0" />
+            <enum name="loading" value="1" />
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="CSSubordinateMenuItem">
+        <attr name="title" format="string" />
+        <attr name="iconSrc" />
+        <attr name="itemState" format="enum">
+            <enum name="normal" value="0" />
+            <enum name="selected" value="1" />
+            <enum name="needToUpgrade" value="2" />
+            <enum name="comingSoon" value="3" />
+            <enum name="disabled" value="4" />
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="CircleProgressBar">
+        <attr name="progress" format="integer" />
+    </declare-styleable>
+
+    <declare-styleable name="MultiChoiceOptionButton">
+        <attr name="optionIndex"/>
+    </declare-styleable>
+
+    <declare-styleable name="SingleAnswerButton">
+        <attr name="optionIndex"/>
+        <attr name="answerButtonState"/>
+    </declare-styleable>
+
+    <declare-styleable name="TrueFalseOptionButton">
+        <attr name="optionContent" format="boolean" />
+        <attr name="answerButtonState"/>
+    </declare-styleable>
+
+    <declare-styleable name="LoadingAnimation">
+        <attr name="animationBackgroundColor" format="color" />
+    </declare-styleable>
+
+    <declare-styleable name="CSTimerNumberPicker">
+        <attr name="isBase6" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="RandomBuzzerView">
+        <attr name="hasCorrectAnswer" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="NetworkDisconnectView">
+        <attr name="cardRadius" format="dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="PaintOptionButton">
+        <attr name="iconResource" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name="CSMessageDialog">
+        <attr name="positiveTextColor" format="color" />
+        <attr name="negativeTextColor" format="color" />
+        <attr name="positiveDisableTextColor" format="color" />
+        <attr name="negativeDisableTextColor" format="color" />
+        <attr name="csmdMaskBackground" format="reference|color" />
+    </declare-styleable>
+
+    <declare-styleable name="KatexView">
+        <attr name="android:textColor" />
+        <attr name="android:textSize" />
+        <attr name="android:textStyle" />
+        <attr name="android:gravity" />
+        <attr name="android:maxLines" />
+    </declare-styleable>
+
+    <declare-styleable name="RecordMarkWidget">
+        <attr name="rmwMaskBackground" format="reference|color" />
+    </declare-styleable>
+
+    <!-- VSFT-8454 SketchReviewWidget. 拷貝自 RecordMarkWidget styleable。 -->
+    <declare-styleable name="SketchReviewWidget">
+        <attr name="srMaskBackground" format="reference|color" />
+    </declare-styleable>
+
+    <attr name="optionIndex" format="integer" />
+
+    <attr name="answerButtonState" format="enum">
+        <enum name="chosen" value="0" />
+        <enum name="not_chosen" value="1" />
+        <enum name="disabled" value="2" />
+    </attr>
+
+    <declare-styleable name="BatchQuizBarChart">
+        <attr name="barChartColor" format="color" />
+        <attr name="barChartMaxHeight" format="dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="MvbQuizTagChipView">
+        <attr name="mqctc_variant" format="enum">
+            <enum name="quiz_type" value="0" />
+            <enum name="subject" value="1" />
+            <enum name="standards" value="2" />
+        </attr>
+        <attr name="mqctc_text" format="string" />
+    </declare-styleable>
+
+</resources>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="360dp"
+    android:layout_height="wrap_content"
+    android:paddingVertical="16dp"
+    android:paddingStart="21.33dp"
+    android:paddingEnd="16dp"
+    android:background="@drawable/bg_window_corner_prompt"
+    android:theme="@style/Base.Theme.ClassSwift"
+    tools:ignore="ContentDescription">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_logo"
+        android:layout_width="26.7dp"
+        android:layout_height="26.7dp"
+        app:srcCompat="@drawable/ic_logo_with_transparent_background"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:includeFontPadding="false"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textSize="16sp"
+        android:textColor="@color/black"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintTop_toTopOf="@id/iv_logo"
+        app:layout_constraintBottom_toBottomOf="@id/iv_logo"
+        app:layout_constraintStart_toEndOf="@id/iv_logo"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="ClassSwift Downtime Notice NoticeNoticeNotice"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10.66dp"
+        android:includeFontPadding="false"
+        android:text="@string/connection_disconnected_from_the_server"
+        android:textSize="12sp"
+        android:textColor="@color/color_2E3133"
+        app:layout_constraintTop_toBottomOf="@id/iv_logo"
+        app:layout_constraintLeft_toLeftOf="parent"
+        tools:text="ClassSwift will be down for scheduled maintenance in 5 minutes. During maintenance, ClassSwift APP and Hub will not be accessible.
+The system will automatically save your class records before the downtime begins."/>
+
+    <com.viewsonic.classswift.ui.widget.ClassSwiftLoadingButton
+        android:id="@+id/cslb_got_it"
+        android:layout_width="54dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="10.66dp"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/tv_description"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:lbBackgroundColor="@color/white"
+        app:lbBorderColor="@color/color_0A8CF0"
+        app:lbLoadingBackground="@color/color_0A8CF0"
+        app:lbProgressIndicatorColor="@color/progressing_loading_white"
+        app:lbText="@string/common_got_it"
+        app:lbTextColor="@color/color_0A8CF0"
+        app:lbTextSize="12sp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

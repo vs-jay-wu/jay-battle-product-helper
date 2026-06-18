@@ -1,0 +1,73 @@
+<resources>
+    <!-- CS Radius-->
+    <dimen name="radius_50">0.66dp</dimen>
+    <dimen name="radius_100">1.33dp</dimen>
+    <dimen name="radius_150">2dp</dimen>
+    <dimen name="radius_200">2.66dp</dimen>
+    <dimen name="radius_300">3dp</dimen>
+    <dimen name="radius_400">5.33dp</dimen>
+    <dimen name="radius_500">6.66dp</dimen>
+    <dimen name="radius_600">8dp</dimen>
+    <dimen name="radius_800">10.66dp</dimen>
+    <dimen name="radius_1000">13.33dp</dimen>
+    <dimen name="radius_1100">14.66dp</dimen>
+    <dimen name="radius_1200">16dp</dimen>
+    <dimen name="radius_1500">20dp</dimen>
+    <dimen name="radius_2200">29.33dp</dimen>
+    <dimen name="radius_3000">40dp</dimen>
+    <dimen name="radius_full">9999dp</dimen>
+
+    <!-- CS Border Line-->
+    <dimen name="border_100">0.33dp</dimen>
+    <dimen name="border_200">0.66dp</dimen>
+    <dimen name="border_400">1.33dp</dimen>
+    
+    <!-- MVB Radius-->
+    <dimen name="mvb_radius_50">1.33dp</dimen>
+    <dimen name="mvb_radius_100">2.66dp</dimen>
+    <dimen name="mvb_radius_150">4dp</dimen>
+    <dimen name="mvb_radius_200">5.33dp</dimen>
+    <dimen name="mvb_radius_300">8dp</dimen>
+    <dimen name="mvb_radius_400">10.66dp</dimen>
+    <dimen name="mvb_radius_500">13.33dp</dimen>
+    <dimen name="mvb_radius_600">16dp</dimen>
+    <dimen name="mvb_radius_800">21.33dp</dimen>
+    <dimen name="mvb_radius_1000">26.66dp</dimen>
+    <dimen name="mvb_radius_1100">29.33dp</dimen>
+    <dimen name="mvb_radius_1500">40dp</dimen>
+    <dimen name="mvb_radius_2200">58.66dp</dimen>
+    <dimen name="mvb_radius_3000">80dp</dimen>
+    <dimen name="mvb_radius_full">6666dp</dimen>
+
+    <!-- Spacing -->
+    <dimen name="mvb_spacing_50">1.33dp</dimen>
+    <dimen name="mvb_spacing_100">2.66dp</dimen>
+    <dimen name="mvb_spacing_150">4dp</dimen>
+    <dimen name="mvb_spacing_200">5.33dp</dimen>
+    <dimen name="mvb_spacing_250">6.66dp</dimen>
+    <dimen name="mvb_spacing_300">8dp</dimen>
+    <dimen name="mvb_spacing_400">10.66dp</dimen>
+    <dimen name="mvb_spacing_500">13.33dp</dimen>
+    <dimen name="mvb_spacing_600">16dp</dimen>
+    <dimen name="mvb_spacing_800">21.33dp</dimen>
+    <dimen name="mvb_spacing_900">24.00dp</dimen>
+    <dimen name="mvb_spacing_1000">26.66dp</dimen>
+    <dimen name="mvb_spacing_1100">29.33dp</dimen>
+    <dimen name="mvb_spacing_1200">32dp</dimen>
+    <dimen name="mvb_spacing_1400">37.33dp</dimen>
+    <dimen name="mvb_spacing_1500">40dp</dimen>
+    <dimen name="mvb_spacing_1600">42.66dp</dimen>
+    <dimen name="mvb_spacing_1800">48dp</dimen>
+    <dimen name="mvb_spacing_2000">53.33dp</dimen>
+    <dimen name="mvb_spacing_2200">58.66dp</dimen>
+    <dimen name="mvb_spacing_2400">64dp</dimen>
+    <dimen name="mvb_spacing_3000">80dp</dimen>
+
+    <!-- borderline-->
+    <dimen name="mvb_border_100">0.66dp</dimen>
+    <dimen name="mvb_border_200">1.33dp</dimen>
+    <dimen name="mvb_border_400">2.66dp</dimen>
+    <dimen name="mvb_border_600">4dp</dimen>
+    <dimen name="mvb_border_800">5.33dp</dimen>
+    <dimen name="mvb_border_1200">8dp</dimen>
+</resources>

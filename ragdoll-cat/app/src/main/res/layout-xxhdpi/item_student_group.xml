@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mcv_root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="105.33dp"
+    android:maxHeight="195dp"
+    android:theme="@style/Theme.MaterialComponents.Bridge"
+    app:cardBackgroundColor="@color/neutral_200"
+    app:cardCornerRadius="@dimen/radius_400"
+    app:cardElevation="0dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="72dp"
+            android:layout_height="match_parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_group_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                >
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_group_no"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:text="1"
+                    android:textColor="@color/neutral_900"
+                    android:textSize="24sp"
+                    android:textFontWeight="700"
+                    app:layout_constrainedWidth="true"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="1" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_group_decrease_point"
+                    android:layout_width="22dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginTop="5.33dp"
+                    android:background="@drawable/bg_window_prompt"
+                    android:backgroundTint="@color/selector_student_list_decrease_point"
+                    android:gravity="center"
+                    android:paddingVertical="1dp"
+                    android:text="- 1"
+                    android:textColor="@color/white"
+                    android:textSize="10.8sp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_group_no"
+                    tools:ignore="HardcodedText,SmallSp" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_group_increase_point"
+                    android:layout_width="22dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/bg_window_prompt"
+                    android:backgroundTint="@color/selector_student_list_increase_point"
+                    android:gravity="center"
+                    android:layout_marginStart="5.33dp"
+                    android:paddingVertical="1dp"
+                    android:text="+ 1"
+                    android:textColor="@color/white"
+                    android:textSize="10.8sp"
+                    app:layout_constraintTop_toTopOf="@id/tv_group_decrease_point"
+                    app:layout_constraintStart_toEndOf="@id/tv_group_decrease_point"
+                    tools:ignore="HardcodedText,SmallSp" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:id="@+id/view_divider"
+            android:layout_width="2dp"
+            android:layout_height="match_parent"
+            android:background="@color/white" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_student_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_solid_rounded_10dp"
+            android:backgroundTint="@color/neutral_200"
+            android:layout_marginHorizontal="4dp"
+            android:layout_marginVertical="5dp" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

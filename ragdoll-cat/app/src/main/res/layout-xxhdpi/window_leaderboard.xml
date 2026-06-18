@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="854dp"
+    android:layout_height="520dp"
+    android:background="@drawable/bg_neutral0_radius800_line_neutral450_border200"
+    android:theme="@style/Theme.MaterialComponents.Bridge">
+
+    <!-- close button -->
+    <ImageButton
+        android:id="@+id/ib_close"
+        android:layout_width="21.3dp"
+        android:layout_height="21.3dp"
+        android:layout_marginTop="10.6dp"
+        android:layout_marginEnd="10.6dp"
+        android:background="@drawable/ic_close_64dp"
+        android:backgroundTint="@color/bg_close_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_toolbar_bring_to_front"
+        android:layout_width="21.3dp"
+        android:layout_height="21.3dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintRight_toLeftOf="@id/ib_close"
+        app:layout_constraintTop_toTopOf="@id/ib_close"
+        app:srcCompat="@drawable/ic_toolbar_bring_to_front_64dp"
+        app:tint="@color/bg_toolbar_bring_to_front" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_minimize_window"
+        android:layout_width="21.3dp"
+        android:layout_height="21.3dp"
+        android:layout_marginTop="10.6dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintRight_toLeftOf="@id/ib_close"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_minus_32dp"
+        app:tint="@color/bg_minimize_window" />
+
+    <WebView
+        android:id="@+id/wv_leaderboard"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="13.33dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginBottom="13.33dp"
+        android:background="@color/transparent"
+        android:scrollbars="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_error_page"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/wv_leaderboard"
+        app:layout_constraintEnd_toEndOf="@id/wv_leaderboard"
+        app:layout_constraintStart_toStartOf="@id/wv_leaderboard"
+        app:layout_constraintTop_toTopOf="@id/wv_leaderboard"
+        tools:visibility="visible">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_error_icon"
+            android:layout_width="168dp"
+            android:layout_height="168dp"
+            android:layout_marginTop="95dp"
+            android:src="@drawable/ic_webview_error"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="ContentDescription" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_error_msg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10.66dp"
+            android:text="@string/error_msg_general"
+            android:textColor="@color/error_message_text_color"
+            android:textFontWeight="600"
+            android:textSize="21sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/iv_error_icon" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_try_again_msg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5.33dp"
+            android:text="@string/common_please_try_again"
+            android:textColor="@color/error_message_text_color"
+            android:textFontWeight="400"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_error_msg" />
+
+
+        <com.viewsonic.classswift.ui.widget.ClassSwiftLoadingButton
+            android:id="@+id/cslb_try_again"
+            android:layout_width="122.66dp"
+            android:layout_height="26.33dp"
+            android:layout_marginTop="16dp"
+            android:clickable="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_try_again_msg"
+            app:lbBackgroundColor="@color/violet_700"
+            app:lbClickedBackgroundColor="@color/violet_800"
+            app:lbLoadingBackground="@color/violet_700"
+            app:lbProgressIndicatorColor="@color/neutral_0"
+            app:lbRadius="@dimen/radius_400"
+            app:lbText="@string/common_try_again"
+            app:lbTextColor="@color/neutral_0"
+            app:lbTextSize="16sp" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,1069 @@
+<resources>
+    <string name="common_app_name">ClassSwift Service</string>
+
+    <!-- Strings used for infrastructure -->
+    <string name="eng_debug_user_id">user_debug</string>
+    <string name="eng_debug_tool_title">Debug Tool</string>
+    <string name="eng_debug_tool_socket_description">Connect/Disconnect Socket</string>
+    <string name="eng_debug_tool_maintenance_json_file_description">The json file used for maintenance announcement.</string>
+    <string name="eng_debug_tool_maintenance_json_file_from_server">From Server</string>
+    <string name="eng_debug_tool_maintenance_json_file_from_test">From Test</string>
+
+    <!-- Strings used for common -->
+    <string name="common_empty_content">-</string>
+    <string name="common_temp_view">Temp View</string>
+    <string name="common_loading">Loading...</string>
+    <string name="common_end_app">End App</string>
+    <string name="common_cancel">Cancel</string>
+    <string name="common_deny">Deny</string>
+    <string name="common_allow">Allow</string>
+    <string name="common_retry">Retry</string>
+    <string name="common_group">Groups</string>
+    <string name="common_ok">OK</string>
+    <string name="common_error_general">That\'s an error. Please try again.</string>
+    <string name="common_save">Save</string>
+    <string name="common_submit">Submit</string>
+    <string name="common_connect">Connect</string>
+    <string name="common_disconnect">Disconnect</string>
+    <string name="common_try_to_refresh_page">Try to refresh this page again</string>
+    <string name="common_upgrade">Upgrade</string>
+    <string name="common_soon">Soon</string>
+    <string name="common_buzzer">Buzzer</string>
+    <string name="common_timer">Timer</string>
+    <string name="common_clear">Clear</string>
+    <string name="common_all">All</string>
+    <string name="common_link">Link</string>
+    <string name="common_version">Version</string>
+    <string name="common_end_in_session">End in Session</string>
+    <string name="common_got_it">Got it</string>
+    <string name="common_understand">Understand</string>
+    <string name="common_quit">Quit</string>
+    <string name="common_quit_app">Quit app</string>
+    <string name="common_remove">Remove</string>
+    <string name="common_guest">Guest</string>
+    <string name="common_empty_seat_number">-</string>
+    <string name="common_sign_out">Sign Out</string>
+    <string name="common_select">Select</string>
+    <string name="common_confirm">Confirm</string>
+    <string name="common_notice">Notice</string>
+    <string name="common_sign_out_notice">Sign out Notice</string>
+    <string name="common_edit">Edit</string>
+    <string name="common_delete">Delete</string>
+    <string name="common_select_again">Select Again</string>
+    <string name="common_upload_again">Upload Again</string>
+    <string name="common_start_quiz">Start question</string>
+    <string name="common_question">Question</string>
+    <string name="mvb_sketch_response_pagination_current_page">1</string>
+    <string name="common_cancel_question">Cancel question</string>
+    <string name="common_capture_again">Capture again</string>
+    <string name="common_upload_failed">Failed to Upload</string>
+    <string name="common_failed">Failed</string>
+    <string name="common_reload">Reload</string>
+    <string name="common_correct">Correct</string>
+    <string name="common_no_answer">No Answer</string>
+    <string name="common_participants">participants</string>
+    <string name="common_incorrect">Incorrect</string>
+    <string name="common_absent">Absent</string>
+    <string name="common_close_quiz">Close Question</string>
+    <string name="common_close">Close</string>
+    <string name="common_screenshot_hint">Drag and select the area to create a question</string>
+    <string name="common_screenshot_drag_hint">Drag and capture the area to create question</string>
+    <string name="common_connection_lost_msg">No internet connection. Please check your internet and try again.</string>
+    <string name="common_done">Done</string>
+    <string name="common_stopwatch">Stopwatch</string>
+    <string name="common_start">Start</string>
+    <string name="common_stop">Stop</string>
+    <string name="common_try_again">Try again</string>
+    <string name="common_continue">continue</string>
+    <string name="common_no_current_participants">No Current Participants</string>
+    <string name="common_no_internet_connecting">No internet. Reconnecting...</string>
+    <string name="common_or">OR</string>
+    <string name="common_please_try_again">Please try again.</string>
+    <string name="common_upgrade_your_plan_title">Upgrade Your Plan</string>
+    <string name="common_upgrade_for_leaderboard">Upgrade now to unlock the full Leaderboard experience.</string>
+    <string name="common_status_absent">Absent</string>
+    <string name="common_url">Link</string>
+    <string name="common_language">Language</string>
+    <string name="common_select_all">All</string>
+    <string name="common_records">Records</string>
+    <string name="common_upgrade_hint">Upgrade the plan to access the following features.</string>
+    <string name="common_add">Add</string>
+    <string name="common_subtract">Subtract</string>
+    <string name="common_english">English</string>
+    <string name="common_chinese">繁體中文</string>
+    <string name="common_create">Create</string>
+    <string name="common_network_disconnect_message">Please check your internet connection and try again.</string>
+
+    <!-- Log in flow -->
+    <string name="overlay_permission_title">Display over other apps?</string>
+    <string name="overlay_permission_message">Allow ClassSwift to display on top of other apps you’re using. This app will be able to see where you tap on the screen.</string>
+    <string name="overlay_permission_go_setting">Go setting.</string>
+    <string name="overlay_permission_deny_message">Permission required to continue. Please enable the necessary permissions in System Settings and try again.</string>
+    <string name="error_msg_general">Something went wrong</string>
+    <string name="error_msg_general_try_again">Something went wrong, please try again.</string>
+    <string name="splashscreen_login_with_browser">Log in with browser</string>
+    <string name="splashscreen_no_account">No account?</string>
+    <string name="splashscreen_create_one">Create one</string>
+    <string name="splashscreen_complete_login">Go to the browser to complete login</string>
+    <string name="splashscreen_open_browser_again">Open browser tab again</string>
+    <string name="dialog_save_login_title">Save Login Information</string>
+    <string name="dialog_save_login_message">Do you want to save your login information?</string>
+    <string name="dialog_refresh_page_btn">Refresh Page</string>
+    <string name="eng_time_format">%1$02d:%2$02d:%3$02d</string>
+    <string name="region_not_supported_title">Region Not Supported</string>
+    <string name="region_not_supported_message">This app is currently unavailable in your region. Please contact your sales representative for assistance.</string>
+
+    <!-- user info -->
+    <string name="userinfo_title">Almost there...</string>
+    <string name="userinfo_sub_title">We’d love to know a little more about you. Fill this out and you’re all set to dive in!</string>
+    <string name="userinfo_terms_update_title">Terms and Conditions Update</string>
+    <string name="userinfo_terms_update_sub_title">We’ve recently updated our terms and conditions on the below policies. To continue using ClassSwift, please review and accept these changes. Your privacy and data security are important to us, and these updates aim to enhance your experience.</string>
+    <string name="userinfo_success_title">You are ready to go!</string>
+    <string name="userinfo_success_subtitle">Thank you for your submission.</string>
+    <string name="userinfo_display_name">Display name</string>
+    <string name="userinfo_country">Country/Territory</string>
+    <string name="userinfo_state">State</string>
+    <string name="userinfo_school">School/Organization</string>
+    <string name="userinfo_my_role">My role is</string>
+    <string name="userinfo_eula_message" formatted="false">I agree to the ClassSwift %s and %s . We process your personal data in accordance with our %s.</string>
+    <string name="userinfo_eula_string">EULA</string>
+    <string name="userinfo_service_string">Terms of Service</string>
+    <string name="userinfo_privacy_string">Privacy Policy</string>
+    <string name="userinfo_ai_message">I consent to participating in the ClassSwift AI Beta Program, agreeing to provide feedback aimed at improving product features and functionalities.</string>
+    <string name="userinfo_privacy_message">I want to receive the latest ClassSwift news and promotions. I agree to the evaluation of the newsletter usage with the aim of newsletter improvement. I am aware that I can withdraw my consent at any time. We use your data exclusively in accordance with our %s.</string>
+
+    <!-- tool bar menu-->
+    <string name="toolbar_menu_student_management">Student List</string>
+    <string name="toolbar_menu_join_class">Join Class</string>
+    <string name="toolbar_menu_interaction_spinner">Spinner</string>
+    <string name="toolbar_menu_settings">Settings</string>
+    <string name="toolbar_menu_interaction_random_draw">Random Draw</string>
+    <string name="leaderboard_title">Leaderboard</string>
+    <string name="quiz_types_true_false">True/False</string>
+    <string name="quiz_types_multiple_selection">Multiple Selection</string>
+    <string name="quiz_types_poll">Poll</string>
+    <string name="quiz_types_short_answer">Short Answer</string>
+    <string name="quiz_types_sketch_response">Sketch response</string>
+    <string name="quiz_types_audio">Audio</string>
+    <string name="quiz_types_quiz_generator">Quiz Generator</string>
+    <string name="preset_quiz_title">Preset Quiz</string>
+    <string name="toolbar_menu_settings_quit_app">Quit ClassSwift</string>
+    <string name="toolbar_leave_class">Leave Class</string>
+    <string name="toolbar_start_lesson">Start Lesson</string>
+    <string name="dialog_end_lesson_title">End Lesson</string>
+    <string name="push_and_respond_title">Sketch Response</string>
+    <string name="instant_push_title">Instant Push</string>
+    <string name="dialog_buttons_end_in_session">Lesson in Session</string>
+    <string name="quiz_collection_preset_lesson_not_started">Lesson not started</string>
+    <string name="dialog_buttons_end_lesson">End lesson and return</string>
+    <string name="dialog_end_lesson_with_return">Are you sure you want to end the lesson and return to Class List?</string>
+    <string name="dialog_end_lesson_with_logout">Are you sure you want to end the lesson and log out?</string>
+    <string name="dialog_buttons_end_lesson_logout">End lesson and log out</string>
+    <string name="dialog_end_lesson_with_quit">Are you sure you want to end the lesson and quit ClassSwift?</string>
+    <string name="dialog_buttons_end_lesson_quit">End lesson and quit</string>
+    <string name="toolbar_tools">Tool</string>
+    <string name="toolbar_settings">Settings</string>
+
+    <!-- In-App Tutorial -->
+    <string name="settings_tutorial_watch">Watch</string>
+    <string name="tutorial_actions_skip">Skip</string>
+    <string name="tutorial_actions_get_started">Get Started</string>
+    <string name="tutorial_skip_dialog_skip_for_now">Skip for Now</string>
+    <string name="tutorial_skip_dialog_keep_going">Keep Going</string>
+    <string name="tutorial_actions_watch_again">Watch Again</string>
+    <string name="tutorial_actions_ready">I\'m Ready!</string>
+    <string name="tutorial_actions_back">Back</string>
+    <string name="tutorial_actions_next">Next</string>
+    <string name="tutorial_hint_url" translatable="false">%s/helpcenter/33000218099</string>
+    <string name="tutorial_intro_title">Welcome to ClassSwift!</string>
+    <string name="tutorial_intro_subtitle">Make your class more interactive and fun in 5 easy steps.</string>
+    <string name="tutorial_walkthrough_pick_title">Pick a Class &amp; Jump In</string>
+    <string name="tutorial_walkthrough_pick_subtitle">Choose or create a class and start instantly—it\'s that easy!</string>
+    <string name="tutorial_pick_class_video_url">%s/tutorial/PickAClassAndJumpIn_en.mp4</string>
+    <string name="tutorial_walkthrough_join_title">Let Students Join Instantly</string>
+    <string name="tutorial_let_student_join_description">Share a QR code, link, or class ID—students can jump in right away!</string>
+    <string name="tutorial_let_student_join_video_url">%s/tutorial/LetStudentsJoinInstantly_en.mp4</string>
+    <string name="tutorial_walkthrough_open_title">Open Your Digital Teaching Material</string>
+    <string name="tutorial_walkthrough_open_subtitle">No need to upload files—just use what you already have to start a question.</string>
+    <string name="tutorial_open_teaching_material_video_url">%s/tutorial/OpenYourDigitalTeachingMaterial_en.mp4</string>
+    <string name="tutorial_walkthrough_sparkles_title">Add Some Sparkles to Your Class</string>
+    <string name="tutorial_walkthrough_sparkles_subtitle">Make learning fun! Use points and engagement tools to keep students engaged.</string>
+    <string name="tutorial_add_sparkles_video_url">%s/tutorial/AddSomeSparklesToYourClass_en.mp4</string>
+    <string name="tutorial_walkthrough_enhance_title">Enhance Your Teaching with Smart Tools</string>
+    <string name="tutorial_walkthrough_enhance_subtitle">The toolbar is packed with features to support your lessons.</string>
+    <string name="tutorial_use_smart_tool_video_url">%s/tutorial/EnhanceYourTeachingWithSmartTools_en.mp4</string>
+    <string name="tutorial_skip_dialog_title">Sure you want to skip?</string>
+    <string name="tutorial_skip_dialog_content">You can restart anytime in Settings.\nNo pressure—just want you to feel ready!</string>
+    <string name="tutorial_video_load_failed_toast_title">Failed to load the video. Please try again.</string>
+    <string name="tutorial_video_load_failed_title">Failed to load the video</string>
+    <string name="tutorial_learn_mode_qrcode_title">Scan with Your Camera to Learn More</string>
+    <string name="tutorial_completion_title">You\'re All Set!</string>
+    <string name="tutorial_completion_description">Start teaching now, or revisit this tutorial anytime from Settings.</string>
+    <string name="tutorial_feedback_title">Do you find this helpful?</string>
+    <string name="tutorial_feedback_done">Thanks for your feedback!</string>
+    <string name="tutorial_feedback_failed_toast_title">Failed to end the tutorial. If the issue persists, try restarting the app.</string>
+    <string name="settings_tutorial_watch_the_tutorial">Watch the Tutorial</string>
+    <string name="tutorial_walkthrough_enhance_learn_more">Learn more here.</string>
+    <string name="tutorial_walkthrough_step_aria_label">>Step %1$d</string>
+    <string name="tutorial_dialog_action_skip_all">Skip all</string>
+
+    <!-- Tutorial Tooltips  -->
+    <string name="onboarding_roster_class_list_phase_title">Your Class Roster is Ready</string>
+    <string name="onboarding_roster_class_list_phase_description">You\'re all set! Choose a class from the list to get started.</string>
+    <string name="onboarding_roster_enter_class_phase_title">Enter Your Class</string>
+    <string name="onboarding_roster_enter_class_phase_description">Tap “Enter Class” to view your imported student list.</string>
+    <string name="onboarding_class_list_phase_title">Your Class List</string>
+    <string name="onboarding_class_list_phase_description">Choose a class from the list to get started.</string>
+    <string name="onboarding_enter_class_phase_title">Enter Your Class</string>
+    <string name="onboarding_enter_class_phase_description">Tap “Enter Class” to view your imported student list.</string>
+    <string name="onboarding_roster_student_list_phase_title">Your Students Roster</string>
+    <string name="onboarding_roster_student_list_phase_description">This roster is automatically synced from your organization\'s roster source.</string>
+    <string name="onboarding_roster_invite_student_phase_title">Invite Students to Join</string>
+    <string name="onboarding_roster_invite_student_phase_description">Students can join your class by shared the class link.</string>
+    <string name="onboarding_student_list_phase_title">Your Student List</string>
+    <string name="onboarding_student_list_phase_description">The student list can be updated anytime from ClassSwift Hub. Guest seats are available for students to choose when joining your class.</string>
+    <string name="onboarding_invite_student_phase_title">Invite Students to Join</string>
+    <string name="onboarding_invite_student_phase_description">Students can scan the QR code using their device\'s native camera to join your class.</string>
+    <string name="onboarding_start_lesson_phase_title">Click Start Lesson when you\'re ready</string>
+    <string name="onboarding_start_lesson_phase_description">Unlock powerful classroom tools, and students can still join anytime.</string>
+
+    <!-- Socket Reconnection  -->
+    <string name="connection_connection_lost">Connection Lost</string>
+    <string name="connection_reconnecting">Reconnecting...</string>
+    <string name="connection_disconnected_from_the_server">Disconnected from the server.</string>
+    <string name="connection_reconnect_server">Reconnecting the server.</string>
+    <string name="connection_reconnect">Reconnect</string>
+    <string name="dialog_socket_reconnection_prompt_message">Are you sure you want to quit ClassSwift?\nUnsaved class records will be lost.</string>
+
+    <!-- OTA -->
+    <string name="autoupdate_available">Update Available</string>
+    <string name="autoupdate_available_description">Previous versions will no longer be supported. Please download the latest version.</string>
+    <string name="autoupdate_update_now">Update now</string>
+    <string name="autoupdate_update_failed">Update failed. Please try again.</string>
+
+    <!-- Student Management -->
+    <string name="join_class_action_back_to_class_list">Back to Class List</string>
+    <string name="join_class_info_version">Version: %s</string>
+    <string name="join_class_info_id">ID: %s</string>
+    <string name="join_class_title_join">Join %s</string>
+    <string name="student_list_title">Whole Class</string>
+    <string name="student_list_join_status_typing">Typing…</string>
+    <string name="join_class_copy_success">Copy successful</string>
+    <string name="join_class_copy_link">Copy link</string>
+    <string name="join_class_switch_class">Switch Class</string>
+    <string name="join_class_switch_dialog_title">Leave this class?</string>
+    <string name="join_class_switch_dialog_message">Leaving will end the current class session.</string>
+    <string name="join_class_switch_dialog_confirm">Leave</string>
+    <string name="join_class_switch_dialog_cancel">Cancel</string>
+    <string name="join_class_step_1">Step 1: Join the class</string>
+    <string name="join_class_step_2">Step 2: Enter class ID</string>
+    <string name="join_class_scan_to_join">Scan to join</string>
+    <string name="join_class_whole_class">Whole Class</string>
+    <string name="join_class_student_count">%d joined</string>
+    <string name="join_class_student_count_fraction">%d joined / %d students</string>
+    <string name="join_class_guest_mode_limit">Guest mode limit: %1$d seats</string>
+    <string name="join_class_student_list_loading">Loading student list...</string>
+    <string name="join_class_empty_message">Invite students to join\nwith a class code or QR code.</string>
+    <string name="join_class_remove_title">Remove student from class?</string>
+    <string name="join_class_remove_message">Removed students can’t join the next quiz.</string>
+    <string name="join_class_remove_success">Student was removed successfully.</string>
+    <string name="join_class_remove_failed">Unexpected event happened, please try again.</string>
+    <!-- VSFT-8256: Network disconnect body message -->
+    <string name="join_class_network_disconnect_message">Hang tight! Your connection is a bit unstable. Check your Wi-Fi to see your class.</string>
+    <!-- VSFT-8256: Network disconnect toast -->
+    <string name="mvb_network_disconnect_toast">Please check your internet connection and try again.</string>
+    <string name="join_class_student_absent">Not joined</string>
+    <string name="join_class_student_joining">Typing...</string>
+<string name="student_list_menu_add_point_to_all">+1 point to all</string>
+    <string name="student_list_menu_minus_point_to_all">-1 point to all</string>
+    <string name="student_list_action_remove_student">Remove student</string>
+    <string name="student_list_remove_student_title">Remove Student?</string>
+    <string name="student_list_remove_student_message">%s \nLesson data will be permanently deleted once you remove the student.</string>
+    <string name="student_list_remove_student_success">Successfully removed %s</string>
+    <string name="student_list_error_msg_student_leave">%s has already left the classroom</string>
+    <string name="student_list_error_msg_failed_removed">Failed to remove %s. Please check your connection and try again.</string>
+    <string name="student_list_all_students">all students</string>
+    <string name="quiz_all_correct_students">all correct students</string>
+    <string name="student_list_error_msg_failed_to_add_point">Failed to add point to %s. Please try again.</string>
+    <string name="student_list_error_msg_failed_to_subtract_point">Failed to subtract point to %s. Please try again.</string>
+    <string name="student_list_error_msg_failed_to_find_student">Failed to find student list. Please try again.</string>
+    <string name="student_list_error_msg_failed_to_find_student_title">Failed to find student list</string>
+
+    <!-- Select Organization -->
+    <string name="select_org_title">Select Organization</string>
+    <string name="select_org_exp">EXP:%s</string>
+    <string name="select_org_empty_org">There is no organization</string>
+    <string name="select_org_error_msg_select_org_failed">Failed to select organization. Please try again.</string>
+    <string name="select_org_individual_plan">(Individual)</string>
+    <string name="dialog_permission_error_multi_login">You are logged in on another device.</string>
+    <string name="dialog_permission_error_logged_out_admin">You have been logged out by organization admin.</string>
+    <string name="dialog_permission_error_logged_out_admin_retry">You have been logged out by organization admin. Please wait a few minutes before you try again.</string>
+    <string name="dialog_permission_error_reach_maximum">All available seats have been taken. Please contact your organization admin for access.</string>
+
+    <!-- Selected My Class -->
+    <string name="my_class_title">My Class</string>
+    <string name="my_class_welcome_title">Welcome to ClassSwift</string>
+    <string name="my_class_subtitle">Select or create a class to join</string>
+    <string name="my_class_action_create_class">Create a new class</string>
+    <string name="my_class_action_exit">Exit ClassSwift</string>
+    <string name="my_class_rename_dialog_title">Rename class</string>
+    <string name="my_class_action_rename">Rename</string>
+    <string name="my_class_rename_error_empty">Please enter a class name</string>
+    <string name="my_class_delete_dialog_message">This action will permanently delete this class.</string>
+    <string name="my_class_rename_hint">Enter class name</string>
+    <string name="my_class_info_org_name">Organization</string>
+    <string name="my_class_action_link_to_hub">ClassSwift Hub</string>
+    <string name="my_class_class_default_name">Default Class</string>
+    <string name="my_class_action_new_class">New Class</string>
+    <string name="select_class_window_title">Start Interactive Quizzing</string>
+    <string name="my_class_info_plan">Plan</string>
+    <string name="my_class_info_classname">Class Name</string>
+    <string name="my_class_info_number_of_students">Number of Students</string>
+    <string name="my_class_status_ongoing">Ongoing</string>
+    <string name="my_class_action_enter_class">Enter Class</string>
+    <string name="dialog_delete_class_title">Delete class</string>
+    <string name="dialog_delete_class_message">Are you sure you want to delete %s?</string>
+    <string name="my_class_info_plan_maximum" formatted="false">%s plan allows a maximum of %s concurrent users</string>
+    <string name="my_class_info_customize_class">If you want to customize classes, add new class in ClassSwift Hub.</string>
+    <string name="my_class_success_msg_delete_class">Class deleted successfully.</string>
+    <string name="my_class_success_msg_save_class_name">Class name saved successfully.</string>
+    <string name="my_class_error_msg_delete_class">Failed to delete %s. Please try again.</string>
+    <string name="my_class_error_msg_save_classname">Failed to save class. Please try again.</string>
+    <string name="my_class_error_msg_create_class">Failed to create new class. Please try again.</string>
+    <string name="my_class_error_msg_join_class">Failed to join class. Please try again.</string>
+    <string name="my_class_error_msg_rejoin_class">Failed to rejoin the ongoing class. Please try again.</string>
+    <string name="error_msg_internet">Network error. Please try again.</string>
+    <string name="my_class_error_msg_class_already_exists">Class already exists. Please try again.</string>
+    <string name="my_class_error_msg_find_class">Failed to find class list</string>
+    <string name="my_class_error_msg_fetch_class">Failed to find class list. Please try again.</string>
+    <string name="my_class_error_msg_start_lesson">Failed to start lesson. Please try again.</string>
+    <string name="my_class_error_msg_join_lesson_conflict">This class is currently in session. Multiple teachers are not allowed to start the class at the same time.</string>
+    <string name="my_class_create_success">Class created successfully.</string>
+    <string name="my_class_error_msg_save_class_failed">Failed to save class.</string>
+
+    <!-- Quiz -->
+    <string name="quiz_title_answer">Answer</string>
+    <string name="quiz_types_multiple_choice">Multiple choice</string>
+    <string name="quiz_action_end_quiz">End Question</string>
+    <string name="quiz_info_option">Option</string>
+    <string name="quiz_option_number" translatable="false">123</string>
+    <string name="quiz_option_letter" translatable="false">ABC</string>
+    <string name="quiz_mvb_answer_types">Answer types</string>
+    <string name="quiz_mvb_answer_options">Answer options</string>
+    <string name="quiz_mvb_single_select">Single-select</string>
+    <string name="quiz_mvb_multi_select">Multi-select</string>
+    <string name="quiz_types_multiple_choice_single_answer">Single answer</string>
+    <string name="quiz_types_multiple_choice_multiple_answers">Multiple answers</string>
+    <string name="quiz_info_select_the_right_answer">Select the right answer</string>
+    <string name="quiz_disclose_select_the_correct_answer">Select the correct answer</string>
+    <string name="quiz_disclose_option_label_true" translatable="false">T</string>
+    <string name="quiz_disclose_option_label_false" translatable="false">F</string>
+    <string name="quiz_disclose_show_question_result">Show question(s) result</string>
+    <string name="quiz_mvb_quizzing_type_true_or_false">True or false</string>
+    <string name="quiz_mvb_quizzing_type_multiple_choice">Multiple choice</string>
+    <string name="quiz_mvb_quizzing_type_poll">Poll</string>
+    <string name="quiz_mvb_quizzing_subtitle_single_select">Single-select</string>
+    <string name="quiz_mvb_quizzing_subtitle_multi_select">Multi-select</string>
+    <string name="quiz_mvb_quizzing_options_title">Options</string>
+    <string name="quiz_mvb_quizzing_responses_title">Responses</string>
+    <string name="quiz_mvb_quizzing_end_and_review">End and review question</string>
+    <string name="quiz_mvb_quizzing_refresh">Refresh</string>
+    <string name="quiz_mvb_quizzing_stopwatch_default" translatable="false">00:00</string>
+    <string name="quiz_mvb_cell_submitted">Submitted</string>
+    <string name="quiz_mvb_cell_not_submitted">Not submitted</string>
+    <string name="quiz_mvb_cell_absent">Absent</string>
+    <!-- VSFT-7265 Result Page -->
+    <string name="quiz_mvb_result_tab_overview">Overview</string>
+    <string name="quiz_mvb_result_tab_student_responses">Student responses</string>
+    <string name="quiz_mvb_show_students_name">Show students\' name</string>
+    <string name="quiz_mvb_result_correct_answer">Correct answer</string>
+    <string name="quiz_mvb_result_answered_correctly">Answered correctly</string>
+    <string name="quiz_mvb_result_answered_incorrectly">Answered incorrectly</string>
+    <string name="quiz_mvb_result_no_answer">Not submitted</string>
+    <string name="quiz_mvb_result_students_label">students</string>
+    <string name="quiz_mvb_result_correct_rate">Correct rate %1$d%%</string>
+    <string name="quiz_mvb_result_incorrect_rate">Incorrect rate %1$d%%</string>
+    <string name="quiz_mvb_result_no_answer_rate">Not submitted %1$d%%</string>
+    <!-- VSFT-7601 Poll result / VSFT-8294 Audio result -->
+    <string name="quiz_mvb_result_submitted_rate">Submitted %1$d%%</string>
+    <string name="quiz_mvb_result_not_submitted_rate">Not submitted %1$d%%</string>
+    <string name="quiz_mvb_result_click_to_highlight">Click an option to highlight students</string>
+    <!-- VSFT-7561 Short Answer student answer popup -->
+    <string name="quiz_mvb_short_answer_popup_prev_content_desc">Previous student</string>
+    <string name="quiz_mvb_short_answer_popup_next_content_desc">Next student</string>
+    <string name="quiz_mvb_short_answer_popup_close_content_desc">Close</string>
+    <!-- VSFT-8453 / VSFT-8454 Sketch Response 結果頁 -->
+    <!-- Header / labels -->
+    <string name="mvb_sketch_response_result_window_title">Question</string>
+    <string name="mvb_sketch_response_result_title_prefix">%1$d. Sketch response</string>
+    <string name="mvb_sketch_response_result_options_title">Options</string>
+    <string name="mvb_sketch_response_result_options_hint">Click an option to highlight students</string>
+    <string name="mvb_sketch_response_responses_title">Responses</string>
+    <string name="mvb_sketch_response_refresh_button">Refresh</string>
+    <!-- Tabs -->
+    <string name="mvb_sketch_response_tab_overview">Overview</string>
+    <string name="mvb_sketch_response_tab_student_responses">Student responses</string>
+    <!-- Card states + toggle -->
+    <string name="mvb_sketch_response_show_students_name">Show students\' name</string>
+    <string name="mvb_sketch_response_status_submitted">Submitted</string>
+    <string name="mvb_sketch_response_status_not_submitted">Not submitted</string>
+    <string name="mvb_sketch_response_status_click_to_view">Click to view</string>
+    <string name="mvb_sketch_response_status_handed_back">Handed back</string>
+    <!-- Overview bar/label/format -->
+    <string name="mvb_sketch_response_students_label">students</string>
+    <string name="quiz_mvb_response_count_slash" translatable="false">/</string>
+    <string name="quiz_mvb_pagination_first_page" translatable="false">1</string>
+    <!-- Button / toast -->
+    <string name="mvb_sketch_response_save_and_hand_back">Save and hand back</string>
+    <string name="mvb_sketch_response_save_success">Saved and handed back</string>
+    <string name="mvb_sketch_response_error_load_failed">Failed to load results. Please try again.</string>
+    <string name="mvb_sketch_response_error_save_and_hand_back_failed">Failed to send and save. Please try again.</string>
+    <string name="mvb_sketch_response_error_close_batch_failed">Failed to end the task. Please try again.</string>
+    <string name="quiz_mvb_result_response_count_format" translatable="false">%1$d / %2$d</string>
+    <plurals name="quiz_mvb_result_responses_count">
+        <item quantity="one">%d response</item>
+        <item quantity="other">%d responses</item>
+    </plurals>
+    <string name="quiz_disclose_close_confirm_title">Close question</string>
+    <string name="quiz_disclose_close_confirm_body">Are you sure you want to close the question? Unfinished responses will be lost.</string>
+    <string name="quiz_disclose_close_confirm_positive">Close question</string>
+    <string name="quiz_disclose_close_confirm_negative">Cancel</string>
+    <string name="quiz_info_number_of_participants">Number of Participants</string>
+    <string name="quiz_error_msg_start_quiz">Failed to start question. Please try again.</string>
+    <string name="quiz_error_msg_ongoing_quiz">Failed to start question. Please end the unfinished question first.</string>
+    <string name="quiz_status_answered">Answered</string>
+    <string name="dialog_message_close_quiz">Are you sure you want to close the question?</string>
+    <string name="quiz_action_disclose_answer">Show Answer</string>
+    <string name="quiz_error_msg_close_quiz">Failed to close the question. Please try again</string>
+    <string name="quiz_error_msg_end_quiz">Failed to end the question. Please try again</string>
+    <string name="quiz_info_results" formatted="false">Responses (%s/%s)</string>
+    <string name="quiz_info_correct_answer">Correct Answer</string>
+    <string name="quiz_info_participants_count">%s participants</string>
+    <string name="quiz_error_msg_screenshot">Failed to screenshot the question. Please try again.</string>
+    <string name="quiz_random_draw_title">Advanced Random Draw</string>
+    <string name="quiz_random_draw_conditions">Participant Conditions</string>
+    <string name="dialog_end_and_start_new_quiz">End and start new question</string>
+    <string name="dialog_end_ongoing_quiz">End ongoing question</string>
+    <string name="quiz_title">Question</string>
+    <string name="quiz_result">Response</string>
+    <string name="quiz_answer_select_right">Select the right answer</string>
+    <string name="quiz_answer_disclose">Show Answer</string>
+    <string name="quiz_chart_all_correct">All Correct</string>
+    <string name="quiz_chart_correct_rate">Correct rate</string>
+    <string name="quiz_chart_incorrect_rate">Incorrect rate</string>
+    <string name="quiz_chart_status_no_student">No Participants</string>
+    <string name="quiz_results_collapse_all">Collapse All</string>
+    <string name="quiz_results_expand_all">Expand All</string>
+
+    <!-- Poll Quiz -->
+    <string name="quiz_types_poll_single_vote">Single vote</string>
+    <string name="quiz_types_poll_multiple_votes">Multiple votes</string>
+    <string name="quiz_status_voted">Voted</string>
+
+    <!-- Quiz Collection -->
+    <string name="quiz_collection_title">Quiz Collection</string>
+    <string name="quiz_collection_default_folder">Home</string>
+
+    <!-- VSFT-7266: Mvb Quiz Collection (mVB-bound new UI) -->
+    <string name="mvb_qc_window_title">Quiz Collection</string>
+    <string name="mvb_qc_folder_default">Default</string>
+    <string name="mvb_qc_your_folders">Your folders</string>
+    <string name="mvb_qc_empty_state_title">No questions here yet</string>
+    <string name="mvb_qc_empty_state_message">Try switching folders to view other questions</string>
+    <string name="mvb_qc_error_state_title">Failed to find quiz collection</string>
+    <string name="mvb_qc_error_state_message">Try to refresh this page again</string>
+    <string name="mvb_qc_btn_refresh">Refresh</string>
+    <string name="mvb_qc_loading_state_message">Loading…</string>
+    <string name="mvb_qc_quiz_standards_count">%1$d standards</string>
+    <string name="mvb_qc_quiz_subject_general">General</string>
+    <string name="mvb_qc_quiz_standard_count_one">%1$d standard</string>
+
+    <string name="mvb_qc_detail_btn_back">Back</string>
+    <string name="mvb_qc_detail_btn_start_questions">Start question(s)</string>
+    <string name="mvb_qc_detail_options_label">Options</string>
+
+    <!-- mvb-text-quiz-detail: TF text variant option labels (different from image variant T/F single-letter) -->
+    <string name="mvb_qc_detail_text_tf_true_label">true</string>
+    <string name="mvb_qc_detail_text_tf_false_label">false</string>
+    <string name="mvb_qc_detail_toast_start_failed">Failed to start question(s). Please try again.</string>
+    <string name="mvb_qc_detail_toast_ongoing_conflict">Another question is currently ongoing. Please end the question before starting a new one.</string>
+    <!-- Detail chip labels removed in T44 fix — now reuses existing localized `quiz_types_*` strings. -->
+
+
+    <string name="quiz_collection_home_no_quizzes_title">No quiz has been created yet</string>
+    <string name="quiz_collection_home_no_quizzes_message">Select a quiz type and content to create a quiz</string>
+    <string name="quiz_collection_failed_to_load">Failed to load your quiz collection</string>
+    <string name="quiz_collection_folder_input_error_message_reserved">The folder name cannot be the same as the Home folder.\nPlease enter a different name.</string>
+    <string name="quiz_collection_folder_create_button">New Folder</string>
+    <string name="quiz_collection_folder_input_error_message_empty">The folder name cannot be empty. Please enter a name.</string>
+    <string name="quiz_collection_folder_create_toast_error">Failed to create a new folder. Please try again.</string>
+    <string name="quiz_collection_folder_create_toast_success">Successfully created a new folder!</string>
+    <string name="quiz_collection_back_to_view_mode">Back to view mode</string>
+    <string name="quiz_collection_filter_ai_generated">AI generated</string>
+    <string name="quiz_collection_filter_all_countries">All countries</string>
+    <string name="quiz_collection_filter_all_quiz_types">All question types</string>
+    <string name="quiz_collection_filter_all_quizzes">All questions</string>
+    <string name="quiz_collection_filter_all_subjects">All subjects</string>
+    <string name="quiz_collection_filter_anytime">Anytime</string>
+    <string name="quiz_collection_filter_clear_filters">Clear filters</string>
+    <string name="quiz_collection_filter_last_days">Last %1$d days</string>
+    <string name="quiz_collection_filter_last_months">Last %1$d months</string>
+    <string name="quiz_collection_filter_my_content">My content</string>
+    <string name="quiz_collection_folder_create_dialog_title">Create New Folder</string>
+    <string name="quiz_collection_folder_delete_dialog_content">\"​%1$s\" will be deleted forever and you will not be able to restore it. If there are questions in the folder, they will be deleted as well.</string>
+    <string name="quiz_collection_folder_delete_dialog_title">Delete folder?</string>
+    <string name="quiz_collection_folder_delete_toast_error">Failed to delete folder. Please try again.</string>
+    <string name="quiz_collection_folder_delete_toast_success">The folder is deleted!</string>
+    <string name="quiz_collection_folder_rename_dialog_title">Rename Folder</string>
+    <string name="quiz_collection_folder_rename_toast_error">Failed to rename folder. Please try again.</string>
+    <string name="quiz_collection_folder_rename_toast_success">Folder has been renamed to %1$s</string>
+    <string name="quiz_collection_folder_switch_dialog_cancel">Stay on this page</string>
+    <string name="quiz_collection_folder_switch_dialog_confirm">Leave this page</string>
+    <string name="quiz_collection_folder_switch_dialog_content">Your action has not been completed yet. Are you sure you want to leave this page?</string>
+    <string name="quiz_collection_folder_switch_dialog_title">Switch Folders</string>
+    <string name="quiz_collection_name_after_my_classes">Name after my classes</string>
+    <string name="quiz_collection_quiz_delete_dialog_content_plural">Are you sure you want to delete %1$d questions? This action cannot be undone.</string>
+    <string name="quiz_collection_quiz_delete_dialog_content">Are you sure you want to delete 1 question? This action cannot be undone.</string>
+    <string name="quiz_collection_quiz_delete_dialog_title">Delete Question?</string>
+    <string name="quiz_collection_quiz_delete_toast_error_plural">Failed to delete question(s). Please try again.</string>
+    <string name="quiz_collection_quiz_delete_toast_error">Failed to delete question(s). Please try again.</string>
+    <string name="quiz_collection_quiz_delete_toast_success.plural">Successfully deleted %1$d question(s)</string>
+    <string name="quiz_collection_quiz_delete_toast_success">Successfully deleted 1 question</string>
+    <string name="quiz_collection_quiz_lesson_not_started">Lesson not started</string>
+    <string name="quiz_collection_quiz_move_to_folder_button">Move to folder</string>
+    <string name="quiz_collection_quiz_move_to_folder_dialog_confirm">Move</string>
+    <string name="quiz_collection_quiz_move_to_folder_dialog_create_new_folder">Create a new folder</string>
+    <string name="quiz_collection_quiz_move_to_folder_dialog_title">Location</string>
+    <string name="quiz_collection_quiz_move_to_folder_toast_error.plural">Failed to move questions. Please try again.</string>
+    <string name="quiz_collection_quiz_move_to_folder_toast_error">Failed to move question. Please try again.</string>
+    <string name="quiz_collection_quiz_move_to_folder_toast_success.plural">Successfully move %1$d questions to %2$s</string>
+    <string name="quiz_collection_quiz_move_to_folder_toast_success">Successfully move 1 question to %1$s</string>
+    <string name="quiz_collection_quiz_no_result_description">Move questions from</string>
+    <string name="quiz_collection_quiz_no_result_title">This folder is empty</string>
+    <string name="quiz_collection_quiz_no_result_filtered_description">Try a different filter combination</string>
+    <string name="quiz_collection_quiz_no_result_filtered_title">That\'s a miss</string>
+    <string name="quiz_collection_quiz_no_result_home_description">Select a question type and content to create a question</string>
+    <string name="quiz_collection_quiz_no_result_home_title">No question has been created yet</string>
+    <string name="quiz_collection_quiz_pin_toast_error">Failed to pin question. Please try again.</string>
+    <string name="quiz_collection_quiz_pin_toast_success">The question has been pinned to the front!</string>
+    <string name="quiz_collection_quiz_selected">%1$d selected</string>
+    <string name="quiz_collection_quiz_start_quiz_toast_error_quiz_ongoing">Another question is currently ongoing. Please end the quiz before starting a new one.</string>
+    <string name="quiz_collection_quiz_unpin_toast_error">Failed to unpin question. Please try again.</string>
+    <string name="quiz_collection_quiz_unpin_toast_success">The question has been unpinned.</string>
+    <string name="quiz_collection_rename">Rename</string>
+    <string name="disclose_or_select_the_answer">Show or select the answer</string>
+    <string name="disclose_the_set_answer">Show the set answer</string>
+    <string name="ai_answer">AI Answer</string>
+    <string name="view_answer">View Answer</string>
+    <string name="short_answer_capitalized_first_word">Short answer</string>
+
+    <!-- OTA-->
+    <string name="autoupdate_access_restricted_title">Access Restricted</string>
+    <string name="autoupdate_access_restricted_msg">This app is only supported on certain ViewSonic IFP models. Please switch to a compatible device to continue.</string>
+    <string name="autoupdate_app_updating">ClassSwift Updating...</string>
+    <string name="autoupdated_download_lastest_version">Downloading latest version of ClassSwift...</string>
+    <string name="autoupdate_download_percent">%d%%</string>
+    <string name="autoupdate_check_failed">Update Check Failed</string>
+    <string name="autoupdate_error_msg_unable_to_check">Unable to check for updates. This might be due to a temporary server issue. Please try again later.</string>
+    <string name="autoupdate_check_update">Checking for updates...</string>
+    <string name="autoupdate_un_zipping_file">Unzipping file...</string>
+    <string name="autoupdate_check_update_memo">Unable to download. Please check your internet connection.</string>
+    <string name="autoupdate_download_failed">Download Failed</string>
+    <string name="autoupdate_start">Start</string>
+    <string name="autoupdate_install_error_alert_title">ClassSwift Installation</string>
+    <string name="autoupdate_download_error_memo">Failed to download ClassSwift. Please check your internet connection.</string>
+    <string name="autoupdate_install_error_alert_memo">Failed to install ClassSwift. Please try again.</string>
+    <string name="autoupdate_updated_error_alert_title">Update Error</string>
+    <string name="autoupdate_error_details">More details</string>
+    <string name="autoupdate_error_reinstall">Reinstall</string>
+
+    <!-- Tool -->
+    <string name="tools_timer_times_up">Time‘s up!</string>
+    <string name="tools_timer_buttons_stop">Stop</string>
+    <string name="tools_timer_buttons_continue">Continue</string>
+
+    <!-- Maintenance Announcements -->
+    <string name="maintenance_title_upcoming">Upcoming Maintenance</string>
+    <string name="dialog_app_check_failed">App Check Failed</string>
+    <string name="dialog_unable_to_complete_app_check">Unable to complete app check. This might be due to a temporary server issue. Please try again later. (Code: NTF-01)</string>
+
+    <!-- Settings -->
+    <string name="settings_translation_tool_title">Translation tool</string>
+    <string name="settings_translation_tool_msg">Help students translate the questions</string>
+    <string name="settings_translation_tool_error_msg_fetch_translation_tool">Failed to access translation tool settings. Please try again.</string>
+    <string name="settings_translation_tool_error_msg_toggle_translation_tool">Failed to toggle the translation tool. Please try again.</string>
+    <string name="setting_language_hint">Language changes require a quick system reset and restart.</string>
+    <string name="set_language_message">Updating your language settings…\nPlease wait a moment.</string>
+    <string name="switch_language_title">Change Language?</string>
+    <string name="switch_language_message">Switching the language now will discard any unfinished actions in this session. Do you want to continue?</string>
+    <string name="switch_language_select">Switch Language</string>
+
+    <!-- Permission Error-->
+    <string name="dialog_sign_out_notification_title">Sign Out Notification</string>
+    <string name="dialog_sign_out_notification_message">You have logged in on another device. You are being logged out from this device.</string>
+
+    <!-- Random Draw-->
+    <string name="quiz_random_draw_status_no_student">No Current Participants</string>
+
+    <!-- QR code sing in-->
+    <string name="login_action_with_viewsonic">Log in with ViewSonic account</string>
+    <string name="login_action_with_classlink">Log in with ClassLink</string>
+    <string name="login_action_qrcode">QR code sign-in</string>
+    <string name="login_info_scan_qr_code_to_sing_in">Scan to sign into ViewSonic Account</string>
+    <string name="error_msg_something_went_wrong">Something went wrong. Please try again.</string>
+
+    <!-- Push Respond -->
+    <string name="push_and_respond_sort_group">Groups</string>
+    <string name="push_and_respond_task">Task</string>
+    <string name="push_and_respond_sort_number">Number</string>
+    <string name="push_and_respond_info_select_content">Select Content</string>
+    <string name="push_and_respond_info_link">Link</string>
+    <string name="push_and_respond_tabs_content">Content</string>
+    <string name="push_and_respond_tabs_records">Records</string>
+    <string name="push_and_respond_action_to_all">Send to all</string>
+    <string name="push_and_respond_action_custom_push">Custom Send</string>
+    <string name="push_and_respond_info_item_selected">%d selected</string>
+    <string name="dialog_push_and_respond_delete_content_title">Delete Content</string>
+    <string name="dialog_push_and_respond_delete_content_message">Are you sure you want to delete %d material(s)?</string>
+    <string name="push_and_respond_hint_enter_link">Enter or paste your link</string>
+    <string name="dialog_end_quiz_message">You still have an ongoing question. Are you sure you want to end the question and push tasks?</string>
+    <string name="dialog_end_quiz_title">End Question</string>
+    <string name="dialog_end_quiz_end_and_push_task">End and push task</string>
+    <string name="dialog_end_quiz_end_and_push_task_failed">Failed to push tasks. Please end the unfinished question first.</string>
+    <string name="push_and_respond_error_msg_push_all_failed">Push task: %d task(s) failed to push.</string>
+    <string name="push_and_respond_error_msg_push_partial_failed" formatted="false">Push task: %d task(s) pushed successfully, %d task(s) failed to push.</string>
+    <string name="push_and_respond_success_msg_push_all_successful">Push task: %d task(s) pushed successfully.</string>
+    <string name="dialog_push_and_respond_end_task_title">End task send</string>
+    <string name="push_and_respond_task_end">End task</string>
+    <string name="dialog_push_and_respond_end_task_message">You still have ongoing tasks. Are you sure you want to end the tasks and start the question?</string>
+    <string name="dialog_end_and_start_quiz">End and start question</string>
+    <string name="error_msg_end_task_and_start_quiz">Failed to start question. Please end the unfinished tasks first.</string>
+    <string name="push_and_respond_error_msg_valid_url_hint">Please enter a valid link</string>
+    <string name="push_and_respond_empty_student_message">No one\'s in the room. Start by inviting people to join.</string>
+    <string name="push_and_respond_task_name">Task %1$d</string>
+    <string name="push_and_respond_error_one_upload_at_time">Only one re-upload is allowed at a time. Please try again later.</string>
+    <string name="push_and_respond_error_upload_failed">Failed to upload image. Please try again</string>
+    <string name="push_and_respond_custom_push_push">Send</string>
+    <string name="push_and_respond_custom_push_single_content">Single Content</string>
+    <string name="push_and_respond_custom_push_multiple_content">Multiple Content</string>
+    <string name="push_and_respond_custom_push_students">Students</string>
+    <string name="push_and_respond_custom_push_group">Group</string>
+    <string name="push_and_respond_reselect_content">Reselect content</string>
+    <string name="push_and_respond_reselect_record">Reselect records</string>
+    <string name="push_and_respond_custom_push_multiple_content_memo">A maximum of 4 pictures can be combined (excluding links).</string>
+    <string name="push_and_respond_custom_push_task_preview">Task Preview</string>
+
+    <!-- records -->
+    <string name="push_and_respond_status_submission_not_submitted">Not submitted</string>
+    <string name="push_and_respond_status_submission_not_marked">Not marked</string>
+    <string name="push_and_respond_status_submission_marked">Marked</string>
+    <string name="push_and_respond_status_link_opened">Link opened</string>
+    <string name="push_and_respond_status_link_not_opened">Link not opened</string>
+    <string name="push_and_respond_dialog_grading_send_and_save">Send &amp; Save</string>
+    <string name="push_and_respond_empty_records_title">No Records</string>
+    <string name="push_and_respond_empty_records_message">Start by pushing content to class</string>
+    <string name="push_and_respond_end_all_tasks">End all tasks</string>
+    <string name="push_and_respond_task_status_receiving">Receiving</string>
+    <string name="push_and_respond_task_status_ended">Task ended</string>
+    <string name="push_and_respond_sort_label">Sort by</string>
+    <string name="push_and_respond_action_label_as_marked">Label as marked</string>
+    <string name="push_and_respond_task_add_point">Submitted works +1</string>
+    <string name="push_and_respond_error_new_submission">New record submitted from this participants. Please mark again.</string>
+    <string name="push_and_respond_error_save_and_send_failed">Failed to send and save. Please try again.</string>
+    <string name="push_and_respond_student_left">%1$s %2$s has left the classroom</string>
+    <string name="dialog_switch_content_title">Switch Content</string>
+    <string name="dialog_switch_content_message">Your action has not been completed yet.\n Are you sure you want to leave this page?</string>
+    <string name="dialog_switch_content_action_leave">Leave this page</string>
+    <string name="dialog_switch_content_action_stay">Stay on this page</string>
+    <string name="push_and_respond_error_msg_find_records">Failed to find records</string>
+    <string name="success_msg_task_mark_success">Mark task: %1$s task marked successfully.</string>
+    <string name="error_msg_task_mark_all_failed">Mark task: %1$s task failed to mark.</string>
+    <string name="error_msg_task_partial_failed">Mark task: %1$s task marked successfully, %2$s task failed to mark.</string>
+    <string name="error_msg_label_as_mark">Failed to label as graded. Please try again.</string>
+    <string name="push_and_respond_error_msg_not_submitted">Not submitted. Please select another record to mark.</string>
+    <string name="push_and_respond_status_task_ended">Task Ended</string>
+    <string name="push_and_respond_info_push_records">Send Records</string>
+    <string name="success_msg_task_end_success">End task: %d task ended successfully.</string>
+    <string name="error_msg_task_end_all_failed">End task: %d task failed to end.</string>
+    <string name="error_msg_task_end_partial_failed">End task: %1$d task ended successfully, %2$d task failed to end.</string>
+    <string name="dialog_end_task_title">End Task</string>
+    <string name="dialog_end_all_tasks_title">End All Task</string>
+    <string name="dialog_end_task_message">Are you sure you want to end task?</string>
+    <string name="dialog_end_all_tasks_message">Are you sure you want to end all tasks?</string>
+    <string name="dialog_action_end_task">End Task</string>
+    <string name="dialog_action_end_all_tasks">End All Tasks</string>
+    <string name="record_student_absent_message">The student was absent</string>
+    <string name="record_student_not_submitted_message">The student has not submitted yet</string>
+
+    <!-- network related message -->
+    <string name="connection_error_invalid_request">Invalid request body</string>
+    <string name="connection_network_error_disconnect">Network disconnected</string>
+
+    <!-- unknown definition part -->
+    <string name="selection_west_virginia">West Virginia</string>
+    <string name="selection_wisconsin">Wisconsin</string>
+    <string name="selection_wyoming">Wyoming</string>
+    <string name="dialog_remove_student_warning">Lesson data will be permanently deleted once you remove the student.</string>
+    <string name="dialog_end_lesson_message">Are you sure you want to end this lesson?</string>
+    <string name="dialog_task_end_single">Are you sure you want to end task?</string>
+    <string name="dialog_task_end_all_message">Are you sure you want to end all tasks?</string>
+    <string name="dialog_multi_login_title">Logout</string>
+    <string name="select_org_switch_org">Switch organization</string>
+    <string name="dialog_switch_title">Switch Content</string>
+    <string name="dialog_switch_message">Your action has not been completed yet. Are you sure you want to leave this page?</string>
+    <string name="eng_recording_msg">Screen capture requires screen recording permission. Please enable it in System Settings &gt; Privacy &amp; Security &gt; Screen Recording.</string>
+
+    <!-- Batch Quiz -->
+    <string name="batch_quiz_title">Quiz Builder</string>
+    <string name="batch_quiz_start_title">Quiz in Progress</string>
+    <string name="batch_quiz_return_to_view_mode">Return to view mode</string>
+    <string name="batch_quiz_error_no_batch_quizzes_in_folder">There are no batch quizzes in this folder. Please select a different folder.</string>
+    <string name="batch_quiz_error_reach_max_quiz_limit">Only a maximum of 20 quizzes can be started at a time.</string>
+    <string name="batch_quiz_error_failed_to_start_batch_quiz">Failed to start the quiz builder. Please try again.</string>
+    <string name="batch_quiz_hint">Quiz Builder is limited to True/False and Multiple Choice questions with correct answers, and at least two questions are required to start the quiz.</string>
+    <string name="end_batch_quiz_dialog_message">Are you sure you want to end and close the question?</string>
+    <string name="batch_quiz_end_quiz">End quiz</string>
+    <string name="accuracy_title">Accuracy</string>
+    <string name="bar_chart_title">Bar Chart</string>
+    <string name="batch_quiz_failed_to_load">Failed to load result page</string>
+    <string name="ongoing_mission_conflict_title">End Ongoing Mission</string>
+    <string name="ongoing_mission_conflict_message">You have an ongoing push task or quiz. Are you sure you want to end it and start the %s?</string>
+    <string name="ongoing_mission_conflict_positive_title">End and start %s</string>
+
+    <!-- MVB Activate -->
+    <string name="mvb_my_class_welcome_title">Welcome to ClassSwift</string>
+    <string name="mvb_my_class_subtitle">Select or create a class to join</string>
+    <string name="mvb_my_class_activating">Activating ClassSwift…</string>
+    <string name="mvb_my_class_action_exit">Exit ClassSwift</string>
+    <string name="mvb_activate_error_description">Something went wrong, please check your internet status and try again later.</string>
+    <string name="mvb_activate_failed_description">Failed to show class. Please try again.</string>
+    <string name="mvb_ota_title">ClassSwift updating…</string>
+
+    <!-- MVB Question Edit -->
+    <string name="mvb_question_edit_preparing_question_progress">Preparing your question image... %1$d%%</string>
+    <string name="mvb_question_edit_failed_to_show_image">Failed to show image</string>
+
+    <!-- MVB Question Start -->
+    <string name="mvb_question_start_failed_to_end_question">Failed to end question. Please try again.</string>
+    <string name="mvb_question_start_failed_to_disclose_question">Failed to show students’ responds. Please try again.</string>
+
+    <!-- MVB Text Question Start -->
+    <string name="mvb_text_true_false_suggested_answer">Suggested answer</string>
+    <string name="mvb_text_true_false_applied">Applied</string>
+
+    <!-- String array part -->
+    <string-array name="language_list" translatable="false">
+        <item>@string/common_english</item>
+        <item>@string/common_chinese</item>
+    </string-array>
+
+    <string-array name="push_respond_tabs">
+        <item>@string/push_and_respond_tabs_content</item>
+        <item>@string/push_and_respond_tabs_records</item>
+    </string-array>
+
+    <string-array name="push_respond_sort_options">
+        <item>@string/push_and_respond_sort_number</item>
+        <item>@string/common_group</item>
+    </string-array>
+    <!-- ok area is top -->
+
+
+    <!-- Country State-->
+    <string-array name="au_states">
+        <item>New South Wales</item>
+        <item>Queensland</item>
+        <item>South Australia</item>
+        <item>Tasmania</item>
+        <item>Victoria</item>
+        <item>Western Australia</item>
+        <item>Australian Capital Territory</item>
+        <item>Northern Territory</item>
+    </string-array>
+
+    <string-array name="br_states">
+        <item>Acre</item>
+        <item>Alagoas</item>
+        <item>Amapá</item>
+        <item>Amazonas</item>
+        <item>Bahia</item>
+        <item>Ceará</item>
+        <item>Distrito Federal</item>
+        <item>Espírito Santo</item>
+        <item>Goiás</item>
+        <item>Maranhão</item>
+        <item> Mato Grosso</item>
+        <item>Mato Grosso do Sul</item>
+        <item>Minas Gerais</item>
+        <item>Pará</item>
+        <item>Paraíba</item>
+        <item>Paraná</item>
+        <item>Pernambuco</item>
+        <item>Piauí</item>
+        <item>Rio de Janeiro</item>
+        <item>Rio Grande do Norte</item>
+        <item>Rio Grande do Su</item>
+        <item>Rondônia</item>
+        <item>Roraima</item>
+        <item>Santa Catarina</item>
+        <item>São Paulo</item>
+        <item>Sergipe</item>
+        <item>Tocantins</item>
+    </string-array>
+
+    <string-array name="ca_states">
+        <item>Alberta</item>
+        <item>British Columbia</item>
+        <item>Manitoba</item>
+        <item>New Brunswick</item>
+        <item>Newfoundland and Labrador</item>
+        <item>Nova Scotia</item>
+        <item>Ontario</item>
+        <item>Prince Edward Island</item>
+        <item>Quebec</item>
+        <item>Saskatchewan</item>
+    </string-array>
+
+    <string-array name="cn_states">
+        <item>Anhui</item>
+        <item>Beijing</item>
+        <item>Chongqing</item>
+        <item>Fujian</item>
+        <item>Gansu</item>
+        <item>Guangdong</item>
+        <item>Guangxi</item>
+        <item>Guizhou</item>
+        <item>Hainan</item>
+        <item>Hebei</item>
+        <item>Heilongjiang</item>
+        <item>Henan</item>
+        <item>Hubei</item>
+        <item>Hunan</item>
+        <item>Jiangsu</item>
+        <item>Jiangxi</item>
+        <item>Jilin</item>
+        <item>Liaoning</item>
+        <item>Inner Mongolia</item>
+        <item>Ningxia</item>
+        <item>Qinghai</item>
+        <item>Shaanxi</item>
+        <item>Shandong</item>
+        <item>Shanghai</item>
+        <item>Shanxi</item>
+        <item>Sichuan</item>
+        <item>Tianjin</item>
+        <item>Tibet</item>
+        <item>Xinjiang</item>
+        <item>Yunnan</item>
+        <item>Zhejiang</item>
+    </string-array>
+
+    <string-array name="in_states">
+        <item>Andhra Pradesh</item>
+        <item>Arunachal Pradesh</item>
+        <item>Assam</item>
+        <item>Bihar</item>
+        <item>Chhattisgarh</item>
+        <item>Goa</item>
+        <item>Gujarat</item>
+        <item>Haryana</item>
+        <item>Himachal Pradesh</item>
+        <item>Jharkhand</item>
+        <item>Karnataka</item>
+        <item>Kerala</item>
+        <item>Madhya Pradesh</item>
+        <item>Maharashtra</item>
+        <item>Manipur</item>
+        <item>Meghalaya</item>
+        <item>Mizoram</item>
+        <item>Nagaland</item>
+        <item>Odisha</item>
+        <item>Punjab</item>
+        <item>Rajasthan</item>
+        <item>Sikkim</item>
+        <item>Tamil Nadu</item>
+        <item>Telangana</item>
+        <item>Tripura</item>
+        <item>Uttar Pradesh</item>
+        <item>Uttarakhand</item>
+        <item>West Bengal</item>
+    </string-array>
+
+    <string-array name="ie_states">
+        <item>Carlow</item>
+        <item>Cavan</item>
+        <item>Clare</item>
+        <item>Cork</item>
+        <item>Donegal</item>
+        <item>Dublin</item>
+        <item>Galway</item>
+        <item>Kerry</item>
+        <item>Kildare</item>
+        <item>Kilkenny</item>
+        <item>Laois</item>
+        <item>Leitrim</item>
+        <item>Limerick</item>
+        <item>Longford</item>
+        <item>Louth</item>
+        <item>Mayo</item>
+        <item>Meath</item>
+        <item>Monaghan</item>
+        <item>Offaly</item>
+        <item>Roscommon</item>
+        <item>Sligo</item>
+        <item>Tipperary</item>
+        <item>Waterford</item>
+        <item>Westmeath</item>
+        <item>Wexford</item>
+        <item>Wicklow</item>
+    </string-array>
+
+    <string-array name="it_states">
+        <item>Abruzzo</item>
+        <item>Basilicata</item>
+        <item>Calabria</item>
+        <item>Campania</item>
+        <item>Emilia-Romagna</item>
+        <item>Friuli Venezia Giulia</item>
+        <item>Lazio</item>
+        <item>Liguria</item>
+        <item>Lombardy</item>
+        <item>Marche</item>
+        <item>Molise</item>
+        <item>Piedmont</item>
+        <item>Apulia</item>
+        <item>Sardinia</item>
+        <item>Sicily</item>
+        <item>Tuscany</item>
+        <item>Trentino-Alto Adige</item>
+        <item>Umbria</item>
+        <item>Aosta Valley</item>
+        <item>Veneto</item>
+    </string-array>
+
+    <string-array name="mx_states">
+        <item>Aguascalientes</item>
+        <item>Baja California</item>
+        <item>Baja California Sur</item>
+        <item>Campeche</item>
+        <item>Chiapas</item>
+        <item>Chihuahua</item>
+        <item>Coahuila</item>
+        <item>Colima</item>
+        <item>Durango</item>
+        <item>Guanajuato</item>
+        <item>Guerrero</item>
+        <item>Hidalgo</item>
+        <item>Jalisco</item>
+        <item>Mexico City</item>
+        <item>Mexico State</item>
+        <item>Michoacán</item>
+        <item>Morelos</item>
+        <item>Nayarit</item>
+        <item>Nuevo León</item>
+        <item>Oaxaca</item>
+        <item>Puebla</item>
+        <item>Querétaro</item>
+        <item>Quintana Roo</item>
+        <item>San Luis Potosí</item>
+        <item>Sinaloa</item>
+        <item>Sonora</item>
+        <item>Tabasco</item>
+        <item>Tamaulipas</item>
+        <item>Tlaxcala</item>
+        <item>Veracruz</item>
+        <item>Yucatan</item>
+        <item>Zacatecas</item>
+    </string-array>
+
+    <string-array name="us_states">
+        <item>Alabama</item>
+        <item>Alaska</item>
+        <item>Arizona</item>
+        <item>Arkansas</item>
+        <item>California</item>
+        <item>Colorado</item>
+        <item>Connecticut</item>
+        <item>Delaware</item>
+        <item>Florida</item>
+        <item>Georgia</item>
+        <item>Hawaii</item>
+        <item>Idaho</item>
+        <item>Illinois</item>
+        <item>Indiana</item>
+        <item>Iowa</item>
+        <item>Kansas</item>
+        <item>Kentucky</item>
+        <item>Louisiana</item>
+        <item>Maine</item>
+        <item>Maryland</item>
+        <item>Massachusetts</item>
+        <item>Michigan</item>
+        <item>Minnesota</item>
+        <item>Mississippi</item>
+        <item>Missouri</item>
+        <item>Montana</item>
+        <item>Nebraska</item>
+        <item>Nevada</item>
+        <item>New Hampshire</item>
+        <item>New Jersey</item>
+        <item>New Mexico</item>
+        <item>New York</item>
+        <item>North Carolina</item>
+        <item>North Dakota</item>
+        <item>Ohio</item>
+        <item>Oklahoma</item>
+        <item>Oregon</item>
+        <item>Pennsylvania</item>
+        <item>Rhode Island</item>
+        <item>South Carolina</item>
+        <item>South Dakota</item>
+        <item>Tennessee</item>
+        <item>Texas</item>
+        <item>Utah</item>
+        <item>Vermont</item>
+        <item>Virginia</item>
+        <item>Washington</item>
+        <item>West Virginia</item>
+        <item>Wisconsin</item>
+        <item>Wyoming</item>
+    </string-array>
+
+
+    <!-- missing strings -->
+    <string name="untitled_folder">Untitled folder</string>
+    <string name="text_true">True</string>
+    <string name="text_false">False</string>
+
+    <string-array name="fill_user_role_list">
+        <item>Teacher</item>
+        <item>Director</item>
+        <item>Principal</item>
+        <item>Teaching Assistant</item>
+        <item>IT Administrator</item>
+        <item>School Staff</item>
+        <item>Others</item>
+    </string-array>
+
+    <string name="add_new_class">+New Class</string>
+    <string name="window_title_multiple_choice">Multiple Choice</string>
+    <string name="multiple_answer">Multiple answer</string>
+    <string name="records_add_point">+ 1</string>
+    <string name="records_subtract_point">- 1</string>
+    <string name="myviewboard_launch_test_message">myviewboard 測試啟動</string>
+    <string name="myviewboard_launch_test_message_with_token">myviewboard 測試啟動\nmvb_token: %1$s</string>
+    <string name="myviewboard_launch_test_close_app">關閉 App</string>
+
+    <!-- VSFT-8451 MVB Sketch Response Answering Window -->
+    <string name="mvb_sketch_response_collect_and_mark">Collect all and mark</string>
+    <string name="mvb_sketch_response_counter_format">%1$d / %2$d</string>
+    <string name="mvb_sketch_response_timer_format">%1$02d:%2$02d</string>
+
+    <string name="mvb_sketch_response_refresh_failed_toast">Failed to refresh submission status. Please try again.</string>
+
+    <plurals name="mvb_sketch_response_in_progress">
+        <item quantity="one">%1$d sketch in progress</item>
+        <item quantity="other">%1$d sketches in progress</item>
+    </plurals>
+
+</resources>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tool="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="357.33dp"
+        android:layout_height="240dp"
+        android:background="@drawable/bg_cs_init"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <com.viewsonic.classswift.ui.widget.CSToast
+            android:id="@+id/cst_toast"
+            android:layout_width="wrap_content"
+            android:layout_height="35.33dp"
+            android:layout_marginHorizontal="80dp"
+            android:layout_marginTop="8dp"
+            android:visibility="gone"
+            app:cstText="@string/common_error_general"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:successStatus="false"
+            tool:cstText="That\'s an error. Please try again."
+            tool:visibility="visible" />
+
+        <ImageView
+            android:id="@+id/iv_icon"
+            android:layout_width="120.66dp"
+            android:layout_height="82.66dp"
+            android:layout_marginTop="62.33dp"
+            android:paddingHorizontal="17.33dp"
+            android:src="@drawable/ic_large_logo"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tool:ignore="ContentDescription" />
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/cpi_progress"
+            android:layout_width="14dp"
+            android:layout_height="16.67dp"
+            android:layout_marginTop="16dp"
+            android:background="@color/transparent"
+            android:indeterminate="true"
+            android:visibility="visible"
+            app:indicatorColor="@color/brand_blue"
+            app:indicatorSize="14dp"
+            app:trackThickness="2dp"
+            app:layout_constraintDimensionRatio="1:1.01"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/iv_icon" />
+
+        <ImageView
+            android:id="@+id/iv_close"
+            android:layout_width="31.33dp"
+            android:layout_height="31.33dp"
+            android:layout_margin="10.66dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_close_64dp"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tool:ignore="ContentDescription" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

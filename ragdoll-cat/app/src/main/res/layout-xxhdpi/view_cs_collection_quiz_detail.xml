@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/bg_neutral0_radius800_line_neutral_500_border200"
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
+
+    <TextView
+        android:id="@+id/tv_quiz_type_option"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:layout_marginEnd="26.66dp"
+        android:background="@drawable/bg_neutral200_radius200"
+        android:includeFontPadding="false"
+        android:paddingHorizontal="6.66dp"
+        android:paddingVertical="3.16dp"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:textColor="@color/neutral_750"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="@string/quiz_types_multiple_choice_single_answer"
+        tools:visibility="visible"/>
+
+    <TextView
+        android:id="@+id/tv_quiz_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:layout_marginEnd="10.66dp"
+        android:includeFontPadding="false"
+        android:paddingHorizontal="6.66dp"
+        android:paddingVertical="3.16dp"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:textColor="@color/neutral_750"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/tv_quiz_type_option"
+        app:layout_goneMarginEnd="26.66dp"
+        tools:text="@string/window_title_multiple_choice"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_placeholder"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="10.66dp"
+        android:layout_marginBottom="80.66dp"
+        android:background="@color/neutral_100"
+        app:layout_constraintDimensionRatio="16:10"
+        app:layout_constraintTop_toBottomOf="@id/tv_quiz_type"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_placeholder"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:srcCompat="@drawable/ic_default_placeholder"
+            app:layout_constraintDimensionRatio="1,1"
+            app:layout_constraintHeight_percent="0.3"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="10.66dp"
+        android:layout_marginBottom="80.66dp"
+        app:srcCompat="@drawable/ic_default_placeholder"
+        app:layout_constraintDimensionRatio="16:10"
+        app:layout_constraintTop_toBottomOf="@id/tv_quiz_type"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:visibility="visible"/>
+
+    <LinearLayout
+        android:id="@+id/ll_true_false_option"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10.66dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/iv_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintVertical_bias="0"
+        tools:visibility="gone">
+
+        <com.viewsonic.classswift.ui.widget.quiz.TrueFalseAnswerButton
+            android:layout_width="53.33dp"
+            android:layout_height="53.33dp"
+            app:optionContent="true"
+            app:answerButtonState="disabled"/>
+
+        <com.viewsonic.classswift.ui.widget.quiz.TrueFalseAnswerButton
+            android:layout_width="53.33dp"
+            android:layout_height="53.33dp"
+            android:layout_marginStart="13.33dp"
+            app:optionContent="false"
+            app:answerButtonState="disabled"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_choice_option"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10.66dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/iv_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintVertical_bias="0"
+        tools:visibility="visible">
+
+        <com.viewsonic.classswift.ui.widget.quiz.SingleAnswerButton
+            android:id="@+id/cssab_option_1"
+            android:layout_width="53.33dp"
+            android:layout_height="53.33dp"
+            app:optionIndex="1"
+            app:answerButtonState="disabled"/>
+
+        <com.viewsonic.classswift.ui.widget.quiz.SingleAnswerButton
+            android:id="@+id/cssab_option_2"
+            android:layout_width="53.33dp"
+            android:layout_height="53.33dp"
+            android:layout_marginStart="13.33dp"
+            app:optionIndex="2"
+            app:answerButtonState="disabled"/>
+
+        <com.viewsonic.classswift.ui.widget.quiz.SingleAnswerButton
+            android:id="@+id/cssab_option_3"
+            android:layout_width="53.33dp"
+            android:layout_height="53.33dp"
+            android:layout_marginStart="13.33dp"
+            app:optionIndex="3"
+            app:answerButtonState="disabled"/>
+
+        <com.viewsonic.classswift.ui.widget.quiz.SingleAnswerButton
+            android:id="@+id/cssab_option_4"
+            android:layout_width="53.33dp"
+            android:layout_height="53.33dp"
+            android:layout_marginStart="13.33dp"
+            app:optionIndex="4"
+            app:answerButtonState="disabled"/>
+
+        <com.viewsonic.classswift.ui.widget.quiz.SingleAnswerButton
+            android:id="@+id/cssab_option_5"
+            android:layout_width="53.33dp"
+            android:layout_height="53.33dp"
+            android:layout_marginStart="13.33dp"
+            app:optionIndex="5"
+            app:answerButtonState="disabled"/>
+
+        <com.viewsonic.classswift.ui.widget.quiz.SingleAnswerButton
+            android:id="@+id/cssab_option_6"
+            android:layout_width="53.33dp"
+            android:layout_height="53.33dp"
+            android:layout_marginStart="13.33dp"
+            app:optionIndex="6"
+            app:answerButtonState="disabled"/>
+
+    </LinearLayout>
+
+</merge>

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
+    
+    <LinearLayout
+        android:id="@+id/ll_suggested_answer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/mvb_spacing_400"
+        android:layout_marginStart="@dimen/mvb_spacing_400"
+        android:paddingVertical="@dimen/mvb_spacing_100"
+        android:paddingHorizontal="@dimen/mvb_spacing_200"
+        android:orientation="horizontal"
+        android:background="@drawable/bg_violet100_radius_full"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:visibility="gone">
+        
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="@dimen/mvb_spacing_400"
+            android:layout_height="@dimen/mvb_spacing_400"
+            app:srcCompat="@drawable/ic_sparkles"
+            app:tint="@color/neutral_900"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/mvb_spacing_100"
+            android:includeFontPadding="false"
+            android:text="@string/mvb_text_true_false_suggested_answer"
+            android:textColor="@color/neutral_900"
+            android:textSize="8sp"/>
+
+    </LinearLayout>
+
+    <com.viewsonic.classswift.ui.widget.quizcollection.mvb.MvbTextQuizOptionRadioButton
+        android:id="@+id/mvb_radio_button"
+        android:layout_width="@dimen/mvb_spacing_900"
+        android:layout_height="@dimen/mvb_spacing_900"
+        android:layout_marginTop="8.66dp"
+        android:layout_marginEnd="@dimen/mvb_spacing_400"
+        android:checked="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/tv_content"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/mvb_spacing_200"
+        android:layout_marginHorizontal="@dimen/mvb_spacing_400"
+        android:textColor="@color/neutral_900"
+        android:textSize="10.66sp"
+        app:layout_constraintTop_toBottomOf="@id/ll_suggested_answer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_goneMarginTop="@dimen/mvb_spacing_400"
+        tools:text="@string/text_true"
+        tools:visibility="visible" />
+
+    <com.viewsonic.classswift.ui.widget.KatexView
+        android:id="@+id/cskv_content"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/mvb_spacing_200"
+        android:layout_marginHorizontal="@dimen/mvb_spacing_400"
+        android:textColor="@color/neutral_900"
+        android:textSize="10.66sp"
+        app:layout_constraintTop_toBottomOf="@id/ll_suggested_answer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_goneMarginTop="@dimen/mvb_spacing_400"
+        tools:visibility="visible" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier_content_bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="tv_content,cskv_content" />
+
+    <TextView
+        android:id="@+id/tv_reason"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/mvb_spacing_200"
+        android:layout_marginHorizontal="@dimen/mvb_spacing_400"
+        android:textColor="@color/neutral_650"
+        android:textSize="10.66sp"
+        app:layout_constraintTop_toBottomOf="@id/barrier_content_bottom"
+        app:layout_constraintBottom_toTopOf="@id/view_space"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="The option is incorrect, because simony refers to the buying or selling of sacred spiritual things, such as the sacraments or holy offices, and is not specifically related to the sale of indulgences."
+        tools:visibility="visible" />
+
+    <com.viewsonic.classswift.ui.widget.KatexView
+        android:id="@+id/cskv_reason"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/mvb_spacing_200"
+        android:layout_marginHorizontal="@dimen/mvb_spacing_400"
+        android:textColor="@color/neutral_650"
+        android:textSize="10.66sp"
+        app:layout_constraintTop_toBottomOf="@id/barrier_content_bottom"
+        app:layout_constraintBottom_toTopOf="@id/view_space"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:visibility="visible" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier_reason_bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="tv_reason,cskv_reason" />
+
+    <View
+        android:id="@+id/view_space"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/mvb_spacing_400"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/barrier_reason_bottom"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+</merge>

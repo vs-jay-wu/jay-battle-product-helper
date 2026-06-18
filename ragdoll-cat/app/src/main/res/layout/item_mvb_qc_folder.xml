@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/quiz_mvb_qc_folder_row_height"
+    android:background="@drawable/bg_mvb_qc_folder_selector"
+    android:clickable="true"
+    android:focusable="true"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/mvb_spacing_400"
+    android:paddingEnd="@dimen/mvb_spacing_400">
+
+    <ImageView
+        android:id="@+id/iv_mqcf_icon"
+        android:layout_width="@dimen/quiz_mvb_qc_icon_sm"
+        android:layout_height="@dimen/quiz_mvb_qc_icon_sm"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_mvb_qc_folder"
+        tools:src="@drawable/ic_mvb_qc_folder_open" />
+
+    <TextView
+        android:id="@+id/tv_mqcf_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/mvb_spacing_300"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:fontFamily="sans-serif-medium"
+        android:includeFontPadding="false"
+        android:maxLines="1"
+        android:textColor="@color/neutral_900"
+        android:textSize="@dimen/quiz_mvb_text_sm"
+        tools:text="Science Grade 1" />
+</LinearLayout>

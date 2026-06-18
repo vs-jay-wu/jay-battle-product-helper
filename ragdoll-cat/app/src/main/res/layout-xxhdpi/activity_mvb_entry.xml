@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="666.67dp"
+        android:layout_height="453.33dp"
+        android:background="@drawable/bg_my_class_window"
+        android:clipToOutline="true"
+        android:orientation="horizontal"
+        android:outlineProvider="background"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!-- Left decorative panel: cover illustration on deep-blue background -->
+        <!-- Cover image (432x599) centered in panel (500x680) with ~34dp/40dp margins -->
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/color_0F2671"
+            android:paddingStart="22.67dp"
+            android:paddingTop="26.67dp"
+            android:paddingEnd="22.67dp"
+            android:paddingBottom="26.67dp">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:scaleType="fitCenter"
+                android:src="@drawable/bg_my_class_cover"
+                tools:ignore="ContentDescription" />
+        </FrameLayout>
+
+        <!-- Right content panel -->
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/fcv_container"
+            android:name="androidx.navigation.fragment.NavHostFragment"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/white"
+            app:defaultNavHost="true" />
+
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

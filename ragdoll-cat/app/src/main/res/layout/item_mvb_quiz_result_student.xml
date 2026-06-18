@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mcv_result_student_root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardBackgroundColor="@color/neutral_0"
+    app:cardCornerRadius="@dimen/radius_600"
+    app:cardElevation="0dp"
+    app:strokeColor="@color/neutral_300"
+    app:strokeWidth="@dimen/quiz_mvb_divider_thickness">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Header: bg + student name -->
+        <TextView
+            android:id="@+id/tv_result_student_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_result_student_header_correct"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center"
+            android:maxLines="1"
+            android:minHeight="@dimen/quiz_mvb_result_student_header_min_height"
+            android:paddingHorizontal="@dimen/mvb_spacing_200"
+            android:paddingVertical="@dimen/mvb_spacing_100"
+            android:textColor="@color/color_48720F"
+            android:textSize="@dimen/quiz_mvb_text_sm"
+            tools:text="1 Ruby" />
+
+        <!-- Answer area: chips for MC selections, fallback text for other states / T/F -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="40dp"
+            android:paddingHorizontal="@dimen/mvb_spacing_200"
+            android:paddingVertical="@dimen/mvb_spacing_200">
+
+            <LinearLayout
+                android:id="@+id/ll_result_student_answer_chips"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+            <TextView
+                android:id="@+id/tv_result_student_answer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="sans-serif"
+                android:gravity="center"
+                android:textColor="@color/neutral_900"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                tools:text="T" />
+        </FrameLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

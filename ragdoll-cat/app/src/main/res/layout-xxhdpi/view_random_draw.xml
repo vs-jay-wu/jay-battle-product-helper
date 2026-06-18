@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/mask_color">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="562dp"
+        android:layout_height="348dp"
+        android:background="@drawable/bg_cs_window_white_borderline"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_close"
+            android:layout_width="21.33dp"
+            android:layout_height="21.33dp"
+            android:layout_marginTop="10.66dp"
+            android:layout_marginEnd="10.66dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_close_64dp" />
+
+        <TextView
+            android:id="@+id/tv_random_draw"
+            android:layout_width="511dp"
+            android:layout_height="35dp"
+            android:layout_marginHorizontal="26.66dp"
+            android:layout_marginTop="32dp"
+            android:text="@string/quiz_random_draw_title"
+            android:textColor="@color/neutral_900"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_dice"
+            android:layout_width="125.3dp"
+            android:layout_height="125.3dp"
+            android:background="@drawable/bg_circle_blue"
+            android:layout_marginTop="26dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_random_draw">
+
+
+            <ImageView
+                android:layout_width="106.66dp"
+                android:layout_height="106.66dp"
+                android:src="@drawable/ic_dice"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="ContentDescription" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottie_dice"
+            android:layout_width="125.3dp"
+            android:layout_height="125.3dp"
+            android:layout_marginTop="26dp"
+            android:background="@drawable/bg_circle_blue"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_random_draw"
+            app:lottie_autoPlay="false"
+            app:lottie_fileName="dice_animation.json"
+            app:lottie_loop="true" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_participant_info"
+            android:layout_width="0dp"
+            android:layout_height="176dp"
+            android:layout_marginHorizontal="42dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/tv_seat"
+                    android:layout_width="82.66dp"
+                    android:layout_height="82.66dp"
+                    android:background="@drawable/bg_circle_blue"
+                    android:gravity="center"
+                    android:textColor="@color/neutral_0"
+                    android:textFontWeight="600"
+                    android:textSize="29.33sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="100" />
+
+                <TextView
+                    android:id="@+id/tv_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="82.66dp"
+                    android:layout_marginStart="10.66dp"
+                    android:layout_marginEnd="16dp"
+                    android:gravity="start|center"
+                    android:maxLines="2"
+                    android:textColor="@color/neutral_1000"
+                    android:textSize="21.33sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/tv_seat"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="達卡奴巴索 阿布里古達依卡拉" />
+            </LinearLayout>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/tv_no_participants"
+            android:layout_width="0dp"
+            android:layout_height="176dp"
+            android:layout_marginHorizontal="26.66dp"
+            android:layout_marginTop="62dp"
+            android:layout_marginBottom="31.66dp"
+            android:gravity="center"
+            android:text="@string/quiz_random_draw_status_no_student"
+            android:textColor="@color/neutral_450"
+            android:textFontWeight="600"
+            android:textSize="24sp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="TextContrastCheck" />
+
+        <TextView
+            android:id="@+id/tv_conditions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10.66dp"
+            android:text="@string/quiz_random_draw_conditions"
+            android:textColor="@color/neutral_900"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toTopOf="@id/ll_conditions"
+            app:layout_constraintStart_toStartOf="@id/tv_random_draw" />
+
+        <LinearLayout
+            android:id="@+id/ll_conditions"
+            android:layout_width="0dp"
+            android:layout_height="54dp"
+            android:layout_marginHorizontal="26.66dp"
+            android:layout_marginBottom="26.66dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:weightSum="4"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_correct"
+                style="@style/RandomDrawButton"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:text="@string/common_correct"
+                android:textAllCaps="false"
+                android:textColor="@color/selector_correct_text"
+                app:backgroundTint="@color/bg_correct_button"
+                app:strokeColor="@color/stroke_correct_button" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_incorrect"
+                style="@style/RandomDrawButton"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:text="@string/common_incorrect"
+                android:textColor="@color/selector_incorrect_text"
+                app:backgroundTint="@color/bg_incorrect_button"
+                app:strokeColor="@color/stroke_incorrect_button" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_answered"
+                style="@style/RandomDrawButton"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:text="@string/quiz_status_answered"
+                android:visibility="gone"
+                android:textColor="@color/selector_correct_text"
+                app:backgroundTint="@color/bg_correct_button"
+                app:strokeColor="@color/stroke_correct_button"
+                />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_no_answered"
+                style="@style/RandomDrawButton"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:text="@string/common_no_answer"
+                android:textColor="@color/selector_no_answer_text"
+                app:backgroundTint="@color/bg_no_answer_button"
+                app:strokeColor="@color/stroke_no_answer_button" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_all"
+                style="@style/RandomDrawButton"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="@string/common_select_all"
+                android:textColor="@color/selector_all_text"
+                app:backgroundTint="@color/bg_all_button"
+                app:strokeColor="@color/stroke_all_button" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_try_again"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:layout_marginBottom="51.33dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:ignore="UseCompoundDrawables">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_upload_again"
+                app:tint="@color/brand_blue"
+                tools:ignore="ContentDescription" />
+
+            <TextView
+                android:id="@+id/tv_Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:maxLines="1"
+                android:text="@string/common_try_again"
+                android:textColor="@color/brand_blue"
+                android:textSize="18.66sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <com.viewsonic.classswift.ui.widget.CSToast
+            android:id="@+id/cst_error_toast"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:layout_marginTop="8dp"
+            android:visibility="gone"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:cstText="@string/error_msg_general_try_again"
+            app:successStatus="false" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

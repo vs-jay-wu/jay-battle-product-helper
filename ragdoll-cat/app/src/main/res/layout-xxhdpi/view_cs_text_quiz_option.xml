@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
+
+    <TextView
+        android:id="@+id/tv_content"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10.66dp"
+        android:layout_marginStart="8dp"
+        android:textColor="@color/neutral_900"
+        android:textSize="16sp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="@string/text_true"
+        tools:visibility="gone" />
+
+    <com.viewsonic.classswift.ui.widget.KatexView
+        android:id="@+id/cskv_content"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10.66dp"
+        android:layout_marginStart="8dp"
+        android:textColor="@color/neutral_900"
+        android:textSize="16sp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:visibility="visible" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier_content_bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="tv_content,cskv_content" />
+
+    <TextView
+        android:id="@+id/tv_reason"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2.66dp"
+        android:layout_marginStart="8dp"
+        android:textColor="@color/neutral_750"
+        android:textSize="13.33sp"
+        app:layout_constraintTop_toBottomOf="@id/barrier_content_bottom"
+        app:layout_constraintBottom_toTopOf="@id/view_space"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="The option is incorrect, because simony refers to the buying or selling of sacred spiritual things, such as the sacraments or holy offices, and is not specifically related to the sale of indulgences."
+        tools:visibility="visible" />
+
+    <com.viewsonic.classswift.ui.widget.KatexView
+        android:id="@+id/cskv_reason"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2.66dp"
+        android:layout_marginStart="8dp"
+        android:textColor="@color/neutral_750"
+        android:textSize="13.33sp"
+        app:layout_constraintTop_toBottomOf="@id/barrier_content_bottom"
+        app:layout_constraintBottom_toTopOf="@id/view_space"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:visibility="visible" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier_reason_bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="tv_reason,cskv_reason" />
+
+    <View
+        android:id="@+id/view_space"
+        android:layout_width="0dp"
+        android:layout_height="10.66dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/barrier_reason_bottom"
+        app:layout_constraintBottom_toTopOf="@id/view_horizontal_divider"/>
+
+    <View
+        android:id="@+id/view_horizontal_divider"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="10.66dp"
+        android:background="@color/neutral_450"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+</merge>

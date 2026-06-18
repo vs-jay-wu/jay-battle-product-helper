@@ -1,0 +1,582 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="933dp"
+    android:layout_height="529dp"
+    android:background="@drawable/bg_cs_window"
+    android:theme="@style/Theme.MaterialComponents.Bridge">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/gl_top_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="32dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/gl_bottom_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="16dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/gl_left_vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="26.66dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/gl_right_vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="26.66dp" />
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5.33dp"
+        android:includeFontPadding="false"
+        android:text="@string/quiz_collection_title"
+        android:textColor="@color/neutral_900"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@id/gl_left_vertical"
+        app:layout_constraintTop_toBottomOf="@id/gl_top_horizontal" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_folder"
+        android:layout_width="21.3dp"
+        android:layout_height="21.3dp"
+        android:layout_marginStart="13.33dp"
+        app:layout_constraintBottom_toBottomOf="@id/tv_title"
+        app:layout_constraintStart_toEndOf="@id/tv_title"
+        app:layout_constraintTop_toTopOf="@id/tv_title"
+        app:srcCompat="@drawable/ic_folder"
+        app:tint="@color/bg_close_button" />
+
+    <TextView
+        android:id="@+id/tv_folder_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="2.66dp"
+        android:includeFontPadding="false"
+        android:text="@string/quiz_collection_default_folder"
+        android:textColor="@color/neutral_750"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/tv_title"
+        app:layout_constraintStart_toEndOf="@id/iv_folder"
+        app:layout_constraintTop_toTopOf="@id/tv_title" />
+
+    <LinearLayout
+        android:id="@+id/ll_collection_quiz_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="@id/tv_title"
+        app:layout_constraintStart_toEndOf="@id/tv_folder_name"
+        app:layout_constraintTop_toTopOf="@id/tv_title"
+        tools:visibility="gone">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="13.3dp"
+            android:layout_height="13.3dp"
+            app:srcCompat="@drawable/ic_right_arrow_64dp"
+            app:tint="@color/color_5C6266" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_collection_quiz_type"
+            android:layout_width="21.3dp"
+            android:layout_height="21.3dp"
+            android:layout_marginStart="13.33dp"
+            app:srcCompat="@drawable/ic_toolbar_irs_true_false"
+            app:tint="@color/neutral_750" />
+
+        <TextView
+            android:id="@+id/tv_collection_quiz_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="2.66dp"
+            android:includeFontPadding="false"
+            android:text="@string/quiz_types_true_false"
+            android:textColor="@color/neutral_750"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <com.viewsonic.classswift.ui.widget.ClassSwiftLoadingButton
+        android:id="@+id/cslb_enter_batch_quiz"
+        android:layout_width="wrap_content"
+        android:layout_height="28dp"
+        android:layout_marginStart="5.33dp"
+        android:paddingStart="5.33dp"
+        android:paddingEnd="8dp"
+        app:layout_constraintBottom_toBottomOf="@id/tv_title"
+        app:layout_constraintStart_toEndOf="@id/tv_folder_name"
+        app:layout_constraintTop_toTopOf="@id/tv_title"
+        app:lbBackgroundColor="@color/neutral_0"
+        app:lbBorderColor="@color/neutral_500"
+        app:lbButtonState="disable"
+        app:lbClickedBackgroundColor="@color/neutral_200"
+        app:lbClickedBorderColor="@color/neutral_500"
+        app:lbDisableBackgroundColor="@color/neutral_0"
+        app:lbDisableBorderColor="@color/neutral_500"
+        app:lbDisableIconTint="@color/neutral_500"
+        app:lbDisableTextColor="@color/neutral_500"
+        app:lbIconHeight="16dp"
+        app:lbIconMarginEnd="2.66dp"
+        app:lbIconTint="@color/neutral_900"
+        app:lbIconWidth="16dp"
+        app:lbImgSrc="@drawable/ic_quiz"
+        app:lbLoadingBorderColor="@color/neutral_500"
+        app:lbProgressIndicatorColor="@color/neutral_900"
+        app:lbText="@string/batch_quiz_title"
+        app:lbTextColor="@color/neutral_900"
+        app:lbTextSize="12sp"
+        tools:visibility="visible" />
+
+    <com.viewsonic.classswift.ui.widget.ClassSwiftLoadingButton
+        android:id="@+id/cslb_exit_batch_quiz"
+        android:layout_width="wrap_content"
+        android:layout_height="28dp"
+        android:layout_marginStart="5.33dp"
+        android:paddingStart="5.33dp"
+        android:paddingEnd="8dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/tv_title"
+        app:layout_constraintStart_toEndOf="@id/tv_folder_name"
+        app:layout_constraintTop_toTopOf="@id/tv_title"
+        app:lbBackgroundColor="@color/neutral_0"
+        app:lbBorderColor="@color/neutral_500"
+        app:lbClickedBackgroundColor="@color/neutral_200"
+        app:lbClickedBorderColor="@color/neutral_500"
+        app:lbDisableBackgroundColor="@color/neutral_0"
+        app:lbDisableBorderColor="@color/neutral_500"
+        app:lbDisableIconTint="@color/neutral_500"
+        app:lbDisableTextColor="@color/neutral_500"
+        app:lbIconHeight="16dp"
+        app:lbIconMarginEnd="2.66dp"
+        app:lbIconTint="@color/neutral_900"
+        app:lbIconWidth="16dp"
+        app:lbImgSrc="@drawable/ic_undo_arrow_round_left"
+        app:lbText="@string/batch_quiz_return_to_view_mode"
+        app:lbTextColor="@color/neutral_900"
+        app:lbTextSize="12sp" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_folder_and_collection_quizzes"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginVertical="10.66dp"
+        app:layout_constraintBottom_toBottomOf="@id/gl_bottom_horizontal"
+        app:layout_constraintEnd_toEndOf="@id/gl_right_vertical"
+        app:layout_constraintStart_toStartOf="@id/gl_left_vertical"
+        app:layout_constraintTop_toBottomOf="@id/tv_title"
+        tools:visibility="visible">
+
+        <com.viewsonic.classswift.ui.widget.ClassSwiftLoadingButton
+            android:id="@+id/cslb_create_folder"
+            android:layout_width="120dp"
+            android:layout_height="32dp"
+            android:clickable="true"
+            app:layout_constraintBottom_toTopOf="@id/rv_folder"
+            app:layout_constraintEnd_toEndOf="@id/rv_folder"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:lbBackgroundColor="@color/white"
+            app:lbBorderColor="@color/color_0A8CF0"
+            app:lbClickedBackgroundColor="@color/color_0A8CF0"
+            app:lbClickedBorderColor="@color/color_0A8CF0"
+            app:lbClickedIconTint="@color/white"
+            app:lbClickedTextColor="@color/white"
+            app:lbDisableBackgroundColor="@color/white"
+            app:lbDisableBorderColor="@color/color_C3C7C7"
+            app:lbDisableIconTint="@color/color_C3C7C7"
+            app:lbDisableTextColor="@color/color_C3C7C7"
+            app:lbIconHeight="16dp"
+            app:lbIconMarginEnd="2.66dp"
+            app:lbIconTint="@color/color_0A8CF0"
+            app:lbIconWidth="16dp"
+            app:lbImgSrc="@drawable/ic_add"
+            app:lbLoadingBackground="@color/white"
+            app:lbLoadingBorderColor="@color/color_0A8CF0"
+            app:lbProgressIndicatorColor="@color/color_0A8CF0"
+            app:lbText="@string/quiz_collection_folder_create_button"
+            app:lbTextColor="@color/color_0A8CF0"
+            app:lbTextSize="14sp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_folder"
+            android:layout_width="134dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="10.66dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cslb_create_folder"
+            tools:listitem="@layout/item_quiz_collection_folder" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_collection_quizzes"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="10.66dp"
+            android:background="@drawable/bg_neutral0_radius800_line_neutral_500_border200"
+            android:orientation="vertical"
+            android:paddingStart="12.66dp"
+            android:paddingTop="10.66dp"
+            android:paddingEnd="13.33dp"
+            android:paddingBottom="@dimen/border_200"
+            app:fastScrollEnabled="true"
+            app:fastScrollHorizontalThumbDrawable="@drawable/selector_student_list_scroll_thumb"
+            app:fastScrollHorizontalTrackDrawable="@drawable/selector_student_list_scroll_track"
+            app:fastScrollVerticalThumbDrawable="@drawable/selector_student_list_scroll_thumb"
+            app:fastScrollVerticalTrackDrawable="@drawable/selector_student_list_scroll_track"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/rv_folder"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:listitem="@layout/item_quiz_collection_folder" />
+
+        <LinearLayout
+            android:id="@+id/ll_loading"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/bg_neutral0_radius800_line_neutral_500_border200"
+            android:gravity="center"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="@id/rv_collection_quizzes"
+            app:layout_constraintEnd_toEndOf="@id/rv_collection_quizzes"
+            app:layout_constraintStart_toStartOf="@id/rv_collection_quizzes"
+            app:layout_constraintTop_toTopOf="@id/rv_collection_quizzes"
+            tools:visibility="gone">
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/lav_loading_animation"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                app:lottie_autoPlay="true"
+                app:lottie_fileName="animation_record_loading.json"
+                app:lottie_loop="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="@string/common_loading"
+                android:textColor="@color/neutral_900"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_empty_content"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/bg_neutral0_radius800_line_neutral_500_border200"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/rv_collection_quizzes"
+            app:layout_constraintEnd_toEndOf="@id/rv_collection_quizzes"
+            app:layout_constraintStart_toStartOf="@id/rv_collection_quizzes"
+            app:layout_constraintTop_toTopOf="@id/rv_collection_quizzes"
+            tools:visibility="gone">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_bookshelf"
+                android:layout_width="171.66dp"
+                android:layout_height="120dp"
+                app:srcCompat="@drawable/ic_bookshelf" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="16dp"
+                android:gravity="center"
+                android:text="@string/quiz_collection_home_no_quizzes_title"
+                android:textColor="@color/neutral_900"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="5.33dp"
+                android:gravity="center"
+                android:text="@string/quiz_collection_home_no_quizzes_message"
+                android:textColor="@color/neutral_900"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_retry"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/bg_neutral0_radius800_line_neutral_500_border200"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/rv_collection_quizzes"
+            app:layout_constraintEnd_toEndOf="@id/rv_collection_quizzes"
+            app:layout_constraintStart_toStartOf="@id/rv_collection_quizzes"
+            app:layout_constraintTop_toTopOf="@id/rv_collection_quizzes"
+            tools:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="16dp"
+                android:gravity="center"
+                android:text="@string/quiz_collection_failed_to_load"
+                android:textColor="@color/neutral_900"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="5.33dp"
+                android:gravity="center"
+                android:text="@string/common_try_to_refresh_page"
+                android:textColor="@color/neutral_900"
+                android:textSize="12sp" />
+
+            <com.viewsonic.classswift.ui.widget.ClassSwiftLoadingButton
+                android:id="@+id/cslb_refresh"
+                android:layout_width="120dp"
+                android:layout_height="32dp"
+                android:layout_marginTop="16dp"
+                app:lbBackgroundColor="@color/color_0A8CF0"
+                app:lbLoadingBackground="@color/color_0A8CF0"
+                app:lbProgressIndicatorColor="@color/neutral_0"
+                app:lbText="@string/dialog_refresh_page_btn"
+                app:lbTextColor="@color/neutral_0"
+                app:lbTextSize="13.3sp" />
+
+        </LinearLayout>
+
+        <com.viewsonic.classswift.ui.widget.quizcollection.CSBatchQuizListWidget
+            android:id="@+id/csw_batch_quiz_list"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="10.66dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/rv_folder"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_collection_quiz_detail"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="10.66dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="@id/gl_bottom_horizontal"
+        app:layout_constraintEnd_toEndOf="@id/gl_right_vertical"
+        app:layout_constraintStart_toStartOf="@id/gl_left_vertical"
+        app:layout_constraintTop_toBottomOf="@id/tv_title"
+        tools:visibility="gone">
+
+        <LinearLayout
+            android:id="@+id/ll_back_area"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                app:srcCompat="@drawable/ic_left_arrow_64dp"
+                app:tint="@color/neutral_1000" />
+
+            <TextView
+                android:id="@+id/tv_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5.33dp"
+                android:includeFontPadding="false"
+                android:text="@string/tutorial_actions_back"
+                android:textColor="@color/neutral_1000"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
+        <com.viewsonic.classswift.ui.widget.quizcollection.CSCollectionQuizDetailView
+            android:id="@+id/cscqdv_quiz_detail"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="5.33dp"
+            android:layout_marginBottom="18.66dp"
+            app:layout_constraintBottom_toTopOf="@id/cslb_start_quiz"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ll_back_area"
+            tools:visibility="gone" />
+
+        <com.viewsonic.classswift.ui.widget.quizcollection.CSCollectionTrueFalseTextQuizDetailView
+            android:id="@+id/csctfcqdv_true_false_text_quiz_detail"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="5.33dp"
+            android:layout_marginBottom="18.66dp"
+            app:layout_constraintBottom_toTopOf="@id/cslb_start_quiz"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ll_back_area"
+            tools:visibility="visible" />
+
+        <com.viewsonic.classswift.ui.widget.quizcollection.CSCollectionMultipleChoiceTextQuizDetailView
+            android:id="@+id/csctfcqdv_multiple_choice_text_quiz_detail"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="5.33dp"
+            android:layout_marginBottom="18.66dp"
+            app:layout_constraintBottom_toTopOf="@id/cslb_start_quiz"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ll_back_area"
+            tools:visibility="visible" />
+
+        <com.viewsonic.classswift.ui.widget.quizcollection.CSCollectionShortAnswerTextQuizDetailView
+            android:id="@+id/csctfcqdv_short_answer_text_quiz_detail"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="5.33dp"
+            android:layout_marginBottom="18.66dp"
+            app:layout_constraintBottom_toTopOf="@id/cslb_start_quiz"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ll_back_area"
+            tools:visibility="visible" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/ib_light_bulb"
+            android:layout_width="43.33dp"
+            android:layout_height="43.33dp"
+            android:layout_marginTop="0.66dp"
+            android:layout_marginEnd="5.33dp"
+            android:background="@drawable/selector_light_bulb"
+            android:contentDescription="@null"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.viewsonic.classswift.ui.widget.ClassSwiftLoadingButton
+            android:id="@+id/cslb_start_quiz"
+            android:layout_width="154.66dp"
+            android:layout_height="37.33dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:lbBackgroundColor="@color/color_0A8CF0"
+            app:lbDisableBackgroundColor="@color/color_C3C7C7"
+            app:lbDisableTextColor="@color/neutral_100"
+            app:lbLoadingBackground="@color/color_005FBD"
+            app:lbProgressIndicatorColor="@color/progressing_loading_white"
+            app:lbText="@string/common_start_quiz"
+            app:lbTextColor="@color/neutral_100"
+            app:lbTextSize="16sp" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_close"
+        android:layout_width="21.3dp"
+        android:layout_height="21.3dp"
+        android:layout_marginTop="10.6dp"
+        android:layout_marginEnd="10.6dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_close_64dp"
+        app:tint="@color/bg_close_button" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_toolbar_bring_to_front"
+        android:layout_width="21.3dp"
+        android:layout_height="21.3dp"
+        android:layout_marginTop="10.6dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintRight_toLeftOf="@id/iv_close"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_toolbar_bring_to_front_64dp"
+        app:tint="@color/bg_toolbar_bring_to_front" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_minimize_window"
+        android:layout_width="21.3dp"
+        android:layout_height="21.3dp"
+        android:layout_marginTop="10.6dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintRight_toLeftOf="@id/iv_close"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_minus_32dp"
+        app:tint="@color/bg_minimize_window" />
+
+    <com.viewsonic.classswift.ui.widget.quizcollection.CSCreateQuizCollectionFolderWidget
+        android:id="@+id/cscqcfw_create_folder"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/bg_mask_radius800"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="gone" />
+
+    <com.viewsonic.classswift.ui.widget.CSToast
+        android:id="@+id/cst_toast"
+        android:layout_width="wrap_content"
+        android:layout_height="32dp"
+        android:layout_marginTop="8dp"
+        android:visibility="gone"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:successStatus="false"
+        tools:visibility="visible" />
+
+    <com.viewsonic.classswift.ui.widget.CSMessageDialog
+        android:id="@+id/csw_message_dialog"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:csmdMaskBackground="@drawable/bg_mask_radius800"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="gone" />
+
+    <com.viewsonic.classswift.ui.widget.NetworkDisconnectView
+        android:id="@+id/view_network_disconnect"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:theme="@style/Theme.MaterialComponents.Bridge"
+        android:visibility="gone"
+        app:cardRadius="@dimen/radius_800"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

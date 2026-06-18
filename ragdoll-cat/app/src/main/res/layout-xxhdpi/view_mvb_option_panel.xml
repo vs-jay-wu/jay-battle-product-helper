@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
+
+    <LinearLayout
+        android:id="@+id/ll_option_boxes_wrapper"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.viewsonic.classswift.ui.widget.ClassSwiftLoadingButton
+            android:id="@+id/cslb_add_option"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:clickable="true"
+            app:lbBackgroundColor="@color/neutral_100"
+            app:lbBorderColor="@color/neutral_100"
+            app:lbImgSrc="@drawable/ic_add"
+            app:lbIconTint="@color/neutral_900"
+            app:lbIconWidth="16dp"
+            app:lbIconHeight="16dp"
+            app:lbIconMarginEnd="0dp"
+            app:lbClickedBackgroundColor="@color/neutral_300"
+            app:lbClickedBorderColor="@color/neutral_300"
+            app:lbClickedTextColor="@color/neutral_900"
+            app:lbText=""
+            app:lbRadius="@dimen/mvb_radius_200"/>
+
+    </LinearLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_settings_panel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/mvb_spacing_400"
+        android:background="@drawable/bg_mvb_neutral100_radius300"
+        android:padding="@dimen/mvb_spacing_300"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ll_option_boxes_wrapper">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_answer_types"
+            android:layout_width="133.33dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_answer_types_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/mvb_spacing_100"
+                android:includeFontPadding="false"
+                android:text="@string/quiz_mvb_answer_types"
+                android:textColor="@color/neutral_900"
+                android:textSize="9.33sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_answer_types_input"
+                android:layout_width="0dp"
+                android:layout_height="37.33dp"
+                android:layout_marginTop="@dimen/mvb_spacing_100"
+                android:background="@drawable/bg_mvb_neutral0_radius200_line_neutral300_border100_selector"
+                android:paddingHorizontal="@dimen/mvb_spacing_400"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_answer_types_label">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_answer_types_value"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/neutral_900"
+                    android:textSize="10.67sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/iv_answer_types_chevron"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_answer_types_chevron"
+                    android:layout_width="10.66dp"
+                    android:layout_height="10.66dp"
+                    android:src="@drawable/ic_chevron_down"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_answer_options"
+            android:layout_width="133.33dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/mvb_spacing_400"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/cl_answer_types"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_answer_options_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/mvb_spacing_100"
+                android:includeFontPadding="false"
+                android:text="@string/quiz_mvb_answer_options"
+                android:textColor="@color/neutral_900"
+                android:textSize="9.33sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_answer_options_input"
+                android:layout_width="0dp"
+                android:layout_height="37.33dp"
+                android:layout_marginTop="@dimen/mvb_spacing_100"
+                android:background="@drawable/bg_mvb_neutral0_radius200_line_neutral300_border100_selector"
+                android:paddingHorizontal="@dimen/mvb_spacing_400"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_answer_options_label">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_answer_options_value"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/neutral_900"
+                    android:textSize="10.67sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/iv_answer_options_chevron"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_answer_options_chevron"
+                    android:layout_width="10.66dp"
+                    android:layout_height="10.66dp"
+                    android:src="@drawable/ic_chevron_down"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</merge>

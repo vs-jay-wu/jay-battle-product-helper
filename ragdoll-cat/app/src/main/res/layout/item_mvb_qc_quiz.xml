@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="@dimen/quiz_mvb_qc_quiz_card_width"
+    android:layout_height="@dimen/quiz_mvb_qc_quiz_card_height"
+    android:layout_margin="@dimen/mvb_spacing_300"
+    android:background="@drawable/bg_mvb_qc_quiz_card"
+    android:clickable="true"
+    android:focusable="true"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/mvb_spacing_400"
+        android:paddingTop="@dimen/mvb_spacing_400"
+        android:paddingEnd="@dimen/mvb_spacing_400">
+
+        <ImageView
+            android:layout_width="@dimen/quiz_mvb_qc_icon_md"
+            android:layout_height="@dimen/quiz_mvb_qc_icon_md"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_mvb_qc_quiz_type" />
+
+        <TextView
+            android:id="@+id/tv_mqcq_quiz_type"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/mvb_spacing_150"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:fontFamily="sans-serif-medium"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:textColor="@color/neutral_900"
+            android:textSize="@dimen/quiz_mvb_text_sm"
+            tools:text="Multiple choice" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/fl_mqcq_resource"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginStart="@dimen/mvb_spacing_400"
+        android:layout_marginTop="@dimen/mvb_spacing_300"
+        android:layout_marginEnd="@dimen/mvb_spacing_400"
+        android:layout_weight="1"
+        android:background="@drawable/bg_mvb_qc_quiz_thumbnail">
+
+        <ImageView
+            android:id="@+id/iv_mqcq_thumbnail"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@null"
+            android:scaleType="centerCrop"
+            tools:src="@color/neutral_300" />
+
+        <TextView
+            android:id="@+id/tv_mqcq_text_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:ellipsize="end"
+            android:fontFamily="sans-serif"
+            android:gravity="top|start"
+            android:includeFontPadding="false"
+            android:maxLines="4"
+            android:padding="@dimen/mvb_spacing_300"
+            android:textColor="@color/neutral_900"
+            android:textSize="@dimen/quiz_mvb_text_sm"
+            android:visibility="gone"
+            tools:text="Which statement below is sometimes used to refer to the time period of the Tang Dynasty?"
+            tools:visibility="visible" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/mvb_spacing_300"
+        android:layout_marginBottom="@dimen/mvb_spacing_400"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/mvb_spacing_400"
+        android:paddingEnd="@dimen/mvb_spacing_400">
+
+        <com.viewsonic.classswift.ui.widget.quizcollection.mvb.MvbQuizTagChipView
+            android:id="@+id/chip_mqcq_subject"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:mqctc_variant="subject" />
+
+        <com.viewsonic.classswift.ui.widget.quizcollection.mvb.MvbQuizTagChipView
+            android:id="@+id/chip_mqcq_standards"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/mvb_spacing_150"
+            app:mqctc_variant="standards" />
+    </LinearLayout>
+</LinearLayout>

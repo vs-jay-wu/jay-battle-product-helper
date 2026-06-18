@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ White background with rounded corners only at top-left and top-right (radius_800).
+  ~ Used for elements anchored to the top of a rounded window shell (e.g., window header),
+  ~ so the shell's background colour (common_window_bg) shows through at the top corners.
+  -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/neutral_0" />
+    <corners
+        android:topLeftRadius="@dimen/radius_800"
+        android:topRightRadius="@dimen/radius_800"
+        android:bottomLeftRadius="0dp"
+        android:bottomRightRadius="0dp" />
+</shape>

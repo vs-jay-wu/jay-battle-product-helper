@@ -1,0 +1,500 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="680dp"
+    android:layout_height="393dp"
+    android:background="@drawable/bg_cs_window"
+    android:theme="@style/Theme.MaterialComponents.Bridge">
+
+    <!-- 關閉按鈕 -->
+    <ImageButton
+        android:id="@+id/button_close"
+        android:layout_width="21.3dp"
+        android:layout_height="21.3dp"
+        android:layout_marginTop="10.6dp"
+        android:layout_marginEnd="10.6dp"
+        android:background="@drawable/ic_close_64dp"
+        android:backgroundTint="@color/bg_close_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_toolbar_bring_to_front"
+        android:layout_width="21.3dp"
+        android:layout_height="21.3dp"
+        android:layout_marginTop="10.7dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintRight_toLeftOf="@id/button_close"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/bg_toolbar_bring_to_front"
+        app:srcCompat="@drawable/ic_toolbar_bring_to_front_64dp" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_left"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:paddingHorizontal="24dp"
+        android:paddingTop="36dp"
+        android:paddingBottom="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/cl_right"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.5">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/iv_back"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/ic_previous_arrow"
+                app:layout_constraintBottom_toBottomOf="@id/tv_title"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/tv_title" />
+
+            <!-- 標題 -->
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/my_class_title"
+                android:textColor="@color/window_my_class_textview"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@id/iv_back"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_class_swift_hub"
+            android:layout_width="wrap_content"
+            android:layout_height="28dp"
+            android:layout_marginEnd="5dp"
+            app:layout_constraintBottom_toBottomOf="@id/cl_back"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/cl_back">
+
+            <ImageView
+                android:id="@+id/iv_class_swift_hub"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/ic_nav_class_swift"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_class_swift_hub"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
+                android:textColor="@color/window_select_org_textview"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/iv_class_swift_hub"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="ClassSwift Hub" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cl_select_class"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cl_back"
+            app:cardBackgroundColor="@color/white"
+            app:cardCornerRadius="2.4dp"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/color_C3C7C7"
+            app:strokeWidth="0.6dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_select_class"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:clipToPadding="false"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toTopOf="@id/view_divider"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <LinearLayout
+                    android:id="@+id/ll_refresh"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="72dp"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/my_class_error_msg_find_class"
+                        android:textColor="@color/window_my_class_textview"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5.33dp"
+                        android:text="@string/common_try_to_refresh_page"
+                        android:textColor="@color/window_my_class_textview"
+                        android:textSize="12sp"
+                        app:layout_constraintBaseline_toBaselineOf="@id/tv_organization_label"
+                        app:layout_constraintEnd_toEndOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tv_refresh_page"
+                        android:layout_width="120dp"
+                        android:layout_height="32dp"
+                        android:layout_marginTop="16dp"
+                        android:background="@drawable/bg_blue_radius400"
+                        android:gravity="center"
+                        android:text="@string/dialog_refresh_page_btn"
+                        android:textColor="@color/neutral_0"
+                        android:textSize="13.33sp"
+                        app:layout_constraintBaseline_toBaselineOf="@id/tv_organization_label"
+                        app:layout_constraintEnd_toEndOf="parent" />
+
+                </LinearLayout>
+
+                <com.google.android.material.progressindicator.CircularProgressIndicator
+                    android:id="@+id/cpi_progress"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:background="@color/transparent"
+                    android:indeterminate="true"
+                    app:indicatorColor="@color/brand_blue"
+                    app:indicatorSize="24dp"
+                    app:layout_constraintBottom_toTopOf="@id/view_divider"
+                    app:layout_constraintDimensionRatio="1:1.01"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:trackThickness="2dp" />
+
+                <View
+                    android:id="@+id/view_divider"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:background="@color/window_item_select_org_divider"
+                    app:layout_constraintBottom_toTopOf="@id/button_add_class"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <com.viewsonic.classswift.ui.widget.ClassSwiftLoadingButton
+                    android:id="@+id/button_add_class"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:gravity="center"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:lbBackgroundColor="@color/transparent"
+                    app:lbClickedBackgroundColor="@color/window_my_class_new_class_button_pressed_bg"
+                    app:lbClickedTextColor="@color/window_my_class_new_class_pressed_text"
+                    app:lbDisableTextColor="@color/window_my_class_new_class_disable_text"
+                    app:lbProgressIndicatorColor="@color/window_my_class_new_class"
+                    app:lbText="@string/add_new_class"
+                    app:lbTextColor="@color/window_my_class_new_class"
+                    app:lbTextSize="16sp" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_right"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:paddingHorizontal="24dp"
+        android:paddingTop="36dp"
+        android:paddingBottom="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/cl_left"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.5">
+
+        <!-- Organization -->
+        <TextView
+            android:id="@+id/tv_organization_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/my_class_info_org_name"
+            android:textColor="@color/window_my_class_textview"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_organization_value"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/window_my_class_textview_sub_text"
+            android:textSize="16sp"
+            app:layout_constraintBaseline_toBaselineOf="@id/tv_organization_label"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tv_organization_label"
+            tools:text="Milton Junior High Milton Junior High Milton Junior High" />
+
+        <!-- Plan -->
+        <TextView
+            android:id="@+id/tv_plan_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/my_class_info_plan"
+            android:textColor="@color/window_my_class_textview"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@id/tv_organization_label"
+            app:layout_constraintTop_toBottomOf="@id/tv_organization_label" />
+
+        <ImageView
+            android:id="@+id/iv_plan_hint"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="4dp"
+            android:src="@drawable/ic_hint"
+            app:layout_constraintBottom_toBottomOf="@id/tv_plan_label"
+            app:layout_constraintStart_toEndOf="@id/tv_plan_label"
+            app:layout_constraintTop_toTopOf="@id/tv_plan_label" />
+
+        <TextView
+            android:id="@+id/tv_plan_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Basic-35"
+            android:textColor="@color/window_my_class_textview_sub_text"
+            android:textSize="16sp"
+            app:layout_constraintBaseline_toBaselineOf="@id/tv_plan_label"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Divider -->
+        <View
+            android:id="@+id/divider"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="16dp"
+            android:background="#D3D3D3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_plan_label" />
+
+        <!-- Class Name -->
+        <TextView
+            android:id="@+id/tv_class_name_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/my_class_info_classname"
+            android:textColor="@color/window_my_class_textview"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/divider" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_input_class_name"
+            android:layout_width="0dp"
+            android:layout_height="36dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_window_my_class_name_edit_disable"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/tv_class_name_label"
+            app:layout_constraintTop_toBottomOf="@id/tv_class_name_label">
+
+            <TextView
+                android:id="@+id/tv_class_name"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_marginHorizontal="9.6dp"
+                android:ellipsize="end"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:text="@string/common_empty_content"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/et_class_name"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_marginStart="9.6dp"
+                android:background="@null"
+                android:enabled="false"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:maxLength="50"
+                android:scrollHorizontally="false"
+                android:singleLine="true"
+                android:textColor="@color/black"
+                android:textColorHint="@color/alert_red"
+                android:textCursorDrawable="@drawable/bg_my_class_cursor"
+                android:textSelectHandle="@color/color_2D2D2D"
+                android:textSize="16sp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toStartOf="@id/tv_class_name_count"
+                app:layout_constraintHorizontal_weight="5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_class_name_count"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="9.6dp"
+                android:gravity="end|center_vertical"
+                android:text="0/50"
+                android:textColor="@color/window_my_class_textview_sub_text"
+                android:textSize="16sp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@id/et_class_name"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintStart_toEndOf="@id/et_class_name"
+                app:layout_constraintTop_toTopOf="@id/et_class_name" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <!-- Number of Students -->
+        <TextView
+            android:id="@+id/tv_number_of_students_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/my_class_info_number_of_students"
+            android:textColor="@color/window_my_class_textview"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cl_input_class_name" />
+
+        <ImageView
+            android:id="@+id/iv_number_hint"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="4dp"
+            android:src="@drawable/ic_hint"
+            app:layout_constraintBottom_toBottomOf="@id/tv_number_of_students_label"
+            app:layout_constraintStart_toEndOf="@id/tv_number_of_students_label"
+            app:layout_constraintTop_toTopOf="@id/tv_number_of_students_label" />
+
+        <TextView
+            android:id="@+id/tv_number_of_students_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/common_empty_content"
+            android:textColor="@color/window_my_class_textview"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_number_of_students_label"
+            tools:text="35" />
+
+        <!-- edit 按鈕 -->
+        <com.viewsonic.classswift.ui.widget.ClassSwiftLoadingButton
+            android:id="@+id/button_edit"
+            style="@style/DefaultButtonSelectWindow"
+            android:layout_marginEnd="8dp"
+            android:clickable="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/button_enter_class"
+            app:layout_constraintStart_toStartOf="parent"
+            app:lbAlertBackgroundColor="@color/window_my_class_left_button_bg"
+            app:lbAlertBorderColor="@color/window_my_class_left_button_board"
+            app:lbAlertText="@string/common_cancel"
+            app:lbAlertTextColor="@color/window_my_class_left_button_text"
+            app:lbBackgroundColor="@color/white"
+            app:lbBorderColor="@color/window_select_org_left_button"
+            app:lbDisableBorderColor="@color/color_C3C7C7"
+            app:lbDisableTextColor="@color/color_C3C7C7"
+            app:lbText="@string/common_edit"
+            app:lbTextColor="@color/window_select_org_left_button_text"
+            app:lbTextSize="14sp" />
+
+        <!-- enter class 按鈕 -->
+        <com.viewsonic.classswift.ui.widget.ClassSwiftLoadingButton
+            android:id="@+id/button_enter_class"
+            style="@style/DefaultButtonSelectWindow"
+            android:clickable="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/button_edit"
+            app:layout_constraintTop_toTopOf="@id/button_edit"
+            app:lbAlertBackgroundColor="@color/window_my_class_right_button_bg"
+            app:lbAlertText="@string/common_save"
+            app:lbAlertTextColor="@color/window_my_class_right_button_text"
+            app:lbBackgroundColor="@color/window_select_org_right_button_bg"
+            app:lbDisableBackgroundColor="@color/window_select_org_right_button_bg_disable"
+            app:lbLoadingBackground="@color/window_select_org_right_button_bg"
+            app:lbProgressIndicatorColor="@color/progressing_loading_white"
+            app:lbText="@string/my_class_action_enter_class"
+            app:lbTextColor="@color/window_select_org_right_button_text"
+            app:lbTextSize="14sp" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.viewsonic.classswift.ui.widget.CSToast
+        android:id="@+id/cst_error_toast"
+        android:layout_width="wrap_content"
+        android:layout_height="32dp"
+        android:layout_marginTop="8dp"
+        android:visibility="gone"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:successStatus="false" />
+
+    <com.viewsonic.classswift.ui.widget.CSToast
+        android:id="@+id/cst_success_toast"
+        android:layout_width="wrap_content"
+        android:layout_height="32dp"
+        android:layout_marginTop="8dp"
+        android:visibility="gone"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:successStatus="true" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

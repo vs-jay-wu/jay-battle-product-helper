@@ -1,0 +1,6 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item  android:state_enabled="false" android:drawable="@drawable/bg_window_my_class_name_edit_disable"/>
+    <item android:state_enabled="true" android:drawable="@drawable/bg_window_my_class_name_edit" />
+    <item android:state_focused="true" android:drawable="@drawable/bg_window_my_class_name_edit_focus">
+    </item>
+</selector>

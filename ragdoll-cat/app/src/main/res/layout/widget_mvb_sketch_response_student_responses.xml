@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ VSFT-8454 Sketch Response 結果頁 Student responses tab content。
+  ~ 只負責 cards mode（toggle + cards grid）。
+  ~ 點 card 後切到 SketchReviewWidget 由 Window 層處理（widget 蓋在整個 fl_shell_root 上）。
+  -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ll_cards_mode"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <!-- Show students' name toggle -->
+    <LinearLayout
+        android:id="@+id/ll_show_students_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:text="@string/mvb_sketch_response_show_students_name"
+            android:textColor="@color/neutral_900"
+            android:textSize="@dimen/quiz_mvb_text_sm" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/sw_show_students_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/mvb_spacing_200"
+            android:background="@null"
+            android:checked="true"
+            android:switchMinWidth="@dimen/mvb_switch_track_width"
+            android:thumb="@drawable/selector_mvb_audio_switch_thumb"
+            app:track="@drawable/selector_mvb_audio_switch_track" />
+    </LinearLayout>
+
+    <!-- Cards grid: 4 columns -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_student_cards"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/mvb_spacing_400"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        tools:itemCount="8"
+        tools:listitem="@layout/item_mvb_sketch_student_card" />
+</LinearLayout>

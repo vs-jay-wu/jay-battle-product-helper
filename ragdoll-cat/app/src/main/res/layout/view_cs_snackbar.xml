@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:parentTag="com.viewsonic.classswift.ui.widget.CSSnackbar">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_icon"
+        android:layout_width="13.33dp"
+        android:layout_height="13.33dp"
+        android:layout_marginEnd="@dimen/mvb_spacing_200"
+        app:srcCompat="@drawable/ic_vsds_cloud_slash" />
+
+    <TextView
+        android:id="@+id/tv_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif"
+        android:textColor="@color/neutral_900"
+        android:textSize="9.33sp"
+        tools:text="Please check your internet connection and try again." />
+
+</merge>

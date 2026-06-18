@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <TextView
+        android:id="@+id/tv_disclose_option_label"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:textColor="@color/neutral_900"
+        android:textSize="27sp"
+        android:textStyle="bold"
+        tools:text="T" />
+
+    <View
+        android:id="@+id/v_disclose_option_selector"
+        android:layout_width="@dimen/mvb_spacing_800"
+        android:layout_height="@dimen/mvb_spacing_800"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="4dp"
+        android:background="@drawable/bg_disclose_radio_unchecked" />
+
+</merge>

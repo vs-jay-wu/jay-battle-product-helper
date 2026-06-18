@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Not submitted student header: vsds/sys/color/surface-200 (#F6F6F6 = neutral_100), radius top only. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/neutral_100" />
+    <corners
+        android:topLeftRadius="@dimen/radius_600"
+        android:topRightRadius="@dimen/radius_600"
+        android:bottomLeftRadius="0dp"
+        android:bottomRightRadius="0dp" />
+</shape>

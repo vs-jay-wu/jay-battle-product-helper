@@ -1,0 +1,438 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--  myViewBoard Design Guide  -->
+    <!-- vsds/sys/color — Core / Brand -->
+    <color name="vsds_sys_color_primary">@color/violet_500</color>
+    <color name="vsds_sys_color_primary_variant">@color/violet_600</color>
+    <color name="vsds_sys_color_primary_ink">@color/violet_500</color>
+    <color name="vsds_sys_color_secondary">@color/violet_100</color>
+    <color name="vsds_sys_color_secondary_variant">@color/violet_200</color>
+    <color name="vsds_sys_color_tertiary">@color/cyan_700</color>
+    <color name="vsds_sys_color_tertiary_variant">@color/cyan_800</color>
+    <color name="vsds_sys_color_neutral">@color/neutral_1000</color>
+    <color name="vsds_sys_color_neutral_variant">@color/neutral_900</color>
+    <!-- vsds/sys/color — Semantic / Status -->
+    <color name="vsds_sys_color_success">@color/green_100</color>
+    <color name="vsds_sys_color_danger">@color/red_100</color>
+    <color name="vsds_sys_color_warning">@color/yellow_100</color>
+    <color name="vsds_sys_color_info">@color/color_D6EDFF</color>
+    <color name="vsds_sys_color_on_info">@color/neutral_900</color>
+    <color name="vsds_sys_color_link">@color/violet_500</color>
+    <!-- vsds/sys/color — State -->
+    <color name="vsds_sys_color_disabled">@color/neutral_200</color>
+    <color name="vsds_sys_color_outline">@color/neutral_300</color>
+    <!-- vsds/sys/color — Surface -->
+    <color name="vsds_sys_color_surface_100">@color/neutral_0</color>
+    <color name="vsds_sys_color_surface_200">@color/neutral_100</color>
+    <color name="vsds_sys_color_surface_300">@color/neutral_300</color>
+    <color name="vsds_sys_color_surface_variant_100">@color/violet_50</color>
+    <color name="vsds_sys_color_surface_variant_200">@color/violet_100</color>
+    <color name="vsds_sys_color_surface_variant_300">@color/violet_200</color>
+    <!-- vsds/sys/color — Text -->
+    <color name="vsds_sys_color_text_200">@color/neutral_600</color>
+    <color name="vsds_sys_color_text_300">@color/color_767676</color>
+
+    <!--  Design Guide  -->
+    <!-- Neutral -->
+    <color name="neutral_0">@color/white</color>
+    <color name="neutral_50">@color/color_FAFAFA</color>
+    <color name="neutral_100">@color/color_F6F6F6</color>
+    <color name="neutral_150">@color/color_F2F2F2</color>
+    <color name="neutral_200">@color/color_EBEBEB</color>
+    <color name="neutral_250">@color/color_E9E9E9</color>
+    <color name="neutral_300">@color/color_E5E5E5</color>
+    <color name="neutral_350">@color/color_DEDEDE</color>
+    <color name="neutral_400">@color/color_CFCFCF</color>
+    <color name="neutral_450">@color/color_C2C2C2</color>
+    <color name="neutral_500">@color/color_B2B2B2</color>
+    <color name="neutral_550">@color/color_A4A4A4</color>
+    <color name="neutral_600">@color/color_999999</color>
+    <color name="neutral_650">@color/color_797979</color>
+    <color name="neutral_700">@color/color_5C6266</color>
+    <color name="neutral_750">@color/color_5E5E5E</color>
+    <color name="neutral_800">@color/color_4D4D4D</color>
+    <color name="neutral_850">@color/color_404041</color>
+    <color name="neutral_900">@color/color_333333</color>
+    <color name="neutral_950">@color/color_2A2A2A</color>
+    <color name="neutral_975">@color/color_202020</color>
+    <color name="neutral_1000">@color/black</color>
+    <!-- Red -->
+    <color name="red_50">@color/color_FFF3F5</color>
+    <color name="red_100">@color/color_FFECEF</color>
+    <color name="red_200">@color/color_FFDFE4</color>
+    <color name="red_300">@color/color_FFBDC8</color>
+    <color name="red_400">@color/color_E7556E</color>
+    <color name="red_500">@color/color_DB0025</color>
+    <color name="red_600">@color/color_BD0020</color>
+    <color name="red_700">@color/color_A6011D</color>
+    <color name="red_800">@color/color_6F001E</color>
+    <color name="red_900">@color/color_4D0017</color>
+    <!-- Green -->
+    <color name="green_50">@color/color_F6FFEB</color>
+    <color name="green_100">@color/color_E7F7D0</color>
+    <color name="green_200">@color/color_D9F2B6</color>
+    <color name="green_300">@color/color_CBEBA0</color>
+    <color name="green_400">@color/color_B1E26E</color>
+    <color name="green_500">@color/color_81B23D</color>
+    <color name="green_600">@color/color_638C2A</color>
+    <color name="green_700">@color/color_48720F</color>
+    <color name="green_800">@color/color_3D5C12</color>
+    <color name="green_900">@color/color_2A4208</color>
+    <!-- Sky -->
+    <color name="sky_50">@color/color_EBF6FF</color>
+    <color name="sky_100">@color/color_D9E7F5</color>
+    <color name="sky_200">@color/color_B2D7F1</color>
+    <color name="sky_300">@color/color_94C3E7</color>
+    <color name="sky_400">@color/color_5EA4DA</color>
+    <color name="sky_500">@color/color_147AC8</color>
+    <color name="sky_600">@color/color_106FBA</color>
+    <color name="sky_700">@color/color_005A9E</color>
+    <color name="sky_800">@color/color_014579</color>
+    <color name="sky_900">@color/color_04345B</color>
+    <!-- Violet -->
+    <color name="violet_50">@color/color_EDEDFD</color>
+    <color name="violet_100">@color/color_DADAFC</color>
+    <color name="violet_200">@color/color_B6B6F9</color>
+    <color name="violet_300">@color/color_9191F6</color>
+    <color name="violet_400">@color/color_6D6DF3</color>
+    <color name="violet_500">@color/color_4848F0</color>
+    <color name="violet_600">@color/color_3B3BD1</color>
+    <color name="violet_700">@color/color_2E2EB2</color>
+    <color name="violet_800">@color/color_212194</color>
+    <color name="violet_900">@color/color_141475</color>
+    <!-- Cyan -->
+    <color name="cyan_50">@color/color_EBFAFA</color>
+    <color name="cyan_100">@color/color_D6F9F9</color>
+    <color name="cyan_200">@color/color_A6EFF1</color>
+    <color name="cyan_300">@color/color_69E3E6</color>
+    <color name="cyan_400">@color/color_3AC9CC</color>
+    <color name="cyan_500">@color/color_35B7BA</color>
+    <color name="cyan_600">@color/color_2C9799</color>
+    <color name="cyan_700">@color/color_23797A</color>
+    <color name="cyan_800">@color/color_1A5A5C</color>
+    <color name="cyan_900">@color/color_144647</color>
+    <!-- Yellow -->
+    <color name="yellow_50">@color/color_FFFAEC</color>
+    <color name="yellow_100">@color/color_FDE9B4</color>
+    <color name="yellow_200">@color/color_FEDC85</color>
+    <color name="yellow_300">@color/color_FEC841</color>
+    <color name="yellow_400">@color/color_FFB800</color>
+    <color name="yellow_500">@color/color_FC9700</color>
+    <color name="yellow_600">@color/color_F67F00</color>
+    <color name="yellow_700">@color/color_EC6200</color>
+    <color name="yellow_800">@color/color_E34521</color>
+    <color name="yellow_900">@color/color_C52703</color>
+    <!-- Blue -->
+    <color name="blue_50">@color/color_F6F9FF</color>
+    <color name="blue_100">@color/color_E5ECFF</color>
+    <color name="blue_200">@color/color_BCCEFE</color>
+    <color name="blue_300">@color/color_86A1F4</color>
+    <color name="blue_400">@color/color_5D80ED</color>
+    <color name="blue_500">@color/color_4C71D2</color>
+    <color name="blue_600">@color/color_3C5AAA</color>
+    <color name="blue_700">@color/color_41538A</color>
+    <color name="blue_800">@color/color_2F3E6D</color>
+    <color name="blue_900">@color/color_1F2E5C</color>
+    <!-- Brown -->
+    <color name="brown_50">@color/color_F0EFEF</color>
+    <color name="brown_100">@color/color_EEECE9</color>
+    <color name="brown_200">@color/color_E8E5E2</color>
+    <color name="brown_300">@color/color_DCD9D3</color>
+    <color name="brown_400">@color/color_D1CCC5</color>
+    <color name="brown_500">@color/color_C5BFB6</color>
+    <color name="brown_600">@color/color_B5AEA4</color>
+    <color name="brown_700">@color/color_A59E92</color>
+    <color name="brown_800">@color/color_958D81</color>
+    <color name="brown_900">@color/color_8D8578</color>
+    <!-- Gray Blue -->
+    <color name="gray_blue_50">@color/color_F0F4F7</color>
+    <color name="gray_blue_100">@color/color_D9E3EA</color>
+    <color name="gray_blue_200">@color/color_CDDAE3</color>
+    <color name="gray_blue_300">@color/color_C1D1DD</color>
+    <color name="gray_blue_400">@color/color_B5C8D6</color>
+    <color name="gray_blue_500">@color/color_9CB5C8</color>
+    <color name="gray_blue_600">@color/color_84A3BB</color>
+    <color name="gray_blue_700">@color/color_6C91AD</color>
+    <color name="gray_blue_800">@color/color_5D7E96</color>
+    <color name="gray_blue_900">@color/color_384D5D</color>
+    <!-- Indigo -->
+    <color name="indigo_50">@color/color_F5F6FB</color>
+    <color name="indigo_100">@color/color_E6E8F4</color>
+    <color name="indigo_200">@color/color_CACCEE</color>
+    <color name="indigo_300">@color/color_ADAFE2</color>
+    <color name="indigo_400">@color/color_8D92CD</color>
+    <color name="indigo_500">@color/color_7074B2</color>
+    <color name="indigo_600">@color/color_484C93</color>
+    <color name="indigo_700">@color/color_373C91</color>
+    <color name="indigo_800">@color/color_2B3084</color>
+    <color name="indigo_900">@color/color_1A1D4F</color>
+    <!-- Purple -->
+    <color name="purple_50">@color/color_F6EAFF</color>
+    <color name="purple_100">@color/color_E5C3FF</color>
+    <color name="purple_200">@color/color_CA87FF</color>
+    <color name="purple_300">@color/color_B95FFF</color>
+    <color name="purple_400">@color/color_A737FF</color>
+    <color name="purple_500">@color/color_882CCF</color>
+    <color name="purple_600">@color/color_68219F</color>
+    <color name="purple_700">@color/color_48166E</color>
+    <color name="purple_800">@color/color_360A57</color>
+    <color name="purple_900">@color/color_23003D</color>
+    <!-- Slate -->
+    <color name="slate_50">@color/color_E9EAF0</color>
+    <color name="slate_100">@color/color_D3D6E1</color>
+    <color name="slate_200">@color/color_C2C6D5</color>
+    <color name="slate_300">@color/color_A7ADC0</color>
+    <color name="slate_400">@color/color_838CA6</color>
+    <color name="slate_500">@color/color_636D8A</color>
+    <color name="slate_600">@color/color_3C455D</color>
+    <color name="slate_700">@color/color_20273E</color>
+    <color name="slate_800">@color/color_151C32</color>
+    <color name="slate_900">@color/color_000C2B</color>
+    <!-- Teal -->
+    <color name="teal_50">@color/color_F1F7F6</color>
+    <color name="teal_100">@color/color_EAF3F2</color>
+    <color name="teal_200">@color/color_E3EFED</color>
+    <color name="teal_300">@color/color_D6E8E4</color>
+    <color name="teal_400">@color/color_C8E0DB</color>
+    <color name="teal_500">@color/color_BADBD2</color>
+    <color name="teal_600">@color/color_9EBDB7</color>
+    <color name="teal_700">@color/color_82A29C</color>
+    <color name="teal_800">@color/color_668780</color>
+    <color name="teal_900">@color/color_587A73</color>
+    <color name="warning">@color/color_FDE9B4</color>
+    <color name="warning_variant">@color/color_C52703</color>
+    <color name="danger">@color/color_FFECEF</color>
+    <color name="danger_variant">@color/color_DB0025</color>
+
+    <!--  Custom  -->
+    <color name="window_main_background">@color/color_E6E6E6</color>
+    <color name="window_api_demo_background">@color/color_93D55D</color>
+    <color name="window_datastore_demo_background">@color/color_4697EC</color>
+    <color name="progress_background">@color/white_a40</color>
+    <color name="brand_blue">@color/color_0A8CF0</color>
+    <color name="alert_red">@color/color_EE0000</color>
+    <color name="permission_positive_color">@color/white_a18</color>
+    <color name="init_button_color">@color/color_005FBD</color>
+    <color name="open_browser_button_color">@color/color_0A8CF0</color>
+    <color name="retry_button_color">@color/color_0A8CF0</color>
+    <color name="progressing_loading_white">@color/white</color>
+    <color name="description_message_color">@color/color_2E3133</color>
+    <color name="text_white_color">@color/white</color>
+
+    <color name="common_stroke_color">@color/color_C3C7C7</color>
+    <color name="common_window_bg">@color/color_F5F5F5</color>
+
+    <color name="cs_main_black_text_color">@color/color_2E3133</color>
+    <color name="cs_disable_text_color">@color/color_BDBDBD</color>
+    <color name="cs_button_bg_disable">@color/color_C3C7C7</color>
+
+    <color name="cs_switch_bg_disable">@color/color_C3C7C7</color>
+
+    <color name="deny_permission_text_color">@color/color_2E3133</color>
+
+    <color name="no_account_text_color">@color/color_BDBDBD</color>
+
+    <color name="account_info_item_color">@color/color_2E3133</color>
+    <color name="account_into_drop_spinner_background_color">@color/white</color>
+    <color name="account_into_spinner_focus_border_line_color">@color/color_0A8CF0</color>
+    <color name="account_info_button_loading_color">@color/color_005FBD</color>
+
+    <color name="window_crop_image_mask">@color/black_a40</color>
+    <color name="window_crop_image_default_paint">@color/color_EE0000</color>
+    <color name="window_crop_image_view_stroke">@color/color_C3C7C7</color>
+    <color name="window_crop_image_button_bg">@color/color_F5F5F5</color>
+    <color name="window_crop_image_button_disable_bg">@color/color_909090</color>
+    <color name="window_crop_image_text">@color/color_2E3133</color>
+
+    <color name="window_select_org_bg">@color/color_F5F5F5</color>
+    <color name="window_select_org_textview">@color/color_2E3133</color>
+    <color name="window_item_select_org_select_bg">@color/color_0A8CF0</color>
+    <color name="window_item_select_org_select_text">@color/white</color>
+    <color name="window_item_select_org_unselect_bg">@color/white</color>
+    <color name="window_item_select_org_unselect_text">@color/color_2E3133</color>
+    <color name="window_item_select_org_sub_text">@color/color_BDBDBD</color>
+    <color name="window_item_select_org_divider">@color/color_C3C7C7</color>
+    <color name="window_select_org_recyclerview_stroke">@color/color_C3C7C7</color>
+    <color name="window_select_org_loading">@color/white</color>
+    <color name="window_select_org_left_button">@color/color_0A8CF0</color>
+    <color name="window_select_org_left_button_text">@color/color_0A8CF0</color>
+    <color name="window_select_org_right_button_text">@color/white</color>
+    <color name="window_select_org_right_button_bg">@color/color_0A8CF0</color>
+    <color name="window_select_org_right_button_bg_disable">@color/color_C3C7C7</color>
+    <color name="window_select_org_disable_text">@color/color_C3C7C7</color>
+    <color name="window_my_class_new_class">@color/color_78CB3D</color>
+    <color name="window_my_class_textview">@color/color_2E3133</color>
+    <color name="window_my_class_textview_sub_text">@color/neutral_500</color>
+    <color name="window_my_class_dialog_delete">@color/color_F02B2B</color>
+    <color name="window_my_class_popup_window_bg">@color/white</color>
+    <color name="window_my_class_input_bg_disable">@color/color_EBEBEB</color>
+    <color name="window_my_class_input_bg_focus">@color/color_0A8CF0</color>
+    <color name="window_my_class_input_bg">@color/white</color>
+    <color name="window_my_class_input_bg_active">@color/color_2E3133</color>
+    <color name="window_my_class_input_bg_error">@color/color_F02B2B</color>
+    <color name="window_my_class_right_button_bg">@color/color_0A8CF0</color>
+    <color name="window_my_class_left_button_bg">@color/white</color>
+    <color name="window_my_class_left_button_board">@color/color_0A8CF0</color>
+    <color name="window_my_class_right_button_text">@color/white</color>
+    <color name="window_my_class_left_button_text">@color/color_0A8CF0</color>
+    <color name="window_my_class_new_class_button_bg">@color/white</color>
+    <color name="window_my_class_new_class_button_pressed_bg">@color/color_50A327</color>
+    <color name="window_my_class_new_class_button_stroke">@color/color_C3C7C7</color>
+    <color name="window_my_class_new_class_pressed_text">@color/white</color>
+    <color name="window_my_class_new_class_disable_text">@color/color_C3C7C7</color>
+    <color name="window_my_class_new_class_item_sub_text">@color/color_0A8CF0</color>
+    <color name="window_my_class_new_class_item_sub_text_bg">@color/color_F5F5F5</color>
+    <color name="window_my_class_new_class_item_sub_text_selected_bg">@color/white</color>
+    <color name="window_my_class_mask_bg">@color/black_a40</color>
+    <color name="window_student_management_failed_hit_title_text_color">@color/color_2E3133</color>
+
+    <!-- quiz -->
+    <color name="window_close_mask_bg">@color/black_a40</color>
+    <color name="window_edit_quiz_bg">@color/color_F5F5F5</color>
+    <color name="window_edit_quiz_title">@color/color_2E3133</color>
+    <color name="window_quizzing_result_title">@color/color_2E3133</color>
+
+    <color name="window_edit_quiz_left_button_border">@color/color_0A8CF0</color>
+    <color name="window_edit_quiz_left_button_bg">@color/white</color>
+    <color name="window_edit_quiz_left_button_text">@color/color_0A8CF0</color>
+    <color name="window_edit_quiz_right_button_border">@color/color_0A8CF0</color>
+    <color name="window_edit_quiz_right_button_bg">@color/color_0A8CF0</color>
+    <color name="window_edit_quiz_right_button_text">@color/white</color>
+
+    <color name="window_edit_quiz_progress_bar">@color/color_0A8CF0</color>
+    <color name="multiple_choice_options_title">@color/color_2E3133</color>
+    <color name="multiple_choice_options_text_blue">@color/color_0A8CF0</color>
+    <color name="multiple_choice_options_text_gray">@color/color_BDBDBD</color>
+    <color name="multiple_choice_options_background_blue">@color/color_D9E7F5</color>
+    <color name="multiple_choice_options_background_transparent">@color/transparent</color>
+    <color name="single_multiple_answer_switch_thumb_blue">@color/color_0A8CF0</color>
+    <color name="single_multiple_answer_switch_track_blue">@color/color_D9E7F5</color>
+    <color name="single_multiple_answer_switch_thumb_gray">@color/color_C3C7C7</color>
+    <color name="single_multiple_answer_switch_track_gray">@color/color_E5E5E5</color>
+
+    <color name="window_start_quiz_button_end_quiz_text">@color/color_F02B2B</color>
+    <color name="window_start_quiz_button_end_quiz_border">@color/color_F02B2B</color>
+    <color name="window_start_quiz_button_end_quiz_alert_bg">@color/color_F02B2B</color>
+    <color name="label_failed_to_upload">@color/color_FF4248</color>
+    <color name="stopwatch_text">@color/color_2E3133</color>
+    <color name="divider_shadow">@color/color_60C3C7C7</color>
+
+    <color name="quiz_correct_color">@color/color_78CB3D</color>
+    <color name="quiz_correct_dim_color">@color/color_578431</color>
+    <color name="quiz_correct_second_color">@color/color_F1FAEB</color>
+    <color name="quiz_incorrect_color">@color/color_F04869</color>
+    <color name="quiz_incorrect_dim_color">@color/color_943149</color>
+    <color name="quiz_incorrect_second_color">@color/color_FEF4F4</color>
+    <color name="quiz_no_answer_color">@color/color_C3C7C7</color>
+    <color name="quiz_no_answer_dim_color">@color/color_858585</color>
+    <color name="quiz_absent_text_color">@color/color_C3C7C7</color>
+    <color name="quiz_answered_second_color">@color/color_F2F7FC</color>
+    <color name="quiz_answered_text_color">@color/color_2E3133</color>
+    <color name="window_quizzing_disclose_button_border">@color/color_0A8CF0</color>
+    <color name="window_quizzing_disclose_button_bg">@color/color_0A8CF0</color>
+    <color name="window_quizzing_disclose_button_loading_bg">@color/color_005FBD</color>
+    <color name="window_quizzing_disclose_button_text">@color/white</color>
+    <color name="window_quizzing_disclose_button_bg_disable">@color/color_C3C7C7</color>
+    <!-- end quiz -->
+
+    <color name="transparent_color">@color/transparent</color>
+
+    <!-- common widget color -->
+    <color name="cs_system_dialog_mask_color">@color/white_a60</color>
+    <color name="cs_system_dialog_text_color">@color/color_2E3133</color>
+    <color name="cs_system_dialog_disable_text_color">@color/color_C3C7C7</color>
+    <color name="cs_system_dialog_normal_background">@color/color_F5F5F5</color>
+    <color name="cs_system_dialog_disable_background">@color/color_F5F5F5</color>
+    <color name="cs_system_dialog_pressed_background">@color/color_BDBDBD</color>
+    <color name="cs_system_dialog_divide_color">@color/color_C3C7C7</color>
+
+    <color name="cs_toast_message_text_color">@color/color_2E3133</color>
+    <color name="cs_toast_success">@color/color_E5F5D9</color>
+    <color name="cs_toast_failed">@color/color_FCDFDE</color>
+
+    <color name="starred_text_view_red">@color/color_F02B2B</color>
+
+    <color name="mask_color">@color/black_a40</color>
+
+    <!-- push and respond -->
+    <color name="push_and_respond_tab_selected_text_color">@color/color_0A8CF0</color>
+    <color name="push_and_respond_tab_text_color">@color/color_8E8E8E</color>
+    <color name="push_and_respond_tab_bg">@color/color_F5F5F5</color>
+    <color name="push_and_respond_tab_underline_color">@color/color_C3C7C7</color>
+    <color name="push_and_respond_popup_window_option_text_color">@color/color_1B1B1F</color>
+    <color name="push_and_respond_option_pressed_bg">@color/color_F2F7FC</color>
+    <color name="push_and_respond_task_item_selected_bg">@color/color_0A8CF0</color>
+    <color name="push_and_respond_link_task_title_text_color">@color/color_2E3133</color>
+    <color name="push_and_respond_link_task_description_text_color">@color/color_5C6266</color>
+    <color name="push_and_respond_link_task_url_text_color">@color/color_0A8CF0</color>
+    <color name="push_and_respond_button_enable_color">@color/color_0A8CF0</color>
+    <color name="push_and_respond_button_disable_color">@color/color_C3C7C7</color>
+    <color name="push_and_respond_selected_count_text_color">@color/color_0A8CF0</color>
+    <color name="push_and_respond_url_input_hint_text_color">@color/color_BEC2C2</color>
+    <color name="push_and_respond_url_preview_link_text_color">@color/color_BDBDBD</color>
+    <color name="push_and_respond_window_mask_bg">@color/color_C2BEC2C2</color>
+    <color name="push_and_respond_end_exist_quiz_confirm_text_color">@color/color_0A8CF0</color>
+
+
+    <!-- url meta preview dialog -->
+    <color name="url_preview_dialog_negative_text_color">@color/color_2E3133</color>
+    <color name="url_preview_dialog_edittext_text_color">@color/color_2E3133</color>
+    <color name="url_preview_dialog_positive_enable_text_color">@color/color_0A8CF0</color>
+    <color name="url_preview_dialog_positive_disable_text_color">@color/color_C3C7C7</color>
+    <color name="url_preview_dialog_valid_hint_text_color">@color/color_5C6266</color>
+
+    <!-- push and respond records -->
+    <color name="records_seat_number_bg_enable">@color/color_0A8CF0</color>
+    <color name="records_seat_number_bg_disable">@color/color_C3C7C7</color>
+    <color name="records_name_enable_text_color">@color/color_2E3133</color>
+    <color name="records_name_disable_text_color">@color/color_C3C7C7</color>
+    <color name="records_not_submitted_text_color">@color/color_C3C7C7</color>
+    <color name="records_absent_text_color">@color/color_C3C7C7</color>
+    <color name="records_no_marked_text_color">@color/color_F02B2B</color>
+    <color name="records_marked_text_color">@color/green_500</color>
+    <color name="records_link_opened_text_color">@color/color_0A8CF0</color>
+    <color name="records_link_not_opened_text_color">@color/color_C3C7C7</color>
+    <color name="records_add_point_animator_text_color">@color/color_0A8CF0</color>
+    <color name="records_subtract_point_bg_color">@color/color_F04869</color>
+    <color name="records_mask_send_and_save_button_normal_bg">@color/color_0A8CF0</color>
+    <color name="records_mark_send_and_save_button_text_color">@color/white</color>
+    <color name="records_mark_send_and_save_button_disable_bg">@color/color_C3C7C7</color>
+    <color name="records_not_records_hint_text_color">@color/color_2E3133</color>
+    <color name="records_divider_bg">@color/color_D0D0D0</color>
+    <color name="records_end_task_color">@color/color_F02B2B</color>
+    <color name="records_receiving_header_text_color">@color/color_78CB3D</color>
+    <color name="records_task_ended_header_text_color">@color/neutral_700</color>
+    <color name="records_task_list_item_text_normal_color">@color/color_2E3133</color>
+    <color name="records_task_list_item_text_selected_color">@color/color_0A8CF0</color>
+    <color name="records_timer_text_color">@color/color_2E3133</color>
+    <color name="records_sort_option_normal_text_color">@color/color_2E3133</color>
+    <color name="records_sort_option_selected_text_color">@color/color_0A8CF0</color>
+    <color name="records_mask_widget_mask_color">@color/black_a40</color>
+    <color name="records_label_as_mark_text_color">@color/color_0A8CF0</color>
+    <color name="records_label_as_mark_toolbar_bg_color">@color/color_F5F5F5</color>
+    <color name="records_label_as_mark_button_active_color">@color/color_0A8CF0</color>
+    <color name="records_label_as_mark_button_disable_color">@color/color_C3C7C7</color>
+    <color name="records_label_as_mark_button_text_color">@color/neutral_0</color>
+    <color name="records_label_as_mark_dialog_positive_text_color">@color/color_F02B2B</color>
+    <color name="records_end_task_dialog_positive_text_color">@color/color_0A8CF0</color>
+
+    <!-- paint view -->
+    <color name="paint_color_red">@color/color_F02B2B</color>
+    <color name="paint_color_yellow">@color/color_FDF500</color>
+    <color name="paint_color_green">@color/color_43A700</color>
+    <color name="paint_color_blue">@color/color_004CFC</color>
+    <color name="paint_color_white">@color/white</color>
+    <color name="paint_color_black">@color/black</color>
+    <color name="paint_merge_bitmap_bg_color">@color/color_F5F5F5</color>
+
+    <color name="cs_message_dialog_positive_default_text_color">@color/color_0A8CF0</color>
+    <color name="cs_message_dialog_negative_default_text_color">@color/color_2E3133</color>
+    <color name="cs_message_dialog_default_disable_text_color">@color/color_C3C7C7</color>
+
+    <!-- spinner window-->
+    <color name="spinner_window_title_text_color">@color/color_2E3133</color>
+
+    <!-- leaderboard -->
+    <color name="error_message_text_color">@color/color_2E3133</color>
+
+</resources>

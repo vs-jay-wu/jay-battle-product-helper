@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent">
+
+
+    <com.viewsonic.classswift.ui.widget.batchquiz.CSBatchQuizItemTitle
+        android:id="@+id/csw_title"
+        android:layout_width="@dimen/batch_quiz_result_item_width"
+        android:layout_height="@dimen/batch_quiz_result_title_height"
+        android:layout_marginStart="6.66dp"
+        app:layout_constraintEnd_toStartOf="@id/view_divider"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.viewsonic.classswift.ui.widget.batchquiz.CSBatchQuizBarChart
+        android:id="@+id/csw_correct_barchart"
+        android:layout_width="36dp"
+        android:layout_height="0dp"
+        android:layout_marginVertical="6.66dp"
+        android:layout_marginEnd="10.66dp"
+        app:layout_constraintBottom_toTopOf="@id/tv_answer_percent"
+        app:layout_constraintEnd_toStartOf="@id/csw_incorrect_barchart"
+        app:layout_constraintTop_toBottomOf="@id/csw_title"
+        app:barChartColor="@color/green_500"
+        app:barChartMaxHeight="@dimen/batch_quiz_chart_bar_max_height"/>
+
+    <com.viewsonic.classswift.ui.widget.batchquiz.CSBatchQuizBarChart
+        android:id="@+id/csw_incorrect_barchart"
+        android:layout_width="36dp"
+        android:layout_height="0dp"
+        android:layout_marginVertical="6.66dp"
+        app:layout_constraintBottom_toTopOf="@id/tv_answer_percent"
+        app:layout_constraintEnd_toStartOf="@id/view_divider"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/csw_title"
+        app:barChartColor="@color/red_400"
+        app:barChartMaxHeight="@dimen/batch_quiz_chart_bar_max_height"/>
+
+    <com.viewsonic.classswift.ui.widget.batchquiz.CSBatchQuizBarChart
+        android:id="@+id/csw_no_answer_barchart"
+        android:layout_width="36dp"
+        android:layout_height="0dp"
+        android:layout_marginVertical="6.66dp"
+        android:layout_marginStart="10.66dp"
+        app:layout_constraintBottom_toTopOf="@id/tv_answer_percent"
+        app:layout_constraintStart_toEndOf="@id/csw_incorrect_barchart"
+        app:layout_constraintTop_toBottomOf="@id/csw_title"
+        app:barChartColor="@color/neutral_450"
+        app:barChartMaxHeight="@dimen/batch_quiz_chart_bar_max_height"/>
+
+    <TextView
+        android:id="@+id/tv_answer_percent"
+        android:layout_width="@dimen/batch_quiz_result_item_width"
+        android:layout_height="@dimen/batch_quiz_result_title_height"
+        android:layout_marginStart="6.66dp"
+        android:gravity="center"
+        android:text="60%"
+        android:textColor="@color/neutral_900"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/view_divider"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <View
+        android:id="@+id/view_divider"
+        android:layout_width="0.66dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="6.66dp"
+        android:background="@color/neutral_500"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/csw_title"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

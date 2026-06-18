@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ VSFT-8454 Sketch Response 學生 card Submitted / Handed back 用 chip outline。
+  ~ Figma: Chip type="outlined" semanticColor="success"
+  ~        透明 bg + success-variant (#48720F) 1.33dp 框線 + radius_full pill。
+  -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@android:color/transparent" />
+    <corners android:radius="@dimen/radius_full" />
+    <stroke
+        android:width="@dimen/border_400"
+        android:color="@color/color_48720F" />
+</shape>

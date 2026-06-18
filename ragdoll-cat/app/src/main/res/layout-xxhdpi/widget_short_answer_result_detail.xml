@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:theme="@style/Theme.MaterialComponents.Bridge"
+    tools:parentTag="com.google.android.material.card.MaterialCardView"
+    app:cardBackgroundColor="@color/black_a40"
+    app:cardElevation="0dp"
+    app:cardCornerRadius="@dimen/radius_800">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_container"
+            android:layout_width="446.6dp"
+            android:layout_height="289.6dp"
+            android:layout_gravity="center"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:listitem="@layout/item_quiz_short_answer_result_detail"/>
+
+        <ToggleButton
+            android:id="@+id/tb_eye"
+            android:layout_width="26.6dp"
+            android:layout_height="26.6dp"
+            android:layout_marginTop="10.6dp"
+            android:layout_marginStart="10.6dp"
+            android:background="@drawable/selector_quiz_result_eye"
+            android:checked="false"
+            android:textOff=""
+            android:textOn=""
+            android:visibility="visible"
+            app:layout_constraintTop_toTopOf="@+id/rv_container"
+            app:layout_constraintStart_toStartOf="@id/rv_container"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</merge>

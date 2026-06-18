@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@color/window_select_org_disable_text" android:state_enabled="false"/>
+    <!-- 選中狀態 -->
+    <item android:color="@color/window_item_select_org_select_text" android:state_selected="true"/>
+    <!-- 未選中狀態 -->
+    <item android:color="@color/window_item_select_org_unselect_text"/>
+
+</selector>

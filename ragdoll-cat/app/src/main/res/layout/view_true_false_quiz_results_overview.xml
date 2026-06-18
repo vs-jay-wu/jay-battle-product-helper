@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
+
+    <LinearLayout
+        android:id="@+id/ll_correct_answer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteX="1dp"
+        tools:layout_editor_absoluteY="1dp" >
+
+        <TextView
+            android:id="@+id/tv_correct_answer_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/quiz_answered_text_color"
+            android:textSize="16sp"
+            android:text="@string/quiz_info_correct_answer" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_correct_answer"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="8dp"
+            tools:src="@drawable/ic_true"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/ll_correct"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginTop="14.4dp"
+        app:layout_constraintTop_toBottomOf="@+id/ll_correct_answer"
+        app:layout_constraintStart_toStartOf="parent" >
+
+        <TextView
+            android:id="@+id/tv_correct_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/quiz_correct_color"
+            android:textSize="16sp"
+            android:text="@string/common_correct" />
+
+        <TextView
+            android:id="@+id/tv_correct_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:textColor="@color/quiz_answered_text_color"
+            android:textSize="16sp"
+            tools:text="12" />
+
+        <TextView
+            android:id="@+id/tv_correct_participants"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="3dp"
+            android:textColor="@color/quiz_answered_text_color"
+            android:textSize="16sp"
+            android:text="@string/common_participants" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/ll_incorrect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginTop="14.4dp"
+        app:layout_constraintTop_toBottomOf="@+id/ll_correct"
+        app:layout_constraintStart_toStartOf="parent" >
+
+        <TextView
+            android:id="@+id/tv_incorrect_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/quiz_incorrect_color"
+            android:textSize="16sp"
+            android:text="@string/common_incorrect" />
+
+        <TextView
+            android:id="@+id/tv_incorrect_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:textColor="@color/quiz_answered_text_color"
+            android:textSize="16sp"
+            tools:text="10" />
+
+        <TextView
+            android:id="@+id/tv_incorrect_participants"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="3dp"
+            android:textColor="@color/quiz_answered_text_color"
+            android:textSize="16sp"
+            android:text="@string/common_participants" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/ll_no_answer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginTop="14.4dp"
+        app:layout_constraintTop_toBottomOf="@+id/ll_incorrect"
+        app:layout_constraintStart_toStartOf="parent" >
+
+        <TextView
+            android:id="@+id/tv_no_answer_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/quiz_no_answer_color"
+            android:textSize="16sp"
+            android:text="@string/common_no_answer" />
+
+        <TextView
+            android:id="@+id/tv_no_answer_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:textColor="@color/quiz_answered_text_color"
+            android:textSize="16sp"
+            tools:text="8" />
+
+        <TextView
+            android:id="@+id/tv_no_answer_participants"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="3dp"
+            android:textColor="@color/quiz_answered_text_color"
+            android:textSize="16sp"
+            android:text="@string/common_participants" />
+
+    </LinearLayout>
+</merge>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<inset xmlns:android="http://schemas.android.com/apk/res/android"
+    android:insetTop="@dimen/mvb_spacing_150"
+    android:insetBottom="@dimen/mvb_spacing_150">
+    <shape android:shape="oval">
+        <solid android:color="@color/neutral_0" />
+        <size
+            android:width="@dimen/mvb_switch_thumb_size"
+            android:height="@dimen/mvb_switch_thumb_size" />
+    </shape>
+</inset>

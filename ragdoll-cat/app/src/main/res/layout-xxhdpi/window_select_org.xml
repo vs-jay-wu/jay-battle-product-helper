@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="350dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_cs_window"
+        android:paddingEnd="10dp"
+        android:paddingStart="10dp"
+        android:paddingBottom="16dp"
+        android:paddingTop="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!-- 關閉按鈕 -->
+        <ImageButton
+            android:id="@+id/button_close"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/ic_close_64dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- 標題 -->
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/select_org_title"
+            android:textColor="@color/window_select_org_textview"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@id/cl_select_org"
+            app:layout_constraintTop_toBottomOf="@id/button_close" />
+
+        <!-- RecyclerView -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cl_select_org"
+            android:layout_width="300dp"
+            android:layout_height="260dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/bg_window_select_org_recyclerview_bg"
+            app:cardCornerRadius="2.66dp"
+            app:cardBackgroundColor="@color/white"
+            app:strokeColor="@color/common_stroke_color"
+            app:strokeWidth="0.6dp"
+            app:layout_constraintBottom_toTopOf="@id/cl_button_container"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_title">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_select_org"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:visibility="gone"
+                />
+
+            <TextView
+                android:id="@+id/tv_null_org"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="@string/select_org_empty_org"
+                android:textColor="@color/window_select_org_disable_text"
+                android:textSize="14sp"
+               />
+
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- 按鈕容器 -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_button_container"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/cl_select_org"
+            app:layout_constraintStart_toStartOf="@id/cl_select_org">
+
+            <!-- Sign Out 按鈕 -->
+            <com.viewsonic.classswift.ui.widget.ClassSwiftLoadingButton
+                android:id="@+id/button_sign_out"
+                style="@style/DefaultButtonSelectWindow"
+                android:layout_marginEnd="8dp"
+                android:clickable="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/button_select"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:lbBackgroundColor="@color/white"
+                app:lbBorderColor="@color/window_select_org_left_button"
+                app:lbText="@string/common_sign_out"
+                app:lbTextColor="@color/window_select_org_left_button_text"
+                app:lbTextSize="14sp"/>
+
+            <!-- Select 按鈕 -->
+            <com.viewsonic.classswift.ui.widget.ClassSwiftLoadingButton
+                android:id="@+id/button_select"
+                style="@style/DefaultButtonSelectWindow"
+                android:clickable="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/button_sign_out"
+                app:layout_constraintTop_toTopOf="parent"
+                app:lbBackgroundColor="@color/window_select_org_right_button_bg"
+                app:lbDisableBackgroundColor="@color/window_select_org_right_button_bg_disable"
+                app:lbLoadingBackground="@color/window_select_org_right_button_bg"
+                app:lbProgressIndicatorColor="@color/progressing_loading_white"
+                app:lbText="@string/common_select"
+                app:lbTextColor="@color/window_select_org_right_button_text"
+                app:lbTextSize="14sp" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.viewsonic.classswift.ui.widget.CSToast
+            android:id="@+id/cst_toast"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:layout_marginTop="8dp"
+            android:visibility="gone"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:successStatus="false" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

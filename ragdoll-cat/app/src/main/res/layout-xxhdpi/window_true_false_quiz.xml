@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="385dp"
+    android:layout_height="515dp"
+    android:background="@drawable/bg_cs_window">
+
+    <ImageButton
+        android:id="@+id/button_close"
+        android:layout_width="21.3dp"
+        android:layout_height="21.3dp"
+        android:layout_marginTop="10.6dp"
+        android:layout_marginEnd="10.6dp"
+        android:background="@drawable/ripple_neutral300_oval"
+        app:srcCompat="@drawable/ic_close_64dp"
+        app:tint="@color/bg_close_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_toolbar_bring_to_front"
+        android:layout_width="21.3dp"
+        android:layout_height="21.3dp"
+        android:layout_marginTop="10.6dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintRight_toLeftOf="@id/button_close"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_toolbar_bring_to_front_64dp"
+        android:background="@drawable/ripple_neutral300_oval"
+        app:tint="@color/bg_toolbar_bring_to_front" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_minimize_window"
+        android:layout_width="21.3dp"
+        android:layout_height="21.3dp"
+        android:layout_marginTop="10.6dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintRight_toLeftOf="@id/button_close"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_minus_32dp"
+        android:background="@drawable/ripple_neutral300_oval"
+        app:tint="@color/bg_minimize_window" />
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-light"
+        android:text="@string/quiz_types_true_false"
+        android:textColor="@color/window_edit_quiz_title"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/cl_image_upload_container"
+        app:layout_constraintTop_toBottomOf="@id/button_close" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_image_upload_container"
+        android:layout_width="329.3dp"
+        android:layout_height="180dp"
+        android:layout_marginTop="10.6dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_title">
+
+        <!-- 顯示/上傳圖片 components -->
+        <com.viewsonic.classswift.ui.widget.quiz.ImageUploadView
+            android:id="@+id/cs_image_upload_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.viewsonic.classswift.ui.widget.ClassSwiftLoadingButton
+        android:id="@+id/button_select_again"
+        android:layout_width="160dp"
+        android:layout_height="37.5dp"
+        android:layout_marginBottom="10.6dp"
+        android:clickable="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/button_start_quiz"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:lbBackgroundColor="@color/white"
+        app:lbBorderColor="@color/window_edit_quiz_left_button_border"
+        app:lbDisableBackgroundColor="@color/window_edit_quiz_bg"
+        app:lbDisableBorderColor="@color/cs_button_bg_disable"
+        app:lbDisableTextColor="@color/cs_button_bg_disable"
+        app:lbText="@string/common_select_again"
+        app:lbTextColor="@color/window_edit_quiz_left_button_text"
+        app:lbTextSize="14sp" />
+
+    <com.viewsonic.classswift.ui.widget.ClassSwiftLoadingButton
+        android:id="@+id/button_start_quiz"
+        android:layout_width="160dp"
+        android:layout_height="37.5dp"
+        android:layout_marginStart="10.6dp"
+        android:layout_marginBottom="10.6dp"
+        android:clickable="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/button_select_again"
+        app:lbBackgroundColor="@color/window_edit_quiz_right_button_bg"
+        app:lbBorderColor="@color/window_edit_quiz_left_button_border"
+        app:lbDisableBackgroundColor="@color/cs_button_bg_disable"
+        app:lbDisableTextColor="@color/white"
+        app:lbProgressIndicatorColor="@color/white"
+        app:lbText="@string/common_start_quiz"
+        app:lbTextColor="@color/window_edit_quiz_right_button_text"
+        app:lbTextSize="14sp" />
+
+    <com.viewsonic.classswift.ui.widget.CSToast
+        android:id="@+id/cst_toast"
+        android:layout_width="wrap_content"
+        android:layout_height="32dp"
+        android:layout_marginTop="8dp"
+        android:visibility="gone"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:successStatus="false" />
+
+    <com.viewsonic.classswift.ui.widget.LoadingAnimation
+        android:id="@+id/cs_loading_animation"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.viewsonic.classswift.ui.widget.NetworkDisconnectView
+        android:id="@+id/view_network_disconnect"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:cardRadius="@dimen/radius_800"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.viewsonic.classswift.ui.widget.CSMessageDialog
+        android:id="@+id/cs_message_dialog"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:csmdMaskBackground="@drawable/bg_mask_radius800"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

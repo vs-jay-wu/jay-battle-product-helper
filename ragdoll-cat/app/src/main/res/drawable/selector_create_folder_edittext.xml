@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Disabled -->
+    <item android:state_enabled="false"
+        android:drawable="@drawable/bg_neutral0_radius200_line_c3c7c7_border200" />
+
+    <!-- Focused -->
+    <item android:state_focused="true"
+        android:drawable="@drawable/bg_neutral0_radius200_line_0a8cf0_border200" />
+
+    <!-- Default (fallback) -->
+    <item android:drawable="@drawable/bg_neutral0_radius200_line_0a8cf0_border200" />
+</selector>

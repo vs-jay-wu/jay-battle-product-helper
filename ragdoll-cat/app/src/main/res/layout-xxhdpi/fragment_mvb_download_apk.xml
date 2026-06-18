@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:clipToPadding="false"
+    android:paddingStart="16dp"
+    android:paddingTop="26.67dp"
+    android:paddingEnd="16dp"
+    android:paddingBottom="26.67dp">
+
+    <!-- X close button (top-right, 8dp from panel corner via translation) -->
+    <ImageButton
+        android:id="@+id/ib_close"
+        android:layout_width="26.67dp"
+        android:layout_height="26.67dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:padding="8dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_close_64dp"
+        android:translationX="10.67dp"
+        android:translationY="-21.33dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/neutral_900"
+        tools:ignore="ContentDescription" />
+
+    <!-- Title: "Welcome to ClassSwift" -->
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/mvb_ota_title"
+        android:textColor="@color/neutral_900"
+        android:textSize="18.67sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Downloading -->
+    <LinearLayout
+        android:id="@+id/ll_main"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottie_loading"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_gravity="center"
+            app:lottie_autoPlay="true"
+            app:lottie_fileName="ani_loading.json"
+            app:lottie_loop="true" />
+
+        <LinearLayout
+            android:id="@+id/ll_progress_root"
+            android:layout_width="200dp"
+            android:layout_height="12dp"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/bg_download_progress_border">
+
+            <View
+                android:id="@+id/view_progress"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/download_progressbar"
+                android:background="@drawable/bg_download_progress" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_download"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/autoupdated_download_lastest_version"
+                android:textAlignment="viewStart"
+                android:textColor="@color/cs_system_dialog_text_color"
+                android:textFontWeight="600"
+                android:textSize="9.33sp"
+                tools:ignore="SmallSp" />
+
+            <TextView
+                android:id="@+id/tv_progress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/autoupdate_download_percent"
+                android:textAlignment="viewEnd"
+                android:textColor="@color/cs_system_dialog_text_color"
+                android:textFontWeight="600"
+                android:textSize="9.33sp"
+                tools:ignore="SmallSp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Bottom buttons row -->
+    <LinearLayout
+        android:id="@+id/ll_bottom_buttons"
+        android:layout_width="0dp"
+        android:layout_height="32dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <!-- Exit ClassSwift button (outline, 50%) -->
+        <com.viewsonic.classswift.ui.widget.ClassSwiftLoadingButton
+            android:id="@+id/button_exit"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="5.33dp"
+            android:layout_weight="1"
+            android:clickable="true"
+            app:lbBackgroundColor="@color/white"
+            app:lbBorderColor="@color/window_select_org_right_button_bg_disable"
+            app:lbRadius="5.33dp"
+            app:lbText="@string/mvb_my_class_action_exit"
+            app:lbTextColor="@color/neutral_900"
+            app:lbTextSize="10.67sp" />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

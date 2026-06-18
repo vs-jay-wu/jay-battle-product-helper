@@ -1,0 +1,115 @@
+package com.viewsonic.classswift.ui.widget.fastscroll
+
+import android.graphics.Canvas
+import android.view.MotionEvent
+
+abstract class SimpleViewHelper : FastScroller.ViewHelper {
+    private var mOnPreDrawListener: Runnable? = null
+    private var mOnScrollChangedListener: Runnable? = null
+    private var mOnTouchEventListener: Predicate<MotionEvent?>? = null
+    private var mListenerInterceptingTouchEvent = false
+
+    override fun addOnPreDrawListener(listener: Runnable) {
+        mOnPreDrawListener = listener
+    }
+
+    fun draw(canvas: Canvas) {
+        mOnPreDrawListener?.run()
+        superDraw(canvas)
+    }
+
+    override fun addOnScrollChangedListener(listener: Runnable) {
+        mOnScrollChangedListener = listener
+    }
+
+    fun onScrollChanged(left: Int, top: Int, oldLeft: Int, oldTop: Int) {
+        superOnScrollChanged(left, top, oldLeft, oldTop)
+        mOnScrollChangedListener?.run()
+    }
+
+    override fun addOnTouchEventListener(listener: Predicate<MotionEvent?>) {
+        mOnTouchEventListener = listener
+    }
+
+    fun onInterceptTouchEvent(event: MotionEvent): Boolean {
+        mOnTouchEventListener?.let {
+            if (it.test(event)) {
+                val actionMasked = event.actionMasked
+                if (actionMasked != MotionEvent.ACTION_UP && actionMasked != MotionEvent.ACTION_CANCEL) {
+                    mListenerInterceptingTouchEvent = true
+                }
+
+                if (actionMasked != MotionEvent.ACTION_CANCEL) {
+                    val cancelEvent = MotionEvent.obtain(event)
+                    cancelEvent.setAction(MotionEvent.ACTION_CANCEL)
+                    superOnInterceptTouchEvent(cancelEvent)
+                    cancelEvent.recycle()
+                } else {
+                    superOnInterceptTouchEvent(event)
+                }
+                return true
+            }
+        }
+        return superOnInterceptTouchEvent(event)
+    }
+
+    fun onTouchEvent(event: MotionEvent): Boolean {
+        mOnTouchEventListener?.let {
+            if (mListenerInterceptingTouchEvent) {
+                it.test(event)
+
+                val actionMasked = event.actionMasked
+                if (actionMasked == MotionEvent.ACTION_UP || actionMasked == MotionEvent.ACTION_CANCEL) {
+                    mListenerInterceptingTouchEvent = false
+                }
+                return true
+            } else {
+                val actionMasked = event.actionMasked
+                if (actionMasked != MotionEvent.ACTION_DOWN && it.test(event)) {
+                    if (actionMasked != MotionEvent.ACTION_UP && actionMasked != MotionEvent.ACTION_CANCEL) {
+                        mListenerInterceptingTouchEvent = true
+                    }
+
+                    if (actionMasked != MotionEvent.ACTION_CANCEL) {
+                        val cancelEvent = MotionEvent.obtain(event)
+                        cancelEvent.setAction(MotionEvent.ACTION_CANCEL)
+                        superOnTouchEvent(cancelEvent)
+                        cancelEvent.recycle()
+                    } else {
+                        superOnTouchEvent(event)
+                    }
+                    return true
+                }
+            }
+        }
+        return superOnTouchEvent(event)
+    }
+
+    override fun getScrollRange(): Int {
+        return computeVerticalScrollRange()
+    }
+
+    override fun getScrollOffset(): Int {
+        return computeVerticalScrollOffset()
+    }
+
+    override fun scrollTo(offset: Int) {
+        scrollTo(getScrollX(), offset)
+    }
+
+    protected abstract fun superDraw(canvas: Canvas)
+
+    protected abstract fun superOnScrollChanged(left: Int, top: Int, oldLeft: Int, oldTop: Int)
+
+    protected abstract fun superOnInterceptTouchEvent(event: MotionEvent): Boolean
+
+    protected abstract fun superOnTouchEvent(event: MotionEvent): Boolean
+
+    protected abstract fun computeVerticalScrollRange(): Int
+
+    protected abstract fun computeVerticalScrollOffset(): Int
+
+    protected abstract fun getScrollX(): Int
+
+    protected abstract fun scrollTo(x: Int, y: Int)
+}

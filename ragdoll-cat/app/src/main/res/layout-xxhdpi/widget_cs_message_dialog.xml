@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_mask_radius800"
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="372dp"
+        android:layout_height="wrap_content"
+        android:clipChildren="true"
+        android:clipToPadding="true"
+        app:cardBackgroundColor="@color/cs_system_dialog_normal_background"
+        app:cardCornerRadius="5.33dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:background="@color/cs_system_dialog_normal_background"
+                android:gravity="center"
+                android:padding="4dp"
+                android:text="@string/common_link"
+                android:textColor="@color/neutral_900"
+                android:textFontWeight="600"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:text="Link" />
+
+            <View
+                android:id="@+id/view_top_divider_line"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:background="@color/cs_system_dialog_divide_color"
+                app:layout_constraintTop_toBottomOf="@id/tv_title"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+            <TextView
+                android:id="@+id/tv_message"
+                android:layout_width="0dp"
+                android:layout_height="117.33dp"
+                android:paddingHorizontal="13.33dp"
+                android:minHeight="104.33dp"
+                android:background="@color/neutral_0"
+                android:gravity="center"
+                android:textColor="@color/description_message_color"
+                android:textSize="16sp"
+                app:layout_constraintTop_toBottomOf="@id/view_top_divider_line"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:text="You still have an ongoing quiz. Are you sure you
+                    want to end the quiz and push tasks?" />
+
+            <View
+                android:id="@+id/view_bottom_divider_line"
+                android:layout_width="match_parent"
+                android:layout_height="0.66dp"
+                android:background="@color/cs_system_dialog_divide_color"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_message" />
+
+            <View
+                android:id="@+id/view_button_divider_line"
+                android:layout_width="0.66dp"
+                android:layout_height="0dp"
+                android:background="@color/cs_system_dialog_divide_color"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/view_bottom_divider_line" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/bt_negative"
+                android:layout_width="0dp"
+                android:layout_height="37.33dp"
+                android:background="@drawable/selector_system_dialog_button"
+                android:padding="8dp"
+                android:text="@string/common_cancel"
+                android:textAllCaps="false"
+                android:textColor="@color/url_preview_dialog_negative_text_color"
+                android:textFontWeight="600"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/view_button_divider_line"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/view_bottom_divider_line"
+                tools:text="@string/common_cancel" />
+
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:id="@+id/cpi_negative"
+                android:layout_width="0dp"
+                android:layout_height="37.33dp"
+                android:indeterminate="true"
+                android:visibility="gone"
+                app:indicatorColor="@color/brand_blue"
+                app:indicatorSize="24dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintDimensionRatio="1:1.01"
+                app:layout_constraintHeight_percent=".12"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@id/view_button_divider_line"
+                app:layout_constraintTop_toBottomOf="@id/view_bottom_divider_line"
+                app:trackThickness="2dp"
+                tools:visibility="visible" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/acb_positive"
+                android:layout_width="0dp"
+                android:layout_height="37.33dp"
+                android:background="@drawable/selector_system_dialog_button"
+                android:padding="8dp"
+                android:text="@string/common_confirm"
+                android:textAllCaps="false"
+                android:textColor="@color/brand_blue"
+                android:textFontWeight="600"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/view_button_divider_line"
+                app:layout_constraintTop_toBottomOf="@id/view_bottom_divider_line"
+                tools:text="@string/common_confirm" />
+
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:id="@+id/cpi_positive"
+                android:layout_width="0dp"
+                android:layout_height="37.33dp"
+                android:indeterminate="true"
+                android:visibility="gone"
+                app:indicatorColor="@color/brand_blue"
+                app:indicatorSize="24dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintDimensionRatio="1:1.01"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHeight_percent=".12"
+                app:layout_constraintStart_toEndOf="@id/view_button_divider_line"
+                app:layout_constraintTop_toBottomOf="@id/view_bottom_divider_line"
+                app:trackThickness="2dp"
+                tools:visibility="visible" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</merge>

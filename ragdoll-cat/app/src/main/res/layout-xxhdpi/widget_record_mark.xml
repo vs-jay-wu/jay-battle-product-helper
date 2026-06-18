@@ -1,0 +1,383 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="706dp"
+    android:layout_height="560dp"
+    android:background="@drawable/bg_cs_window"
+    android:paddingHorizontal="32dp"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent">
+
+    <com.viewsonic.classswift.ui.widget.CSToast
+        android:id="@+id/cst_toast"
+        android:layout_width="wrap_content"
+        android:layout_height="35.33dp"
+        android:layout_marginTop="7dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="30.33dp"
+        android:layout_marginTop="38dp"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:maxLines="1"
+        android:text="@string/push_and_respond_tabs_records"
+        android:textColor="@color/records_name_enable_text_color"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_close"
+        android:layout_width="32dp"
+        android:layout_height="28dp"
+        android:layout_marginTop="30dp"
+        android:src="@drawable/ic_records_mark_close"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_left_arrow"
+        android:layout_width="21.3dp"
+        android:layout_height="21.3dp"
+        android:layout_marginStart="100dp"
+        android:background="@drawable/bg_record_result_switch"
+        app:srcCompat="@drawable/ic_left_arrow_64dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/cl_student_info_panel"
+        app:layout_constraintBottom_toBottomOf="@id/cl_student_info_panel" />
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_student_info_panel"
+        android:layout_width="wrap_content"
+        android:layout_height="32dp"
+        android:layout_marginTop="13.33dp"
+        android:maxWidth="380dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_title">
+
+        <TextView
+            android:id="@+id/tv_seat_number"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:gravity="center"
+            android:maxLines="1"
+            android:textColor="@color/records_name_enable_text_color"
+            android:textSize="18.66sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="2" />
+
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:layout_marginStart="10.66dp"
+            android:textColor="@color/records_name_enable_text_color"
+            android:textSize="18.66sp"
+            android:maxWidth="213.33dp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tv_seat_number"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Andy Rubin Andy Rubin Andy Rubin Andy Rubin" />
+
+        <com.viewsonic.classswift.ui.widget.task.records.RecordStatusView
+            android:id="@+id/rsv_status"
+            android:layout_width="wrap_content"
+            android:layout_height="22dp"
+            android:layout_marginStart="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tv_name"
+            app:layout_constraintTop_toTopOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_right_arrow"
+        android:layout_width="21.3dp"
+        android:layout_height="21.3dp"
+        android:layout_marginEnd="100dp"
+        android:background="@drawable/bg_record_result_switch"
+        app:srcCompat="@drawable/ic_right_arrow_64dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/cl_student_info_panel"
+        app:layout_constraintBottom_toBottomOf="@id/cl_student_info_panel" />
+
+    <com.viewsonic.classswift.ui.widget.ImageDownloadView
+        android:id="@+id/iv_image"
+        android:layout_width="639.33dp"
+        android:layout_height="361.33dp"
+        android:layout_marginTop="13.33dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cl_student_info_panel"
+        tools:visibility="gone"/>
+
+    <com.viewsonic.classswift.ui.widget.task.paint.PaintView
+        android:id="@+id/pv_paint_view"
+        android:layout_width="639.33dp"
+        android:layout_height="361.33dp"
+        android:layout_marginTop="13.33dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cl_student_info_panel"
+        tools:visibility="visible"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_api_failed_area"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cl_student_info_panel"
+        tools:visibility="visible">
+
+        <LinearLayout
+            android:id="@+id/ll_failed_area"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="9.88dp"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toTopOf="@id/cv_retry_area"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/iv_failed_icon"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:src="@drawable/ic_upload_failed"
+                tools:ignore="ContentDescription" />
+
+            <TextView
+                android:id="@+id/tv_download_failed"
+                android:layout_width="wrap_content"
+                android:layout_height="25dp"
+                android:gravity="center_vertical"
+                android:text="@string/common_failed"
+                android:textColor="@color/label_failed_to_upload" />
+        </LinearLayout>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cv_retry_area"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:clickable="true"
+            app:cardBackgroundColor="@color/brand_blue"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ll_failed_area">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="8dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                tools:ignore="UseCompoundDrawables">
+
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:src="@drawable/ic_upload_again"
+                    tools:ignore="ContentDescription" />
+
+                <TextView
+                    android:id="@+id/tv_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4.66dp"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:text="@string/common_reload"
+                    android:textColor="@color/white" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <FrameLayout
+        android:id="@+id/fl_with_problem"
+        android:layout_width="639.33dp"
+        android:layout_height="361.33dp"
+        android:layout_marginTop="13.33dp"
+        android:background="@color/black_a40"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cl_student_info_panel"
+        tools:visibility="visible"
+        >
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_problem_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingVertical="8dp"
+            android:paddingHorizontal="13.33dp"
+            android:background="@drawable/bg_blacka60_raduis800"
+            android:text="@string/record_student_not_submitted_message"
+            android:textColor="@color/neutral_0"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textFontWeight="600"
+            android:textSize="16sp" />
+    </FrameLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_paint_options"
+        android:layout_width="wrap_content"
+        android:layout_height="32dp"
+        android:layout_marginTop="13.33dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pv_paint_view">
+
+        <com.viewsonic.classswift.ui.widget.task.paint.PaintOptionButton
+            android:id="@+id/pob_red"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:iconResource="@drawable/ic_paint_red"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.viewsonic.classswift.ui.widget.task.paint.PaintOptionButton
+            android:id="@+id/pob_yellow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5.33dp"
+            app:iconResource="@drawable/ic_paint_yellow"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/pob_red"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.viewsonic.classswift.ui.widget.task.paint.PaintOptionButton
+            android:id="@+id/pob_green"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5.33dp"
+            app:iconResource="@drawable/ic_paint_green"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/pob_yellow"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.viewsonic.classswift.ui.widget.task.paint.PaintOptionButton
+            android:id="@+id/pob_blue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5.33dp"
+            app:iconResource="@drawable/ic_paint_blue"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/pob_green"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.viewsonic.classswift.ui.widget.task.paint.PaintOptionButton
+            android:id="@+id/pob_white"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:iconResource="@drawable/ic_paint_white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/pob_blue"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.viewsonic.classswift.ui.widget.task.paint.PaintOptionButton
+            android:id="@+id/pob_black"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5.33dp"
+            app:iconResource="@drawable/ic_paint_black"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/pob_white"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.viewsonic.classswift.ui.widget.task.paint.PaintOptionButton
+            android:id="@+id/pob_eraser"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5.33dp"
+            app:iconResource="@drawable/ic_paint_eraser"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/pob_black"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_undo"
+            android:layout_width="47dp"
+            android:layout_height="29dp"
+            android:layout_marginStart="5.33dp"
+            android:src="@drawable/selector_paint_reset"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/pob_eraser"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_remove_all"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="5.33dp"
+            android:src="@drawable/selector_paint_remove_all"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/iv_undo"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.viewsonic.classswift.ui.widget.ClassSwiftLoadingButton
+        android:id="@+id/clb_send_and_save"
+        style="@style/DefaultButtonSelectWindow"
+        android:layout_width="110.33dp"
+        android:layout_marginTop="13.33dp"
+        android:clickable="true"
+        android:foregroundGravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pv_paint_view"
+        app:lbAlertBackgroundColor="@color/records_mask_send_and_save_button_normal_bg"
+        app:lbAlertText="@string/push_and_respond_dialog_grading_send_and_save"
+        app:lbAlertTextColor="@color/records_mark_send_and_save_button_text_color"
+        app:lbBackgroundColor="@color/records_mask_send_and_save_button_normal_bg"
+        app:lbDisableBackgroundColor="@color/records_mark_send_and_save_button_disable_bg"
+        app:lbIconHeight="21.33dp"
+        app:lbIconWidth="21.33dp"
+        app:lbImgSrc="@drawable/ic_record_mark_send"
+        app:lbLoadingBackground="@color/records_mask_send_and_save_button_normal_bg"
+        app:lbProgressIndicatorColor="@color/progressing_loading_white"
+        app:lbText="@string/push_and_respond_dialog_grading_send_and_save"
+        app:lbTextColor="@color/records_mark_send_and_save_button_text_color"
+        app:lbTextSize="13.33sp" />
+
+    <View
+        android:id="@+id/view_blocker"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

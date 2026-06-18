@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+    This window is displayed as a floating overlay via MvbTrueFalseEditWindow, where the
+    window size equals the layout size. Because elevation shadows render outside a view's
+    own bounds, they get clipped at the window boundary when there is no surrounding space.
+
+    To work around this:
+    - The root FrameLayout is transparent and sized larger than the visible card
+      (card size + 4 × layout_margin on each axis). Its dimensions must stay in sync
+      with the window size declared in MvbTrueFalseEditWindow.size.
+    - The inner ConstraintLayout is the actual card. Its layout_margin provides the
+      space where the shadow renders. The margin is kept at 8dp (larger than the 4dp
+      elevation) so the shadow is never clipped even with slight rendering variation.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="541.33dp"
+    android:layout_height="426.66dp"
+    android:background="@android:color/transparent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="8dp"
+        android:background="@drawable/bg_mvb_neutral0_radius400_line_neutral300_border100"
+        android:elevation="4dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/mvb_spacing_400"
+            android:paddingTop="4dp"
+            android:paddingEnd="@dimen/mvb_spacing_400"
+            android:paddingBottom="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_question_icon"
+                android:layout_width="21.33dp"
+                android:layout_height="21.33dp"
+                android:src="@drawable/ic_quiz_v2"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_question_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/mvb_spacing_200"
+                android:text="@string/common_question"
+                android:textColor="@color/neutral_900"
+                android:textSize="10.66sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/iv_question_icon"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_btn_close"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:padding="@dimen/mvb_spacing_150"
+                android:src="@drawable/ic_cross"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:background="@drawable/ripple_neutral300_oval" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_btn_minimize"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="@dimen/mvb_spacing_400"
+                android:padding="@dimen/mvb_spacing_150"
+                android:src="@drawable/ic_minus_32dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/iv_btn_close"
+                app:layout_constraintTop_toTopOf="parent"
+                android:background="@drawable/ripple_neutral300_oval" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:id="@+id/view_header_divider"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/mvb_border_100"
+            android:background="@color/color_E6E6E6"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cl_header" />
+
+        <com.viewsonic.classswift.ui.widget.quiz.MvbImageUploadView
+            android:id="@+id/miuv_image_upload_view"
+            android:layout_width="0dp"
+            android:layout_height="277.33dp"
+            android:layout_marginHorizontal="@dimen/mvb_spacing_600"
+            android:layout_marginTop="@dimen/mvb_spacing_600"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/view_header_divider" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_action_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/mvb_spacing_600"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <com.viewsonic.classswift.ui.widget.ClassSwiftLoadingButton
+                android:id="@+id/button_cancel_question"
+                android:layout_width="0dp"
+                android:layout_height="37.33dp"
+                android:clickable="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/button_start_question"
+                app:layout_constraintHorizontal_chainStyle="spread"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:lbBackgroundColor="@color/neutral_0"
+                app:lbBorderColor="@color/neutral_300"
+                app:lbClickedBackgroundColor="@color/neutral_300"
+                app:lbClickedBorderColor="@color/neutral_300"
+                app:lbClickedTextColor="@color/neutral_900"
+                app:lbRadius="5.33dp"
+                app:lbText="@string/common_cancel_question"
+                app:lbTextColor="@color/neutral_900"
+                app:lbTextSize="12sp" />
+
+            <com.viewsonic.classswift.ui.widget.ClassSwiftLoadingButton
+                android:id="@+id/button_start_question"
+                android:layout_width="0dp"
+                android:layout_height="37.33dp"
+                android:layout_marginStart="@dimen/mvb_spacing_400"
+                android:clickable="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintStart_toEndOf="@+id/button_cancel_question"
+                app:layout_constraintTop_toTopOf="parent"
+                app:lbBackgroundColor="@color/violet_500"
+                app:lbBorderColor="@color/violet_500"
+                app:lbClickedBackgroundColor="@color/violet_700"
+                app:lbClickedBorderColor="@color/violet_700"
+                app:lbClickedTextColor="@color/neutral_0"
+                app:lbDisableBackgroundColor="@color/neutral_200"
+                app:lbDisableTextColor="@color/neutral_500"
+                app:lbRadius="5.33dp"
+                app:lbText="@string/common_start_quiz"
+                app:lbTextColor="@color/neutral_0"
+                app:lbTextSize="12sp" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.viewsonic.classswift.ui.widget.MvbLoadingAnimation
+            android:id="@+id/mla_loading"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.viewsonic.classswift.ui.widget.MvbToast
+            android:id="@+id/mt_toast"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/mvb_spacing_400"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:mtHasActionButton="false"
+            app:mtHasCloseButton="false"
+            app:mtText="@string/quiz_error_msg_start_quiz"
+            app:mtToastLevel="level_danger" />
+
+        <com.viewsonic.classswift.ui.widget.CSMessageDialog
+            android:id="@+id/cs_message_dialog"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone"
+            app:csmdMaskBackground="@drawable/bg_mask_radius800"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.viewsonic.classswift.ui.widget.dialog.MvbSystemDialogView
+            android:id="@+id/msdv_close_confirm"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>

@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- a = alpha, number = percentage, ex a10 = 10% Transparency-->
+<!-- l = luminance, number = percentage, ex al0 = 10% Luminance -->
+<resources>
+    <color name="color_F7514D">#F7514D</color>
+    <color name="color_EB9E9B">#EB9E9B</color>
+    <color name="color_4F9D52">#4F9D52</color>
+    <color name="color_93D55D">#93D55D</color>
+    <color name="color_A0AEF9">#A0AEF9</color>
+    <color name="color_F08843">#F08843</color>
+    <color name="color_F2F7FC">#F2F7FC</color>
+    <color name="color_4697EC">#4697EC</color>
+    <color name="color_FFF3F5">#FFF3F5</color>
+    <color name="color_E7556E">#E7556E</color>
+    <color name="color_BD0020">#BD0020</color>
+    <color name="color_DB0025">#DB0025</color>
+    <color name="color_FCBA00">#FCBA00</color>
+    <color name="color_F4BA00">#F4BA00</color>
+    <color name="color_FC9700">#FC9700</color>
+    <color name="color_51FFA6">#51FFA6</color>
+    <color name="color_61B82C">#61B82C</color>
+    <color name="color_5C6266">#5C6266</color>
+    <color name="color_D9E7F5">#D9E7F5</color>
+    <color name="color_5EA4DA">#5EA4DA</color>
+    <color name="color_2E2EB2">#2E2EB2</color>
+    <color name="color_212194">#212194</color>
+    <color name="color_3AC9CC">#3AC9CC</color>
+    <color name="color_35B7BA">#35B7BA</color>
+    <color name="color_1B1B1F">#1B1B1F</color>
+    <color name="color_C70C31">#C70C31</color>
+    <color name="color_EE0000">#FFEE0000</color>
+    <color name="color_0A8CF0">#FF0A8CF0</color>
+    <color name="color_005FBD">#FF005FBD</color>
+    <color name="color_638C2A">#638C2A</color>
+    <color name="color_C3C7C7">#FFC3C7C7</color>
+    <color name="color_66C3C7C7">#66C3C7C7</color>
+    <color name="color_60C3C7C7">#60C3C7C7</color>
+    <color name="color_2E3133">#FF2E3133</color>
+    <color name="color_78CB3D">#78CB3D</color>
+    <color name="color_578431">#FF578431</color>
+    <color name="color_F1FAEB">#FFF1FAEB</color>
+    <color name="color_E5F5D9">#FFE5F5D9</color>
+    <color name="color_F02B2B">#FFF02B2B</color>
+    <color name="color_F04869">#FFF04869</color>
+    <color name="color_943149">#FF943149</color>
+    <color name="color_F44336">#FFF44336</color>
+    <color name="color_FF4248">#FFFF4248</color>
+    <color name="color_FEF4F4">#FFFEF4F4</color>
+    <color name="color_FCDFDE">#FFFCDFDE</color>
+    <color name="color_50A327">#FF50A327</color>
+    <color name="color_E7F4DB">#FFE7F4DB</color>
+    <color name="color_065490">#FF065490</color>
+    <color name="color_828B93">#FF828B93</color>
+    <color name="color_F6FFEB">#FFF6FFEB</color>
+    <color name="color_81B23D">#FF81B23D</color>
+    <color name="color_8E8E8E">#FF8E8E8E</color>
+    <color name="color_FDE9B4">#FFFDE9B4</color>
+    <color name="color_C52703">#FFC52703</color>
+    <color name="color_FFECEF">#FFFFECEF</color>
+    <color name="color_E7F7D0">#FFE7F7D0</color>
+    <color name="color_3C5AAA">#FF3C5AAA</color>
+    <color name="color_4848F0">#FF4848F0</color>
+    <color name="color_3B3BD1">#FF3B3BD1</color>
+    <color name="color_DADAFC">#FFDADAFC</color>
+    <color name="color_B6B6F9">#FFB6B6F9</color>
+    <color name="color_23797A">#FF23797A</color>
+    <color name="color_1A5A5C">#FF1A5A5C</color>
+    <color name="color_D6EDFF">#FFD6EDFF</color>
+    <color name="color_EDEDFD">#FFEDEDFD</color>
+    <color name="color_999999">#FF999999</color>
+    <color name="color_767676">#FF767676</color>
+    <color name="color_0F2671">#FF0F2671</color>
+    <color name="color_666666">#FF666666</color>
+    <color name="color_a64_000000">#A3000000</color>
+    <color name="color_DC2626">#FFDC2626</color>
+
+    <!-- Black-->
+    <color name="black">#000000</color>
+    <color name="black_a10">#1A000000</color>
+    <color name="black_a20">#33000000</color>
+    <color name="black_a24">#3D000000</color>
+    <color name="black_a30">#4C000000</color>
+    <color name="black_a35">#59000000</color>
+    <color name="black_a40">#66000000</color>
+    <color name="black_a60">#99000000</color>
+    <color name="black_a70">#B2000000</color>
+    <color name="black_a80">#CC000000</color>
+    <color name="black_a85">#D9000000</color>
+
+    <!-- White-->
+    <color name="white">#FFFFFF</color>
+    <color name="white_a00">#00FFFFFF</color>
+    <color name="white_a05">#0DFFFFFF</color>
+    <color name="white_a08">#14FFFFFF</color>
+    <color name="white_a10">#1AFFFFFF</color>
+    <color name="white_a16">#29FFFFFF</color>
+    <color name="white_a18">#2EFFFFFF</color>
+    <color name="white_a20">#33FFFFFF</color>
+    <color name="white_a24">#3DFFFFFF</color>
+    <color name="white_a30">#4DFFFFFF</color>
+    <color name="white_a32">#52FFFFFF</color>
+    <color name="white_a40">#66FFFFFF</color>
+    <color name="white_a50">#80FFFFFF</color>
+    <color name="white_a60">#99FFFFFF</color>
+    <color name="white_a70">#B2FFFFFF</color>
+    <color name="white_a80">#CCFFFFFF</color>
+    <color name="white_a90">#E5FFFFFF</color>
+
+    <!-- Gray -->
+    <color name="color_F6F6F6">#F6F6F6</color>
+    <color name="color_F2F2F2">#F2F2F2</color>
+    <color name="color_F5F5F5">#F5F5F5</color>
+    <color name="color_E5E5E5">#E5E5E5</color>
+    <color name="color_EBEBEB">#EBEBEB</color>
+    <color name="color_E6E6E6">#E6E6E6</color>
+    <color name="color_D6D6D6">#D6D6D6</color>
+    <color name="color_CFCFCF">#CFCFCF</color>
+    <color name="color_C2C2C2">#C2C2C2</color>
+    <color name="color_BDBDBD">#BDBDBD</color>
+    <color name="color_B2B2B2">#B2B2B2</color>
+    <color name="color_909090">#909090</color>
+    <color name="color_797979">#797979</color>
+    <color name="color_858585">#858585</color>
+    <color name="color_333333">#333333</color>
+    <color name="color_2D2D2D">#2D2D2D</color>
+    <color name="color_2A2A2A">#2A2A2A</color>
+    <color name="color_5E5E5E">#5E5E5E</color>
+    <color name="color_4D4D4D">#4D4D4D</color>
+    <color name="color_BEC2C2">#BEC2C2</color>
+    <color name="color_C2BEC2C2">#C2BEC2C2</color>
+    <color name="color_D0D0D0">#D0D0D0</color>
+
+    <!-- transparent -->
+    <color name="transparent">#00000000</color>
+
+    <!-- Pint color -->
+    <color name="color_FDF500">#FDF500</color>
+    <color name="color_43A700">#43A700</color>
+    <color name="color_004CFC">#004CFC</color>
+
+    <!-- VSDS Foundation — Neutral (new steps) -->
+    <color name="color_FAFAFA">#FAFAFA</color>
+    <color name="color_E9E9E9">#E9E9E9</color>
+    <color name="color_DEDEDE">#DEDEDE</color>
+    <color name="color_A4A4A4">#A4A4A4</color>
+    <color name="color_404041">#404041</color>
+    <color name="color_202020">#202020</color>
+
+    <!-- VSDS Foundation — Red (new steps) -->
+    <color name="color_FFDFE4">#FFDFE4</color>
+    <color name="color_FFBDC8">#FFBDC8</color>
+    <color name="color_A6011D">#A6011D</color>
+    <color name="color_6F001E">#6F001E</color>
+    <color name="color_4D0017">#4D0017</color>
+
+    <!-- VSDS Foundation — Green (new steps) -->
+    <color name="color_D9F2B6">#D9F2B6</color>
+    <color name="color_CBEBA0">#CBEBA0</color>
+    <color name="color_B1E26E">#B1E26E</color>
+    <color name="color_48720F">#48720F</color>
+    <color name="color_3D5C12">#3D5C12</color>
+    <color name="color_2A4208">#2A4208</color>
+
+    <!-- VSDS Foundation — Sky (new steps) -->
+    <color name="color_EBF6FF">#EBF6FF</color>
+    <color name="color_B2D7F1">#B2D7F1</color>
+    <color name="color_94C3E7">#94C3E7</color>
+    <color name="color_147AC8">#147AC8</color>
+    <color name="color_106FBA">#106FBA</color>
+    <color name="color_005A9E">#005A9E</color>
+    <color name="color_014579">#014579</color>
+    <color name="color_04345B">#04345B</color>
+
+    <!-- VSDS Foundation — Violet (new steps) -->
+    <color name="color_9191F6">#9191F6</color>
+    <color name="color_6D6DF3">#6D6DF3</color>
+    <color name="color_141475">#141475</color>
+
+    <!-- VSDS Foundation — Cyan (new steps) -->
+    <color name="color_EBFAFA">#EBFAFA</color>
+    <color name="color_D6F9F9">#D6F9F9</color>
+    <color name="color_A6EFF1">#A6EFF1</color>
+    <color name="color_69E3E6">#69E3E6</color>
+    <color name="color_2C9799">#2C9799</color>
+    <color name="color_144647">#144647</color>
+
+    <!-- VSDS Foundation — Yellow (new steps) -->
+    <color name="color_FFFAEC">#FFFAEC</color>
+    <color name="color_FEDC85">#FEDC85</color>
+    <color name="color_FEC841">#FEC841</color>
+    <color name="color_FFB800">#FFB800</color>
+    <color name="color_F67F00">#F67F00</color>
+    <color name="color_EC6200">#EC6200</color>
+    <color name="color_E34521">#E34521</color>
+
+    <!-- VSDS Foundation — Blue -->
+    <color name="color_F6F9FF">#F6F9FF</color>
+    <color name="color_E5ECFF">#E5ECFF</color>
+    <color name="color_BCCEFE">#BCCEFE</color>
+    <color name="color_86A1F4">#86A1F4</color>
+    <color name="color_5D80ED">#5D80ED</color>
+    <color name="color_4C71D2">#4C71D2</color>
+    <color name="color_41538A">#41538A</color>
+    <color name="color_2F3E6D">#2F3E6D</color>
+    <color name="color_1F2E5C">#1F2E5C</color>
+
+    <!-- VSDS Foundation — Brown -->
+    <color name="color_F0EFEF">#F0EFEF</color>
+    <color name="color_EEECE9">#EEECE9</color>
+    <color name="color_E8E5E2">#E8E5E2</color>
+    <color name="color_DCD9D3">#DCD9D3</color>
+    <color name="color_D1CCC5">#D1CCC5</color>
+    <color name="color_C5BFB6">#C5BFB6</color>
+    <color name="color_B5AEA4">#B5AEA4</color>
+    <color name="color_A59E92">#A59E92</color>
+    <color name="color_958D81">#958D81</color>
+    <color name="color_8D8578">#8D8578</color>
+
+    <!-- VSDS Foundation — Gray Blue -->
+    <color name="color_F0F4F7">#F0F4F7</color>
+    <color name="color_D9E3EA">#D9E3EA</color>
+    <color name="color_CDDAE3">#CDDAE3</color>
+    <color name="color_C1D1DD">#C1D1DD</color>
+    <color name="color_B5C8D6">#B5C8D6</color>
+    <color name="color_9CB5C8">#9CB5C8</color>
+    <color name="color_84A3BB">#84A3BB</color>
+    <color name="color_6C91AD">#6C91AD</color>
+    <color name="color_5D7E96">#5D7E96</color>
+    <color name="color_384D5D">#384D5D</color>
+
+    <!-- VSDS Foundation — Indigo -->
+    <color name="color_F5F6FB">#F5F6FB</color>
+    <color name="color_E6E8F4">#E6E8F4</color>
+    <color name="color_CACCEE">#CACCEE</color>
+    <color name="color_ADAFE2">#ADAFE2</color>
+    <color name="color_8D92CD">#8D92CD</color>
+    <color name="color_7074B2">#7074B2</color>
+    <color name="color_484C93">#484C93</color>
+    <color name="color_373C91">#373C91</color>
+    <color name="color_2B3084">#2B3084</color>
+    <color name="color_1A1D4F">#1A1D4F</color>
+
+    <!-- VSDS Foundation — Purple -->
+    <color name="color_F6EAFF">#F6EAFF</color>
+    <color name="color_E5C3FF">#E5C3FF</color>
+    <color name="color_CA87FF">#CA87FF</color>
+    <color name="color_B95FFF">#B95FFF</color>
+    <color name="color_A737FF">#A737FF</color>
+    <color name="color_882CCF">#882CCF</color>
+    <color name="color_68219F">#68219F</color>
+    <color name="color_48166E">#48166E</color>
+    <color name="color_360A57">#360A57</color>
+    <color name="color_23003D">#23003D</color>
+
+    <!-- VSDS Foundation — Slate -->
+    <color name="color_E9EAF0">#E9EAF0</color>
+    <color name="color_D3D6E1">#D3D6E1</color>
+    <color name="color_C2C6D5">#C2C6D5</color>
+    <color name="color_A7ADC0">#A7ADC0</color>
+    <color name="color_838CA6">#838CA6</color>
+    <color name="color_636D8A">#636D8A</color>
+    <color name="color_3C455D">#3C455D</color>
+    <color name="color_20273E">#20273E</color>
+    <color name="color_151C32">#151C32</color>
+    <color name="color_000C2B">#000C2B</color>
+
+    <!-- VSDS Foundation — Teal -->
+    <color name="color_F1F7F6">#F1F7F6</color>
+    <color name="color_EAF3F2">#EAF3F2</color>
+    <color name="color_E3EFED">#E3EFED</color>
+    <color name="color_D6E8E4">#D6E8E4</color>
+    <color name="color_C8E0DB">#C8E0DB</color>
+    <color name="color_BADBD2">#BADBD2</color>
+    <color name="color_9EBDB7">#9EBDB7</color>
+    <color name="color_82A29C">#82A29C</color>
+    <color name="color_668780">#668780</color>
+    <color name="color_587A73">#587A73</color>
+
+</resources>

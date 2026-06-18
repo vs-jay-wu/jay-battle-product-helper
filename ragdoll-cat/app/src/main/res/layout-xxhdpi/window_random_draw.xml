@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="348dp"
+    android:layout_height="336dp"
+    android:background="@drawable/bg_neural0_radius800_line_neutral450_border400"
+    tools:ignore="TextSizeCheck">
+
+    <ImageButton
+        android:id="@+id/button_close"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="10.66dp"
+        android:layout_marginEnd="10.66dp"
+        android:background="@drawable/ic_close_64dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription" />
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10.66dp"
+        android:layout_marginTop="34.66dp"
+        android:text="@string/toolbar_menu_interaction_random_draw"
+        android:textColor="@color/neutral_900"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_dice"
+        android:layout_width="125.3dp"
+        android:layout_height="125.3dp"
+        android:background="@drawable/bg_circle_blue"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:layout_width="106.66dp"
+            android:layout_height="106.66dp"
+            android:src="@drawable/ic_dice"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="ContentDescription" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottie_dice"
+        android:layout_width="125.3dp"
+        android:layout_height="125.3dp"
+        android:background="@drawable/bg_circle_blue"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:lottie_autoPlay="false"
+        app:lottie_fileName="dice_animation.json"
+        app:lottie_loop="true" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_participant_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="26.66dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/tv_seat"
+            android:layout_width="82.66dp"
+            android:layout_height="82.66dp"
+            android:background="@drawable/bg_circle_blue"
+            android:gravity="center"
+            android:textColor="@color/neutral_0"
+            android:textFontWeight="600"
+            android:textSize="29.33sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="100" />
+
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="0dp"
+            android:layout_height="82.66dp"
+            android:layout_marginStart="16dp"
+            android:gravity="start|center"
+            android:maxLines="2"
+            android:textColor="@color/neutral_1000"
+            android:textSize="21.33sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tv_seat"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="達卡奴巴索 阿布里古達依卡拉瓦利斯" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_try_again"
+        android:layout_width="wrap_content"
+        android:layout_height="32dp"
+        android:layout_marginBottom="24dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="UseCompoundDrawables">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_upload_again"
+            app:tint="@color/brand_blue"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            android:id="@+id/tv_Text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:maxLines="1"
+            android:text="@string/common_try_again"
+            android:textColor="@color/brand_blue"
+            android:textSize="18.66sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_no_participants"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10.66dp"
+        android:layout_marginBottom="31.66dp"
+        android:text="@string/quiz_random_draw_status_no_student"
+        android:textColor="@color/neutral_450"
+        android:textFontWeight="600"
+        android:textSize="18.66sp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="TextContrastCheck" />
+
+    <com.viewsonic.classswift.ui.widget.CSToast
+        android:id="@+id/cst_error_toast"
+        android:layout_width="wrap_content"
+        android:layout_height="32dp"
+        android:layout_marginTop="8dp"
+        android:visibility="gone"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:cstText="@string/error_msg_general_try_again"
+        app:successStatus="false" />
+
+    <com.viewsonic.classswift.ui.widget.NetworkDisconnectView
+        android:id="@+id/view_network_disconnect"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:cardRadius="@dimen/radius_800"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

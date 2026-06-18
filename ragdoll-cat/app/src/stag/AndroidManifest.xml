@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- TestFocusableReceiver is registered dynamically in ClassSwiftApplication via reflection.
+     No manifest receiver needed (Android 8+ background implicit broadcast restriction). -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" />

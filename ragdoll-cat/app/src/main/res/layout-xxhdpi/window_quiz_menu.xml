@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:paddingVertical="9.33dp"
+    android:paddingHorizontal="12dp"
+    android:background="@drawable/bg_window_subordinate_menu"
+    android:theme="@style/Base.Theme.ClassSwift"
+    tools:ignore="ContentDescription">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_left_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent">
+
+        <com.viewsonic.classswift.ui.widget.toolbar.CSSubordinateMenuItem
+            android:id="@+id/cssmi_true_or_false"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintWidth_min="wrap"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:iconSrc="@drawable/ic_toolbar_irs_true_false"
+            app:title="@string/quiz_types_true_false"/>
+
+        <com.viewsonic.classswift.ui.widget.toolbar.CSSubordinateMenuItem
+            android:id="@+id/cssmi_multiple_selection"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4.66dp"
+            app:layout_constraintWidth_min="wrap"
+            app:layout_constraintTop_toBottomOf="@id/cssmi_true_or_false"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:iconSrc="@drawable/ic_toolbar_irs_multiple_selection"
+            app:title="@string/quiz_types_multiple_selection"/>
+
+        <com.viewsonic.classswift.ui.widget.toolbar.CSSubordinateMenuItem
+            android:id="@+id/cssmi_poll"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4.66dp"
+            app:layout_constraintWidth_min="wrap"
+            app:layout_constraintTop_toBottomOf="@id/cssmi_multiple_selection"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:iconSrc="@drawable/ic_toolbar_irs_poll"
+            app:title="@string/quiz_types_poll"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_right_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6.67dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/cl_left_container">
+
+        <com.viewsonic.classswift.ui.widget.toolbar.CSSubordinateMenuItem
+            android:id="@+id/cssmi_short_answer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintWidth_min="wrap"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:iconSrc="@drawable/ic_toolbar_irs_short_answer"
+            app:title="@string/quiz_types_short_answer"/>
+
+        <com.viewsonic.classswift.ui.widget.toolbar.CSSubordinateMenuItem
+            android:id="@+id/cssmi_audio"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4.66dp"
+            app:layout_constraintWidth_min="wrap"
+            app:layout_constraintTop_toBottomOf="@id/cssmi_short_answer"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:iconSrc="@drawable/ic_toolbar_irs_audio"
+            app:title="@string/quiz_types_audio"/>
+
+        <com.viewsonic.classswift.ui.widget.toolbar.CSSubordinateMenuItem
+            android:id="@+id/cssmi_quiz_generator"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4.66dp"
+            app:layout_constraintWidth_min="wrap"
+            app:layout_constraintTop_toBottomOf="@id/cssmi_audio"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:iconSrc="@drawable/ic_toolbar_irs_quiz_generator"
+            app:title="@string/quiz_types_quiz_generator"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

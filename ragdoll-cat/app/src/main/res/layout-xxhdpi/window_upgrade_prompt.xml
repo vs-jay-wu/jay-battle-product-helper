@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:paddingHorizontal="9.6dp"
+    android:paddingVertical="7.2dp"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:theme="@style/Base.Theme.ClassSwift"
+    android:background="@drawable/bg_window_prompt"
+    tools:ignore="ContentDescription">
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:textSize="15sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:text="@string/instant_push_title"/>
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_premium_icon"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginStart="2.6dp"
+        android:padding="2dp"
+        android:src="@drawable/ic_premium"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/tv_title"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription" />
+
+    <TextView
+        android:id="@+id/tv_soon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:paddingHorizontal="1.26dp"
+        android:paddingVertical="1dp"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:textSize="7.53sp"
+        android:textStyle="bold"
+        android:text="@string/common_soon"
+        android:background="@drawable/bg_toolbar_prompt_button"
+        android:backgroundTint="@color/color_F4BA00"
+        app:layout_constraintStart_toEndOf="@id/tv_title"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

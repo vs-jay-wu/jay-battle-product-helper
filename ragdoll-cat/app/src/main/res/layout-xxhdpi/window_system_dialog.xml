@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/cs_system_dialog_mask_color">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="372dp"
+        android:layout_height="196dp"
+        android:clipChildren="true"
+        android:clipToPadding="true"
+        app:cardCornerRadius="5.33dp"
+        app:cardBackgroundColor="@color/cs_system_dialog_normal_background"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:background="@color/cs_system_dialog_normal_background"
+                android:gravity="center"
+                android:padding="4dp"
+                android:textColor="@color/neutral_900"
+                android:textFontWeight="600"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHeight_percent="0.22"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Title" />
+
+            <View
+                android:id="@+id/view_top_divider_line"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/cs_system_dialog_divide_color"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_title" />
+
+            <TextView
+                android:id="@+id/tv_message"
+                android:layout_width="match_parent"
+                android:layout_height="104dp"
+                android:layout_gravity="center"
+                android:background="@color/white"
+                android:gravity="center"
+                android:paddingVertical="4dp"
+                android:paddingHorizontal="24dp"
+                android:textColor="@color/neutral_900"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHeight_percent="0.52"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/view_top_divider_line"
+                tools:text="Message" />
+
+            <View
+                android:id="@+id/view_bottom_divider_line"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/cs_system_dialog_divide_color"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_message" />
+
+            <View
+                android:id="@+id/view_button_divider_line"
+                android:layout_width="1dp"
+                android:layout_height="0dp"
+                android:background="@color/cs_system_dialog_divide_color"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/view_bottom_divider_line" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/bt_negative"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@drawable/selector_system_dialog_button"
+                android:padding="8dp"
+                android:textFontWeight="600"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textAllCaps="false"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/view_button_divider_line"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/view_bottom_divider_line"
+                tools:text="@string/common_cancel" />
+
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:id="@+id/cpi_negative"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:indeterminate="true"
+                android:visibility="gone"
+                app:indicatorColor="@color/brand_blue"
+                app:layout_constraintTop_toBottomOf="@id/view_bottom_divider_line"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@id/view_button_divider_line"
+                app:layout_constraintDimensionRatio="1:1.01"
+                app:layout_constraintHeight_percent=".18"
+                app:indicatorSize="24dp"
+                app:trackThickness="2dp"
+                tools:visibility="visible" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/bt_positive"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@drawable/selector_system_dialog_button"
+                android:padding="8dp"
+                android:textColor="@color/brand_blue"
+                android:textFontWeight="600"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textAllCaps="false"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/view_button_divider_line"
+                app:layout_constraintTop_toBottomOf="@id/view_bottom_divider_line"
+                tools:text="@string/common_save" />
+
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:id="@+id/cpi_positive"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:indeterminate="true"
+                android:visibility="gone"
+                app:indicatorColor="@color/brand_blue"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintDimensionRatio="1:1.01"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHeight_percent=".18"
+                app:indicatorSize="24dp"
+                app:trackThickness="2dp"
+                app:layout_constraintStart_toEndOf="@id/view_button_divider_line"
+                app:layout_constraintTop_toBottomOf="@id/view_bottom_divider_line"
+                tools:visibility="visible" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

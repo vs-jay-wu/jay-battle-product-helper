@@ -1,0 +1,9 @@
+# ragdoll-cat is tracked here (demo repo), but block sensitive files.
+# Most secrets (*.jks, *.keystore, keystore.properties, local.properties,
+# google-services.json, *.env-style) are already covered by ragdoll-cat/.gitignore.
+# These symlinks point to personal credential paths outside the repo — never commit them.
+ragdoll-cat/.env
+ragdoll-cat/.mcp.json
+# Debug keystore (ragdoll-cat/.gitignore only covers cs_release.keystore + *.jks)
+ragdoll-cat/*.keystore
+# Note: cs_release.keystore.gpg is GPG-encrypted and intentionally kept (safe to commit).

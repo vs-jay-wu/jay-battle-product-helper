@@ -1,0 +1,46 @@
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/quiz_info_option"
+        android:textSize="18sp"
+        android:textColor="@color/multiple_choice_options_title"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- 123/ABC switch -->
+    <com.viewsonic.classswift.ui.widget.quiz.NumberAlphabetSwitch
+        android:id="@+id/cs_number_alphabet_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_5"
+        app:layout_constraintStart_toEndOf="@+id/tv_title"
+        app:layout_constraintTop_toTopOf="@+id/tv_title"
+        app:layout_constraintBottom_toBottomOf="@id/tv_title"/>
+
+    <!-- Multiple/Single answer switch -->
+    <com.viewsonic.classswift.ui.widget.quiz.SingleMultipleAnswerSwitch
+        android:id="@+id/cs_single_multiple_answer_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="17dp"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_title"
+        app:layout_constraintEnd_toEndOf="@+id/cs_option_button_group"
+        app:layout_constraintTop_toTopOf="@+id/tv_title" />
+
+    <!-- 123/ABC options -->
+    <com.viewsonic.classswift.ui.widget.quiz.OptionButtonGroup
+        android:id="@+id/cs_option_button_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_14"
+        app:layout_constraintTop_toBottomOf="@+id/tv_title"
+        app:layout_constraintStart_toStartOf="@+id/tv_title" />
+
+</merge>

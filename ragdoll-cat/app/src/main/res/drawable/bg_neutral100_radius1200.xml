@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ VSFT-8453 Sketch Response Overview tab 大數字 box 底色。
+  ~ Figma: surface-200 (#F6F6F6, vsds/sys/color/surface-200) + rounded-[24px] + 無 border。
+  ~ radius_1200=16dp 對應 Figma 24px ÷ 1.5。
+  -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/neutral_100" />
+    <corners android:radius="@dimen/radius_1200" />
+</shape>

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cl_root"
+    android:layout_width="827.33dp"
+    android:layout_height="332dp"
+    android:background="@drawable/bg_neutral0_radius400_commonstrokecolor_border200">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_left_panel"
+        android:layout_width="130dp"
+        android:layout_height="330.67dp"
+        android:layout_marginStart="0.66dp"
+        android:background="@drawable/bg_record_group_left_panel"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/tv_group_number"
+            android:layout_width="wrap_content"
+            android:layout_height="37.73dp"
+            android:layout_marginTop="128.26dp"
+            android:textColor="@color/neutral_900"
+            android:textSize="32sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="123" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/acb_add_point"
+            android:layout_width="32dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="16.66dp"
+            android:layout_marginEnd="30dp"
+            android:background="@drawable/bg_records_add_point"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1"
+            android:text="@string/records_add_point"
+            android:textColor="@color/neutral_0"
+            android:textSize="13.33sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_group_number" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/acb_subtract_point"
+            android:layout_width="32dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="16.66dp"
+            android:background="@drawable/bg_records_subtract_point"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1"
+            android:text="@string/records_subtract_point"
+            android:textColor="@color/neutral_0"
+            android:textSize="13.33sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_group_number" />
+
+        <TextView
+            android:id="@+id/tv_add_point_animator"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:background="@color/transparent"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1"
+            android:padding="0dp"
+            android:text="@string/records_add_point"
+            android:textColor="@color/records_add_point_animator_text_color"
+            android:textSize="13.33sp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/acb_add_point"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/acb_add_point"
+            app:layout_constraintTop_toBottomOf="@+id/tv_group_number"
+            tools:text="+1" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_right_panel"
+        android:layout_width="697.33dp"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/cl_left_panel"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="13dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

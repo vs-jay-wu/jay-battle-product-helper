@@ -1,0 +1,123 @@
+<resources>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="margin_32">32dp</dimen>
+    <dimen name="margin_14">14dp</dimen>
+    <dimen name="margin_8">8dp</dimen>
+    <dimen name="margin_5">5dp</dimen>
+    <dimen name="margin_3">3dp</dimen>
+    <dimen name="margin_2">2dp</dimen>
+    <dimen name="margin_1">1dp</dimen>
+    <dimen name="quiz_option_padding">80dp</dimen>
+    <dimen name="quiz_max_chart_bar_width">205dp</dimen>
+    <dimen name="quiz_no_answer_start_padding">4dp</dimen>
+    <dimen name="quiz_no_answer_end_padding">9.6dp</dimen>
+    <dimen name="fastscroll_min_touch_target_size">48dp</dimen>
+    <dimen name="download_progressbar">2dp</dimen>
+    <dimen name="push_respond_task_grid_item_horizontal_space">6.66dp</dimen>
+    <dimen name="push_respond_task_grid_item_vertical_space">6.66dp</dimen>
+    <dimen name="push_respond_group_grid_item_horizontal_space">3.33dp</dimen>
+    <dimen name="push_respond_group_grid_item_vertical_space">3.33dp</dimen>
+    <dimen name="push_respond_record_item_horizontal_space">0dp</dimen>
+    <dimen name="push_respond_record_item_vertical_space">4.66dp</dimen>
+    <dimen name="push_respond_record_list_normal_mode_height">382.33dp</dimen>
+    <dimen name="push_respond_record_list_label_as_marked_mode_height">341dp</dimen>
+    <dimen name="push_respond_record_list_push_record_mode_height">339dp</dimen>
+    <dimen name="push_respond_record_non_full_screen_loading_height">454.33dp</dimen>
+    <dimen name="push_respond_record_non_full_screen_loading_width">862dp</dimen>
+    <dimen name="batch_quiz_result_title_height">53.33dp</dimen>
+    <dimen name="batch_quiz_result_scrollbar_padding">16.66dp</dimen>
+    <!-- must  batch_quiz_result_title_height + batch_quiz_result_scrollbar_padding for recycle view scrollbar margin-->
+    <dimen name="batch_quiz_result_title_with_scrollbar_height">65.33dp</dimen>
+    <!-- must 26.66 - batch_quiz_result_scrollbar_padding for recycle view scrollbar margin-->
+    <dimen name="batch_quiz_result_bottom_margin_for_scrollbar">10dp</dimen>
+    <dimen name="batch_quiz_result_item_width">154.66dp</dimen>
+    <dimen name="batch_quiz_chart_bar_max_height">330dp</dimen>
+    <dimen name="batch_quiz_chart_bar_bottom_padding">6.66dp</dimen>
+    <dimen name="cstv_track_min_width">48dp</dimen>
+
+    <!-- MVB audio switch component dimensions -->
+    <dimen name="mvb_switch_track_width">40dp</dimen>
+    <dimen name="mvb_switch_track_height">20dp</dimen>
+    <dimen name="mvb_switch_thumb_size">12dp</dimen>
+
+    <!-- MVB quiz scaled design dimensions (Figma px / 1.5) — quiz-specific values that do not map to a shared mvb_spacing_* token. -->
+    <dimen name="quiz_mvb_panel_left_width">333.33dp</dimen>
+    <dimen name="quiz_mvb_option_row_height">67.33dp</dimen>
+    <dimen name="quiz_mvb_student_cell_height">66.67dp</dimen>
+    <dimen name="quiz_mvb_student_cell_header_height">23.33dp</dimen>
+    <dimen name="quiz_mvb_result_student_header_min_height">18.67dp</dimen>
+    <dimen name="quiz_mvb_divider_thickness">0.67dp</dimen>
+    <dimen name="quiz_mvb_tab_indicator_height">1.33dp</dimen>
+    <dimen name="quiz_mvb_icon_size_sm">16dp</dimen>
+    <dimen name="quiz_mvb_icon_size_md">21.33dp</dimen>
+    <dimen name="quiz_mvb_header_height">32dp</dimen>
+    <dimen name="quiz_mvb_header_divider_height">1dp</dimen>
+    <dimen name="quiz_mvb_poll_start_window_width">853dp</dimen>
+    <dimen name="quiz_mvb_poll_start_window_height">480dp</dimen>
+    <!-- RESULT 狀態高度：Figma 1280×784 ÷ 1.5 = 853×522.67dp -->
+    <dimen name="quiz_mvb_sketch_response_result_window_height">522.67dp</dimen>
+    <dimen name="quiz_mvb_dialog_width">244dp</dimen>
+    <dimen name="quiz_mvb_poll_edit_window_width">541.33dp</dimen>
+    <dimen name="quiz_mvb_poll_edit_window_height">626dp</dimen>
+    <dimen name="quiz_mvb_short_answer_edit_window_width">541.33dp</dimen>
+    <dimen name="quiz_mvb_short_answer_edit_window_height">426.66dp</dimen>
+    <dimen name="quiz_mvb_sketch_response_edit_window_width">541.33dp</dimen>
+    <!-- Figma 4877-103143: 704px / 1.5 ≈ 469dp (header + edit{preview + pagination + 24+24 padding} + action{24+24 padding + button}). Tight fit. -->
+    <dimen name="quiz_mvb_sketch_response_edit_window_height">469.33dp</dimen>
+    <dimen name="quiz_mvb_short_answer_popup_width">480dp</dimen>
+    <dimen name="quiz_mvb_short_answer_popup_height">288dp</dimen>
+    <dimen name="quiz_mvb_poll_edit_image_height">277.33dp</dimen>
+    <dimen name="quiz_mvb_close_btn_size">24dp</dimen>
+    <dimen name="quiz_mvb_window_button_height">37.33dp</dimen>
+    <dimen name="quiz_mvb_pagination_btn_size">21.33dp</dimen>
+    <dimen name="quiz_mvb_loading_size">32dp</dimen>
+    <dimen name="quiz_mvb_dialog_button_height">26.66dp</dimen>
+    <dimen name="quiz_mvb_text_xs">8sp</dimen>
+    <dimen name="quiz_mvb_text_sm">9.33sp</dimen>
+    <dimen name="quiz_mvb_text_md">10.67sp</dimen>
+    <dimen name="quiz_mvb_text_lg">12sp</dimen>
+    <dimen name="quiz_mvb_text_xl">13.33sp</dimen>
+    <dimen name="quiz_mvb_text_popup_answer">28sp</dimen>
+
+    <!-- MVB Quiz Collection layout dimensions (Figma px / 1.5) -->
+    <dimen name="quiz_mvb_qc_window_width">853dp</dimen>
+    <dimen name="quiz_mvb_qc_window_height">480dp</dimen>
+    <dimen name="quiz_mvb_qc_sidemenu_width">171dp</dimen>
+    <dimen name="quiz_mvb_qc_quiz_card_width">150dp</dimen>
+    <dimen name="quiz_mvb_qc_quiz_card_height">168dp</dimen>
+    <dimen name="quiz_mvb_qc_state_illustration_size">100dp</dimen>
+    <dimen name="quiz_mvb_qc_paging_footer_height">60dp</dimen>
+    <dimen name="quiz_mvb_qc_window_header_height">32dp</dimen>
+    <dimen name="quiz_mvb_qc_folder_row_height">32dp</dimen>
+    <dimen name="quiz_mvb_qc_sidebar_header_height">32dp</dimen>
+    <dimen name="quiz_mvb_qc_refresh_button_height">32dp</dimen>
+    <dimen name="quiz_mvb_qc_paging_loading_size">32dp</dimen>
+    <dimen name="quiz_mvb_qc_toolbar_icon_size">24dp</dimen>
+    <dimen name="quiz_mvb_qc_icon_xs">10.66dp</dimen>
+    <dimen name="quiz_mvb_qc_icon_sm">13.33dp</dimen>
+    <dimen name="quiz_mvb_qc_icon_md">16dp</dimen>
+    <dimen name="quiz_mvb_qc_icon_lg">21.33dp</dimen>
+    <dimen name="quiz_mvb_qc_icon_xl">26.66dp</dimen>
+    <dimen name="quiz_mvb_qc_sidemenu_loading_size">40dp</dimen>
+    <dimen name="quiz_mvb_qc_back_button_height">24dp</dimen>
+    <dimen name="quiz_mvb_qc_start_button_height">32dp</dimen>
+    <dimen name="quiz_mvb_qc_answer_mode_pill_height">16dp</dimen>
+
+    <!-- VSFT-8451 MVB Sketch Response Answering Window (Figma values ÷ 1.5) -->
+    <dimen name="quiz_mvb_sketch_response_window_width">786.66dp</dimen>
+    <dimen name="quiz_mvb_sketch_response_window_height">453.33dp</dimen>
+    <dimen name="quiz_mvb_sketch_response_left_column_width">253.33dp</dimen>
+    <dimen name="quiz_mvb_sketch_response_preview_height">169.33dp</dimen>
+    <dimen name="quiz_mvb_sketch_response_collect_btn_height">37.33dp</dimen>
+    <dimen name="quiz_mvb_sketch_response_refresh_btn_height">29.33dp</dimen>
+    <dimen name="quiz_mvb_sketch_response_card_width">112.66dp</dimen>
+    <dimen name="quiz_mvb_sketch_response_card_height">66.66dp</dimen>
+    <dimen name="quiz_mvb_sketch_response_card_name_bar_height">22dp</dimen>
+    <dimen name="quiz_mvb_sketch_response_icon_md">16dp</dimen>
+    <dimen name="quiz_mvb_sketch_response_icon_lg">21.33dp</dimen>
+
+    <!-- MVB Text Short Answer Quizzing Window (Figma values ÷ 1.5) -->
+    <dimen name="quiz_mvb_text_sa_quizzing_preview_height">169dp</dimen>
+    <dimen name="quiz_mvb_result_pie_chart_size">160dp</dimen>
+    <dimen name="quiz_mvb_result_chip_area_divider_height">45dp</dimen>
+</resources>

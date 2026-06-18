@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/quiz_mvb_qc_paging_footer_height">
+
+    <com.viewsonic.classswift.ui.widget.MvbLoadingAnimation
+        android:id="@+id/la_mqcpf_loading"
+        android:layout_width="@dimen/quiz_mvb_qc_paging_loading_size"
+        android:layout_height="@dimen/quiz_mvb_qc_paging_loading_size"
+        android:layout_gravity="center" />
+</FrameLayout>

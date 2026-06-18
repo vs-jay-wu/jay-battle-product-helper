@@ -1,0 +1,541 @@
+# =============================================================================
+# Android Build Workflow
+# =============================================================================
+#
+# PURPOSE
+#   This workflow is scoped to APK generation only. It builds signed APKs for
+#   the staging, RC, and production flavors and distributes them to QA via S3
+#   and email.
+#
+# CURRENT LIMITATIONS
+#   - All environments (stag, rc, prod) upload to the same staging S3 bucket
+#     (classswift-android-apk-aps1-stg). Dedicated RC and production buckets
+#     are not yet wired up.
+#   - There is no CD step. APKs are delivered to QA for manual installation;
+#     automated deployment to devices or the Play Store is out of scope here.
+#
+# FUTURE WORK
+#   When the team is ready to expand this pipeline, the following can be added:
+#   - Separate AWS S3 buckets and IAM roles per environment (RC, production).
+#   - A CD stage that promotes a validated APK to the Play Store or an MDM
+#     platform after QA sign-off.
+#
+# =============================================================================
+
+name: Android Build
+
+on:
+#  push:
+#    branches:
+#      - staging
+#      - rc
+#      - production
+#    paths:
+#      - 'version.properties'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Build environment'
+        type: choice
+        required: true
+        options:
+          - stag
+          - rc
+          - prod
+          - all
+      is_auto_upgrade_version:
+        description: 'Auto bump versionCode before building (stag: internal+1, rc: minor+1 on develop)'
+        type: boolean
+        default: false
+      is_test_mode:
+        description: 'Run in test mode — no git push to develop/staging; uploads to Test/ prefix'
+        type: boolean
+        default: false
+
+permissions:
+  id-token: write
+  contents: write
+
+jobs:
+  prepare:
+    name: Resolve build matrix
+    runs-on: ubuntu-latest
+    outputs:
+      envs: ${{ steps.matrix.outputs.envs }}
+    steps:
+      - name: Resolve environment list
+        id: matrix
+        run: |
+          echo "::group::Trigger info"
+          echo "event_name        : ${{ github.event_name }}"
+          echo "ref_name          : ${{ github.ref_name }}"
+          echo "inputs.environment: ${{ inputs.environment }}"
+          echo "::endgroup::"
+
+          if [ "${{ github.event_name }}" = "push" ]; then
+            case "${{ github.ref_name }}" in
+              staging)    ENVS='["stag"]' ;;
+              rc)         ENVS='["rc"]' ;;
+              production) ENVS='["prod"]' ;;
+            esac
+          elif [ "${{ inputs.environment }}" = "all" ]; then
+            ENVS='["stag","rc","prod"]'
+          else
+            ENVS='["${{ inputs.environment }}"]'
+          fi
+
+          echo "Resolved envs: $ENVS"
+          echo "envs=$ENVS" >> $GITHUB_OUTPUT
+
+  build:
+    name: Build ${{ matrix.env }} APKs
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      matrix:
+        env: ${{ fromJson(needs.prepare.outputs.envs) }}
+    steps:
+      - name: Determine build config
+        id: config
+        run: |
+          case "${{ matrix.env }}" in
+            stag)
+              TASK="assembleStageApks"
+              S3_PREFIX="Staging"
+              SECRET_SUFFIX="STAG"
+              BRANCH="staging"
+              ;;
+            rc)
+              TASK="assembleReleaseCandidateApks"
+              S3_PREFIX="RC"
+              SECRET_SUFFIX="RC"
+              BRANCH="rc"
+              ;;
+            prod)
+              TASK="assembleProductionApks"
+              S3_PREFIX="Production"
+              SECRET_SUFFIX="PROD"
+              BRANCH="production"
+              ;;
+          esac
+
+          # NOTE: All environments currently share the staging S3 bucket.
+          # Dedicated RC and production buckets will be introduced in a future update.
+          S3_BUCKET="classswift-android-apk-aps1-stg"
+          AWS_ROLE="$(printf '%s' "${{ secrets.ANDROID_AWS_STAGING_ROLE }}" | base64 -d)"
+          echo "::add-mask::$AWS_ROLE"
+          AWS_REGION="ap-southeast-1"
+
+          if [ "${{ inputs.is_test_mode }}" = "true" ]; then
+            EFFECTIVE_PREFIX="Test"
+          else
+            EFFECTIVE_PREFIX="$S3_PREFIX"
+          fi
+
+          echo "::group::Build config"
+          echo "env             : ${{ matrix.env }}"
+          echo "branch          : $BRANCH"
+          echo "task            : $TASK"
+          echo "s3_bucket       : $S3_BUCKET"
+          echo "s3_prefix       : $S3_PREFIX"
+          echo "effective_prefix: $EFFECTIVE_PREFIX"
+          echo "secret_suffix   : $SECRET_SUFFIX"
+          echo "aws_region      : $AWS_REGION"
+          echo "is_test_mode    : ${{ inputs.is_test_mode }}"
+          echo "::endgroup::"
+
+          echo "task=$TASK"                         >> $GITHUB_OUTPUT
+          echo "branch=$BRANCH"                     >> $GITHUB_OUTPUT
+          echo "s3_prefix=$S3_PREFIX"               >> $GITHUB_OUTPUT
+          echo "effective_prefix=$EFFECTIVE_PREFIX" >> $GITHUB_OUTPUT
+          echo "secret_suffix=$SECRET_SUFFIX"       >> $GITHUB_OUTPUT
+          echo "s3_bucket=$S3_BUCKET"               >> $GITHUB_OUTPUT
+          echo "aws_role=$AWS_ROLE"                 >> $GITHUB_OUTPUT
+          echo "aws_region=$AWS_REGION"             >> $GITHUB_OUTPUT
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.is_test_mode == true && github.ref_name || steps.config.outputs.branch }}
+          fetch-depth: 0
+
+      - name: Check develop for version bump (rc)
+        id: rc-check
+        if: github.event_name == 'workflow_dispatch' && inputs.is_auto_upgrade_version == true && matrix.env == 'rc'
+        run: |
+          # After a stag bump pushes to develop (and fast-forwards staging),
+          # develop's HEAD is always a version bump commit, so we compare
+          # major.minor of the latest two version bump commits (combined as
+          # major*100 + minor so 2.0 > 1.99).
+          #   latest >  previous → rc bump already done this cycle → SKIP
+          #   latest == previous → still in stag-bump cycle        → DO bump
+          #   latest <  previous → unexpected (rollback?)          → FAIL
+          BUMPS=$(git log origin/develop --grep="^ci: update version to" --format="%s" | head -2)
+          LATEST_MSG=$(echo "$BUMPS" | sed -n '1p')
+          SECOND_MSG=$(echo "$BUMPS" | sed -n '2p')
+
+          echo "Latest:   $LATEST_MSG"
+          echo "Previous: $SECOND_MSG"
+
+          if [ -z "$SECOND_MSG" ]; then
+            echo "Fewer than 2 version bump commits on develop, proceeding with bump."
+            echo "skip_version_bump=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          parse_key() {
+            local major minor
+            major=$(echo "$1" | sed -E 's/^ci: update version to ([0-9]+)\.([0-9]+)\..*/\1/')
+            minor=$(echo "$1" | sed -E 's/^ci: update version to ([0-9]+)\.([0-9]+)\..*/\2/')
+            echo $((major * 100 + minor))
+          }
+          LATEST_KEY=$(parse_key "$LATEST_MSG")
+          SECOND_KEY=$(parse_key "$SECOND_MSG")
+
+          echo "Latest key:   $LATEST_KEY"
+          echo "Previous key: $SECOND_KEY"
+
+          if [ "$LATEST_KEY" -gt "$SECOND_KEY" ]; then
+            echo "Latest > previous: rc bump already done this cycle, skipping."
+            echo "skip_version_bump=true" >> $GITHUB_OUTPUT
+          elif [ "$LATEST_KEY" -eq "$SECOND_KEY" ]; then
+            echo "Latest == previous: minor not yet bumped this cycle, proceeding."
+            echo "skip_version_bump=false" >> $GITHUB_OUTPUT
+          else
+            echo "::warning::Latest version ($LATEST_MSG) is older than previous ($SECOND_MSG) on develop. Aborting."
+            exit 1
+          fi
+
+      - name: Bump internal version (stag)
+        id: stag-bump
+        if: github.event_name == 'workflow_dispatch' && inputs.is_auto_upgrade_version == true && matrix.env == 'stag'
+        run: |
+          # Configure git identity (needed for both the sync rebase and the bump commit)
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # ----------------------------------------------------------------------
+          # Pre-bump sync (Path 1, strict): the bump must land on develop and
+          # staging at the same SHA. That requires staging to be a fast-forward
+          # of develop before we bump. If develop is ahead, rebase staging onto
+          # develop and push. If staging has commits develop doesn't (or they've
+          # diverged), fail loudly — Path 1's invariant has been broken and a
+          # human needs to resolve it.
+          #
+          # Skipped in test mode (no pushes happen there; bump runs on the
+          # caller's branch as-is).
+          # ----------------------------------------------------------------------
+          if [ "${{ inputs.is_test_mode }}" != "true" ]; then
+            git fetch origin develop staging
+            DEVELOP_SHA=$(git rev-parse origin/develop)
+            STAGING_SHA=$(git rev-parse origin/staging)
+            echo "origin/develop: $DEVELOP_SHA"
+            echo "origin/staging: $STAGING_SHA"
+
+            if [ "$DEVELOP_SHA" = "$STAGING_SHA" ]; then
+              echo "staging and develop are in sync — no pre-bump sync needed."
+            elif git merge-base --is-ancestor "$STAGING_SHA" "$DEVELOP_SHA"; then
+              echo "develop is ahead of staging — rebasing staging onto develop and pushing."
+              git checkout -B staging origin/staging
+              git rebase origin/develop
+              git push origin HEAD:staging
+              echo "staging fast-forwarded to $(git rev-parse HEAD)."
+            else
+              echo "::error::staging has commits not on develop (or has diverged). Path 1 requires staging to be a fast-forward of develop. Resolve manually before retrying."
+              exit 1
+            fi
+
+            # Bump on develop so develop and staging share the same SHA after the push step.
+            git checkout -B develop origin/develop
+          fi
+
+          # Idempotency check: skip if the current tip is already a version bump
+          LATEST_MSG=$(git log -1 --format="%s")
+          echo "Latest commit: $LATEST_MSG"
+          if [[ "$LATEST_MSG" == "ci: update version to"* ]]; then
+            echo "Latest commit is already a version bump, skipping."
+            echo "has_version_bump=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          # Bump internal version by 1
+          VERSION_CODE=$(grep "^versionCode" version.properties | cut -d= -f2)
+
+          # Guard: INTERNAL is 2 digits (max 99). Auto-bumping past 99 would
+          # silently carry into HOTFIX. Fail fast and require a manual HOTFIX bump.
+          CURRENT_INTERNAL=$((VERSION_CODE % 100))
+          if [ "$CURRENT_INTERNAL" -ge 99 ]; then
+              echo "::error::INTERNAL version is already at 99 (versionCode=$VERSION_CODE). Auto-bump would carry into HOTFIX. Bump HOTFIX manually and retry."
+              exit 1
+          fi
+
+          NEW_VERSION_CODE=$((VERSION_CODE + 1))
+          MAJOR=$((NEW_VERSION_CODE / 100000))
+          MINOR=$(((NEW_VERSION_CODE / 1000) % 100))
+          HOTFIX=$(((NEW_VERSION_CODE / 100) % 10))
+          INTERNAL=$((NEW_VERSION_CODE % 100))
+          VERSION_NAME="${MAJOR}.${MINOR}.${HOTFIX}.${INTERNAL}"
+
+          sed -i "s/^versionCode=.*/versionCode=${NEW_VERSION_CODE}/" version.properties
+          echo "Bumped versionCode: $VERSION_CODE → $NEW_VERSION_CODE ($VERSION_NAME)"
+
+          git add version.properties
+          git commit -m "ci: update version to ${VERSION_NAME}"
+
+          echo "has_version_bump=true" >> $GITHUB_OUTPUT
+          echo "version_bump_sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Compute version name
+        id: version
+        run: |
+          VERSION_CODE=$(grep "^versionCode" version.properties | cut -d= -f2)
+          MAJOR=$((VERSION_CODE / 100000))
+          MINOR=$(((VERSION_CODE / 1000) % 100))
+          HOTFIX=$(((VERSION_CODE / 100) % 10))
+          INTERNAL=$((VERSION_CODE % 100))
+          VERSION_NAME="${MAJOR}.${MINOR}.${HOTFIX}.${INTERNAL}"
+          echo "version_name=$VERSION_NAME" >> $GITHUB_OUTPUT
+          echo "Computed version name: $VERSION_NAME"
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', 'gradle/wrapper/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Create keystore files
+        run: |
+          echo "${{ secrets.JKS_BASE64 }}" | base64 -d > MVBA_PlatForm.jks
+          echo "${{ secrets.KEYSTORE_PROPERTY_BASE64 }}" | base64 -d > keystore.properties
+          echo "Keystore files created:"
+          ls -lh MVBA_PlatForm.jks keystore.properties
+
+      - name: Create google-services.json
+        env:
+          GOOGLE_SERVICES_JSON_STAG: ${{ secrets.GOOGLE_SERVICES_JSON_STAG }}
+          GOOGLE_SERVICES_JSON_RC:   ${{ secrets.GOOGLE_SERVICES_JSON_RC }}
+          GOOGLE_SERVICES_JSON_PROD: ${{ secrets.GOOGLE_SERVICES_JSON_PROD }}
+        run: |
+          ENV=${{ matrix.env }}
+          SECRET_SUFFIX=${{ steps.config.outputs.secret_suffix }}
+          SECRET_VAR="GOOGLE_SERVICES_JSON_${SECRET_SUFFIX}"
+          echo "[$ENV] secret_var=$SECRET_VAR → app/src/${ENV}/google-services.json"
+          mkdir -p "app/src/${ENV}"
+          echo "${!SECRET_VAR}" | base64 -d > "app/src/${ENV}/google-services.json"
+          ls -lh "app/src/${ENV}/google-services.json"
+
+      - name: Build APKs
+        run: |
+          echo "Running Gradle task: ${{ steps.config.outputs.task }}"
+          ./gradlew ${{ steps.config.outputs.task }} -PoutputDir=~/Apks
+          echo "APKs generated:"
+          find ~/Apks -name "*.apk" | sort
+
+      - name: Upload APKs as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.env }}-apks-${{ github.run_number }}
+          path: ~/Apks/
+          retention-days: 30
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ steps.config.outputs.aws_role }}
+          aws-region: ${{ steps.config.outputs.aws_region }}
+
+      - name: Upload APKs to S3
+        run: |
+          echo "Uploading to: s3://${{ steps.config.outputs.s3_bucket }}/${{ steps.config.outputs.effective_prefix }}/"
+          aws s3 cp ~/Apks/ \
+            s3://${{ steps.config.outputs.s3_bucket }}/${{ steps.config.outputs.effective_prefix }}/ \
+            --recursive \
+            --include "*.apk"
+          echo "Upload complete."
+
+      - name: Push version bump to develop and fast-forward staging (stag)
+        if: github.event_name == 'workflow_dispatch' && inputs.is_auto_upgrade_version == true && inputs.is_test_mode != true && matrix.env == 'stag' && steps.stag-bump.outputs.has_version_bump == 'true'
+        run: |
+          BUMP_SHA="${{ steps.stag-bump.outputs.version_bump_sha }}"
+
+          # Push the bump to develop first (the bump commit was created on develop locally).
+          git push origin HEAD:develop
+          echo "Pushed version bump commit ($BUMP_SHA) to develop."
+
+          # Fast-forward staging to develop's new tip — same SHA on both branches, no cherry-pick.
+          git push origin HEAD:staging
+          echo "Fast-forwarded staging to $BUMP_SHA."
+
+      - name: Bump minor version on develop (rc)
+        if: github.event_name == 'workflow_dispatch' && inputs.is_auto_upgrade_version == true && inputs.is_test_mode != true && matrix.env == 'rc' && steps.rc-check.outputs.skip_version_bump != 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Checkout develop
+          git checkout -b develop origin/develop
+
+          # Bump minor; if minor is already 99, bump major and reset minor to 0.
+          # Hotfix and internal always reset to 0.
+          VERSION_CODE=$(grep "^versionCode" version.properties | cut -d= -f2)
+          MAJOR=$((VERSION_CODE / 100000))
+          MINOR=$(((VERSION_CODE / 1000) % 100))
+
+          if [ "$MINOR" -ge 99 ]; then
+            NEW_MAJOR=$((MAJOR + 1))
+            NEW_MINOR=0
+          else
+            NEW_MAJOR=$MAJOR
+            NEW_MINOR=$((MINOR + 1))
+          fi
+          NEW_VERSION_CODE=$((NEW_MAJOR * 100000 + NEW_MINOR * 1000))
+          VERSION_NAME="${NEW_MAJOR}.${NEW_MINOR}.0.0"
+
+          sed -i "s/^versionCode=.*/versionCode=${NEW_VERSION_CODE}/" version.properties
+          echo "Bumped: $VERSION_CODE → $NEW_VERSION_CODE ($VERSION_NAME)"
+
+          git add version.properties
+          git commit -m "ci: update version to ${VERSION_NAME}"
+          git push origin HEAD:develop
+          echo "Pushed minor version bump to develop."
+
+      - name: Print APK download URLs
+        run: |
+          BASE_URL="https://android-ota.aps1.classswift-stg.com/${{ steps.config.outputs.effective_prefix }}"
+          echo "APK download URLs:"
+          aws s3 ls "s3://${{ steps.config.outputs.s3_bucket }}/${{ steps.config.outputs.effective_prefix }}/" \
+            | grep "\.apk$" \
+            | awk -v base="$BASE_URL" '{print base "/" $4}'
+
+      - name: Extract JIRA ticket IDs from version range
+        id: jira-tickets
+        if: matrix.env == 'stag'
+        run: |
+          if [ "${{ inputs.is_test_mode }}" = "true" ]; then
+            TARGET_BRANCH="${{ github.ref_name }}"
+          else
+            TARGET_BRANCH="staging"
+          fi
+          echo "Scanning branch: $TARGET_BRANCH"
+
+          BUMPS=$(git log "origin/${TARGET_BRANCH}" \
+            --author="github-actions\[bot\]" \
+            --grep="^ci: update version" \
+            --format="%H" | head -2)
+
+          BUMP_COUNT=$(echo "$BUMPS" | awk '/^[a-f0-9]/{c++} END{print c+0}')
+          echo "Version bump commits found: $BUMP_COUNT"
+
+          if [ "$BUMP_COUNT" -lt 2 ]; then
+            echo "Fewer than 2 version bumps found, skipping JIRA extraction."
+            echo "ticket_ids=" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+
+          NEWER_SHA=$(echo "$BUMPS" | head -1)
+          OLDER_SHA=$(echo "$BUMPS" | tail -1)
+          echo "Commit range: ${OLDER_SHA}..${NEWER_SHA}"
+
+          TICKET_IDS=$(git log "${OLDER_SHA}..${NEWER_SHA}" --format="%s" \
+            | grep -E '^[a-z]+[[(]VSFT-[0-9]+' \
+            | sed -E 's/^[a-z]+[[(]([^])]+)[])]:.*/\1/' \
+            | grep -oE 'VSFT-[0-9]+' \
+            | sort -u) || TICKET_IDS=""
+
+          if [ -z "$TICKET_IDS" ]; then
+            echo "No VSFT tickets found in range."
+            echo "ticket_ids=" >> $GITHUB_OUTPUT
+          else
+            echo "Extracted ticket IDs:"
+            echo "$TICKET_IDS"
+            echo "ticket_ids<<EOF" >> $GITHUB_OUTPUT
+            echo "$TICKET_IDS" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Fetch JIRA ticket titles via API
+        id: jira-titles
+        if: matrix.env == 'stag' && steps.jira-tickets.outputs.ticket_ids != ''
+        env:
+          JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
+          JIRA_USER: ${{ vars.JIRA_USER }}
+          JIRA_BASE_URL: ${{ vars.JIRA_BASE_URL }}
+        run: |
+          AUTH=$(printf '%s:%s' "$JIRA_USER" "$JIRA_TOKEN" | base64 -w 0)
+          ROW_NUM=0
+          TABLE_ROWS=""
+
+          while IFS= read -r TICKET_ID; do
+            [ -z "$TICKET_ID" ] && continue
+            ROW_NUM=$((ROW_NUM + 1))
+
+            RESPONSE=$(curl -sf \
+              -H "Authorization: Basic ${AUTH}" \
+              -H "Content-Type: application/json" \
+              "${JIRA_BASE_URL}/rest/api/3/issue/${TICKET_ID}?fields=summary") || RESPONSE=""
+
+            TITLE=$(echo "$RESPONSE" | jq -r '.fields.summary // empty' 2>/dev/null) || TITLE=""
+            [ -z "$TITLE" ] && TITLE="$TICKET_ID"
+
+            TABLE_ROWS="${TABLE_ROWS}<tr><td>${ROW_NUM}</td><td>${TITLE}</td><td><a href=\"${JIRA_BASE_URL}/browse/${TICKET_ID}\">${TICKET_ID}</a></td></tr>"
+          done <<< "${{ steps.jira-tickets.outputs.ticket_ids }}"
+
+          echo "jira_table<<EOF" >> $GITHUB_OUTPUT
+          echo "$TABLE_ROWS" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Build email body
+        id: email-body
+        env:
+          JIRA_TABLE: ${{ steps.jira-titles.outputs.jira_table }}
+        run: |
+          BASE_URL="https://android-ota.aps1.classswift-stg.com/${{ steps.config.outputs.effective_prefix }}"
+          VERSION_NAME="${{ steps.version.outputs.version_name }}"
+          S3_PREFIX="${{ steps.config.outputs.effective_prefix }}"
+
+          APK_LINKS=$(find ~/Apks -name "*.apk" | sort | while read filepath; do
+            filename=$(basename "$filepath")
+            echo "<li><a href=\"${BASE_URL}/${filename}\">${filename}</a></li>"
+          done)
+
+          echo "body<<EOF" >> $GITHUB_OUTPUT
+          echo "<p>Hi QA Team,</p>" >> $GITHUB_OUTPUT
+          echo "<p>The Android APK files for <strong>ClassSwift v${VERSION_NAME} (${S3_PREFIX})</strong> have been generated and are now available for testing.</p>" >> $GITHUB_OUTPUT
+          echo "<p><strong>Download Links:</strong></p>" >> $GITHUB_OUTPUT
+          echo "<ul>" >> $GITHUB_OUTPUT
+          echo "$APK_LINKS" >> $GITHUB_OUTPUT
+          echo "</ul>" >> $GITHUB_OUTPUT
+          if [ -n "$JIRA_TABLE" ]; then
+            echo "<p><strong>JIRA Tickets in this build:</strong></p>" >> $GITHUB_OUTPUT
+            echo "<table border=\"1\" cellpadding=\"5\" cellspacing=\"0\"><tr><th>#</th><th>Ticket Title</th><th>Link</th></tr>${JIRA_TABLE}</table>" >> $GITHUB_OUTPUT
+          fi
+          echo "<p>Please proceed with testing at your earliest convenience.</p>" >> $GITHUB_OUTPUT
+          echo "<p>Thanks,<br>ClassSwift Android Team</p>" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Send email
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: ${{ vars.EMAIL_SERVER }}
+          server_port: ${{ vars.EMAIL_PORT }}
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: "${{ inputs.is_test_mode == true && '[CI Test] ' || '' }}ClassSwift Service - Teacher app - Android v${{ steps.version.outputs.version_name }} (${{ steps.config.outputs.effective_prefix }}) internal release note"
+          html_body: ${{ steps.email-body.outputs.body }}
+          to: brandon.hc.wong@viewsonic.com, dillon.cy.chang@viewsonic.com, jacky.ml.yang@viewsonic.com, Loren.Chang@viewsonic.com, ingrid.ys.wang@viewsonic.com, Ken.MH.Chung@viewsonic.com, rick.cl.hsu@viewsonic.com, Stephen.tw.Yang@viewsonic.com
+          from: ${{ vars.EMAIL_SENDER }}

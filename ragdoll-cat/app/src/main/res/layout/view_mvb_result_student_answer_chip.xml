@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.AppCompatTextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="@dimen/mvb_spacing_500"
+    android:layout_height="@dimen/mvb_spacing_500"
+    android:background="@drawable/bg_mvb_result_student_answer_chip"
+    android:fontFamily="sans-serif-medium"
+    android:gravity="center"
+    android:padding="0dp"
+    android:textColor="@color/neutral_900"
+    android:textSize="@dimen/quiz_mvb_text_xs"
+    tools:text="A" />

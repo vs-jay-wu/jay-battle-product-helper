@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Text-variant option row background (mvb-text-quiz-detail).
+     Figma 'quiz answer option_text' instance: fill #F6F6F6 / stroke #E5E5E5 1px / radius 16 / pad 16. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/neutral_100" />
+    <corners android:radius="@dimen/mvb_radius_400" />
+    <stroke
+        android:width="@dimen/border_200"
+        android:color="@color/neutral_300" />
+</shape>

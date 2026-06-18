@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ll_result_option_bar_root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingVertical="@dimen/mvb_spacing_200">
+
+    <!-- Row 1: label chip + correct chip + responses chip -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_result_bar_label_chip"
+            android:layout_width="@dimen/mvb_spacing_500"
+            android:layout_height="@dimen/mvb_spacing_500"
+            android:background="@drawable/bg_neutral100_radius_full"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center"
+            android:padding="0dp"
+            android:textColor="@color/neutral_900"
+            android:textSize="@dimen/quiz_mvb_text_xs"
+            tools:text="T" />
+
+        <TextView
+            android:id="@+id/tv_result_bar_correct_chip"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/mvb_spacing_500"
+            android:layout_marginStart="@dimen/mvb_spacing_200"
+            android:background="@drawable/bg_brandblue_radius_full"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center"
+            android:paddingHorizontal="@dimen/mvb_spacing_200"
+            android:text="@string/quiz_mvb_result_correct_answer"
+            android:textColor="@color/neutral_0"
+            android:textSize="@dimen/quiz_mvb_text_xs"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/tv_result_bar_responses_chip"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/mvb_spacing_500"
+            android:background="@drawable/bg_result_chip_outline"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center"
+            android:paddingHorizontal="@dimen/mvb_spacing_200"
+            android:textColor="@color/neutral_900"
+            android:textSize="@dimen/quiz_mvb_text_xs"
+            tools:text="150 responses" />
+    </LinearLayout>
+
+    <!-- Row 2: bar -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/mvb_spacing_400"
+        android:layout_marginTop="@dimen/mvb_spacing_200"
+        android:background="@drawable/bg_neutral100_radius_full">
+
+        <!-- Ratio fill — background is replaced at runtime with a
+             LayerDrawable (solid color + WCAG pattern) per BarStyle. -->
+        <View
+            android:id="@+id/v_result_bar_ratio"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_result_bar_correct" />
+    </FrameLayout>
+</LinearLayout>

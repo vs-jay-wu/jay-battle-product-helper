@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ll_option_container"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_neutral450_radius600_line_neutral_450_border400"
+    android:orientation="vertical"
+    android:paddingHorizontal="2dp"
+    android:paddingVertical="5.33dp">
+
+    <!-- An empty LinearLayout is reserved for dynamically adding popup option items. -->
+</LinearLayout>

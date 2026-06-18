@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tool="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="252.667dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_cs_ask_permission"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/iv_icon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:paddingVertical="6.08dp"
+            android:layout_marginTop="21.6dp"
+            android:src="@drawable/ic_small_logo"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tool:ignore="ContentDescription" />
+
+        <TextView
+            android:id="@+id/tv_class_swift"
+            android:layout_width="0dp"
+            android:layout_height="18dp"
+            android:layout_marginHorizontal="22dp"
+            android:layout_marginTop="14dp"
+            android:text="@string/common_app_name"
+            android:textAlignment="center"
+            android:textColor="@color/deny_permission_text_color"
+            android:textFontWeight="600"
+            android:textSize="14.4sp"
+            android:textStyle="bold"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/iv_icon" />
+
+        <TextView
+            android:id="@+id/tv_description"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="14dp"
+            android:text="@string/common_deny"
+            android:textAlignment="center"
+            android:textColor="@color/deny_permission_text_color"
+            android:textFontWeight="400"
+            android:textSize="12sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_class_swift" />
+
+        <com.viewsonic.classswift.ui.widget.ClassSwiftLoadingButton
+            android:id="@+id/cslb_retry"
+            android:layout_width="0dp"
+            android:layout_height="28.766dp"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="21.6dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_description"
+            app:lbBackgroundColor="@color/retry_button_color"
+            app:lbLoadingBackground="@color/retry_button_color"
+            app:lbProgressIndicatorColor="@color/progressing_loading_white"
+            app:lbRadius="4.8dp"
+            app:lbText="@string/common_retry"
+            app:lbTextColor="@color/text_white_color"
+            app:lbTextSize="16sp"
+            tool:lbText="Retry"/>
+
+        <com.viewsonic.classswift.ui.widget.CSToast
+            android:id="@+id/cst_toast"
+            android:layout_width="wrap_content"
+            android:layout_height="35.33dp"
+            android:layout_marginHorizontal="6.66dp"
+            android:layout_marginTop="8dp"
+            app:cstText="@string/common_error_general"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:successStatus="false"
+            tool:cstText="That\'s an error. Please try again." />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="570.67dp"
+    android:layout_height="472dp"
+    android:background="@drawable/bg_neutral0_radius400_line_neutral300_border400">
+
+    <!-- Header: VSDS standard window header, mirrors window_mvb_quiz_collection.xml -->
+    <LinearLayout
+        android:id="@+id/ll_header"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/quiz_mvb_qc_window_header_height"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/mvb_spacing_400"
+        android:paddingEnd="@dimen/mvb_spacing_300"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="@dimen/quiz_mvb_qc_icon_lg"
+            android:layout_height="@dimen/quiz_mvb_qc_icon_lg"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_mvb_spinner" />
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/mvb_spacing_300"
+            android:layout_weight="1"
+            android:fontFamily="sans-serif"
+            android:includeFontPadding="false"
+            android:text="@string/toolbar_menu_interaction_spinner"
+            android:textColor="@color/neutral_900"
+            android:textSize="@dimen/quiz_mvb_text_md"
+            android:textStyle="bold" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_btn_minimize"
+            android:layout_width="@dimen/quiz_mvb_qc_toolbar_icon_size"
+            android:layout_height="@dimen/quiz_mvb_qc_toolbar_icon_size"
+            android:layout_marginEnd="@dimen/mvb_spacing_200"
+            android:background="?selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:contentDescription="@null"
+            android:focusable="true"
+            android:padding="@dimen/mvb_spacing_150"
+            android:src="@drawable/ic_minus_32dp" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_btn_close"
+            android:layout_width="@dimen/quiz_mvb_qc_toolbar_icon_size"
+            android:layout_height="@dimen/quiz_mvb_qc_toolbar_icon_size"
+            android:background="?selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:contentDescription="@null"
+            android:focusable="true"
+            android:padding="@dimen/mvb_spacing_150"
+            android:src="@drawable/ic_close_64dp"
+            app:tint="@color/neutral_900" />
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/v_header_divider"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/mvb_border_100"
+        android:background="@color/color_E6E6E6"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ll_header" />
+
+    <WebView
+        android:id="@+id/wv_web_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="@dimen/mvb_spacing_600"
+        android:layout_marginBottom="@dimen/mvb_spacing_1000"
+        android:background="@color/transparent"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/v_header_divider" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_loading"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="@+id/wv_web_view"
+        app:layout_constraintEnd_toEndOf="@+id/wv_web_view"
+        app:layout_constraintStart_toStartOf="@+id/wv_web_view"
+        app:layout_constraintTop_toTopOf="@+id/wv_web_view">
+
+        <TextView
+            android:id="@+id/tv_loading_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/common_loading"
+            android:textColor="@color/spinner_window_title_text_color"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.viewsonic.classswift.ui.widget.NetworkDisconnectView
+        android:id="@+id/ndv_network_disconnect_mask"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:cardRadius="@dimen/mvb_radius_400"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

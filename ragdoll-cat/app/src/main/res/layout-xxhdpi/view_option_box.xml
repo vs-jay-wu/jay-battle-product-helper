@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/selector_bg_mvb_option_box"
+    android:clickable="true"
+    android:focusable="true">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_option_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="@color/neutral_900"
+        android:textSize="26.67sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_trash"
+        android:layout_width="@dimen/quiz_mvb_icon_size_md"
+        android:layout_height="@dimen/quiz_mvb_icon_size_md"
+        android:layout_marginTop="@dimen/mvb_spacing_200"
+        android:layout_marginEnd="@dimen/mvb_spacing_200"
+        android:background="@drawable/ripple_neutral300_oval"
+        android:padding="@dimen/mvb_spacing_100"
+        android:src="@drawable/ic_trash_can"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

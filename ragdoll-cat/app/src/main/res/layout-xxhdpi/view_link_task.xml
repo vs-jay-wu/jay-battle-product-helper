@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cl_root"
+    android:layout_width="189.33dp"
+    android:layout_height="161.33dp"
+    android:background="@drawable/bg_neutral0_radius800_line_neutral450_border400"
+    android:paddingHorizontal="13.33dp"
+    android:paddingTop="13dp"
+    android:paddingBottom="14dp">
+
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/cb_select"
+        android:layout_width="19dp"
+        android:layout_height="19dp"
+        android:background="@null"
+        android:button="@drawable/selector_cs_check_box"
+        android:checked="false"
+        android:gravity="center_vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_link_content"
+        android:layout_width="162.66dp"
+        android:layout_height="64dp"
+        android:layout_marginTop="27dp"
+        android:background="@drawable/bg_neutral0_radius600_commonstrokecolor_border200"
+        android:paddingHorizontal="5.33dp"
+        android:paddingVertical="5.33dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_link_thumbnail"
+            android:layout_width="50.66dp"
+            android:layout_height="44dp"
+            android:scaleType="centerCrop"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_link_task_placeholder" />
+
+        <TextView
+            android:id="@+id/tv_link_title"
+            android:layout_width="90.66dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="8dp"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:maxLines="2"
+            android:textColor="@color/push_and_respond_link_task_title_text_color"
+            android:textSize="8sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@+id/iv_link_thumbnail"
+            app:layout_constraintTop_toTopOf="@+id/iv_link_thumbnail"
+            tools:text="ViewSonic ClassSwift ClassSwift ClassSwift ClassSwift" />
+
+        <TextView
+            android:id="@+id/tv_link_description"
+            android:layout_width="90.66dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="8dp"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:maxLines="2"
+            android:textColor="@color/push_and_respond_link_task_description_text_color"
+            android:textSize="6.66sp"
+            app:layout_constraintStart_toEndOf="@+id/iv_link_thumbnail"
+            app:layout_constraintTop_toBottomOf="@+id/tv_link_title"
+            tools:text="ViewSonic ClassSwift ViewSonic ClassSwift ViewSonic ClassSwift" />
+
+        <TextView
+            android:id="@+id/tv_link_url"
+            android:layout_width="148.66dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:maxHeight="12dp"
+            android:maxLines="1"
+            android:textColor="@color/push_and_respond_url_preview_link_text_color"
+            android:textSize="6.66sp"
+            android:visibility="gone"
+            app:layout_constraintStart_toEndOf="@+id/iv_link_thumbnail"
+            app:layout_constraintTop_toBottomOf="@+id/tv_link_description"
+            tools:text="https://viewsonic.com" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/tv_url"
+        android:layout_width="162.66dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6.66dp"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:linksClickable="false"
+        android:maxLines="1"
+        android:textColor="@color/push_and_respond_link_task_url_text_color"
+        android:textSize="8sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cl_link_content"
+        tools:text="http://www.google.com" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_remove"
+        android:layout_width="32dp"
+        android:layout_height="33dp"
+        android:layout_marginTop="3.33dp"
+        android:src="@drawable/ic_task_remove"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_url" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

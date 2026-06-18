@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:clipToPadding="false"
+    android:paddingStart="16dp"
+    android:paddingTop="26.67dp"
+    android:paddingEnd="16dp"
+    android:paddingBottom="26.67dp">
+
+    <!-- X close button (top-right, 8dp from panel corner via translation) -->
+    <ImageButton
+        android:id="@+id/ib_close"
+        android:layout_width="26.67dp"
+        android:layout_height="26.67dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:padding="8dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_close_64dp"
+        android:translationX="10.67dp"
+        android:translationY="-21.33dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/neutral_900"
+        tools:ignore="ContentDescription" />
+
+    <!-- Title: "Welcome to ClassSwift" -->
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/mvb_my_class_welcome_title"
+        android:textColor="@color/neutral_900"
+        android:textSize="18.67sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Subtitle row: CS icon + "Select or create a class to join" -->
+    <ImageView
+        android:id="@+id/iv_class_swift_icon"
+        android:layout_width="13.33dp"
+        android:layout_height="13.33dp"
+        android:src="@drawable/ic_select_class_header"
+        app:layout_constraintBottom_toBottomOf="@id/tv_subtitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tv_subtitle"
+        tools:ignore="ContentDescription" />
+
+    <TextView
+        android:id="@+id/tv_subtitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="10.67dp"
+        android:text="@string/mvb_my_class_subtitle"
+        android:textColor="@color/neutral_900"
+        android:textSize="9.33sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/iv_class_swift_icon"
+        app:layout_constraintTop_toBottomOf="@id/tv_title"
+        tools:ignore="SmallSp" />
+
+    <LinearLayout
+        android:id="@+id/ll_main"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottie_loading"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_gravity="center"
+            app:lottie_autoPlay="true"
+            app:lottie_fileName="ani_loading.json"
+            app:lottie_loop="true" />
+
+        <TextView
+            android:id="@+id/tv_loading"
+            android:layout_width="120dp"
+            android:layout_height="16dp"
+            android:text="@string/mvb_my_class_activating"
+            android:textColor="@color/neutral_900"
+            android:textSize="11sp" />
+    </LinearLayout>
+
+    <!-- Bottom buttons row -->
+    <LinearLayout
+        android:id="@+id/ll_bottom_buttons"
+        android:layout_width="0dp"
+        android:layout_height="32dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <!-- Exit ClassSwift button (outline, 50%) -->
+        <com.viewsonic.classswift.ui.widget.ClassSwiftLoadingButton
+            android:id="@+id/button_exit"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="5.33dp"
+            android:layout_weight="1"
+            android:clickable="true"
+            app:lbBackgroundColor="@color/white"
+            app:lbBorderColor="@color/window_select_org_right_button_bg_disable"
+            app:lbRadius="5.33dp"
+            app:lbText="@string/mvb_my_class_action_exit"
+            app:lbTextColor="@color/neutral_900"
+            app:lbTextSize="10.67sp" />
+
+        <!-- Enter Class button (filled blue, 50%) -->
+        <com.viewsonic.classswift.ui.widget.ClassSwiftLoadingButton
+            android:id="@+id/button_enter_class"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="5.33dp"
+            android:layout_weight="1"
+            android:clickable="true"
+            app:lbBackgroundColor="@color/window_select_org_right_button_bg"
+            app:lbDisableBackgroundColor="@color/window_select_org_right_button_bg_disable"
+            app:lbLoadingBackground="@color/window_select_org_right_button_bg"
+            app:lbProgressIndicatorColor="@color/progressing_loading_white"
+            app:lbRadius="5.33dp"
+            app:lbText="@string/my_class_action_enter_class"
+            app:lbTextColor="@color/window_select_org_right_button_text"
+            app:lbTextSize="10.67sp" />
+    </LinearLayout>
+
+    <!-- Error toast -->
+    <com.viewsonic.classswift.ui.widget.CSToast
+        android:id="@+id/cst_error_toast"
+        android:layout_width="wrap_content"
+        android:layout_height="21.33dp"
+        android:layout_marginBottom="5.33dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:successStatus="false" />
+
+    <!-- Success toast -->
+    <com.viewsonic.classswift.ui.widget.CSToast
+        android:id="@+id/cst_success_toast"
+        android:layout_width="wrap_content"
+        android:layout_height="21.33dp"
+        android:layout_marginBottom="5.33dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:successStatus="true" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

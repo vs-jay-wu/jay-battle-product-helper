@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/selector_student_list_tab_item_background"/>
+    <corners
+        android:topRightRadius="10dp"
+        android:topLeftRadius="10dp"/>
+</shape>

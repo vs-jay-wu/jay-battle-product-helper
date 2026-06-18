@@ -1,0 +1,122 @@
+# Rich Version Format
+# Reference:
+#     https://docs.gradle.org/current/userguide/rich-versions.html
+#     https://docs.gradle.org/current/userguide/platforms.html#sub::toml-dependencies-format
+# Example: test-version = { require = "[4.4.6,)", prefer = "5.0.1", strictly = "xxx"}
+
+#--------------------------------------------------------------------------------------------------
+[versions]
+#--------------------------------------------------------------------------------------------------
+# Plugin
+# Meerkat Feature Drop | 2024.3.2 Maximum supported version => 8.8.2
+versionAndroidGradlePlugin = "8.8.2"
+# Meerkat Feature Drop | 2024.3.2 Built-in version => 2.0.21
+versionKotlinAndroidPlugin = "2.0.21"
+versionKspPlugin = "2.0.21-1.0.28"
+versionProtobufPlugin = "0.9.5"
+versionGoogleServicesPlugin = "4.4.3"
+versionFirebaseCrashlyticsPlugin = "3.0.5"
+versionNavigationSafeArgsGradlePlugin = "2.8.9"
+# AndroidX / Google
+versionAndroidxCoreKtx = "1.15.0"
+versionAppcompat = "1.7.1"
+versionMaterial = "1.12.0"
+versionConstraintlayout = "2.2.1"
+versionNavigationFragmentKtx = "2.8.9"
+versionNavigationUiKtx = "2.8.9"
+versionBrowser = "1.8.0"
+versionDataStore = "1.1.7"
+versionProtobufJavaLite = "4.28.3"
+versionProtobufKotlinLite = "4.28.3"
+versionRoom = "2.7.2"
+versionFirebaseBom = "34.0.0"
+versionMedia3 = "1.7.1"
+versionPaging3 = "3.3.6"
+# Third Party Library
+versionKoin = "3.5.6"
+versionOkhttp = "4.12.0"
+versionOkhttpLoggingInterceptor = "4.12.0"
+versionRetrofit = "2.11.0"
+versionMoshi = "1.15.2"
+versionMoshiKotlinCodeGen = "1.15.2"
+versionMoshiAdapters = "1.15.2"
+versionLottie = "6.5.2"
+versionTimber = "5.0.1"
+versionZxing = "3.5.3"
+versionSocketIO = "2.1.2"
+versionCoil = "2.6.0"
+versionAmplitude = "1.22.0"
+# Unit Test
+versionJunit = "4.13.2"
+versionAndroidxJunit = "1.3.0"
+versionMockk = "1.13.13"
+versionKotlinxCoroutinesTest = "1.9.0"
+versionRobolectric = "4.15.1"
+# Screenshot Test (Roborazzi runs on top of Robolectric)
+versionRoborazzi = "1.43.1"
+# UI Test
+versionEspressoCore = "3.7.0"
+
+#--------------------------------------------------------------------------------------------------
+[libraries]
+#--------------------------------------------------------------------------------------------------
+# AndroidX / Google
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "versionAndroidxCoreKtx" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "versionAppcompat" }
+material = { group = "com.google.android.material", name = "material", version.ref = "versionMaterial" }
+androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "versionConstraintlayout" }
+androidx-navigation-fragment-ktx = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "versionNavigationFragmentKtx" }
+androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "versionNavigationUiKtx" }
+androidx-browser = { group = "androidx.browser", name = "browser", version.ref = "versionBrowser" }
+androidx-datastore = { group = "androidx.datastore", name = "datastore", version.ref = "versionDataStore" }
+room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "versionRoom" }
+room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "versionRoom" }
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "versionRoom" }
+protobuf-java-lite = { group = "com.google.protobuf", name = "protobuf-javalite", version.ref = "versionProtobufJavaLite" }
+protobuf-kotlin-lite = { group = "com.google.protobuf", name = "protobuf-kotlin-lite", version.ref = "versionProtobufKotlinLite" }
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "versionFirebaseBom" }
+firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
+firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
+firebase-config = { module = "com.google.firebase:firebase-config" }
+androidx-media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "versionMedia3" }
+androidx-media3-ui = { group = "androidx.media3", name = "media3-ui", version.ref = "versionMedia3" }
+androidx-media3-common = { group = "androidx.media3", name = "media3-common", version.ref = "versionMedia3" }
+androidx-paging = { group = "androidx.paging", name = "paging-runtime", version.ref = "versionPaging3" }
+# Third Party Library
+koin-android = { group = "io.insert-koin", name = "koin-android", version.ref = "versionKoin" }
+okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "versionOkhttp" }
+okhttp-logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "versionOkhttpLoggingInterceptor" }
+retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "versionRetrofit" }
+retrofit-converter-moshi = { group = "com.squareup.retrofit2", name = "converter-moshi", version.ref = "versionRetrofit" }
+moshi = { group = "com.squareup.moshi", name = "moshi", version.ref = "versionMoshi" }
+moshi-kotlin-codegen = { group = "com.squareup.moshi", name = "moshi-kotlin-codegen", version.ref = "versionMoshiKotlinCodeGen" }
+moshi-adapters = { group = "com.squareup.moshi", name = "moshi-adapters", version.ref = "versionMoshiAdapters" }
+lottie = { group = "com.airbnb.android", name = "lottie", version.ref = "versionLottie" }
+timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "versionTimber" }
+zxing = { group = "com.google.zxing", name = "core", version.ref = "versionZxing" }
+socketio-client = { group = "io.socket", name = "socket.io-client", version.ref = "versionSocketIO" }
+coil = { module = "io.coil-kt:coil", version.ref = "versionCoil" }
+amplitude = { module = "com.amplitude:analytics-android", version.ref = "versionAmplitude" }
+# Unit Test
+junit = { group = "junit", name = "junit", version.ref = "versionJunit" }
+androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "versionAndroidxJunit" }
+mockk = { group = "io.mockk", name = "mockk", version.ref = "versionMockk" }
+kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "versionKotlinxCoroutinesTest" }
+robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "versionRobolectric" }
+# Screenshot Test
+roborazzi = { group = "io.github.takahirom.roborazzi", name = "roborazzi", version.ref = "versionRoborazzi" }
+roborazzi-junit-rule = { group = "io.github.takahirom.roborazzi", name = "roborazzi-junit-rule", version.ref = "versionRoborazzi" }
+# UI Test
+androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "versionEspressoCore" }
+
+#--------------------------------------------------------------------------------------------------
+[plugins]
+#--------------------------------------------------------------------------------------------------
+android-application = { id = "com.android.application", version.ref = "versionAndroidGradlePlugin" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "versionKotlinAndroidPlugin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "versionKspPlugin"}
+protobuf = { id = "com.google.protobuf", version.ref = "versionProtobufPlugin"}
+google-services = { id = "com.google.gms.google-services", version.ref = "versionGoogleServicesPlugin"}
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "versionFirebaseCrashlyticsPlugin"}
+navigation-safeargs-kotlin = { id = "androidx.navigation.safeargs.kotlin", version.ref = "versionNavigationSafeArgsGradlePlugin" }
+roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "versionRoborazzi" }

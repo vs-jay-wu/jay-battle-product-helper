@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/tv_create_class"
+    android:layout_width="match_parent"
+    android:layout_height="32dp"
+    android:background="@drawable/bg_white_radius600_line_e5e5e5_border1dp"
+    android:gravity="center"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:layout_width="13.33dp"
+        android:layout_height="13.33dp"
+        android:src="@drawable/ic_plus"
+        tools:ignore="ContentDescription" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5.33dp"
+        android:fontFamily="sans-serif-medium"
+        android:text="@string/my_class_action_create_class"
+        android:textAllCaps="false"
+        android:textColor="#333333"
+        android:textSize="10.67sp" />
+
+</LinearLayout>

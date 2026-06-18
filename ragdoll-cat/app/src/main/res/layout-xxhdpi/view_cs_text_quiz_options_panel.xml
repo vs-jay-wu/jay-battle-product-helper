@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
+
+    <LinearLayout
+        android:id="@+id/ll_disclose_area"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:visibility="visible">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="28dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:includeFontPadding="false"
+            android:text="@string/disclose_or_select_the_answer"
+            android:textSize="16sp"
+            android:textColor="@color/neutral_900"
+            tools:visibility="visible" />
+
+        <com.viewsonic.classswift.ui.widget.quizcollection.CSTextQuizAnswerButton
+            android:id="@+id/cstqab_view_answer_button"
+            android:layout_width="wrap_content"
+            android:layout_height="28dp"
+            android:layout_marginStart="6.66dp"/>
+
+    </LinearLayout>
+
+    <com.viewsonic.classswift.ui.widget.quizcollection.CSTextQuizOption
+        android:id="@+id/cstqo_option_1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10.66dp"
+        app:layout_constraintTop_toBottomOf="@id/ll_disclose_area"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <com.viewsonic.classswift.ui.widget.quizcollection.CSTextQuizOption
+        android:id="@+id/cstqo_option_2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10.66dp"
+        app:layout_constraintTop_toBottomOf="@id/cstqo_option_1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <com.viewsonic.classswift.ui.widget.quizcollection.CSTextQuizOption
+        android:id="@+id/cstqo_option_3"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10.66dp"
+        app:layout_constraintTop_toBottomOf="@id/cstqo_option_2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <com.viewsonic.classswift.ui.widget.quizcollection.CSTextQuizOption
+        android:id="@+id/cstqo_option_4"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10.66dp"
+        app:layout_constraintTop_toBottomOf="@id/cstqo_option_3"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <com.viewsonic.classswift.ui.widget.quizcollection.CSTextQuizOption
+        android:id="@+id/cstqo_option_5"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10.66dp"
+        app:layout_constraintTop_toBottomOf="@id/cstqo_option_4"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <com.viewsonic.classswift.ui.widget.quizcollection.CSTextQuizOption
+        android:id="@+id/cstqo_option_6"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10.66dp"
+        app:layout_constraintTop_toBottomOf="@id/cstqo_option_5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+</merge>

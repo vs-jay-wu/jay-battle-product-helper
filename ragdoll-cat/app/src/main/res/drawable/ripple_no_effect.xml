@@ -1,0 +1,3 @@
+<!-- res/drawable/ripple_no_effect.xml -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@android:color/transparent" />

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/transparent">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="18dp"
+        android:singleLine="true"
+        android:textColor="@color/cs_main_black_text_color"
+        android:textFontWeight="400"
+        android:textSize="14sp"
+        android:text="@string/quiz_info_option"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_participant_number"
+        android:layout_width="wrap_content"
+        android:layout_height="18dp"
+        android:layout_marginStart="@dimen/quiz_option_padding"
+        android:singleLine="true"
+        android:textColor="@color/cs_main_black_text_color"
+        android:textFontWeight="400"
+        android:textSize="14sp"
+        android:text="@string/quiz_info_number_of_participants"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_options"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_title" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_increase_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginTop="14dp"
+        android:gravity="center"
+        android:paddingVertical="1dp"
+        android:text="@string/common_correct"
+        android:textColor="@color/color_78CB3D"
+        android:textFontWeight="600"
+        android:textSize="10.8sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/rv_options"
+        tools:ignore="HardcodedText,SmallSp" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_increase_point"
+        android:layout_width="24.7dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="4.8dp"
+        android:background="@drawable/selector_correct_plus_one"
+        android:gravity="center"
+        android:paddingVertical="1dp"
+        android:text="+ 1"
+        android:textColor="@color/white"
+        android:textFontWeight="600"
+        android:textSize="10.8sp"
+        app:layout_constraintStart_toEndOf="@id/tv_increase_title"
+        app:layout_constraintTop_toTopOf="@id/tv_increase_title"
+        tools:ignore="HardcodedText,SmallSp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

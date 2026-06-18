@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:paddingVertical="9.33dp"
+    android:paddingHorizontal="12dp"
+    android:background="@drawable/bg_window_subordinate_menu"
+    android:theme="@style/Base.Theme.ClassSwift"
+    tools:ignore="ContentDescription">
+
+    <com.viewsonic.classswift.ui.widget.toolbar.CSSubordinateMenuItem
+        android:id="@+id/cssmi_buzzer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintWidth_min="wrap"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:iconSrc="@drawable/ic_toolbar_irs_buzzer"
+        app:title="@string/common_buzzer"/>
+
+    <com.viewsonic.classswift.ui.widget.toolbar.CSSubordinateMenuItem
+        android:id="@+id/cssmi_random_drawer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4.66dp"
+        app:layout_constraintWidth_min="wrap"
+        app:layout_constraintTop_toBottomOf="@id/cssmi_buzzer"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:iconSrc="@drawable/ic_toolbar_irs_random_drawer"
+        app:title="@string/toolbar_menu_interaction_random_draw"/>
+
+    <com.viewsonic.classswift.ui.widget.toolbar.CSSubordinateMenuItem
+        android:id="@+id/cssmi_spinner"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4.66dp"
+        app:layout_constraintWidth_min="wrap"
+        app:layout_constraintTop_toBottomOf="@id/cssmi_random_drawer"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:visibility="visible"
+        app:iconSrc="@drawable/ic_toolbar_irs_spinner"
+        app:title="@string/toolbar_menu_interaction_spinner"/>
+
+    <com.viewsonic.classswift.ui.widget.toolbar.CSSubordinateMenuItem
+        android:id="@+id/cssmi_timer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4.66dp"
+        app:layout_constraintWidth_min="wrap"
+        app:layout_constraintTop_toBottomOf="@id/cssmi_spinner"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:iconSrc="@drawable/ic_toolbar_irs_timer"
+        app:title="@string/common_timer"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cl_root"
+    android:layout_width="1080dp"
+    android:layout_height="588dp"
+    android:background="@drawable/bg_cs_window">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="1080dp"
+        android:layout_height="588dp"
+        android:background="@drawable/bg_cs_window"
+        android:padding="32dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/tv_window_title"
+            android:layout_width="wrap_content"
+            android:layout_height="30.33dp"
+            android:gravity="center_vertical"
+            android:text="@string/push_and_respond_title"
+            android:textColor="@color/black"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:Text="Push-and-Respond" />
+
+        <FrameLayout
+            android:id="@+id/fl_tab"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_window_title">
+
+            <View
+                android:layout_width="1016dp"
+                android:layout_height="1dp"
+                android:layout_gravity="bottom"
+                android:background="@color/push_and_respond_tab_underline_color" />
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tl_tabs"
+                android:layout_width="wrap_content"
+                android:layout_height="40.66dp"
+                android:background="@color/transparent"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:padding="0dp"
+                app:tabGravity="start"
+                app:tabIndicator="@null"
+                app:tabMode="scrollable"
+                app:tabPaddingBottom="0dp"
+                app:tabPaddingEnd="0dp"
+                app:tabPaddingStart="0dp"
+                app:tabPaddingTop="0dp" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="441dp"
+            android:layout_marginTop="13.33dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/fl_tab">
+
+            <com.viewsonic.classswift.ui.widget.task.content.ContentTaskWidget
+                android:id="@+id/cs_content_widget"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="visible" />
+
+            <com.viewsonic.classswift.ui.widget.task.records.RecordsTaskWidget
+                android:id="@+id/cs_records_widget"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="invisible" />
+
+        </FrameLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ImageButton
+        android:id="@+id/ib_close"
+        android:layout_width="21.33dp"
+        android:layout_height="21.33dp"
+        android:layout_marginTop="10.6dp"
+        android:layout_marginEnd="10.6dp"
+        android:background="@drawable/ic_close_64dp"
+        android:backgroundTint="@color/bg_close_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_toolbar_bring_to_front"
+        android:layout_width="21.3dp"
+        android:layout_height="21.3dp"
+        android:layout_marginTop="10.6dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintRight_toLeftOf="@id/ib_close"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_toolbar_bring_to_front_64dp"
+        app:tint="@color/bg_toolbar_bring_to_front" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_minimize_window"
+        android:layout_width="21.3dp"
+        android:layout_height="21.3dp"
+        android:layout_marginTop="10.6dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintRight_toLeftOf="@id/ib_close"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_minus_32dp"
+        app:tint="@color/bg_minimize_window" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_mask"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_mask_radius800"
+        android:clickable="false"
+        android:focusable="true"
+        android:focusableInTouchMode="false"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.viewsonic.classswift.ui.widget.CSMessageDialog
+        android:id="@+id/cs_message_dialog"
+        android:layout_width="1080dp"
+        android:layout_height="588dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.viewsonic.classswift.ui.widget.task.link.UrlMetaPreviewDialog
+        android:id="@+id/umd_url_meta_preview_dialog"
+        android:layout_width="1080dp"
+        android:layout_height="588dp"
+        android:background="@drawable/bg_mask_radius800"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.viewsonic.classswift.ui.widget.CSToast
+        android:id="@+id/cst_toast"
+        android:layout_width="wrap_content"
+        android:layout_height="35.33dp"
+        android:layout_marginTop="7.17dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:successStatus="false" />
+
+    <com.viewsonic.classswift.ui.widget.task.records.RecordMarkWidget
+        android:id="@+id/csrmw_record_mask_widget"
+        android:layout_width="1080dp"
+        android:layout_height="588dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:rmwMaskBackground="@drawable/bg_record_mask_widget" />
+
+    <com.viewsonic.classswift.ui.widget.NetworkDisconnectView
+        android:id="@+id/ndv_network_disconnect_mask"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:cardRadius="@dimen/radius_800"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,70 @@
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
+
+    <LinearLayout
+        android:id="@+id/ll_row_first"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" >
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_answer_icon_placeholder_1"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginHorizontal="@dimen/margin_2"
+            android:layout_marginVertical="@dimen/margin_2" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_answer_icon_placeholder_2"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginHorizontal="@dimen/margin_2"
+            android:layout_marginVertical="@dimen/margin_2" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_answer_icon_placeholder_3"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginHorizontal="@dimen/margin_2"
+            android:layout_marginVertical="@dimen/margin_2" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_row_second"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@+id/ll_row_first"
+        app:layout_constraintStart_toStartOf="parent" >
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_answer_icon_placeholder_4"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginHorizontal="@dimen/margin_2"
+            android:layout_marginVertical="@dimen/margin_2" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_answer_icon_placeholder_5"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginHorizontal="@dimen/margin_2"
+            android:layout_marginVertical="@dimen/margin_2" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_answer_icon_placeholder_6"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginHorizontal="@dimen/margin_2"
+            android:layout_marginVertical="@dimen/margin_2" />
+
+    </LinearLayout>
+
+</merge>

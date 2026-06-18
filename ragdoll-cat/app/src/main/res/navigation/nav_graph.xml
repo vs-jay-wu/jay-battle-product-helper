@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/loginFragment">
+
+    <fragment
+        android:id="@+id/signInFragment"
+        android:name="com.viewsonic.classswift.ui.fragment.SignInFragment"
+        android:label="SignInFragment"
+        tools:layout="@layout/fragment_signin">
+        <action
+            android:id="@+id/action_to_login_fragment"
+            app:destination="@id/loginFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/askOverlayPermissionFragment"
+        android:name="com.viewsonic.classswift.ui.fragment.AskOverlayPermissionFragment"
+        android:label="AskOverlayPermissionFragment"
+        tools:layout="@layout/fragment_ask_overlay_permission">
+        <action
+            android:id="@+id/action_to_retry_fragment"
+            app:destination="@id/retryPermissionFragment" />
+        <action
+            android:id="@+id/action_back_login_fragment"
+            app:destination="@id/loginFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/retryPermissionFragment"
+        android:name="com.viewsonic.classswift.ui.fragment.PermissionRetryFragment"
+        android:label="RetryPermissionFragment"
+        tools:layout="@layout/fragment_permission_retry">
+        <action
+            android:id="@+id/action_ask_overlay_permission_fragment"
+            app:destination="@id/askOverlayPermissionFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.viewsonic.classswift.ui.fragment.LoginFragment"
+        android:label="LoginFragment"
+        tools:layout="@layout/fragment_login">
+        <action
+            android:id="@+id/action_ask_overlay_permission_fragment"
+            app:destination="@id/askOverlayPermissionFragment" />
+        <action
+            android:id="@+id/action_to_no_network_fragment"
+            app:destination="@id/noNetworkFragment" />
+        <action
+            android:id="@+id/action_to_otp_api_error_fragment"
+            app:destination="@id/otaApiErrorFragment" />
+        <action
+            android:id="@+id/action_to_maintenance_api_error_fragment"
+            app:destination="@id/maintenanceApiErrorFragment" />
+        <action
+            android:id="@+id/action_to_under_maintenance_fragment"
+            app:destination="@id/underMaintenanceFragment" />
+        <action
+            android:id="@+id/action_to_update_available_fragment"
+            app:destination="@id/updateAvailableFragment" />
+        <action
+            android:id="@+id/action_to_access_restricted_fragment"
+            app:destination="@id/accessRestrictedFragment" />
+        <action
+            android:id="@+id/action_fill_user_info_fragment"
+            app:destination="@id/fillUserInfoFragment" />
+        <action
+            android:id="@+id/action_to_signIn_fragment"
+            app:destination="@id/signInFragment" />
+        <action
+            android:id="@+id/action_to_regionDetect_fragment"
+            app:destination="@id/regionDetectFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/updateAvailableFragment"
+        android:name="com.viewsonic.classswift.ui.fragment.UpdateAvailableFragment"
+        android:label="UpdateAvailableFragment"
+        tools:layout="@layout/fragment_update_available">
+
+        <action
+            android:id="@+id/action_to_download_apk_fragment"
+            app:destination="@id/downloadApkFragment" />
+
+        <argument
+            android:name="isUpdateFailed"
+            app:argType="boolean"
+            android:defaultValue="false" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/fillUserInfoFragment"
+        android:name="com.viewsonic.classswift.ui.fragment.FillUserInfoFragment"
+        android:label="FillUserInfoFragment"
+        tools:layout="@layout/fragment_fill_user"/>
+
+    <fragment
+        android:id="@+id/noNetworkFragment"
+        android:name="com.viewsonic.classswift.ui.fragment.NoNetworkFragment"
+        android:label="NoNetworkFragment"
+        tools:layout="@layout/fragment_no_network"/>
+
+    <fragment
+        android:id="@+id/accessRestrictedFragment"
+        android:name="com.viewsonic.classswift.ui.fragment.AccessRestrictedFragment"
+        android:label="AccessRestrictedFragment"
+        tools:layout="@layout/fragment_no_network"/>
+
+    <fragment
+        android:id="@+id/downloadApkFragment"
+        android:name="com.viewsonic.classswift.ui.fragment.DownloadAPKFragment"
+        android:label="DownloadAPKFragment"
+        tools:layout="@layout/fragment_download_apk">
+
+        <action
+            android:id="@+id/action_to_update_available_fragment"
+            app:destination="@id/updateAvailableFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/otaApiErrorFragment"
+        android:name="com.viewsonic.classswift.ui.fragment.OtaApiErrorFragment"
+        android:label="OtaApiErrorFragment"
+        tools:layout="@layout/fragment_no_network"/>
+
+    <fragment
+        android:id="@+id/maintenanceApiErrorFragment"
+        android:name="com.viewsonic.classswift.ui.fragment.MaintenanceApiErrorFragment"
+        android:label="MaintenanceApiErrorFragment"
+        tools:layout="@layout/fragment_maintenance_warning"/>
+
+    <fragment
+        android:id="@+id/underMaintenanceFragment"
+        android:name="com.viewsonic.classswift.ui.fragment.UnderMaintenanceFragment"
+        android:label="UnderMaintenanceFragment"
+        tools:layout="@layout/fragment_under_maintenance"/>
+
+    <fragment
+        android:id="@+id/regionDetectFragment"
+        android:name="com.viewsonic.classswift.ui.fragment.RegionDetectFragment"
+        android:label="RegionDetectFragment"
+        tools:layout="@layout/fragment_region_detect">
+        <action
+            android:id="@+id/action_to_no_network_fragment"
+            app:destination="@id/noNetworkFragment" />
+        <action
+            android:id="@+id/action_to_login_fragment"
+            app:destination="@id/loginFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/mvbActivateFragment"
+        android:name="com.viewsonic.classswift.ui.fragment.MvbActivateFragment"
+        android:label="MvbActivateFragment"
+        tools:layout="@layout/fragment_mvb_activate">
+        <action
+            android:id="@+id/action_to_mvb_under_maintenance_fragment"
+            app:destination="@id/mvbUnderMaintenanceFragment" />
+        <action
+            android:id="@+id/action_to_mvb_maintenance_api_error_fragment"
+            app:destination="@id/mvbMaintenanceApiErrorFragment" />
+        <action
+            android:id="@+id/action_to_mvb_no_network_fragment"
+            app:destination="@id/mvbNoNetworkFragment" />
+        <action
+            android:id="@+id/action_to_mvb_ota_api_error_fragment"
+            app:destination="@id/mvbOtaApiErrorFragment" />
+        <action
+            android:id="@+id/action_to_mvb_download_apk_fragment"
+            app:destination="@id/mvbDownloadApkFragment" />
+        <action
+            android:id="@+id/action_to_mvb_login_api_error_fragment"
+            app:destination="@id/mvbLoginApiErrorFragment" />
+        <action
+            android:id="@+id/action_to_mvb_guest_login_api_error_fragment"
+            app:destination="@id/mvbGuestLoginApiErrorFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/mvbUnderMaintenanceFragment"
+        android:name="com.viewsonic.classswift.ui.fragment.MvbUnderMaintenanceFragment"
+        android:label="MvbUnderMaintenanceFragment"
+        tools:layout="@layout/fragment_mvb_under_maintenance"/>
+
+    <fragment
+        android:id="@+id/mvbMaintenanceApiErrorFragment"
+        android:name="com.viewsonic.classswift.ui.fragment.MvbMaintenanceApiErrorFragment"
+        android:label="MvbMaintenanceApiErrorFragment"
+        tools:layout="@layout/fragment_mvb_api_failed">
+        <action
+            android:id="@+id/action_to_mvb_activate_fragment"
+            app:destination="@id/mvbActivateFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/mvbNoNetworkFragment"
+        android:name="com.viewsonic.classswift.ui.fragment.MvbNoNetworkFragment"
+        android:label="MvbNoNetworkFragment"
+        tools:layout="@layout/fragment_mvb_no_network"/>
+
+    <fragment
+        android:id="@+id/mvbOtaApiErrorFragment"
+        android:name="com.viewsonic.classswift.ui.fragment.MvbOtaApiErrorFragment"
+        android:label="MvbOtaApiErrorFragment"
+        tools:layout="@layout/fragment_mvb_api_failed">
+        <action
+            android:id="@+id/action_to_mvb_activate_fragment"
+            app:destination="@id/mvbActivateFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/mvbDownloadApkFragment"
+        android:name="com.viewsonic.classswift.ui.fragment.MvbDownloadAPKFragment"
+        android:label="MvbDownloadAPKFragment"
+        tools:layout="@layout/fragment_mvb_download_apk">
+        <action
+            android:id="@+id/action_to_mvb_no_network_fragment"
+            app:destination="@id/mvbNoNetworkFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/mvbLoginApiErrorFragment"
+        android:name="com.viewsonic.classswift.ui.fragment.MvbLoginApiErrorFragment"
+        android:label="MvbLoginApiErrorFragment"
+        tools:layout="@layout/fragment_mvb_api_failed">
+        <action
+            android:id="@+id/action_to_mvb_activate_fragment"
+            app:destination="@id/mvbActivateFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/mvbGuestLoginApiErrorFragment"
+        android:name="com.viewsonic.classswift.ui.fragment.MvbGuestLoginApiErrorFragment"
+        android:label="MvbGuestLoginApiErrorFragment"
+        tools:layout="@layout/fragment_mvb_api_failed">
+        <action
+            android:id="@+id/action_to_mvb_activate_fragment"
+            app:destination="@id/mvbActivateFragment" />
+    </fragment>
+</navigation>

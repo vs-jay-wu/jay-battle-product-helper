@@ -1,0 +1,438 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <WebView
+        android:id="@+id/wv_send_info"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="32dp"
+        app:layout_constraintEnd_toEndOf="@id/cl_fill_user_view"
+        app:layout_constraintStart_toStartOf="@id/cl_fill_user_view"
+        app:layout_constraintTop_toTopOf="@id/cl_fill_user_view" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_fill_user_view"
+        android:layout_width="433.33dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_cs_init"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHeight_max="573.56dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/nsv_scroll"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="33.33dp"
+            android:layout_marginTop="26.66dp"
+            android:layout_marginEnd="20dp"
+            android:scrollbarStyle="outsideInset"
+            android:scrollbarThumbVertical="@drawable/shape_cs_spinner_scrollbar"
+            android:scrollbars="vertical"
+            app:layout_constraintBaseline_toBottomOf="@id/cslb_submit"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_max="460dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusableInTouchMode="true"
+                android:orientation="vertical">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/aciv_icon"
+                    android:layout_width="133.33dp"
+                    android:layout_height="150.61dp"
+                    android:src="@drawable/ic_fill_account" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/actv_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/userinfo_title"
+                    android:textAlignment="center"
+                    android:textColor="@color/cs_main_black_text_color"
+                    android:textFontWeight="600"
+                    android:textSize="24sp"
+                    tools:text="Almost there..." />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/actv_subtitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/userinfo_sub_title"
+                    android:textAlignment="center"
+                    android:textColor="@color/cs_main_black_text_color"
+                    android:textFontWeight="600"
+                    android:textSize="16sp"
+                    tools:text="We’d love to know a little more about you. Fill this out and you’re all set to dive in!" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cl_fill_area"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp">
+
+                    <View
+                        android:id="@+id/view_center_position"
+                        android:layout_width="16dp"
+                        android:layout_height="0dp"
+                        android:background="@color/transparent_color"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <com.viewsonic.classswift.ui.widget.StarredTextView
+                        android:id="@+id/stv_display_name"
+                        android:layout_width="0dp"
+                        android:layout_height="20dp"
+                        android:ellipsize="start"
+                        android:gravity="center_vertical|start"
+                        android:maxLines="1"
+                        android:text="@string/userinfo_display_name"
+                        android:textColor="@color/cs_main_black_text_color"
+                        android:textFontWeight="400"
+                        android:textSize="13.33sp"
+                        app:layout_constraintEnd_toStartOf="@id/view_center_position"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="Display Name" />
+
+                    <androidx.appcompat.widget.AppCompatEditText
+                        android:id="@+id/acet_display_name"
+                        android:layout_width="0dp"
+                        android:layout_height="37.33dp"
+                        android:layout_marginTop="5.33dp"
+                        android:background="@drawable/selector_user_info_edit_text"
+                        android:inputType="text"
+                        android:maxLines="1"
+                        android:paddingHorizontal="8dp"
+                        android:textColor="@color/cs_main_black_text_color"
+                        android:textCursorDrawable="@drawable/shape_edit_text_cursor"
+                        android:textFontWeight="400"
+                        android:textSize="13.33sp"
+                        app:layout_constraintEnd_toStartOf="@id/view_center_position"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/stv_display_name"
+                        tools:ignore="ContentDescription,SpeakableTextPresentCheck" />
+
+                    <com.viewsonic.classswift.ui.widget.StarredTextView
+                        android:id="@+id/stv_country"
+                        android:layout_width="0dp"
+                        android:layout_height="20dp"
+                        android:ellipsize="start"
+                        android:gravity="center_vertical|start"
+                        android:maxLines="1"
+                        android:text="@string/userinfo_country"
+                        android:textColor="@color/cs_main_black_text_color"
+                        android:textFontWeight="400"
+                        android:textSize="13.33sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/view_center_position"
+                        app:layout_constraintTop_toTopOf="@id/stv_display_name"
+                        tools:text="Country/Territory" />
+
+                    <com.viewsonic.classswift.ui.widget.CSSpinner
+                        android:id="@+id/css_country"
+                        android:layout_width="0dp"
+                        android:layout_height="37.33dp"
+                        android:textColor="@color/cs_main_black_text_color"
+                        android:textFontWeight="400"
+                        android:textSize="13.33sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/view_center_position"
+                        app:layout_constraintTop_toTopOf="@id/acet_display_name" />
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:id="@+id/llc_state"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:gravity="start"
+                        android:orientation="vertical"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/acet_display_name">
+
+                        <com.viewsonic.classswift.ui.widget.StarredTextView
+                            android:id="@+id/stv_state"
+                            android:layout_width="wrap_content"
+                            android:layout_height="20dp"
+                            android:ellipsize="start"
+                            android:gravity="center_vertical|start"
+                            android:maxLines="1"
+                            android:text="@string/userinfo_state"
+                            android:textColor="@color/cs_main_black_text_color"
+                            android:textFontWeight="400"
+                            android:textSize="13.33sp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@id/view_center_position"
+                            app:layout_constraintTop_toTopOf="@id/stv_display_name"
+                            tools:text="@string/userinfo_state" />
+
+                        <com.viewsonic.classswift.ui.widget.CSSpinner
+                            android:id="@+id/css_state"
+                            android:layout_width="match_parent"
+                            android:layout_height="37.33dp"
+                            android:layout_marginTop="5.33dp"
+                            android:textColor="@color/cs_main_black_text_color"
+                            android:textFontWeight="400"
+                            android:textSize="13.33sp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@id/view_center_position"
+                            app:layout_constraintTop_toTopOf="@id/acet_display_name" />
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+                    <com.viewsonic.classswift.ui.widget.StarredTextView
+                        android:id="@+id/stv_school"
+                        android:layout_width="0dp"
+                        android:layout_height="20dp"
+                        android:layout_marginTop="14dp"
+                        android:ellipsize="start"
+                        android:gravity="center_vertical|start"
+                        android:maxLines="1"
+                        android:text="@string/userinfo_school"
+                        android:textColor="@color/cs_main_black_text_color"
+                        android:textFontWeight="400"
+                        android:textSize="13.33sp"
+                        app:layout_constraintEnd_toStartOf="@id/view_center_position"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/llc_state"
+                        tools:text="School/Organization" />
+
+                    <androidx.appcompat.widget.AppCompatEditText
+                        android:id="@+id/acet_school"
+                        android:layout_width="0dp"
+                        android:layout_height="37.33dp"
+                        android:layout_marginTop="5.33dp"
+                        android:background="@drawable/selector_user_info_edit_text"
+                        android:inputType="text"
+                        android:maxLines="1"
+                        android:paddingHorizontal="8dp"
+                        android:textColor="@color/cs_main_black_text_color"
+                        android:textCursorDrawable="@drawable/shape_edit_text_cursor"
+                        android:textFontWeight="400"
+                        android:textSize="13.33sp"
+                        app:layout_constraintEnd_toStartOf="@id/view_center_position"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/stv_school"
+                        tools:ignore="SpeakableTextPresentCheck" />
+
+                    <com.viewsonic.classswift.ui.widget.StarredTextView
+                        android:id="@+id/stv_role"
+                        android:layout_width="0dp"
+                        android:layout_height="20dp"
+                        android:ellipsize="start"
+                        android:gravity="center_vertical|start"
+                        android:maxLines="1"
+                        android:text="@string/userinfo_my_role"
+                        android:textColor="@color/cs_main_black_text_color"
+                        android:textFontWeight="400"
+                        android:textSize="13.33sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/view_center_position"
+                        app:layout_constraintTop_toTopOf="@id/stv_school"
+                        tools:text="My role is" />
+
+                    <com.viewsonic.classswift.ui.widget.CSSpinner
+                        android:id="@+id/css_role"
+                        android:layout_width="0dp"
+                        android:layout_height="37.33dp"
+                        android:textColor="@color/cs_main_black_text_color"
+                        android:textFontWeight="400"
+                        android:textSize="13.33sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/view_center_position"
+                        app:layout_constraintTop_toTopOf="@id/acet_school" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cl_eula_area"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:orientation="horizontal">
+
+                    <com.viewsonic.classswift.ui.widget.CSUserInfoCheckBox
+                        android:id="@+id/csacb_eula"
+                        android:layout_width="18.33dp"
+                        android:layout_height="18.33dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <com.viewsonic.classswift.ui.widget.StarredTextView
+                        android:id="@+id/actv_eula"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10.66dp"
+                        android:text="@string/userinfo_eula_message"
+                        android:textColor="@color/cs_main_black_text_color"
+                        android:textFontWeight="400"
+                        android:textSize="10.66sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/csacb_eula"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="@string/userinfo_eula_message" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cl_ai_area"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="9.33dp"
+                    android:orientation="horizontal">
+
+                    <com.viewsonic.classswift.ui.widget.CSUserInfoCheckBox
+                        android:id="@+id/csacb_ai"
+                        android:layout_width="18.33dp"
+                        android:layout_height="18.33dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <com.viewsonic.classswift.ui.widget.StarredTextView
+                        android:id="@+id/actv_ai"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10.66dp"
+                        android:text="@string/userinfo_ai_message"
+                        android:textColor="@color/cs_main_black_text_color"
+                        android:textFontWeight="400"
+                        android:textSize="10.66sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/csacb_ai"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="@string/userinfo_ai_message" />
+
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cl_privacy_area"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="9.33dp"
+                    android:orientation="horizontal">
+
+                    <com.viewsonic.classswift.ui.widget.CSUserInfoCheckBox
+                        android:id="@+id/csacb_privacy"
+                        android:layout_width="18.33dp"
+                        android:layout_height="18.33dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:ignore="SpeakableTextPresentCheck" />
+
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/actv_privacy"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10.66dp"
+                        android:text="@string/userinfo_privacy_message"
+                        android:textColor="@color/cs_main_black_text_color"
+                        android:textFontWeight="400"
+                        android:textSize="10.66sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/csacb_privacy"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="@string/userinfo_privacy_message" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.appcompat.widget.LinearLayoutCompat>
+        </androidx.core.widget.NestedScrollView>
+
+        <com.viewsonic.classswift.ui.widget.ClassSwiftLoadingButton
+            android:id="@+id/cslb_submit"
+            android:layout_width="0dp"
+            android:layout_height="37.33dp"
+            android:layout_marginHorizontal="33.33dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="26.66dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/nsv_scroll"
+            app:lbBackgroundColor="@color/brand_blue"
+            app:lbDisableBackgroundColor="@color/cs_button_bg_disable"
+            app:lbLoadingBackground="@color/account_info_button_loading_color"
+            app:lbRadius="5.33dp"
+            app:lbText="@string/common_submit"
+            app:lbTextColor="@color/white"
+            app:lbTextSize="16sp"
+            tools:lbText="common_submit" />
+
+        <View
+            android:id="@+id/view_mask"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@color/transparent_color"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_success_view"
+        android:layout_width="428.33dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_cs_init"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/aciv_success_icon"
+            android:layout_width="133.33dp"
+            android:layout_height="150.61dp"
+            android:layout_marginTop="26.66dp"
+            android:src="@drawable/ic_fill_account"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/actv_success_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/userinfo_success_title"
+            android:textAlignment="center"
+            android:textColor="@color/cs_main_black_text_color"
+            android:textFontWeight="600"
+            android:textSize="24sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/aciv_success_icon" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/actv_success_subtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="26.66dp"
+            android:text="@string/userinfo_success_subtitle"
+            android:textAlignment="center"
+            android:textColor="@color/cs_main_black_text_color"
+            android:textFontWeight="600"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/actv_success_title" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

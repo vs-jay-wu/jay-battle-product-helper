@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+option java_package = "com.viewsonic.classswift";
+option java_multiple_files = true;
+
+message AccountPreferences {
+    string user_email = 1;
+    string user_id = 2;
+}

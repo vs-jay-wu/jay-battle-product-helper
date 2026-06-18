@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mcv_root"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/quiz_mvb_student_cell_height"
+    android:clickable="true"
+    android:focusable="true"
+    android:theme="@style/Theme.MaterialComponents.Bridge"
+    app:cardBackgroundColor="@color/color_EDEDFD"
+    app:cardCornerRadius="@dimen/radius_600"
+    app:cardElevation="0dp"
+    app:strokeColor="@android:color/transparent"
+    app:strokeWidth="0dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_number_and_name"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/quiz_mvb_student_cell_header_height"
+            android:background="@color/color_4848F0"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:paddingHorizontal="@dimen/mvb_spacing_150"
+            android:textColor="@color/neutral_0"
+            android:textFontWeight="500"
+            android:textSize="@dimen/quiz_mvb_text_xs"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="15  Ruby" />
+
+        <View
+            android:id="@+id/view_divider"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/quiz_mvb_divider_thickness"
+            android:background="@color/color_4848F0"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_number_and_name"
+            tools:visibility="visible" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_submitted"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:text="@string/quiz_mvb_cell_submitted"
+            android:textColor="@color/neutral_900"
+            android:textFontWeight="400"
+            android:textSize="@dimen/quiz_mvb_text_sm"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_number_and_name" />
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/ll_audio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            app:layout_constrainedHeight="true"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_number_and_name"
+            tools:visibility="visible">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_audio_control"
+                android:layout_width="13dp"
+                android:layout_height="13dp"
+                android:scaleType="centerCrop"
+                app:srcCompat="@drawable/ic_audio_play_outline" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_audio_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="2dp"
+                android:text="0:00"
+                android:textColor="@color/neutral_900"
+                android:textFontWeight="400"
+                android:textSize="@dimen/quiz_mvb_text_sm" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/cpi_progress_indicator"
+            android:layout_width="21dp"
+            android:layout_height="21dp"
+            android:indeterminate="true"
+            android:visibility="gone"
+            app:indicatorColor="@color/neutral_1000"
+            app:indicatorInset="1dp"
+            app:indicatorSize="21dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_number_and_name"
+            app:trackThickness="1dp"
+            tools:visibility="gone" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_not_submitted"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:text="@string/quiz_mvb_cell_not_submitted"
+            android:textColor="@color/neutral_500"
+            android:textFontWeight="400"
+            android:textSize="@dimen/quiz_mvb_text_sm"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_number_and_name"
+            tools:visibility="gone" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_absent"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:text="@string/common_absent"
+            android:textColor="@color/neutral_500"
+            android:textFontWeight="400"
+            android:textSize="@dimen/quiz_mvb_text_sm"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_number_and_name"
+            tools:visibility="gone" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="333.33dp"
+    android:layout_height="453.33dp"
+    android:clipToPadding="false"
+    android:padding="@dimen/mvb_spacing_600">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_my_class_window"
+        android:clipToOutline="true"
+        android:clipToPadding="false"
+        android:elevation="8dp"
+        android:outlineProvider="background"
+        android:paddingStart="@dimen/mvb_spacing_600"
+        android:paddingTop="@dimen/mvb_spacing_1000"
+        android:paddingEnd="@dimen/mvb_spacing_600"
+        android:paddingBottom="@dimen/mvb_spacing_1000"
+        android:theme="@style/Theme.MaterialComponents.Bridge">
+
+        <!-- Title -->
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ellipsize="none"
+            android:fontFamily="sans-serif"
+            android:maxLines="1"
+            android:text="@string/select_class_window_title"
+            android:textColor="@color/neutral_900"
+            android:textSize="18.67sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Subtitle row: CS icon + subtitle text -->
+        <ImageView
+            android:id="@+id/iv_class_swift_icon"
+            android:layout_width="13.33dp"
+            android:layout_height="13.33dp"
+            android:src="@drawable/ic_select_class_header"
+            app:layout_constraintBottom_toBottomOf="@id/tv_subtitle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_subtitle"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            android:id="@+id/tv_subtitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/mvb_spacing_150"
+            android:layout_marginTop="@dimen/mvb_spacing_600"
+            android:fontFamily="sans-serif-medium"
+            android:text="@string/my_class_subtitle"
+            android:textColor="@color/neutral_900"
+            android:textSize="9.33sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/iv_class_swift_icon"
+            app:layout_constraintTop_toBottomOf="@id/tv_title" />
+
+        <!-- Flow helper: wraps org dropdown + plan badge to next line when needed -->
+        <androidx.constraintlayout.helper.widget.Flow
+            android:id="@+id/flow_org_plan"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/mvb_spacing_600"
+            app:constraint_referenced_ids="ll_org_dropdown,ll_plan_badge"
+            app:flow_horizontalGap="@dimen/mvb_spacing_200"
+            app:flow_verticalGap="@dimen/mvb_spacing_200"
+            app:flow_horizontalStyle="packed"
+            app:flow_horizontalBias="0"
+            app:flow_wrapMode="chain"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_subtitle" />
+
+        <!-- Org selector dropdown (GONE when single org) -->
+        <LinearLayout
+            android:id="@+id/ll_org_dropdown"
+            android:layout_width="wrap_content"
+            android:layout_height="26.67dp"
+            android:background="@drawable/bg_white_radius400_line_4d4d4d_border1dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="@dimen/mvb_spacing_300"
+            android:paddingEnd="@dimen/mvb_spacing_300"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <ImageView
+                android:layout_width="13.33dp"
+                android:layout_height="13.33dp"
+                android:src="@drawable/ic_org_building"
+                tools:ignore="ContentDescription" />
+
+            <TextView
+                android:id="@+id/tv_org_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/mvb_spacing_150"
+                android:ellipsize="end"
+                android:maxWidth="106.67dp"
+                android:maxLines="1"
+                android:textColor="@color/neutral_900"
+                android:textSize="9.33sp"
+                tools:text="Default organization" />
+
+            <ImageView
+                android:layout_width="10.67dp"
+                android:layout_height="10.67dp"
+                android:layout_marginStart="@dimen/mvb_spacing_100"
+                android:src="@drawable/ic_chevron_down"
+                app:tint="@color/neutral_900"
+                tools:ignore="ContentDescription" />
+        </LinearLayout>
+
+        <!-- Plan badge (gray pill) -->
+        <LinearLayout
+            android:id="@+id/ll_plan_badge"
+            android:layout_width="wrap_content"
+            android:layout_height="26.67dp"
+            android:background="@drawable/bg_neutral100_radius600"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="@dimen/mvb_spacing_400"
+            android:paddingEnd="@dimen/mvb_spacing_400">
+
+            <ImageView
+                android:layout_width="13.33dp"
+                android:layout_height="13.33dp"
+                android:src="@drawable/ic_plan_badge_check"
+                tools:ignore="ContentDescription" />
+
+            <TextView
+                android:id="@+id/tv_plan_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/mvb_spacing_100"
+                android:textColor="@color/color_999999"
+                android:textSize="8sp"
+                tools:text="Basic" />
+
+            <ImageView
+                android:layout_width="13.33dp"
+                android:layout_height="13.33dp"
+                android:layout_marginStart="@dimen/mvb_spacing_400"
+                android:src="@drawable/ic_calendar_clock"
+                tools:ignore="ContentDescription" />
+
+            <TextView
+                android:id="@+id/tv_expiration_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/mvb_spacing_100"
+                android:textColor="@color/color_999999"
+                android:textSize="8sp"
+                tools:text="2026/06/30" />
+        </LinearLayout>
+
+        <!-- Horizontal divider -->
+        <View
+            android:id="@+id/view_divider_top"
+            android:layout_width="0dp"
+            android:layout_height="0.67dp"
+            android:layout_marginTop="@dimen/mvb_spacing_600"
+            android:background="@color/neutral_300"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/flow_org_plan" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_select_class"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/mvb_spacing_400"
+            android:layout_marginBottom="@dimen/mvb_spacing_600"
+            android:clipToPadding="false"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/ll_bottom_buttons"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/view_divider_top"
+            app:layout_constraintVertical_bias="0"
+            app:layout_constraintVertical_chainStyle="spread_inside" />
+
+        <!-- Loading spinner -->
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/cpi_progress"
+            android:layout_width="21.33dp"
+            android:layout_height="21.33dp"
+            android:indeterminate="true"
+            app:indicatorColor="@color/brand_blue"
+            app:indicatorSize="18.67dp"
+            app:layout_constraintBottom_toTopOf="@id/ll_bottom_buttons"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/view_divider_top"
+            app:trackThickness="1.67dp" />
+
+        <!-- Refresh UI -->
+        <LinearLayout
+            android:id="@+id/ll_refresh"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/ll_bottom_buttons"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/view_divider_top"
+            app:layout_constraintVertical_bias="0.4">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/my_class_error_msg_find_class"
+                android:textColor="@color/neutral_900"
+                android:textSize="10.67sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/mvb_spacing_150"
+                android:text="@string/common_try_to_refresh_page"
+                android:textColor="@color/color_666666"
+                android:textSize="8sp" />
+
+            <TextView
+                android:id="@+id/tv_refresh_page"
+                android:layout_width="93.33dp"
+                android:layout_height="24dp"
+                android:layout_marginTop="@dimen/mvb_spacing_400"
+                android:background="@drawable/bg_blue_radius400"
+                android:gravity="center"
+                android:text="@string/dialog_refresh_page_btn"
+                android:textColor="@color/neutral_0"
+                android:textSize="8.67sp" />
+        </LinearLayout>
+
+        <!-- Bottom buttons row -->
+        <LinearLayout
+            android:id="@+id/ll_bottom_buttons"
+            android:layout_width="0dp"
+            android:layout_height="32dp"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <com.viewsonic.classswift.ui.widget.ClassSwiftLoadingButton
+                android:id="@+id/button_exit"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="@dimen/mvb_spacing_200"
+                android:layout_weight="1"
+                android:clickable="true"
+                app:lbBackgroundColor="@color/white"
+                app:lbBorderColor="@color/color_E5E5E5"
+                app:lbRadius="5.33dp"
+                app:lbText="@string/my_class_action_exit"
+                app:lbTextColor="@color/neutral_900"
+                app:lbTextSize="10.67sp" />
+
+            <com.viewsonic.classswift.ui.widget.ClassSwiftLoadingButton
+                android:id="@+id/button_enter_class"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="@dimen/mvb_spacing_200"
+                android:layout_weight="1"
+                android:clickable="true"
+                app:lbBackgroundColor="@color/color_4848F0"
+                app:lbDisableBackgroundColor="@color/window_select_org_right_button_bg_disable"
+                app:lbLoadingBackground="@color/color_4848F0"
+                app:lbProgressIndicatorColor="@color/progressing_loading_white"
+                app:lbRadius="5.33dp"
+                app:lbText="@string/my_class_action_enter_class"
+                app:lbTextColor="@color/window_select_org_right_button_text"
+                app:lbTextSize="10.67sp" />
+        </LinearLayout>
+
+        <!-- Error toast -->
+        <com.viewsonic.classswift.ui.widget.CSToast
+            android:id="@+id/cst_error_toast"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:layout_marginBottom="@dimen/mvb_spacing_200"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:successStatus="false" />
+
+        <!-- Success toast -->
+        <com.viewsonic.classswift.ui.widget.CSToast
+            android:id="@+id/cst_success_toast"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:layout_marginBottom="@dimen/mvb_spacing_200"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:successStatus="true" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- X close: Figma 8dp from panel top-right (mvb_spacing_300) -->
+    <ImageButton
+        android:id="@+id/button_close"
+        android:layout_width="26.67dp"
+        android:layout_height="26.67dp"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="@dimen/mvb_spacing_300"
+        android:layout_marginEnd="@dimen/mvb_spacing_300"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:elevation="12dp"
+        android:padding="@dimen/mvb_spacing_300"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_close_64dp"
+        app:tint="@color/neutral_900"
+        tools:ignore="ContentDescription" />
+
+</FrameLayout>

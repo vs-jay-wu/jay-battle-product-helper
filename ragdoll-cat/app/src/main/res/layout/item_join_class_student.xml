@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="69.33dp"
+    android:layout_margin="2dp"
+    android:background="@drawable/bg_neutral0_radius400"
+    android:clipToOutline="true"
+    tools:ignore="ContentDescription">
+
+    <!-- 移除按鈕：貼齊卡片右上角（Figma node-id=8047-132531） -->
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_remove"
+        android:layout_width="21.33dp"
+        android:layout_height="21.33dp"
+        android:visibility="gone"
+        android:padding="@dimen/mvb_spacing_150"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_remove_circle_outline"
+        app:tint="@color/neutral_900"
+        tools:visibility="visible" />
+
+    <!-- 學生姓名
+         區塊：固定高度 37/1.5=24.67dp，底部貼齊 avatar 頂部
+         寬度：81/1.5=54dp（0dp + 左右 margin 5.33dp 各一）
+         內容：靠上水平置中（gravity=center_horizontal） -->
+    <TextView
+        android:id="@+id/tv_name"
+        android:layout_width="54dp"
+        android:layout_height="24.67dp"
+        android:layout_marginStart="@dimen/mvb_spacing_200"
+        android:layout_marginEnd="@dimen/mvb_spacing_200"
+        android:ellipsize="end"
+        android:gravity="top"
+        android:maxLines="2"
+        android:textColor="@color/neutral_900"
+        android:textSize="10sp"
+        app:layout_constraintBottom_toTopOf="@id/iv_avatar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="Emma Johnson"
+        tools:ignore="SmallSp" />
+
+    <!-- Avatar：底部貼齊卡片底部，水平置中（63/1.5×36/1.5 = 42dp×24dp）-->
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_avatar"
+        android:layout_width="42dp"
+        android:layout_height="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:srcCompat="@drawable/ic_avatar_student_01" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

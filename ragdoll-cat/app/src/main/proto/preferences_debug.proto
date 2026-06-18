@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+option java_package = "com.viewsonic.classswift";
+option java_multiple_files = true;
+
+message DebugPreferences {
+  bool is_use_android_test_json_for_maintenance_announcements = 1;
+}

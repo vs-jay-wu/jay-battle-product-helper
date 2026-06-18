@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_dialog_card"
+        android:layout_width="@dimen/quiz_mvb_dialog_width"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/bg_mvb_neutral0_radius400_line_neutral300_border100"
+        android:elevation="@dimen/mvb_spacing_150">
+
+        <!-- Main content (title + body + actions) -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/mvb_spacing_600"
+            android:paddingTop="@dimen/mvb_spacing_1200"
+            android:paddingEnd="@dimen/mvb_spacing_600"
+            android:paddingBottom="@dimen/mvb_spacing_600"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <!-- Title row: icon + text -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_icon"
+                    android:layout_width="@dimen/quiz_mvb_icon_size_sm"
+                    android:layout_height="@dimen/quiz_mvb_icon_size_sm"
+                    android:src="@drawable/ic_vsds_circle_cross" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/mvb_spacing_200"
+                    android:includeFontPadding="false"
+                    android:textColor="@color/neutral_900"
+                    android:textSize="@dimen/quiz_mvb_text_xl"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <!-- Body text -->
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_message"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/mvb_spacing_600"
+                android:includeFontPadding="false"
+                android:lineSpacingMultiplier="1.6"
+                android:textColor="@color/color_666666"
+                android:textSize="@dimen/quiz_mvb_text_xs" />
+
+            <!-- Actions row: right-aligned buttons -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/mvb_spacing_1000"
+                android:gravity="end|center_vertical"
+                android:orientation="horizontal">
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_negative"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/quiz_mvb_dialog_button_height"
+                    android:background="@drawable/ripple_neutral300_radius_mvb200"
+                    android:paddingStart="@dimen/mvb_spacing_400"
+                    android:paddingEnd="@dimen/mvb_spacing_400"
+                    android:stateListAnimator="@null"
+                    android:textAllCaps="false"
+                    android:textColor="@color/neutral_900"
+                    android:textSize="@dimen/quiz_mvb_text_sm" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_positive"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/quiz_mvb_dialog_button_height"
+                    android:layout_marginStart="@dimen/mvb_spacing_600"
+                    android:background="@drawable/selector_bg_mvb_dialog_positive"
+                    android:paddingStart="@dimen/mvb_spacing_400"
+                    android:paddingEnd="@dimen/mvb_spacing_400"
+                    android:stateListAnimator="@null"
+                    android:textAllCaps="false"
+                    android:textColor="@color/selector_text_mvb_dialog_positive"
+                    android:textSize="@dimen/quiz_mvb_text_sm" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- X close button: stacked on top, padding from TR: top=8px(5.33dp), right=24px(16dp) -->
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_btn_close"
+            android:layout_width="@dimen/quiz_mvb_icon_size_md"
+            android:layout_height="@dimen/quiz_mvb_icon_size_md"
+            android:layout_marginTop="@dimen/mvb_spacing_200"
+            android:layout_marginEnd="@dimen/mvb_spacing_600"
+            android:background="@drawable/ripple_neutral300_oval"
+            android:padding="@dimen/mvb_spacing_200"
+            android:src="@drawable/ic_cross"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</merge>

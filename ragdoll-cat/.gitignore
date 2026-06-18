@@ -1,0 +1,68 @@
+# Gradle files
+.gradle/
+build/
+
+# Personal local Claude instructions (not shared with team)
+CLAUDE.local.md
+
+# Local configuration file (sdk path, etc)
+local.properties
+
+# Log/OS Files
+*.log
+
+# Android Studio generated files and folders
+captures/
+.externalNativeBuild/
+.cxx/
+*.apk
+output.json
+.kotlin/sessions
+
+# IntelliJ
+*.iml
+.idea/
+misc.xml
+deploymentTargetDropDown.xml
+render.experimental.xml
+keystore.properties
+
+# Keystore files
+cs_release.keystore
+*.jks
+
+# Google Services (e.g. APIs or Firebase)
+google-services.json
+
+# Android Profiling
+*.hprof
+
+# Mac OS
+.DS_Store
+
+# AI
+.codex
+.claude/*
+!.claude/rules/
+.claude/rules/*
+!.claude/rules/naming-conventions.md
+!.claude/rules/project-coding-architecture.mdc
+!.claude/rules/git-rebase-only.mdc
+!.claude/rules/extension-functions.md
+!.claude/rules/coding-solid-and-testing.mdc
+!.claude/rules/file-placement.md
+!.claude/rules/sonar-kotlin-actionable.md
+!.claude/rules/sonar-kotlin-rules.md
+!.claude/skills/
+.claude/skills/*
+!.claude/skills/cs-commit/
+!.claude/skills/cs-commit/*
+.cursor/
+.github/rules
+.github/skills
+openspec
+.prospec
+pipeline
+launchd
+bin
+docs/dev

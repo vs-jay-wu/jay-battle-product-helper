@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:padding="8dp"
+    tools:ignore="ContentDescription">
+
+    <FrameLayout
+        android:id="@+id/ll_shell_root"
+        android:layout_width="853dp"
+        android:layout_height="480dp"
+        android:background="@drawable/bg_cs_window_no_border_radius800"
+        android:clipToOutline="true"
+        android:elevation="@dimen/mvb_spacing_200"
+        android:outlineProvider="background">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <!-- Header 32dp (Figma 48 ÷ 1.5), padding 6/16/6/16 → 4/10.67/4/10.67 -->
+            <FrameLayout
+                android:id="@+id/fl_header"
+                android:layout_width="match_parent"
+                android:layout_height="32dp"
+                android:background="@color/neutral_0"
+                android:paddingHorizontal="@dimen/mvb_spacing_400">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="start|center_vertical"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="@dimen/mvb_spacing_800"
+                        android:layout_height="@dimen/mvb_spacing_800"
+                        android:layout_marginEnd="@dimen/mvb_spacing_200"
+                        android:src="@drawable/ic_mvb_quizzing_header"
+                        tools:ignore="UseAppTint" />
+
+                    <TextView
+                        android:id="@+id/tv_header_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif"
+                        android:text="@string/quiz_title"
+                        android:textColor="@color/neutral_900"
+                        android:textSize="@dimen/quiz_mvb_text_md"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="end|center_vertical"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/iv_minimize_window"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:layout_marginEnd="@dimen/mvb_spacing_400"
+                        android:src="@drawable/ic_minus_32dp"
+                        android:background="@drawable/ripple_neutral300_oval"
+                        android:visibility="gone"
+                        app:tint="@color/neutral_900"
+                        tools:ignore="UseAppTint" />
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/iv_toolbar_bring_to_front"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:layout_marginEnd="8dp"
+                        android:src="@drawable/ic_toolbar_bring_to_front_64dp"
+                        android:background="@drawable/ripple_neutral300_oval"
+                        android:visibility="gone"
+                        app:tint="@color/neutral_900"
+                        tools:ignore="UseAppTint" />
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/iv_close"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:src="@drawable/ic_close_64dp"
+                        android:background="@drawable/ripple_neutral300_oval"
+                        app:tint="@color/neutral_900"
+                        tools:ignore="UseAppTint" />
+                </LinearLayout>
+            </FrameLayout>
+
+            <!-- Header bottom divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/color_E6E6E6" />
+
+            <!-- Unified panel (quizzing + disclose share same layout, toggled by view visibility) -->
+            <include
+                android:id="@+id/panel_quizzing"
+                layout="@layout/panel_mvb_quizzing"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+        </LinearLayout>
+
+        <com.viewsonic.classswift.ui.widget.MvbToast
+            android:id="@+id/mt_close_error_toast"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginBottom="@dimen/mvb_spacing_400"
+            android:visibility="gone"
+            app:mtHasActionButton="false"
+            app:mtHasCloseButton="false"
+            app:mtToastLevel="level_danger" />
+
+        <FrameLayout
+            android:id="@+id/fl_close_loading_overlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/black_a35"
+            android:clickable="true"
+            android:focusable="true"
+            android:visibility="gone">
+
+            <FrameLayout
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_gravity="center"
+                android:background="@drawable/bg_neutral0_radius800"
+                android:padding="@dimen/mvb_spacing_200">
+
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/lav_loading"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:lottie_autoPlay="false"
+                    app:lottie_fileName="ani_loading.json"
+                    app:lottie_loop="true" />
+            </FrameLayout>
+        </FrameLayout>
+
+        <com.viewsonic.classswift.ui.widget.dialog.MvbSystemDialogView
+            android:id="@+id/msdv_close_confirm"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <com.viewsonic.classswift.ui.widget.CSSnackbar
+            android:id="@+id/cs_snackbar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginBottom="@dimen/mvb_spacing_400"
+            android:visibility="gone" />
+    </FrameLayout>
+</FrameLayout>

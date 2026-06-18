@@ -1,0 +1,916 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="333.33dp"
+    android:layout_height="565.33dp"
+    android:background="@drawable/bg_neutral0_radius800_line_neutral450_border400"
+    tools:ignore="ContentDescription">
+
+    <!-- ═══ Main content ═══ -->
+
+    <LinearLayout
+        android:layout_width="333.33dp"
+        android:layout_height="565.33dp"
+        android:orientation="vertical">
+
+        <!-- Title bar -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="@dimen/mvb_spacing_400"
+            android:paddingTop="@dimen/mvb_spacing_150"
+            android:paddingEnd="@dimen/mvb_spacing_400"
+            android:paddingBottom="@dimen/mvb_spacing_150">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_window_icon"
+                android:layout_width="21.33dp"
+                android:layout_height="21.33dp"
+                app:srcCompat="@drawable/ic_class_management" />
+
+            <TextView
+                android:id="@+id/tv_window_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/mvb_spacing_200"
+                android:layout_marginEnd="@dimen/mvb_spacing_300"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@string/toolbar_menu_join_class"
+                android:textColor="@color/color_2E3133"
+                android:textSize="14.4sp"
+                android:textStyle="bold" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_minimize_window"
+                android:layout_width="21.3dp"
+                android:layout_height="21.3dp"
+                android:layout_marginEnd="@dimen/mvb_spacing_300"
+                app:srcCompat="@drawable/ic_minus_32dp"
+                app:tint="@color/bg_minimize_window" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_toolbar_bring_to_front"
+                android:layout_width="21.3dp"
+                android:layout_height="21.3dp"
+                android:layout_marginEnd="@dimen/mvb_spacing_300"
+                app:srcCompat="@drawable/ic_toolbar_bring_to_front_64dp"
+                app:tint="@color/bg_toolbar_bring_to_front" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_close"
+                android:layout_width="21.3dp"
+                android:layout_height="21.3dp"
+                app:srcCompat="@drawable/ic_close_64dp"
+                app:tint="@color/bg_close_button" />
+
+        </LinearLayout>
+
+        <!-- Title bar bottom divider -->
+        <View
+            android:id="@+id/view_horizontal_divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/color_E6E6E6" />
+
+        <!-- ① Class info row: icon + class name + Switch Class button -->
+        <LinearLayout
+            android:id="@+id/ll_class_info"
+            android:layout_width="match_parent"
+            android:layout_height="45.33dp"
+            android:layout_marginStart="@dimen/mvb_spacing_400"
+            android:layout_marginTop="@dimen/mvb_spacing_400"
+            android:layout_marginEnd="@dimen/mvb_spacing_400"
+            android:background="@drawable/bg_f6f6f6_radius800"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="@dimen/mvb_spacing_400"
+            android:paddingEnd="@dimen/mvb_spacing_400">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_class_icon"
+                android:layout_width="18.66dp"
+                android:layout_height="18.66dp"
+                app:srcCompat="@drawable/ic_user_document" />
+
+            <TextView
+                android:id="@+id/tv_join_class_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/mvb_spacing_200"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="@color/color_2E3133"
+                android:textSize="13.3sp"
+                android:textStyle="bold"
+                tools:text="Science 509" />
+
+            <!-- Switch Class button -->
+            <LinearLayout
+                android:id="@+id/ll_switch_class"
+                android:layout_width="wrap_content"
+                android:layout_height="28dp"
+                android:background="@drawable/bg_neutral0_radius600_line_neutral300_border200"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="@dimen/mvb_spacing_400"
+                android:paddingEnd="@dimen/mvb_spacing_400">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="10.66dp"
+                    android:layout_height="10.66dp"
+                    app:srcCompat="@drawable/ic_toolbar_irs_sign_out" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/mvb_spacing_150"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="@string/join_class_switch_class"
+                    android:textColor="@color/color_2E3133"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- ② Join info card: left (Steps 1+2) | right (QR) -->
+        <LinearLayout
+            android:id="@+id/ll_join_info"
+            android:layout_width="match_parent"
+            android:layout_height="132dp"
+            android:layout_marginStart="@dimen/mvb_spacing_400"
+            android:layout_marginTop="@dimen/mvb_spacing_400"
+            android:layout_marginEnd="@dimen/mvb_spacing_400"
+            android:orientation="horizontal">
+
+            <!-- Left column: Step 1 (URL + copy) + Step 2 (class code tiles) -->
+            <LinearLayout
+                android:id="@+id/ll_steps"
+                android:layout_width="184dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_f6f6f6_radius800"
+                android:orientation="vertical"
+                android:padding="@dimen/mvb_spacing_400">
+
+                <!-- Step 1 header: label + copy icon -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="24dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tv_step1_label"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/join_class_step_1"
+                        android:textColor="@color/color_2E3133"
+                        android:textSize="10.7sp"
+                        android:textStyle="bold" />
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/iv_copy_link"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginStart="@dimen/mvb_spacing_150"
+                        app:srcCompat="@drawable/ic_copy_link" />
+
+                </LinearLayout>
+
+                <!-- URL text -->
+                <TextView
+                    android:id="@+id/tv_join_class_link"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/mvb_spacing_150"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textColor="@color/violet_500"
+                    android:textSize="18.7sp"
+                    android:textStyle="bold"
+                    tools:text="s.mvb.fyi/join" />
+
+                <!-- Step 2 label -->
+                <TextView
+                    android:id="@+id/tv_step2_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/mvb_spacing_300"
+                    android:text="@string/join_class_step_2"
+                    android:textColor="@color/color_333333"
+                    android:textSize="10.7sp"
+                    android:textStyle="bold" />
+
+                <!-- Class code tiles (populated in code) -->
+                <LinearLayout
+                    android:id="@+id/ll_class_code_tiles"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/mvb_spacing_150"
+                    android:orientation="horizontal" />
+
+            </LinearLayout>
+
+            <!-- Right column: Scan to join + QR code -->
+            <LinearLayout
+                android:id="@+id/ll_qr_section"
+                android:layout_width="117.33dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="@dimen/mvb_spacing_400"
+                android:background="@drawable/bg_f6f6f6_radius800"
+                android:orientation="vertical"
+                android:padding="@dimen/mvb_spacing_400">
+
+                <!-- "Scan to join" header: label + expand icon -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="24dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tv_scan_to_join"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/join_class_scan_to_join"
+                        android:textColor="@color/color_333333"
+                        android:textSize="10.7sp"
+                        android:textStyle="bold" />
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/iv_qr_expand"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        app:srcCompat="@drawable/ic_zoom_in" />
+
+                </LinearLayout>
+
+                <!-- QR code image (square via adjustViewBounds) -->
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_qr_code"
+                    android:layout_width="81.33dp"
+                    android:layout_height="81.33dp"
+                    android:layout_marginTop="@dimen/mvb_spacing_100"
+                    android:adjustViewBounds="true"
+                    tools:srcCompat="@drawable/ic_copy_blue" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- ③ QR expanded section (in-place, replaces ll_join_info when expanded) -->
+        <LinearLayout
+            android:id="@+id/ll_qr_expanded_section"
+            android:layout_width="312dp"
+            android:layout_height="317.33dp"
+            android:layout_marginStart="@dimen/mvb_spacing_400"
+            android:layout_marginTop="@dimen/mvb_spacing_400"
+            android:layout_marginEnd="@dimen/mvb_spacing_400"
+            android:background="@drawable/bg_f6f6f6_radius800"
+            android:orientation="vertical"
+            android:padding="@dimen/mvb_spacing_400"
+            android:visibility="gone">
+
+            <!-- Header: "Scan to join" + collapse icon -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="24dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/join_class_scan_to_join"
+                    android:textColor="@color/color_333333"
+                    android:textSize="10.7sp"
+                    android:textStyle="bold" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_qr_collapse"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    app:srcCompat="@drawable/ic_zoom_out" />
+
+            </LinearLayout>
+
+            <!-- Large QR code image -->
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_qr_code_expanded"
+                android:layout_width="266.66dp"
+                android:layout_height="266.66dp"
+                android:layout_marginStart="@dimen/mvb_spacing_400"
+                android:layout_marginTop="@dimen/mvb_spacing_100"
+                android:layout_marginEnd="@dimen/mvb_spacing_400"
+                android:adjustViewBounds="true"
+                android:background="@drawable/bg_neutral0_radius400"
+                tools:srcCompat="@drawable/ic_copy_blue" />
+
+        </LinearLayout>
+
+        <!-- ④ Student attendance panel (VSFT-7256) -->
+        <!-- FrameLayout wrapper 供 VSFT-8256 斷線 overlay 疊加 -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginStart="@dimen/mvb_spacing_300"
+            android:layout_marginTop="@dimen/mvb_spacing_400"
+            android:layout_marginEnd="@dimen/mvb_spacing_300"
+            android:layout_marginBottom="@dimen/mvb_spacing_300">
+
+        <LinearLayout
+            android:id="@+id/ll_student_panel"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_f6f6f6_radius800"
+            android:clipToOutline="true"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/mvb_spacing_400"
+            android:paddingTop="@dimen/mvb_spacing_400"
+            android:paddingEnd="@dimen/mvb_spacing_400">
+
+            <!-- Header：Whole Class 標題 + 人數 + ⓘ -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingBottom="@dimen/mvb_spacing_300">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/join_class_whole_class"
+                    android:textColor="@color/neutral_900"
+                    android:textSize="10.7sp"
+                    android:textStyle="bold"
+                    tools:ignore="SmallSp" />
+
+                <!-- VSFT-8437: Spinner entry point -->
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_spinner"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginStart="@dimen/mvb_spacing_200"
+                    android:visibility="gone"
+                    app:srcCompat="@drawable/ic_mvb_join_class_spinner"
+                    tools:visibility="visible" />
+
+                <!-- TODO(VSFT-7256): 預留篩選圖示按鈕區塊 -->
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <!-- 有網路：人數 + ⓘ（與 ll_network_status 互斥）-->
+                <LinearLayout
+                    android:id="@+id/ll_student_count_group"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tv_student_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/neutral_900"
+                        android:textSize="10.7sp"
+                        tools:text="0 joined / 14 students"
+                        tools:ignore="SmallSp" />
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/iv_student_info"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:layout_marginStart="@dimen/mvb_spacing_200"
+                        app:srcCompat="@drawable/ic_info_circle"
+                        app:tint="@color/neutral_900" />
+
+                </LinearLayout>
+
+                <!-- 斷線狀態：cloud-off icon + "No internet. Reconnecting..."（與 ll_student_count_group 互斥）-->
+                <LinearLayout
+                    android:id="@+id/ll_network_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:visibility="gone">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        app:srcCompat="@drawable/ic_network_disconnect_black" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/mvb_spacing_150"
+                        android:text="@string/common_no_internet_connecting"
+                        android:textColor="@color/neutral_900"
+                        android:textSize="10.7sp"
+                        tools:ignore="SmallSp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- 四種互斥 body state + 固定底部 banner（VSFT-8256）-->
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+                <!-- Loading 狀態（fetch 中）-->
+                <LinearLayout
+                    android:id="@+id/ll_student_loading"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <com.airbnb.lottie.LottieAnimationView
+                        android:id="@+id/lottie_student_loading"
+                        android:layout_width="@dimen/mvb_spacing_800"
+                        android:layout_height="@dimen/mvb_spacing_800"
+                        app:lottie_autoPlay="false"
+                        app:lottie_fileName="ani_loading.json"
+                        app:lottie_loop="true" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/mvb_spacing_300"
+                        android:text="@string/join_class_student_list_loading"
+                        android:textColor="@color/neutral_600"
+                        android:textSize="10.7sp"
+                        tools:ignore="SmallSp" />
+
+                </LinearLayout>
+
+                <!-- 學生清單 RecyclerView -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_student_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingEnd="18.6dp"
+                    android:paddingBottom="@dimen/mvb_spacing_400"
+                    android:visibility="gone"
+                    app:fastScrollEnabled="true"
+                    app:fastScrollHorizontalThumbDrawable="@drawable/selector_student_list_scroll_thumb"
+                    app:fastScrollHorizontalTrackDrawable="@drawable/selector_student_list_scroll_track"
+                    app:fastScrollVerticalThumbDrawable="@drawable/selector_student_list_scroll_thumb"
+                    app:fastScrollVerticalTrackDrawable="@drawable/selector_student_list_scroll_track" />
+
+                <!-- 空狀態（無學生加入且無 pre-roster）-->
+                <LinearLayout
+                    android:id="@+id/ll_empty_state"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:paddingStart="@dimen/mvb_spacing_400"
+                    android:paddingEnd="@dimen/mvb_spacing_400"
+                    android:visibility="gone">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/iv_empty_illustration"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        app:srcCompat="@drawable/ic_join_class_empty" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/mvb_spacing_300"
+                        android:gravity="center"
+                        android:text="@string/join_class_empty_message"
+                        android:textColor="@color/neutral_600"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+                <!-- VSFT-8256：第 4 種 body 狀態：網路斷線（插圖 + 提示文字）-->
+                <LinearLayout
+                    android:id="@+id/ll_network_disconnect_body"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        app:srcCompat="@drawable/ic_error" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/mvb_spacing_300"
+                        android:gravity="center"
+                        android:text="@string/join_class_network_disconnect_message"
+                        android:textColor="@color/neutral_600"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+                <!-- VSFT-8256: Network disconnect banner（固定顯示，釘在底部）-->
+                <LinearLayout
+                    android:id="@+id/ll_network_disconnect_banner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:background="@drawable/bg_banner_danger"
+                    android:orientation="horizontal"
+                    android:paddingStart="10.67dp"
+                    android:paddingTop="5.33dp"
+                    android:paddingEnd="10.67dp"
+                    android:paddingBottom="5.33dp"
+                    android:visibility="gone"
+                    tools:visibility="visible">
+
+                    <ImageView
+                        android:layout_width="13.33dp"
+                        android:layout_height="13.33dp"
+                        android:layout_marginEnd="5.33dp"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_network_disconnect_black" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/mvb_network_disconnect_toast"
+                        android:textColor="@color/neutral_900"
+                        android:textSize="9.33sp"
+                        tools:ignore="SmallSp" />
+
+                </LinearLayout>
+
+            </FrameLayout>
+
+        </LinearLayout>
+
+        </FrameLayout>
+
+    </LinearLayout>
+
+    <!-- ═══ Overlays (full-window stacking) ═══ -->
+
+    <!-- Copy success tooltip (appears above copy-link icon) -->
+    <LinearLayout
+        android:id="@+id/ll_copy_tooltip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start|top"
+        android:layout_marginStart="120dp"
+        android:layout_marginTop="78dp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_tooltips"
+            android:paddingStart="10dp"
+            android:paddingTop="6dp"
+            android:paddingEnd="10dp"
+            android:paddingBottom="6dp"
+            android:text="@string/join_class_copy_success"
+            android:textColor="@color/white"
+            android:textSize="10.7sp" />
+
+        <!-- Arrow tip pointing toward copy-link icon -->
+        <ImageView
+            android:layout_width="10dp"
+            android:layout_height="6dp"
+            android:layout_marginTop="-2dp"
+            android:src="@drawable/ic_tooltip_arrow_down" />
+
+    </LinearLayout>
+
+    <!-- Plan limit tooltip (appears above ⓘ icon, dismissed after 3s) -->
+    <!-- tools margin: tooltipLeft≈203dp, tooltipTop≈225dp, arrowLeft≈107dp (runtime set by code) -->
+    <LinearLayout
+        android:id="@+id/ll_plan_limit_tooltip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start|top"
+        android:orientation="vertical"
+        android:visibility="gone"
+        tools:layout_marginStart="203dp"
+        tools:layout_marginTop="225dp"
+        tools:visibility="visible">
+
+        <TextView
+            android:id="@+id/tv_plan_limit_tooltip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_tooltips"
+            android:paddingStart="10dp"
+            android:paddingTop="6dp"
+            android:paddingEnd="10dp"
+            android:paddingBottom="6dp"
+            android:textColor="@color/white"
+            android:textSize="8sp"
+            tools:text="Plan Limit: 50 Seats"
+            tools:ignore="SmallSp" />
+
+        <!-- Arrow tip：leftMargin 由 code 動態設定，對齊 ⓘ 按鈕中央 -->
+        <ImageView
+            android:id="@+id/iv_plan_limit_arrow"
+            android:layout_width="10dp"
+            android:layout_height="6dp"
+            android:layout_marginTop="-2dp"
+            android:src="@drawable/ic_tooltip_arrow_down"
+            tools:layout_marginStart="107dp" />
+
+    </LinearLayout>
+
+    <!-- Switch Class confirmation dialog overlay -->
+    <FrameLayout
+        android:id="@+id/fl_leave_class_dialog"
+        android:layout_width="333.33dp"
+        android:layout_height="565.33dp"
+        android:background="@drawable/bg_blacka60_raduis800"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="244dp"
+            android:layout_height="146dp"
+            android:layout_gravity="center"
+            app:cardBackgroundColor="@color/neutral_0"
+            app:cardCornerRadius="@dimen/mvb_radius_400"
+            app:cardElevation="0dp">
+
+            <!-- Content -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/mvb_spacing_600"
+                android:orientation="vertical"
+                android:padding="@dimen/mvb_spacing_600">
+
+                <!-- Title row: icon + text -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        app:srcCompat="@drawable/ic_toolbar_irs_sign_out"
+                        app:tint="@color/neutral_900" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/mvb_spacing_200"
+                        android:text="@string/join_class_switch_dialog_title"
+                        android:textColor="@color/neutral_900"
+                        android:textSize="13.33sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <!-- Message -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/mvb_spacing_600"
+                    android:text="@string/join_class_switch_dialog_message"
+                    android:textColor="@color/neutral_600"
+                    android:textSize="8sp"
+                    tools:ignore="SmallSp" />
+
+                <!-- Buttons: end-aligned -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="37.33dp"
+                    android:layout_marginTop="@dimen/mvb_spacing_600"
+                    android:gravity="end|bottom"
+                    android:orientation="horizontal">
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btn_dialog_cancel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="24dp"
+                        android:background="@null"
+                        android:gravity="center"
+                        android:insetLeft="0dp"
+                        android:insetTop="0dp"
+                        android:insetRight="0dp"
+                        android:insetBottom="0dp"
+                        android:minWidth="0dp"
+                        android:minHeight="0dp"
+                        android:paddingStart="@dimen/mvb_spacing_400"
+                        android:paddingTop="0dp"
+                        android:paddingEnd="@dimen/mvb_spacing_400"
+                        android:paddingBottom="0dp"
+                        android:stateListAnimator="@null"
+                        android:text="@string/join_class_switch_dialog_cancel"
+                        android:textAllCaps="false"
+                        android:textColor="@color/neutral_700"
+                        android:textSize="12sp" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btn_dialog_leave"
+                        android:layout_width="wrap_content"
+                        android:layout_height="24dp"
+                        android:layout_marginStart="@dimen/mvb_spacing_300"
+                        android:background="@drawable/bg_red50_radius600"
+                        android:gravity="center"
+                        android:insetLeft="0dp"
+                        android:insetTop="0dp"
+                        android:insetRight="0dp"
+                        android:insetBottom="0dp"
+                        android:minWidth="0dp"
+                        android:minHeight="0dp"
+                        android:paddingStart="@dimen/mvb_spacing_400"
+                        android:paddingTop="0dp"
+                        android:paddingEnd="@dimen/mvb_spacing_400"
+                        android:paddingBottom="0dp"
+                        android:stateListAnimator="@null"
+                        android:text="@string/join_class_switch_dialog_confirm"
+                        android:textAllCaps="false"
+                        android:textColor="@color/neutral_700"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- Close button: top-right corner -->
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_dialog_close"
+                android:layout_width="21.33dp"
+                android:layout_height="21.33dp"
+                android:layout_gravity="top|end"
+                android:layout_marginTop="@dimen/mvb_spacing_200"
+                android:layout_marginEnd="@dimen/mvb_spacing_600"
+                android:padding="@dimen/mvb_spacing_150"
+                app:srcCompat="@drawable/ic_close_64dp"
+                app:tint="@color/bg_close_button" />
+
+        </androidx.cardview.widget.CardView>
+
+    </FrameLayout>
+
+    <!-- Remove student confirmation dialog overlay -->
+    <FrameLayout
+        android:id="@+id/fl_remove_student_dialog"
+        android:layout_width="333.33dp"
+        android:layout_height="565.33dp"
+        android:background="@drawable/bg_blacka60_raduis800"
+        android:visibility="gone">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="244dp"
+            android:layout_height="146dp"
+            android:layout_gravity="center"
+            app:cardBackgroundColor="@color/neutral_0"
+            app:cardCornerRadius="@dimen/mvb_radius_400"
+            app:cardElevation="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/mvb_spacing_600"
+                android:orientation="vertical"
+                android:padding="@dimen/mvb_spacing_600">
+
+                <!-- Title row: icon + text -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        app:srcCompat="@drawable/ic_remove_circle_outline"
+                        app:tint="@color/neutral_900" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/mvb_spacing_200"
+                        android:text="@string/join_class_remove_title"
+                        android:textColor="@color/neutral_900"
+                        android:textSize="13.33sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <!-- Message -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/mvb_spacing_600"
+                    android:text="@string/join_class_remove_message"
+                    android:textColor="@color/neutral_600"
+                    android:textSize="8sp"
+                    tools:ignore="SmallSp" />
+
+                <!-- Buttons: end-aligned -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="37.33dp"
+                    android:layout_marginTop="@dimen/mvb_spacing_600"
+                    android:gravity="end|bottom"
+                    android:orientation="horizontal">
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btn_remove_dialog_cancel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="24dp"
+                        android:background="@null"
+                        android:gravity="center"
+                        android:insetLeft="0dp"
+                        android:insetTop="0dp"
+                        android:insetRight="0dp"
+                        android:insetBottom="0dp"
+                        android:minWidth="0dp"
+                        android:minHeight="0dp"
+                        android:paddingStart="@dimen/mvb_spacing_400"
+                        android:paddingTop="0dp"
+                        android:paddingEnd="@dimen/mvb_spacing_400"
+                        android:paddingBottom="0dp"
+                        android:stateListAnimator="@null"
+                        android:text="@string/common_cancel"
+                        android:textAllCaps="false"
+                        android:textColor="@color/neutral_700"
+                        android:textSize="12sp" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btn_remove_dialog_confirm"
+                        android:layout_width="wrap_content"
+                        android:layout_height="24dp"
+                        android:layout_marginStart="@dimen/mvb_spacing_300"
+                        android:background="@drawable/bg_red50_radius600"
+                        android:gravity="center"
+                        android:insetLeft="0dp"
+                        android:insetTop="0dp"
+                        android:insetRight="0dp"
+                        android:insetBottom="0dp"
+                        android:minWidth="0dp"
+                        android:minHeight="0dp"
+                        android:paddingStart="@dimen/mvb_spacing_400"
+                        android:paddingTop="0dp"
+                        android:paddingEnd="@dimen/mvb_spacing_400"
+                        android:paddingBottom="0dp"
+                        android:stateListAnimator="@null"
+                        android:text="@string/common_remove"
+                        android:textAllCaps="false"
+                        android:textColor="@color/neutral_700"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- Close button: top-right corner -->
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_remove_dialog_close"
+                android:layout_width="21.33dp"
+                android:layout_height="21.33dp"
+                android:layout_gravity="top|end"
+                android:layout_marginTop="@dimen/mvb_spacing_200"
+                android:layout_marginEnd="@dimen/mvb_spacing_600"
+                android:padding="@dimen/mvb_spacing_150"
+                app:srcCompat="@drawable/ic_close_64dp"
+                app:tint="@color/bg_close_button" />
+
+        </androidx.cardview.widget.CardView>
+
+    </FrameLayout>
+
+    <!-- Student action toast (remove success / error) -->
+    <com.viewsonic.classswift.ui.widget.CSToast
+        android:id="@+id/cst_toast"
+        android:layout_width="wrap_content"
+        android:layout_height="32dp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="@dimen/mvb_spacing_300"
+        android:visibility="gone"
+        app:successStatus="false"
+        tools:visibility="visible" />
+
+</FrameLayout>

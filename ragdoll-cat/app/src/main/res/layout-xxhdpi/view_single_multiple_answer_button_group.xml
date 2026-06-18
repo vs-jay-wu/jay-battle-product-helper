@@ -1,0 +1,84 @@
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
+
+    <TextView
+        android:id="@+id/tv_answer_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/quiz_info_select_the_right_answer"
+        android:textSize="18sp"
+        android:textColor="@color/multiple_choice_options_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.viewsonic.classswift.ui.widget.quiz.SingleAnswerButton
+        android:id="@+id/button_option_1"
+        android:layout_width="56.3dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="10.6dp"
+        app:layout_constraintDimensionRatio="H,1:1"
+        android:stateListAnimator="@null"
+        app:optionIndex="1"
+        app:layout_constraintTop_toBottomOf="@+id/tv_answer_title"
+        app:layout_constraintStart_toStartOf="@+id/tv_answer_title"/>
+
+    <com.viewsonic.classswift.ui.widget.quiz.SingleAnswerButton
+        android:id="@+id/button_option_2"
+        android:layout_width="56.3dp"
+        android:layout_height="0dp"
+        app:layout_constraintDimensionRatio="H,1:1"
+        android:stateListAnimator="@null"
+        app:optionIndex="2"
+        android:layout_marginStart="@dimen/margin_8"
+        app:layout_constraintTop_toTopOf="@+id/button_option_1"
+        app:layout_constraintStart_toEndOf="@+id/button_option_1" />
+
+    <com.viewsonic.classswift.ui.widget.quiz.SingleAnswerButton
+        android:id="@+id/button_option_3"
+        android:layout_width="56.3dp"
+        android:layout_height="0dp"
+        app:layout_constraintDimensionRatio="H,1:1"
+        android:stateListAnimator="@null"
+        app:optionIndex="3"
+        android:layout_marginStart="@dimen/margin_8"
+        app:layout_constraintTop_toTopOf="@+id/button_option_1"
+        app:layout_constraintStart_toEndOf="@+id/button_option_2" />
+
+    <com.viewsonic.classswift.ui.widget.quiz.SingleAnswerButton
+        android:id="@+id/button_option_4"
+        android:layout_width="56.3dp"
+        android:layout_height="0dp"
+        app:layout_constraintDimensionRatio="H,1:1"
+        android:stateListAnimator="@null"
+        app:optionIndex="4"
+        android:layout_marginStart="@dimen/margin_8"
+        app:layout_constraintTop_toTopOf="@+id/button_option_1"
+        app:layout_constraintStart_toEndOf="@+id/button_option_3" />
+
+    <com.viewsonic.classswift.ui.widget.quiz.SingleAnswerButton
+        android:id="@+id/button_option_5"
+        android:layout_width="56.3dp"
+        android:layout_height="0dp"
+        app:layout_constraintDimensionRatio="H,1:1"
+        android:stateListAnimator="@null"
+        app:optionIndex="5"
+        android:layout_marginStart="@dimen/margin_8"
+        app:layout_constraintTop_toTopOf="@+id/button_option_1"
+        app:layout_constraintStart_toEndOf="@+id/button_option_4" />
+
+    <com.viewsonic.classswift.ui.widget.quiz.SingleAnswerButton
+        android:id="@+id/button_option_6"
+        android:layout_width="56.3dp"
+        android:layout_height="0dp"
+        app:layout_constraintDimensionRatio="H,1:1"
+        android:stateListAnimator="@null"
+        app:optionIndex="6"
+        android:layout_marginTop="@dimen/margin_8"
+        app:layout_constraintTop_toBottomOf="@+id/button_option_1"
+        app:layout_constraintStart_toStartOf="@+id/button_option_1" />
+
+</merge>

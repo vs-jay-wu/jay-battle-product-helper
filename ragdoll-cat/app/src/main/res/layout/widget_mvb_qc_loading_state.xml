@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:parentTag="android.widget.LinearLayout">
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lav_mqcls_loading"
+        android:layout_width="@dimen/quiz_mvb_qc_state_illustration_size"
+        android:layout_height="@dimen/quiz_mvb_qc_state_illustration_size"
+        android:layout_gravity="center_horizontal"
+        app:lottie_autoPlay="true"
+        app:lottie_fileName="animation_record_loading.json"
+        app:lottie_loop="true" />
+
+    <TextView
+        android:id="@+id/tv_mqcls_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/mvb_spacing_300"
+        android:fontFamily="sans-serif"
+        android:includeFontPadding="false"
+        android:text="@string/mvb_qc_loading_state_message"
+        android:textColor="@color/neutral_900"
+        android:textSize="@dimen/quiz_mvb_text_lg" />
+</merge>

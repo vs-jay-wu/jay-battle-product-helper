@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    tools:ignore="ContentDescription">
+
+    <FrameLayout
+        android:layout_width="947dp"
+        android:layout_height="515dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_cs_window">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_close"
+                android:layout_width="21.3dp"
+                android:layout_height="21.3dp"
+                android:layout_marginTop="10.6dp"
+                android:layout_marginEnd="10.6dp"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_close_64dp"
+                android:background="@drawable/ripple_neutral300_oval" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_toolbar_bring_to_front"
+                android:layout_width="21.3dp"
+                android:layout_height="21.3dp"
+                android:layout_marginTop="10.6dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintRight_toLeftOf="@id/iv_close"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_toolbar_bring_to_front_64dp"
+                android:background="@drawable/ripple_neutral300_oval"
+                app:tint="@color/bg_toolbar_bring_to_front" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_minimize_window"
+                android:layout_width="21.3dp"
+                android:layout_height="21.3dp"
+                android:layout_marginTop="10.6dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintRight_toLeftOf="@id/iv_close"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_minus_32dp"
+                android:background="@drawable/ripple_neutral300_oval"
+                app:tint="@color/bg_minimize_window" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_start_quiz_left_container"
+                android:layout_width="355dp"
+                android:layout_height="455dp"
+                android:layout_marginVertical="30dp"
+                android:layout_marginStart="30dp"
+                android:elevation="@dimen/margin_3"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cl_window_title_container"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="@+id/scroll_view"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <!-- 題型名稱 -->
+                    <TextView
+                        android:id="@+id/tv_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-light"
+                        android:text="@string/quiz_types_true_false"
+                        android:textColor="@color/window_edit_quiz_title"
+                        android:textSize="28sp"
+                        android:textStyle="bold"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <!-- 碼錶 -->
+                <com.viewsonic.classswift.ui.widget.quiz.Stopwatch
+                    android:id="@+id/cs_stopwatch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="@+id/cl_window_title_container"
+                    app:layout_constraintEnd_toEndOf="@+id/scroll_view"
+                    app:layout_constraintTop_toTopOf="@+id/cl_window_title_container" />
+
+                <!-- ScrollView -->
+                <ScrollView
+                    android:id="@+id/scroll_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/cl_window_title_container">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/cl_scroll_container"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <com.viewsonic.classswift.ui.widget.quiz.ImageUploadView
+                            android:id="@+id/cs_screenshot_image"
+                            android:layout_width="320dp"
+                            android:layout_height="180dp"
+                            android:layout_marginTop="10.6dp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:srcCompat="@drawable/placeholder_1920x1080" />
+
+                        <FrameLayout
+                            android:id="@+id/fl_select_answer_container"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/cs_screenshot_image">
+
+                            <com.viewsonic.classswift.ui.widget.quiz.TrueFalseAnswerButtonGroup
+                                android:id="@+id/cs_true_false_answer_button_group"
+                                android:layout_width="320dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10.6dp"
+                                android:visibility="invisible" />
+
+                            <!-- QuizResults: barChart -->
+                            <com.viewsonic.classswift.ui.widget.quiz.ClassSwiftAnswerOptionInfoView
+                                android:id="@+id/cs_answer_option_info_barchart_view"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10.6dp"
+                                android:visibility="gone" />
+
+                        </FrameLayout>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </ScrollView>
+
+                <!-- 結束測驗 button -->
+                <com.viewsonic.classswift.ui.widget.ClassSwiftLoadingButton
+                    android:id="@+id/button_end_quiz"
+                    android:layout_width="160dp"
+                    android:layout_height="37.5dp"
+                    android:clickable="true"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/scroll_view"
+                    app:layout_constraintStart_toStartOf="@+id/scroll_view"
+                    app:lbBackgroundColor="@color/white"
+                    app:lbBorderColor="@color/window_start_quiz_button_end_quiz_border"
+                    app:lbClickedBackgroundColor="@color/window_start_quiz_button_end_quiz_alert_bg"
+                    app:lbClickedBorderColor="@color/window_start_quiz_button_end_quiz_alert_bg"
+                    app:lbClickedTextColor="@color/white"
+                    app:lbLoadingBackground="@color/white"
+                    app:lbLoadingBorderColor="@color/window_start_quiz_button_end_quiz_alert_bg"
+                    app:lbProgressIndicatorColor="@color/window_start_quiz_button_end_quiz_alert_bg"
+                    app:lbText="@string/quiz_action_end_quiz"
+                    app:lbTextColor="@color/window_start_quiz_button_end_quiz_text"
+                    app:lbTextSize="14sp" />
+
+                <!-- 公布答案 button -->
+                <com.viewsonic.classswift.ui.widget.ClassSwiftLoadingButton
+                    android:id="@+id/button_disclose_answer"
+                    android:layout_width="160dp"
+                    android:layout_height="37.5dp"
+                    android:clickable="true"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/scroll_view"
+                    app:layout_constraintStart_toStartOf="@+id/scroll_view"
+                    app:lbAlertBackgroundColor="@color/window_quizzing_disclose_button_bg"
+                    app:lbAlertText="@string/common_save"
+                    app:lbAlertTextColor="@color/window_quizzing_disclose_button_text"
+                    app:lbBackgroundColor="@color/window_quizzing_disclose_button_bg"
+                    app:lbDisableBackgroundColor="@color/window_quizzing_disclose_button_bg_disable"
+                    app:lbLoadingBackground="@color/window_quizzing_disclose_button_loading_bg"
+                    app:lbProgressIndicatorColor="@color/progressing_loading_white"
+                    app:lbText="@string/quiz_action_disclose_answer"
+                    app:lbTextColor="@color/window_quizzing_disclose_button_text"
+                    app:lbTextSize="14sp" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <View
+                android:id="@+id/divider"
+                android:layout_width="8dp"
+                android:layout_height="0dp"
+                android:layout_marginVertical="1dp"
+                android:background="@drawable/bg_gradient_divider"
+                android:clickable="false"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/cl_start_quiz_left_container"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_start_quiz_right_container"
+                android:layout_width="521.33dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="22dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginEnd="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toRightOf="@id/divider"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <!-- 答題結果 -->
+                <TextView
+                    android:id="@+id/tv_result_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/quiz_info_results"
+                    android:textColor="@color/window_quizzing_result_title"
+                    android:textSize="28sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <!-- eye button -->
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_eye"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="5dp"
+                    android:src="@drawable/ic_eye_closed"
+                    android:visibility="invisible"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_result_title"
+                    app:layout_constraintStart_toEndOf="@+id/tv_result_title"
+                    app:layout_constraintTop_toTopOf="@+id/tv_result_title" />
+
+                <LinearLayout
+                    android:id="@+id/ll_random_draw"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="5.33dp"
+                    android:background="@drawable/bg_button_quiz_random_draw"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:visibility="invisible"
+                    app:layout_constraintBottom_toBottomOf="@+id/iv_eye"
+                    app:layout_constraintStart_toEndOf="@+id/iv_eye"
+                    app:layout_constraintTop_toTopOf="@+id/iv_eye">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:layout_marginStart="5.33dp"
+                        android:src="@drawable/ic_random_draw" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:text="@string/toolbar_menu_interaction_random_draw"
+                        android:textColor="@color/neutral_900"
+                        android:textFontWeight="600"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <!-- Student Quizzing/EndQuiz/DiscloseAnswer RecyclerView -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_student_quizzing_list"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="1dp"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="12dp"
+                    app:fastScrollEnabled="true"
+                    app:fastScrollHorizontalThumbDrawable="@drawable/selector_student_list_scroll_thumb"
+                    app:fastScrollHorizontalTrackDrawable="@drawable/selector_student_list_scroll_track"
+                    app:fastScrollVerticalThumbDrawable="@drawable/selector_student_list_scroll_thumb"
+                    app:fastScrollVerticalTrackDrawable="@drawable/selector_student_list_scroll_track"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_result_title" />
+
+                <!-- Student QuizResults RecyclerView -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_student_quiz_results_list"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="1dp"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="12dp"
+                    android:visibility="gone"
+                    app:fastScrollEnabled="true"
+                    app:fastScrollHorizontalThumbDrawable="@drawable/selector_student_list_scroll_thumb"
+                    app:fastScrollHorizontalTrackDrawable="@drawable/selector_student_list_scroll_track"
+                    app:fastScrollVerticalThumbDrawable="@drawable/selector_student_list_scroll_thumb"
+                    app:fastScrollVerticalTrackDrawable="@drawable/selector_student_list_scroll_track"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_result_title" />
+
+                <!-- Overview 正確/錯誤/未作答人數 component -->
+                <com.viewsonic.classswift.ui.widget.quiz.TrueFalseQuizResultsOverview
+                    android:id="@+id/cs_true_false_quiz_results_overview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:visibility="gone"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_result_title" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <com.viewsonic.classswift.ui.widget.CSToast
+                android:id="@+id/cst_toast"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_marginTop="8dp"
+                android:visibility="gone"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:successStatus="false"
+                tools:visibility="visible" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:id="@+id/window_close_mask"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_window_mask"
+            android:visibility="gone" />
+
+        <com.viewsonic.classswift.ui.widget.LoadingAnimation
+            android:id="@+id/cs_loading_animation"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.viewsonic.classswift.ui.widget.quiz.RandomDrawWidget
+            android:id="@+id/widget_random_draw"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            app:hasCorrectAnswer="true" />
+
+    </FrameLayout>
+
+    <com.viewsonic.classswift.ui.widget.NetworkDisconnectView
+        android:id="@+id/view_network_disconnect"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:cardRadius="@dimen/radius_800"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

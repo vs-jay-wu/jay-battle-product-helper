@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ White background with rounded corners only at bottom-left and bottom-right (radius_800).
+  ~ Used for elements anchored to the bottom of a rounded window shell (e.g., pagination bar),
+  ~ so the shell's background colour (common_window_bg) shows through at the bottom corners.
+  -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/neutral_0" />
+    <corners
+        android:bottomLeftRadius="@dimen/radius_800"
+        android:bottomRightRadius="@dimen/radius_800"
+        android:topLeftRadius="0dp"
+        android:topRightRadius="0dp" />
+</shape>

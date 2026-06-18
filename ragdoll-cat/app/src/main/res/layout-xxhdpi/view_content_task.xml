@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cl_root"
+    android:layout_width="189.33dp"
+    android:layout_height="161.33dp"
+    android:background="@drawable/bg_neutral0_radius800_line_neutral450_border400"
+    android:paddingHorizontal="13.33dp"
+    android:paddingTop="13dp"
+    android:paddingBottom="14dp">
+
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/cb_select"
+        android:layout_width="19dp"
+        android:layout_height="19dp"
+        android:background="@null"
+        android:button="@drawable/selector_cs_check_box"
+        android:checked="false"
+        android:gravity="center_vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.viewsonic.classswift.ui.widget.quiz.ImageUploadView
+        android:id="@+id/cs_screenshot_image"
+        android:layout_width="162.66dp"
+        android:layout_height="81.33dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_remove"
+        android:layout_width="32dp"
+        android:layout_height="33dp"
+        android:layout_marginTop="4.5dp"
+        android:src="@drawable/selector_push_respond_delete"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cs_screenshot_image" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

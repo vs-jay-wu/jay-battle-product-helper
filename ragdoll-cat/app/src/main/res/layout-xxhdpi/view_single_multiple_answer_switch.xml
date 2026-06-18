@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
+
+    <TextView
+        android:id="@+id/tv_multiple_answers"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="-15dp"
+        android:text="@string/quiz_types_multiple_choice_multiple_answers"
+        android:textColor="@color/multiple_choice_options_text_gray"
+        android:textSize="10sp"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_single_answer"
+        app:layout_constraintEnd_toStartOf="@+id/switch_answer"
+        app:layout_constraintTop_toTopOf="@+id/tv_single_answer" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switch_answer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/margin_3"
+        android:background="@color/transparent"
+        android:checked="true"
+        android:thumb="@drawable/switch_thumb_blue"
+        app:switchMinWidth="30dp"
+        app:track="@drawable/selector_switch_track"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_single_answer"
+        app:layout_constraintEnd_toStartOf="@+id/tv_single_answer"
+        app:layout_constraintTop_toTopOf="@+id/tv_single_answer" />
+
+    <TextView
+        android:id="@+id/tv_single_answer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/quiz_types_multiple_choice_single_answer"
+        android:textColor="@color/multiple_choice_options_text_blue"
+        android:textSize="10sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.5" />
+
+</merge>

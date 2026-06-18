@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:parentTag="android.widget.LinearLayout">
+
+    <ImageView
+        android:id="@+id/iv_mqctc_icon"
+        android:layout_width="@dimen/quiz_mvb_qc_icon_xs"
+        android:layout_height="@dimen/quiz_mvb_qc_icon_xs"
+        android:layout_gravity="center_vertical"
+        android:layout_marginEnd="@dimen/mvb_spacing_150"
+        android:contentDescription="@null"
+        android:visibility="gone"
+        tools:visibility="visible"
+        tools:src="@drawable/ic_mvb_qc_quiz_type" />
+
+    <TextView
+        android:id="@+id/tv_mqctc_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:fontFamily="sans-serif"
+        android:includeFontPadding="false"
+        android:textColor="@color/neutral_900"
+        android:textSize="@dimen/quiz_mvb_text_sm"
+        tools:text="Multiple choice" />
+</merge>

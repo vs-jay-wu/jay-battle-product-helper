@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Single character tile for class code display (e.g. X 5 8 E 9 6 4 7) -->
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="18dp"
+    android:layout_height="34.66dp"
+    android:layout_marginEnd="@dimen/mvb_spacing_100"
+    android:background="@drawable/bg_neutral300_radius400"
+    android:gravity="center"
+    android:includeFontPadding="false"
+    android:textColor="@color/color_333333"
+    android:textSize="14.4sp"
+    android:textStyle="bold" />

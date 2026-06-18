@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:minWidth="145.8dp"
+    android:paddingVertical="4.8dp"
+    android:background="@drawable/bg_solid_rounded_5dp"
+    android:backgroundTint="@color/white">
+
+    <TextView
+        android:id="@+id/tv_increase_score_for_all"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/selector_student_list_more_menu_item_background"
+        android:paddingVertical="7.6dp"
+        android:paddingHorizontal="7.2dp"
+        android:textSize="14.4sp"
+        android:textColor="@color/color_0A8CF0"
+        android:text="@string/student_list_menu_add_point_to_all"
+        app:layout_constraintWidth_min="wrap"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_decrease_score_for_all"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/selector_student_list_more_menu_item_background"
+        android:paddingVertical="7.6dp"
+        android:paddingHorizontal="7.2dp"
+        android:textSize="14.4sp"
+        android:textColor="@color/color_1B1B1F"
+        android:text="@string/student_list_menu_minus_point_to_all"
+        app:layout_constraintWidth_min="wrap"
+        app:layout_constraintTop_toBottomOf="@id/tv_increase_score_for_all"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_remove_student"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/selector_student_list_more_menu_removal_item_background"
+        android:paddingVertical="7.6dp"
+        android:paddingHorizontal="7.2dp"
+        android:textSize="14.4sp"
+        android:textColor="@color/color_F02B2B"
+        android:text="@string/student_list_action_remove_student"
+        app:layout_constraintWidth_min="wrap"
+        app:layout_constraintTop_toBottomOf="@id/tv_decrease_score_for_all"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

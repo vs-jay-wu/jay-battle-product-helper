@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ll_result_analytic_chip_root"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:paddingVertical="@dimen/mvb_spacing_200">
+
+    <!-- Chip header: icon + label -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/mvb_spacing_500"
+        android:background="@drawable/bg_result_chip_outline"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/mvb_spacing_200">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_result_analytic_icon"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:layout_marginEnd="@dimen/mvb_spacing_100"
+            android:visibility="gone"
+            app:tint="@color/neutral_900"
+            tools:ignore="ContentDescription,UseAppTint"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/tv_result_analytic_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="@color/neutral_900"
+            android:textSize="@dimen/quiz_mvb_text_xs"
+            tools:text="Answered correctly" />
+    </LinearLayout>
+
+    <!-- Big number -->
+    <TextView
+        android:id="@+id/tv_result_analytic_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/mvb_spacing_200"
+        android:fontFamily="sans-serif"
+        android:textColor="@color/neutral_900"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        tools:text="150" />
+
+    <!-- "students" label -->
+    <TextView
+        android:id="@+id/tv_result_analytic_students_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif"
+        android:text="@string/quiz_mvb_result_students_label"
+        android:textColor="@color/neutral_900"
+        android:textSize="@dimen/quiz_mvb_text_xs" />
+</LinearLayout>

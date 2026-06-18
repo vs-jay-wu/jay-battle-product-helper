@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingStart="@dimen/mvb_spacing_900"
+    android:paddingTop="@dimen/mvb_spacing_300"
+    android:paddingEnd="@dimen/mvb_spacing_900"
+    android:paddingBottom="@dimen/mvb_spacing_500">
+
+    <!-- Back button (top, left aligned) — Figma 87×36 / pad 0/16/0/16 / gap 4 / icon 16×16 / text 14px -->
+    <LinearLayout
+        android:id="@+id/ll_mqcd_back"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/quiz_mvb_qc_back_button_height"
+        android:background="?selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/mvb_spacing_400"
+        android:paddingEnd="@dimen/mvb_spacing_400">
+
+        <ImageView
+            android:layout_width="@dimen/quiz_mvb_qc_icon_xs"
+            android:layout_height="@dimen/quiz_mvb_qc_icon_xs"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_arrow_hook_left" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/mvb_spacing_100"
+            android:fontFamily="sans-serif-medium"
+            android:includeFontPadding="false"
+            android:text="@string/mvb_qc_detail_btn_back"
+            android:textColor="@color/color_4848F0"
+            android:textSize="@dimen/quiz_mvb_text_sm" />
+    </LinearLayout>
+
+    <!-- Question card (chip + preview + options) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/mvb_spacing_100"
+        android:layout_weight="1"
+        android:background="@drawable/bg_neutral100_radius800"
+        android:orientation="vertical">
+
+        <!-- Header row: chip-icon + quiz type label — Figma 'Icon+Title' 139×40, gap 4 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="@dimen/mvb_spacing_500"
+            android:paddingTop="@dimen/mvb_spacing_300"
+            android:paddingEnd="@dimen/mvb_spacing_500"
+            android:paddingBottom="@dimen/mvb_spacing_400">
+
+            <!-- Combined chip drawable from Figma 'tools 48*48' (40×40 viewBox = 26.66dp Android).
+                 Single ImageView; the drawable bakes in blue square + white border + check/X icon. -->
+            <ImageView
+                android:id="@+id/iv_mqcd_chip"
+                android:layout_width="@dimen/quiz_mvb_qc_icon_xl"
+                android:layout_height="@dimen/quiz_mvb_qc_icon_xl"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_mvb_qc_chip_true_false" />
+
+            <!-- Quiz type label: Inter w400 16px (Figma) → 10.67sp, neutral_900 -->
+            <TextView
+                android:id="@+id/tv_mqcd_chip_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/mvb_spacing_100"
+                android:fontFamily="sans-serif"
+                android:includeFontPadding="false"
+                android:textColor="@color/neutral_900"
+                android:textSize="@dimen/quiz_mvb_text_md"
+                tools:text="True or false" />
+
+            <!-- Single/Multiple answer pill badge — Figma 'badge' (#DADAFC, radius=9999, pad=8/0).
+                 Populated by base bindChip() for MC + Poll quiz types only; GONE otherwise.
+                 Figma 24px height → 16dp; pad 8px → 5.33dp; text 12px Inter w500 → 8sp medium. -->
+            <TextView
+                android:id="@+id/tv_mqcd_chip_badge"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/quiz_mvb_qc_answer_mode_pill_height"
+                android:layout_marginStart="@dimen/mvb_spacing_400"
+                android:background="@drawable/bg_violet_pill"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:paddingStart="@dimen/mvb_spacing_200"
+                android:paddingEnd="@dimen/mvb_spacing_200"
+                android:textColor="@color/neutral_900"
+                android:textSize="@dimen/quiz_mvb_text_xs"
+                android:visibility="gone"
+                tools:text="Single answer"
+                tools:visibility="visible" />
+        </LinearLayout>
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/border_200"
+            android:background="@color/neutral_300" />
+
+        <!-- Body: preview + options -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:paddingStart="@dimen/mvb_spacing_500"
+            android:paddingTop="@dimen/mvb_spacing_400"
+            android:paddingEnd="@dimen/mvb_spacing_500"
+            android:paddingBottom="@dimen/mvb_spacing_500">
+
+            <!-- Preview area (image / text) -->
+            <FrameLayout
+                android:id="@+id/fl_mqcd_preview"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="491"
+                android:background="@drawable/bg_neutral0_radius600" />
+
+            <!-- Options area (variant-specific) -->
+            <LinearLayout
+                android:id="@+id/ll_mqcd_options_section"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="@dimen/mvb_spacing_500"
+                android:layout_weight="283"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="@dimen/quiz_mvb_qc_icon_sm"
+                        android:layout_height="@dimen/quiz_mvb_qc_icon_sm"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_mvb_qc_options" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/mvb_spacing_100"
+                        android:fontFamily="sans-serif"
+                        android:includeFontPadding="false"
+                        android:text="@string/mvb_qc_detail_options_label"
+                        android:textColor="@color/neutral_900"
+                        android:textSize="@dimen/quiz_mvb_text_md"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <FrameLayout
+                    android:id="@+id/fl_mqcd_options_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="@dimen/mvb_spacing_300"
+                    android:layout_weight="1" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Footer: Start question(s) button (right aligned) -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/mvb_spacing_400">
+
+        <com.viewsonic.classswift.ui.widget.ClassSwiftLoadingButton
+            android:id="@+id/cslb_mqcd_start"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/quiz_mvb_qc_start_button_height"
+            android:layout_gravity="end"
+            android:paddingStart="@dimen/mvb_spacing_500"
+            android:paddingEnd="@dimen/mvb_spacing_500"
+            app:lbBackgroundColor="@color/violet_500"
+            app:lbBorderColor="@color/violet_500"
+            app:lbClickedBackgroundColor="@color/violet_700"
+            app:lbClickedBorderColor="@color/violet_700"
+            app:lbClickedTextColor="@color/neutral_0"
+            app:lbDisableBackgroundColor="@color/neutral_200"
+            app:lbDisableBorderColor="@color/neutral_200"
+            app:lbDisableTextColor="@color/neutral_500"
+            app:lbFontFamily="sans-serif-medium"
+            app:lbRadius="@dimen/radius_400"
+            app:lbText="@string/mvb_qc_detail_btn_start_questions"
+            app:lbTextColor="@color/neutral_0"
+            app:lbTextSize="@dimen/quiz_mvb_text_md" />
+    </FrameLayout>
+</LinearLayout>
