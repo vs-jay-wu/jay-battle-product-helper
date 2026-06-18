@@ -6,4 +6,10 @@ plugins {
     alias(libs.plugins.protobuf) apply false
     alias(libs.plugins.google.services) apply false
     alias(libs.plugins.firebase.crashlytics) apply false
+    // --- Compose Multiplatform / Hot Reload (dev-only desktop preview) ---
+    alias(libs.plugins.android.library) apply false
+    alias(libs.plugins.kotlin.multiplatform) apply false
+    alias(libs.plugins.compose.compiler) apply false
+    alias(libs.plugins.compose.multiplatform) apply false
+    alias(libs.plugins.compose.hotreload) apply false
 }

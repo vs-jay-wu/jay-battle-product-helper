@@ -11,8 +11,12 @@
 # Meerkat Feature Drop | 2024.3.2 Maximum supported version => 8.8.2
 versionAndroidGradlePlugin = "8.8.2"
 # Meerkat Feature Drop | 2024.3.2 Built-in version => 2.0.21
-versionKotlinAndroidPlugin = "2.0.21"
-versionKspPlugin = "2.0.21-1.0.28"
+# Bumped 2.0.21 -> 2.1.20: required by Compose Hot Reload (Kotlin 2.1.20+ / CMP 1.8.2+).
+versionKotlinAndroidPlugin = "2.1.20"
+versionKspPlugin = "2.1.20-1.0.31"
+# Compose Multiplatform + Hot Reload (dev-only desktop preview; see docs/desktop-app-architecture.md)
+versionComposeMultiplatform = "1.8.2"
+versionComposeHotReload = "1.1.1"
 versionProtobufPlugin = "0.9.5"
 versionGoogleServicesPlugin = "4.4.3"
 versionFirebaseCrashlyticsPlugin = "3.0.5"
@@ -120,3 +124,9 @@ google-services = { id = "com.google.gms.google-services", version.ref = "versio
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "versionFirebaseCrashlyticsPlugin"}
 navigation-safeargs-kotlin = { id = "androidx.navigation.safeargs.kotlin", version.ref = "versionNavigationSafeArgsGradlePlugin" }
 roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "versionRoborazzi" }
+# --- Compose Multiplatform / Hot Reload (dev-only desktop preview) ---
+android-library = { id = "com.android.library", version.ref = "versionAndroidGradlePlugin" }
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "versionKotlinAndroidPlugin" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "versionKotlinAndroidPlugin" }
+compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "versionComposeMultiplatform" }
+compose-hotreload = { id = "org.jetbrains.compose.hot-reload", version.ref = "versionComposeHotReload" }
