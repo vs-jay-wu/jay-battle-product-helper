@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 
+import 'dev_docking.dart';
 import 'dev_inspector.dart';
 import 'products.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  registerDevInspector(); // debug-only Designer Shell bridge (no-op in release)
+  await initWindowManager(); // debug desktop only
+  registerDevInspector(); // debug-only Designer Shell inspector bridge (no-op in release)
+  registerDevDocking(); // debug-only Designer Shell window-docking bridge
   runApp(const ShopDemoApp());
 }
 

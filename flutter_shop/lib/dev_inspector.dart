@@ -57,6 +57,7 @@ Map<String, dynamic> _selectAt(Offset position) {
 
   // Drive the standard Flutter inspector selection (same call the in-app tap uses)
   // so getSelectedSummaryWidget resolves the nearest user widget + creationLocation.
+  // ignore: invalid_use_of_protected_member
   final bool ok = WidgetInspectorService.instance.setSelection(hitElement, 'shell-inspector');
 
   final RenderObject? ro = hitElement.renderObject;
