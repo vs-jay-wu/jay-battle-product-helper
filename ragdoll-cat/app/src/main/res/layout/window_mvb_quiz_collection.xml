@@ -212,40 +212,12 @@
         app:layout_constraintStart_toEndOf="@id/v_mqcw_sidemenu_divider"
         app:layout_constraintTop_toBottomOf="@id/ll_mqcw_breadcrumb">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_mqcw_quizzes"
+        <!-- Phase 3: quiz list + loading/empty/error states replaced by a single Compose surface.
+             Same QuizCard/state composables as the desktop canvas, driven by the real Paging flow. -->
+        <androidx.compose.ui.platform.ComposeView
+            android:id="@+id/cv_mqcw_compose_body"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:overScrollMode="never"
-            android:padding="@dimen/mvb_spacing_400"
-            tools:itemCount="8"
-            tools:listitem="@layout/item_mvb_qc_quiz"
-            tools:spanCount="4" />
-
-        <com.viewsonic.classswift.ui.widget.quizcollection.mvb.MvbQuizCollectionLoadingStateView
-            android:id="@+id/cv_mqcw_loading_state"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:visibility="gone"
-            tools:visibility="gone" />
-
-        <com.viewsonic.classswift.ui.widget.quizcollection.mvb.MvbQuizCollectionEmptyStateView
-            android:id="@+id/cv_mqcw_empty_state"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:visibility="gone"
-            tools:visibility="gone" />
-
-        <com.viewsonic.classswift.ui.widget.quizcollection.mvb.MvbQuizCollectionErrorStateView
-            android:id="@+id/cv_mqcw_error_state"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:visibility="gone"
-            tools:visibility="gone" />
+            android:layout_height="match_parent" />
     </FrameLayout>
 
     <!-- Detail container (visible when selectedQuiz != null; covers sidemenu+body).

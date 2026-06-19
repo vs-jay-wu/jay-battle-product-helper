@@ -12,6 +12,8 @@ plugins {
     alias(libs.plugins.firebase.crashlytics)
     alias(libs.plugins.navigation.safeargs.kotlin )
     alias(libs.plugins.roborazzi)
+    // Compose interop: host CMP screens (e.g. Quiz Collection) via ComposeView
+    alias(libs.plugins.compose.compiler)
 }
 
 val keystorePropertiesFile = file("../keystore.properties")
@@ -172,6 +174,7 @@ android {
         viewBinding = true
         buildConfig = true
         aidl = true
+        compose = true
     }
     testOptions {
         // Required by Robolectric so unit tests can access R.* resources and
@@ -410,6 +413,16 @@ dependencies {
     // VSApi (formerly under app/src/aosp/build.gradle.kts; runtime gating via VSApiGateway)
     compileOnly(files("libs/VSApi-release.aar"))
     implementation(files("libs/VSApiCompat-release.aar"))
+
+    // --- Designer-to-Code: CMP UI modules hosted via ComposeView (Phase 3) ---
+    implementation(project(":core:designsystem"))
+    implementation(project(":core:ui"))
+    implementation(project(":feature:quizcollection:ui"))
+    implementation(libs.androidx.compose.runtime)
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.paging.compose)
+    implementation(libs.coil.compose)
 
     // AndroidX / Google
     implementation(libs.androidx.core.ktx)

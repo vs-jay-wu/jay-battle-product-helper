@@ -18,8 +18,8 @@ data class FolderRowUi(
 sealed interface QuizCardContent {
     data class Text(val text: String) : QuizCardContent
 
-    /** Image-backed quiz. Phase 1 renders a placeholder box (no network image in preview). */
-    data object Thumbnail : QuizCardContent
+    /** Image-backed quiz; [imageUrl] is loaded by the host (Coil on Android; placeholder in preview). */
+    data class Thumbnail(val imageUrl: String) : QuizCardContent
 }
 
 /** A quiz card in the grid. */
@@ -28,6 +28,8 @@ data class QuizCardUi(
     val quizType: String,
     val content: QuizCardContent,
     val subject: String? = null,
+    /** When true the subject chip uses the muted "general" tint (no specific subject). */
+    val subjectIsGeneral: Boolean = false,
     val standardsCount: Int = 0,
 )
 

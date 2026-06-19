@@ -17,6 +17,8 @@ versionKspPlugin = "2.1.20-1.0.31"
 # Compose Multiplatform + Hot Reload (dev-only desktop preview; see docs/desktop-app-architecture.md)
 versionComposeMultiplatform = "1.8.2"
 versionComposeHotReload = "1.1.1"
+# androidx Compose for :app interop (ComposeView hosting CMP screens) — must match CMP 1.8.2's runtime
+versionComposeAndroidx = "1.8.2"
 versionProtobufPlugin = "0.9.5"
 versionGoogleServicesPlugin = "4.4.3"
 versionFirebaseCrashlyticsPlugin = "3.0.5"
@@ -86,6 +88,12 @@ androidx-media3-exoplayer = { group = "androidx.media3", name = "media3-exoplaye
 androidx-media3-ui = { group = "androidx.media3", name = "media3-ui", version.ref = "versionMedia3" }
 androidx-media3-common = { group = "androidx.media3", name = "media3-common", version.ref = "versionMedia3" }
 androidx-paging = { group = "androidx.paging", name = "paging-runtime", version.ref = "versionPaging3" }
+# Compose interop in :app (host CMP screens via ComposeView + Paging)
+androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime", version.ref = "versionComposeAndroidx" }
+androidx-compose-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "versionComposeAndroidx" }
+androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "versionComposeAndroidx" }
+androidx-paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "versionPaging3" }
+coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "versionCoil" }
 # Third Party Library
 koin-android = { group = "io.insert-koin", name = "koin-android", version.ref = "versionKoin" }
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "versionOkhttp" }

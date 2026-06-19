@@ -48,8 +48,13 @@ fun QuizCollectionScreen(
     AppTheme {
         Surface(modifier = modifier.fillMaxSize(), color = AppTheme.tokens.colors.neutral100) {
             when (state) {
-                is QuizCollectionUiState.Loading -> LoadingState()
-                is QuizCollectionUiState.Error -> ErrorState(state, onEvent)
+                is QuizCollectionUiState.Loading -> QuizCollectionLoading()
+                is QuizCollectionUiState.Error ->
+                    QuizCollectionError(
+                        onRefresh = { onEvent(QuizCollectionEvent.RefreshClicked) },
+                        title = state.title,
+                        message = state.message,
+                    )
                 is QuizCollectionUiState.Content -> ContentLayout(state, onEvent)
             }
         }
@@ -65,7 +70,7 @@ private fun ContentLayout(
         FolderSidebar(state.folders, onEvent)
         Box(Modifier.weight(1f).fillMaxHeight()) {
             if (state.quizzes.isEmpty()) {
-                EmptyState()
+                QuizCollectionEmpty()
             } else {
                 QuizGrid(state.quizzes, onEvent)
             }
@@ -143,10 +148,11 @@ private fun QuizGrid(
 }
 
 @Composable
-private fun QuizCard(quiz: QuizCardUi, onClick: () -> Unit) {
+fun QuizCard(quiz: QuizCardUi, modifier: Modifier = Modifier, onClick: () -> Unit) {
     val tokens = AppTheme.tokens
+    val images = LocalQuizCollectionImages.current
     Column(
-        modifier = Modifier
+        modifier = modifier
             .width(150.dp)
             .height(168.dp)
             .clip(RoundedCornerShape(tokens.radius.r600))
@@ -161,12 +167,7 @@ private fun QuizCard(quiz: QuizCardUi, onClick: () -> Unit) {
                 .padding(start = tokens.spacing.s400, top = tokens.spacing.s400, end = tokens.spacing.s400),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Spacer(
-                Modifier
-                    .size(16.dp)
-                    .clip(RoundedCornerShape(2.dp))
-                    .background(tokens.colors.neutral900),
-            )
+            images.QuizTypeIcon(Modifier.size(16.dp))
             Spacer(Modifier.width(tokens.spacing.s150))
             Text(
                 text = quiz.quizType,
@@ -197,7 +198,7 @@ private fun QuizCard(quiz: QuizCardUi, onClick: () -> Unit) {
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.padding(tokens.spacing.s300),
                 )
-                QuizCardContent.Thumbnail -> Unit // placeholder box only
+                is QuizCardContent.Thumbnail -> images.Thumbnail(content.imageUrl, Modifier.fillMaxSize())
             }
         }
 
@@ -211,13 +212,19 @@ private fun QuizCard(quiz: QuizCardUi, onClick: () -> Unit) {
             ),
         ) {
             quiz.subject?.let { subject ->
-                MvbQuizTagChip(text = subject, variant = ChipVariant.SUBJECT)
+                val subjectVariant = if (quiz.subjectIsGeneral) ChipVariant.SUBJECT_GENERAL else ChipVariant.SUBJECT
+                MvbQuizTagChip(
+                    text = subject,
+                    variant = subjectVariant,
+                    leadingIcon = { tint -> images.ChipIcon(subjectVariant, tint, Modifier.size(10.66.dp)) },
+                )
             }
             if (quiz.standardsCount > 0) {
                 Spacer(Modifier.height(tokens.spacing.s150))
                 MvbQuizTagChip(
                     text = "${quiz.standardsCount} standards",
                     variant = ChipVariant.STANDARDS,
+                    leadingIcon = { tint -> images.ChipIcon(ChipVariant.STANDARDS, tint, Modifier.size(10.66.dp)) },
                 )
             }
         }
@@ -225,10 +232,10 @@ private fun QuizCard(quiz: QuizCardUi, onClick: () -> Unit) {
 }
 
 @Composable
-private fun EmptyState() {
+fun QuizCollectionEmpty(modifier: Modifier = Modifier) {
     val tokens = AppTheme.tokens
-    StateColumn {
-        Spacer(Modifier.size(100.dp).clip(RoundedCornerShape(tokens.radius.r800)).background(tokens.colors.neutral300))
+    StateColumn(modifier) {
+        LocalQuizCollectionImages.current.StateIllustration(QuizStateIllustration.EMPTY, Modifier.size(100.dp))
         Spacer(Modifier.height(tokens.spacing.s300))
         Text("No questions here yet", color = tokens.colors.neutral900, fontSize = tokens.type.xl, fontWeight = FontWeight.Bold)
         Spacer(Modifier.height(tokens.spacing.s150))
@@ -237,24 +244,26 @@ private fun EmptyState() {
 }
 
 @Composable
-private fun ErrorState(
-    state: QuizCollectionUiState.Error,
-    onEvent: (QuizCollectionEvent) -> Unit,
+fun QuizCollectionError(
+    onRefresh: () -> Unit,
+    modifier: Modifier = Modifier,
+    title: String = "Failed to find quiz collection",
+    message: String = "Try to refresh this page again",
 ) {
     val tokens = AppTheme.tokens
-    StateColumn {
-        Spacer(Modifier.size(100.dp).clip(RoundedCornerShape(tokens.radius.r800)).background(tokens.colors.neutral300))
+    StateColumn(modifier) {
+        LocalQuizCollectionImages.current.StateIllustration(QuizStateIllustration.ERROR, Modifier.size(100.dp))
         Spacer(Modifier.height(tokens.spacing.s300))
-        Text(state.title, color = tokens.colors.neutral900, fontSize = tokens.type.xl, fontWeight = FontWeight.Bold)
+        Text(title, color = tokens.colors.neutral900, fontSize = tokens.type.xl, fontWeight = FontWeight.Bold)
         Spacer(Modifier.height(tokens.spacing.s150))
-        Text(state.message, color = tokens.colors.neutral900, fontSize = tokens.type.lg)
+        Text(message, color = tokens.colors.neutral900, fontSize = tokens.type.lg)
         Spacer(Modifier.height(tokens.spacing.s900))
         Box(
             modifier = Modifier
                 .height(32.dp)
                 .clip(RoundedCornerShape(tokens.radius.r800))
                 .background(tokens.colors.primary)
-                .clickable { onEvent(QuizCollectionEvent.RefreshClicked) }
+                .clickable { onRefresh() }
                 .padding(horizontal = tokens.spacing.s900)
                 .designNode("qc_refresh_button"),
             contentAlignment = Alignment.Center,
@@ -265,9 +274,9 @@ private fun ErrorState(
 }
 
 @Composable
-private fun LoadingState() {
+fun QuizCollectionLoading(modifier: Modifier = Modifier) {
     val tokens = AppTheme.tokens
-    StateColumn {
+    StateColumn(modifier) {
         CircularProgressIndicator(color = tokens.colors.primary)
         Spacer(Modifier.height(tokens.spacing.s300))
         Text("Loading…", color = tokens.colors.neutral900, fontSize = tokens.type.lg)
@@ -275,8 +284,8 @@ private fun LoadingState() {
 }
 
 @Composable
-private fun StateColumn(content: @Composable () -> Unit) {
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+private fun StateColumn(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
+    Box(modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) { content() }
     }
 }

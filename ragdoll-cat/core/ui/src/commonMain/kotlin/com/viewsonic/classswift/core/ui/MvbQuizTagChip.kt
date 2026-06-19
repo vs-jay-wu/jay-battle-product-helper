@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.viewsonic.classswift.core.designsystem.AppTheme
 
@@ -28,16 +29,19 @@ fun MvbQuizTagChip(
     text: String,
     variant: ChipVariant,
     modifier: Modifier = Modifier,
-) {
-    val tokens = AppTheme.tokens
-    val tint = if (variant == ChipVariant.SUBJECT_GENERAL) tokens.colors.neutral650 else tokens.colors.neutral900
-    Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
+    leadingIcon: @Composable (tint: Color) -> Unit = { tint ->
         Spacer(
             Modifier
                 .size(10.66.dp)
                 .clip(RoundedCornerShape(2.dp))
                 .background(tint),
         )
+    },
+) {
+    val tokens = AppTheme.tokens
+    val tint = if (variant == ChipVariant.SUBJECT_GENERAL) tokens.colors.neutral650 else tokens.colors.neutral900
+    Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
+        leadingIcon(tint)
         Spacer(Modifier.width(tokens.spacing.s150))
         Text(text = text, color = tint, fontSize = tokens.type.sm, maxLines = 1)
     }

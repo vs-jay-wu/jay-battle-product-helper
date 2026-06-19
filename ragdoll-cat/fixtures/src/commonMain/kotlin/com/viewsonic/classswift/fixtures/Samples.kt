@@ -28,7 +28,7 @@ object Samples {
             subject = "History",
             standardsCount = 2,
         ),
-        QuizCardUi("q2", "True / False", QuizCardContent.Thumbnail, subject = "Science", standardsCount = 0),
+        QuizCardUi("q2", "True / False", QuizCardContent.Thumbnail(""), subject = "Science", standardsCount = 0),
         QuizCardUi(
             id = "q3",
             quizType = "Short answer",
@@ -36,7 +36,7 @@ object Samples {
             subject = "Science",
             standardsCount = 3,
         ),
-        QuizCardUi("q4", "Poll", QuizCardContent.Thumbnail, subject = null, standardsCount = 1),
+        QuizCardUi("q4", "Poll", QuizCardContent.Thumbnail(""), subject = null, standardsCount = 1),
         QuizCardUi(
             id = "q5",
             quizType = "Multiple choice",
@@ -44,7 +44,7 @@ object Samples {
             subject = "Mathematics",
             standardsCount = 0,
         ),
-        QuizCardUi("q6", "Sketch response", QuizCardContent.Thumbnail, subject = "Art", standardsCount = 0),
+        QuizCardUi("q6", "Sketch response", QuizCardContent.Thumbnail(""), subject = "Art", standardsCount = 0),
     )
 
     val loading: QuizCollectionUiState = QuizCollectionUiState.Loading

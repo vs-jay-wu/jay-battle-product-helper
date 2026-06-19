@@ -5,8 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.view.ContextThemeWrapper
-import androidx.paging.LoadState
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.viewsonic.classswift.R
 import com.viewsonic.classswift.data.info.QuizInCollectionInfo
@@ -17,8 +15,6 @@ import com.viewsonic.classswift.ui.helper.WindowControlButtonsUiHelper
 import com.viewsonic.classswift.ui.widget.quizcollection.mvb.MvbCollectionQuizDetailView
 import com.viewsonic.classswift.ui.widget.quizcollection.mvb.MvbQuizDetailViewFactory
 import com.viewsonic.classswift.ui.window.adapter.MvbQuizCollectionFolderListAdapter
-import com.viewsonic.classswift.ui.window.adapter.MvbQuizCollectionQuizzesAdapter
-import com.viewsonic.classswift.ui.window.adapter.MvbQuizCollectionQuizzesLoadStateAdapter
 import com.viewsonic.classswift.ui.windowmodel.MvbQuizCollectionWindowModel
 import com.viewsonic.classswift.utils.extension.show
 import com.viewsonic.classswift.windowframework.core.CSWindowManager
@@ -45,14 +41,13 @@ class MvbQuizCollectionWindow(
     private val coroutineScope: CoroutineScope = CoroutineManager.getScope(this)
 
     private lateinit var folderAdapter: MvbQuizCollectionFolderListAdapter
-    private lateinit var quizzesAdapter: MvbQuizCollectionQuizzesAdapter
+
+    /** Lifecycle/savedstate owner for the ComposeView body (this is not an Activity). */
+    private val composeHost = ComposeWindowHost()
 
     /** Currently displayed detail view (null while in list mode). Re-created on quiz change. */
     private var detailView: MvbCollectionQuizDetailView? = null
     private var currentDetailQuizId: String? = null
-
-    /** Last known refresh state — used by `addOnPagesUpdatedListener` to decide visibility. */
-    private var lastRefreshState: LoadState = LoadState.NotLoading(endOfPaginationReached = false)
 
     override var tag: WindowTag = WindowTag.WINDOW_MVB_QUIZ_COLLECTION
     override var size: SizeInPixels = SizeInPixels(
@@ -68,25 +63,30 @@ class MvbQuizCollectionWindow(
         )
 
     override fun getCurrentSize(): SizeInPixels {
-        if (binding.root.width <= 0 || binding.root.height <= 0) {
-            binding.root.measure(
-                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
-                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
-            )
-            return SizeInPixels(binding.root.measuredWidth, binding.root.measuredHeight)
-        }
-        return SizeInPixels(binding.root.width, binding.root.height)
+        // Fixed size from the layout dimens — do NOT measure the view tree here. The framework
+        // calls getCurrentSize() before the view is attached (and off the main thread); measuring
+        // a detached ComposeView crashes with "Cannot locate windowRecomposer". The shell is a
+        // fixed-size ConstraintLayout (quiz_mvb_qc_window_*) wrapped in a mvb_spacing_400 padding.
+        val res = context.resources
+        val padding = res.getDimensionPixelSize(R.dimen.mvb_spacing_400)
+        val width = res.getDimensionPixelSize(R.dimen.quiz_mvb_qc_window_width) + padding * 2
+        val height = res.getDimensionPixelSize(R.dimen.quiz_mvb_qc_window_height) + padding * 2
+        return SizeInPixels(width, height)
     }
 
     override fun onViewCreated() {
         super.onViewCreated()
         initHeader()
         initFolderList()
-        initQuizList()
-        initErrorState()
+        setupComposeBody()
         observeUiState()
-        observeQuizzesPagingData()
         windowModel.loadFolders()
+    }
+
+    private fun setupComposeBody() {
+        composeHost.attach(binding.cvMqcwComposeBody) {
+            MvbQuizCollectionComposeBody(windowModel)
+        }
     }
 
     private fun initHeader() {
@@ -113,32 +113,6 @@ class MvbQuizCollectionWindow(
         }
     }
 
-    private fun initQuizList() {
-        quizzesAdapter = MvbQuizCollectionQuizzesAdapter(
-            canUseStandards = windowModel.canUseStandards,
-            onQuizClick = { info -> windowModel.selectQuiz(info) },
-        )
-        val footerAdapter = MvbQuizCollectionQuizzesLoadStateAdapter()
-        val concatAdapter = quizzesAdapter.withLoadStateFooter(footerAdapter)
-        val gridLayoutManager = GridLayoutManager(context, QUIZ_GRID_SPAN)
-        gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-            override fun getSpanSize(position: Int): Int {
-                val isFooter = position == quizzesAdapter.itemCount && footerAdapter.itemCount > 0
-                return if (isFooter) QUIZ_GRID_SPAN else 1
-            }
-        }
-        binding.rvMqcwQuizzes.apply {
-            layoutManager = gridLayoutManager
-            adapter = concatAdapter
-        }
-    }
-
-    private fun initErrorState() {
-        binding.cvMqcwErrorState.onRefreshClick = {
-            windowModel.refreshAfterError()
-        }
-    }
-
     private fun observeUiState() {
         coroutineScope.launch(Dispatchers.Main) {
             windowModel.uiStateFlow.collectLatest { state ->
@@ -153,21 +127,8 @@ class MvbQuizCollectionWindow(
                     state.folders.firstOrNull { it.folder.id == state.selectedFolderId }
                         ?.folder?.name.orEmpty()
                 applyDetailMode(state.selectedQuiz)
-                when {
-                    state.folderLoadFailed -> applyBodyVisibility(
-                        showError = true,
-                        showEmpty = false,
-                        showQuizzes = false,
-                    )
-                    state.isLoadingFolders -> applyBodyVisibility(
-                        showError = false,
-                        showEmpty = false,
-                        showQuizzes = false,
-                        showLoading = true,
-                    )
-                    // Otherwise leave the body driven by the paging load state observer.
-                    else -> Unit
-                }
+                // Quiz body (loading / empty / error / list) is now owned by the Compose body,
+                // which observes uiState + the paging flow directly.
             }
         }
     }
@@ -205,75 +166,6 @@ class MvbQuizCollectionWindow(
             binding.laMqcwFoldersLoading.cancelAnimation()
             binding.laMqcwFoldersLoading.visibility = View.GONE
         }
-    }
-
-    private fun observeQuizzesPagingData() {
-        coroutineScope.launch(Dispatchers.Main) {
-            windowModel.quizzesPagingDataFlow.collectLatest { pagingData ->
-                quizzesAdapter.submitData(pagingData)
-            }
-        }
-        coroutineScope.launch(Dispatchers.Main) {
-            quizzesAdapter.loadStateFlow.collectLatest { loadState ->
-                lastRefreshState = loadState.refresh
-                applyLoadState(refreshState = loadState.refresh, appendState = loadState.append)
-                // Re-attempt empty/quizzes visibility — pagesUpdated may have already fired while
-                // we were still in Loading and short-circuited. Now that we're NotLoading, retry.
-                applyEmptyOrQuizzesVisibility()
-            }
-        }
-        // Empty/quizzes visibility must wait until pages are committed to the adapter — checking
-        // itemCount inside loadStateFlow's NotLoading branch races with submitData's diff and can
-        // see the previous folder's stale count (showing empty state for a non-empty folder).
-        // addOnPagesUpdatedListener fires AFTER the adapter commits, so itemCount is reliable here.
-        // Both signals call applyEmptyOrQuizzesVisibility(); whichever arrives later wins.
-        quizzesAdapter.addOnPagesUpdatedListener {
-            applyEmptyOrQuizzesVisibility()
-        }
-    }
-
-    private fun applyLoadState(refreshState: LoadState, appendState: LoadState) {
-        if (windowModel.uiStateFlow.value.folderLoadFailed) return
-        // Any API failure (initial refresh OR pagination append) escalates to the full error state.
-        if (refreshState is LoadState.Error || appendState is LoadState.Error) {
-            applyBodyVisibility(showError = true, showEmpty = false, showQuizzes = false)
-            return
-        }
-        when (refreshState) {
-            is LoadState.Loading -> applyBodyVisibility(
-                showError = false,
-                showEmpty = false,
-                showQuizzes = false,
-                showLoading = true,
-            )
-            // NotLoading: defer to addOnPagesUpdatedListener so itemCount reflects committed pages.
-            is LoadState.NotLoading -> Unit
-            is LoadState.Error -> Unit // Already handled above.
-        }
-    }
-
-    private fun applyEmptyOrQuizzesVisibility() {
-        if (windowModel.uiStateFlow.value.folderLoadFailed) return
-        // Skip while still loading or in error — those paths are owned by applyLoadState.
-        if (lastRefreshState !is LoadState.NotLoading) return
-        val isEmpty = quizzesAdapter.itemCount == 0
-        applyBodyVisibility(
-            showError = false,
-            showEmpty = isEmpty,
-            showQuizzes = !isEmpty,
-        )
-    }
-
-    private fun applyBodyVisibility(
-        showError: Boolean,
-        showEmpty: Boolean,
-        showQuizzes: Boolean,
-        showLoading: Boolean = false,
-    ) {
-        binding.rvMqcwQuizzes.visibility = if (showQuizzes) View.VISIBLE else View.GONE
-        binding.cvMqcwEmptyState.visibility = if (showEmpty) View.VISIBLE else View.GONE
-        binding.cvMqcwErrorState.visibility = if (showError) View.VISIBLE else View.GONE
-        binding.cvMqcwLoadingState.visibility = if (showLoading) View.VISIBLE else View.GONE
     }
 
     private fun handleStartClick(view: MvbCollectionQuizDetailView) {
@@ -325,10 +217,7 @@ class MvbQuizCollectionWindow(
 
     override fun onDestroy() {
         super.onDestroy()
+        composeHost.destroy()
         coroutineScope.cancel()
-    }
-
-    companion object {
-        private const val QUIZ_GRID_SPAN = 4
     }
 }
