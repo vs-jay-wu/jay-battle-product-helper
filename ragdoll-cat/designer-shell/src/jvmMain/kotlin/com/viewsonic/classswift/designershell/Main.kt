@@ -24,6 +24,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -45,6 +46,7 @@ import com.viewsonic.classswift.core.ui.ScreenState
 import com.viewsonic.classswift.feature.quizcollection.ui.QuizCollectionScreen
 import com.viewsonic.classswift.fixtures.Samples
 import java.io.File
+import javax.swing.SwingUtilities
 import kotlin.math.roundToInt
 
 /**
@@ -100,13 +102,17 @@ private fun Shell(spec: ScreenSpec) {
     var designMode by remember { mutableStateOf(true) }
     var stateIndex by remember { mutableStateOf(0) }
     var selected by remember { mutableStateOf<DesignNodeInfo?>(null) }
+    // Bumped after each hot-reload to force the canvas to remount (see canvas key() below).
+    val reloadGen = remember { mutableStateOf(0) }
     val session = remember {
         val repoRoot = resolveRepoRoot()
         ClaudeSession(repoRoot).apply {
             // When Claude finishes a turn, recompile + hot-reload so the canvas shows the change.
             // (`--auto` only watches :designer-shell, not the :feature:ui dep Claude edits, so we
-            // trigger the project-wide CHR reload explicitly.)
-            onComplete = { triggerReload(repoRoot) }
+            // trigger the project-wide CHR reload explicitly.) CHR hot-swaps the bytecode but does
+            // not re-invoke an already-composed screen, so once reload succeeds we bump reloadGen,
+            // which remounts the canvas and re-runs the (now swapped) composable — no manual action.
+            onComplete = { triggerReload(repoRoot) { SwingUtilities.invokeLater { reloadGen.value++ } } }
         }
     }
 
@@ -125,7 +131,11 @@ private fun Shell(spec: ScreenSpec) {
                 onSelect = { selected = it },
                 modifier = Modifier.weight(1f).fillMaxHeight(),
             ) {
-                spec.states[stateIndex].content()
+                // reloadGen as key: after a hot-reload it changes, discarding the old subtree and
+                // re-invoking the swapped composable so the change appears with no manual action.
+                key(reloadGen.value, stateIndex) {
+                    spec.states[stateIndex].content()
+                }
             }
             Column(Modifier.width(380.dp).fillMaxHeight().background(tokens.colors.neutral0)) {
                 InspectorPanel(designMode, selected, Modifier.fillMaxWidth())
@@ -280,14 +290,19 @@ private fun resolveRepoRoot(): File {
 /**
  * Trigger Compose Hot Reload of the running app. Runs the project-wide CHR `reload` task, which
  * recompiles any changed sources (including the :feature:ui module Claude just edited) and
- * hot-swaps them into this running window. Fire-and-forget.
+ * hot-swaps them into this running window. Runs on a daemon thread so the caller is not blocked;
+ * invokes [onReloaded] only after the task exits successfully (so the canvas remount picks up the
+ * already-swapped bytecode, not the old code).
  */
-private fun triggerReload(repoRoot: File) {
-    runCatching {
-        ProcessBuilder("/bin/zsh", "-lc", "./gradlew reload")
-            .directory(repoRoot)
-            .redirectOutput(ProcessBuilder.Redirect.DISCARD)
-            .redirectError(ProcessBuilder.Redirect.DISCARD)
-            .start()
-    }
+private fun triggerReload(repoRoot: File, onReloaded: () -> Unit) {
+    Thread {
+        runCatching {
+            ProcessBuilder("/bin/zsh", "-lc", "./gradlew reload")
+                .directory(repoRoot)
+                .redirectOutput(ProcessBuilder.Redirect.DISCARD)
+                .redirectError(ProcessBuilder.Redirect.DISCARD)
+                .start()
+                .waitFor()
+        }.getOrNull()?.let { exit -> if (exit == 0) onReloaded() }
+    }.apply { isDaemon = true }.start()
 }
