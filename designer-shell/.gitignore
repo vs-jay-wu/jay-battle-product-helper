@@ -1,0 +1,5 @@
+.gradle/
+build/
+.kotlin/
+*.hprof
+.DS_Store
