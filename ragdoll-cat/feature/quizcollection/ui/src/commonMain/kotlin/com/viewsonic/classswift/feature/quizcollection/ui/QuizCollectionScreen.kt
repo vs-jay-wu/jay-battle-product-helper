@@ -262,7 +262,7 @@ fun QuizCollectionError(
             modifier = Modifier
                 .height(32.dp)
                 .clip(RoundedCornerShape(tokens.radius.r800))
-                .background(tokens.colors.error)
+                .background(tokens.colors.primary)
                 .clickable { onRefresh() }
                 .padding(horizontal = tokens.spacing.s900)
                 .designNode("qc_refresh_button"),
