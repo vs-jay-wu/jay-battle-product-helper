@@ -41,6 +41,9 @@ class ClaudeSession(private val workingDir: File) {
     private var scope: CoroutineScope? = null
     private val json = Json { ignoreUnknownKeys = true }
 
+    /** Invoked (on an IO thread) when a turn finishes — the shell uses this to trigger a reload. */
+    var onComplete: (() -> Unit)? = null
+
     fun start() {
         stop()
         transcript.clear()
@@ -101,9 +104,12 @@ class ClaudeSession(private val workingDir: File) {
                     }
                 }
             }
-            "result" -> obj["result"]?.jsonPrimitive?.content
-                ?.takeIf { it.isNotBlank() }
-                ?.let { add(ClaudeRole.RESULT, it) }
+            "result" -> {
+                obj["result"]?.jsonPrimitive?.content
+                    ?.takeIf { it.isNotBlank() }
+                    ?.let { add(ClaudeRole.RESULT, it) }
+                onComplete?.invoke()
+            }
         }
     }
 

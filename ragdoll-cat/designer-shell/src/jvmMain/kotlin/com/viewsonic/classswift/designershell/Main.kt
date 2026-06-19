@@ -100,7 +100,15 @@ private fun Shell(spec: ScreenSpec) {
     var designMode by remember { mutableStateOf(true) }
     var stateIndex by remember { mutableStateOf(0) }
     var selected by remember { mutableStateOf<DesignNodeInfo?>(null) }
-    val session = remember { ClaudeSession(resolveRepoRoot()) }
+    val session = remember {
+        val repoRoot = resolveRepoRoot()
+        ClaudeSession(repoRoot).apply {
+            // When Claude finishes a turn, recompile + hot-reload so the canvas shows the change.
+            // (`--auto` only watches :designer-shell, not the :feature:ui dep Claude edits, so we
+            // trigger the project-wide CHR reload explicitly.)
+            onComplete = { triggerReload(repoRoot) }
+        }
+    }
 
     Column(Modifier.fillMaxSize().background(tokens.colors.neutral100)) {
         TopBar(
@@ -267,4 +275,19 @@ private fun resolveRepoRoot(): File {
         dir = dir.parentFile
     }
     return File(System.getProperty("user.dir"))
+}
+
+/**
+ * Trigger Compose Hot Reload of the running app. Runs the project-wide CHR `reload` task, which
+ * recompiles any changed sources (including the :feature:ui module Claude just edited) and
+ * hot-swaps them into this running window. Fire-and-forget.
+ */
+private fun triggerReload(repoRoot: File) {
+    runCatching {
+        ProcessBuilder("/bin/zsh", "-lc", "./gradlew reload")
+            .directory(repoRoot)
+            .redirectOutput(ProcessBuilder.Redirect.DISCARD)
+            .redirectError(ProcessBuilder.Redirect.DISCARD)
+            .start()
+    }
 }
