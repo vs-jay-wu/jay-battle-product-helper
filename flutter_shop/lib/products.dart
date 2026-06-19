@@ -1,0 +1,43 @@
+/// Demo product catalog for the fake e-commerce app (test / demo only).
+class Product {
+  const Product({
+    required this.id,
+    required this.name,
+    required this.category,
+    required this.price,
+    required this.rating,
+  });
+
+  final String id;
+  final String name;
+  final String category;
+  final double price;
+  final double rating;
+
+  /// Deterministic placeholder photo per product (real image, falls back to a
+  /// colored tile if offline — see ProductCard.errorBuilder).
+  String get imageUrl => 'https://picsum.photos/seed/shop-$id/600/600';
+}
+
+const List<String> kCategories = <String>[
+  'All',
+  'Audio',
+  'Wearables',
+  'Home',
+  'Accessories',
+];
+
+const List<Product> kProducts = <Product>[
+  Product(id: '1', name: 'Aurora Wireless Headphones', category: 'Audio', price: 129.0, rating: 4.6),
+  Product(id: '2', name: 'Pulse Bluetooth Speaker', category: 'Audio', price: 79.0, rating: 4.3),
+  Product(id: '3', name: 'Nimbus Smart Watch', category: 'Wearables', price: 199.0, rating: 4.8),
+  Product(id: '4', name: 'Trek Fitness Band', category: 'Wearables', price: 59.0, rating: 4.1),
+  Product(id: '5', name: 'Ember Smart Mug', category: 'Home', price: 89.0, rating: 4.5),
+  Product(id: '6', name: 'Lumen Desk Lamp', category: 'Home', price: 45.0, rating: 4.4),
+  Product(id: '7', name: 'Carry Everyday Backpack', category: 'Accessories', price: 69.0, rating: 4.7),
+  Product(id: '8', name: 'Vault Leather Wallet', category: 'Accessories', price: 39.0, rating: 4.2),
+  Product(id: '9', name: 'Echo Noise-Cancel Earbuds', category: 'Audio', price: 149.0, rating: 4.9),
+  Product(id: '10', name: 'Glide Wireless Mouse', category: 'Accessories', price: 29.0, rating: 4.0),
+  Product(id: '11', name: 'Halo Ring Light', category: 'Home', price: 55.0, rating: 4.3),
+  Product(id: '12', name: 'Stride Running Watch', category: 'Wearables', price: 179.0, rating: 4.6),
+];
