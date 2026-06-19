@@ -5,25 +5,27 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
-/// Debug-only bridge for the Designer Shell. Registers a service extension that
-/// hit-tests a point in the live render tree, sets the Flutter inspector
-/// selection to the hit widget, and returns its global bounds + type. The shell
-/// owns the click (over the docked window) and calls this with the local point;
-/// it then reads the full node (incl. creationLocation) via the standard
-/// `ext.flutter.inspector.getSelectedSummaryWidget`.
+/// True while the Designer Shell has put the app in "design mode": the design
+/// overlay absorbs taps and selects the widget under the pointer instead of
+/// letting the app act.
+final ValueNotifier<bool> kDesignMode = ValueNotifier<bool>(false);
+
+/// Debug-only bridge for the Designer Shell.
 void registerDevInspector() {
   if (!kDebugMode) return;
 
-  developer.registerExtension('ext.shopdemo.selectAt', (String method, Map<String, String> params) async {
-    final double x = double.tryParse(params['x'] ?? '') ?? 0;
-    final double y = double.tryParse(params['y'] ?? '') ?? 0;
-    final Map<String, dynamic> out = _selectAt(Offset(x, y));
-    return developer.ServiceExtensionResponse.result(jsonEncode(out));
+  developer.registerExtension('ext.shopdemo.setDesignMode', (String m, Map<String, String> params) async {
+    kDesignMode.value = (params['on'] ?? 'true') == 'true';
+    return developer.ServiceExtensionResponse.result(jsonEncode(<String, dynamic>{'on': kDesignMode.value}));
   });
 
-  // Returns the logical size of the (first) view so the shell can map shell-pixel
-  // clicks into app-logical coordinates.
-  developer.registerExtension('ext.shopdemo.viewSize', (String method, Map<String, String> params) async {
+  developer.registerExtension('ext.shopdemo.selectAt', (String m, Map<String, String> params) async {
+    final double x = double.tryParse(params['x'] ?? '') ?? 0;
+    final double y = double.tryParse(params['y'] ?? '') ?? 0;
+    return developer.ServiceExtensionResponse.result(jsonEncode(selectAt(Offset(x, y))));
+  });
+
+  developer.registerExtension('ext.shopdemo.viewSize', (String m, Map<String, String> params) async {
     final RenderView view = RendererBinding.instance.renderViews.first;
     final Size s = view.size;
     final double dpr = view.flutterView.devicePixelRatio;
@@ -33,15 +35,32 @@ void registerDevInspector() {
   });
 }
 
-Map<String, dynamic> _selectAt(Offset position) {
-  final Iterable<RenderView> views = RendererBinding.instance.renderViews;
-  if (views.isEmpty) return <String, dynamic>{'found': false, 'reason': 'no-view'};
-  final RenderView view = views.first;
+/// Hit-test the design overlay's tap, set the inspector selection, post a
+/// `shopdemo:selection` event for the shell, and return the hit (incl. bounds
+/// for the in-app highlight).
+Map<String, dynamic> selectAndReport(Offset globalPosition, RenderBox content) {
+  final Map<String, dynamic> res = selectAt(globalPosition, content: content);
+  if (res['found'] == true) developer.postEvent('shopdemo:selection', res);
+  return res;
+}
 
-  final HitTestResult result = HitTestResult();
-  view.hitTest(result, position: position);
+/// Hit-test [globalPosition], set the inspector selection to the hit element,
+/// and return its type + global bounds. When [content] is given, hit-test that
+/// subtree only (so the design overlay above it is ignored).
+Map<String, dynamic> selectAt(Offset globalPosition, {RenderBox? content}) {
+  final HitTestResult result;
+  if (content != null && content.hasSize) {
+    final BoxHitTestResult boxResult = BoxHitTestResult();
+    content.hitTest(boxResult, position: content.globalToLocal(globalPosition));
+    result = boxResult;
+  } else {
+    final Iterable<RenderView> views = RendererBinding.instance.renderViews;
+    if (views.isEmpty) return <String, dynamic>{'found': false, 'reason': 'no-view'};
+    final HitTestResult r = HitTestResult();
+    views.first.hitTest(r, position: globalPosition);
+    result = r;
+  }
 
-  // Walk front-to-back; pick the first hit RenderObject that maps to an Element.
   Element? hitElement;
   for (final HitTestEntry entry in result.path) {
     final Object target = entry.target;
@@ -55,10 +74,10 @@ Map<String, dynamic> _selectAt(Offset position) {
   }
   if (hitElement == null) return <String, dynamic>{'found': false, 'reason': 'no-element'};
 
-  // Drive the standard Flutter inspector selection (same call the in-app tap uses)
-  // so getSelectedSummaryWidget resolves the nearest user widget + creationLocation.
+  // Same call the in-app inspector tap uses; lets getSelectedSummaryWidget resolve
+  // the nearest user widget + creationLocation.
   // ignore: invalid_use_of_protected_member
-  final bool ok = WidgetInspectorService.instance.setSelection(hitElement, 'shell-inspector');
+  WidgetInspectorService.instance.setSelection(hitElement, 'shell-inspector');
 
   final RenderObject? ro = hitElement.renderObject;
   Map<String, dynamic> bounds = <String, dynamic>{};
@@ -67,10 +86,5 @@ Map<String, dynamic> _selectAt(Offset position) {
     bounds = <String, dynamic>{'x': tl.dx, 'y': tl.dy, 'w': ro.size.width, 'h': ro.size.height};
   }
 
-  return <String, dynamic>{
-    'found': true,
-    'selected': ok,
-    'type': hitElement.widget.runtimeType.toString(),
-    ...bounds,
-  };
+  return <String, dynamic>{'found': true, 'type': hitElement.widget.runtimeType.toString(), ...bounds};
 }
