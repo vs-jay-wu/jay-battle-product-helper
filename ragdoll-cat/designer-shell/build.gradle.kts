@@ -17,7 +17,6 @@ kotlin {
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)
-            implementation(libs.kotlinx.serialization.json)
             implementation(project(":core:designsystem"))
             implementation(project(":core:ui"))
             implementation(project(":feature:quizcollection:ui"))
