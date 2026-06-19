@@ -1,3 +1,7 @@
+# Git 規則(最重要)
+
+**禁止 agent 主動 `git push`。** 只有使用者當下明確要求(說「push」「push it」「推上去」等)才可以 push。可以自動 `git commit`(改動明確、已驗證時),但 commit 後**停在本地、不要 push** —— 使用者多在實驗 / 測試階段,自動 push 會造成困擾。破壞性 git 操作(force-push、改寫歷史、`reset --hard` 等)一律先確認。
+
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 
