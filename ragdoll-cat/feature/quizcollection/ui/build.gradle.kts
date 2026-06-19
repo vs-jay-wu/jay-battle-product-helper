@@ -16,6 +16,7 @@ kotlin {
             implementation(compose.foundation)
             implementation(compose.material3)
             implementation(compose.ui)
+            implementation(compose.components.resources)
             implementation(project(":core:designsystem"))
             implementation(project(":core:ui"))
         }
@@ -28,4 +29,9 @@ android {
     defaultConfig {
         minSdk = 28
     }
+}
+
+compose.resources {
+    publicResClass = false
+    packageOfResClass = "com.viewsonic.classswift.feature.quizcollection.ui.generated.resources"
 }
