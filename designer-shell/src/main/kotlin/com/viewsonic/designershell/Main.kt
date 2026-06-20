@@ -68,18 +68,17 @@ fun main() = application {
         var renaming by remember { mutableStateOf(false) }
 
         fun openNew(target: String) {
-            val label = if (target == "flutter") "Flutter" else "Compose"
-            val s = store.create("$label ${sessions.count { it.target == target } + 1}", target)
+            val s = store.create("對話 ${sessions.count { it.target == target } + 1}", target)
             sessions = store.list()
             active = s
         }
 
         MenuBar {
             Menu("Session", mnemonic = 'S') {
-                Item("新增 Flutter session") { openNew("flutter") }
-                Item("新增 Compose session") { openNew("compose") }
+                Item("新的 Flutter 對話") { openNew("flutter") }
+                Item("新的 Compose 對話") { openNew("compose") }
                 if (active != null) {
-                    Item("重新命名…") { renaming = true }
+                    Item("重新命名對話…") { renaming = true }
                     Item("關閉(回到清單)") { active = null }
                 }
                 Separator()
@@ -110,6 +109,13 @@ fun main() = application {
 private fun repoLabel(target: String): String =
     if (target == "flutter") "Flutter · flutter_shop" else "Compose · ragdoll-cat"
 
+private fun sessionPreview(s: Session): String =
+    if (s.transcript.isEmpty()) {
+        "尚無對話"
+    } else {
+        "${s.transcript.size} 則訊息 · ${s.transcript.last().text.take(34).replace("\n", " ")}…"
+    }
+
 @Composable
 private fun SessionPicker(sessions: List<Session>, onOpen: (Session) -> Unit, onNew: (String) -> Unit) {
     var repo by remember { mutableStateOf<String?>(null) }
@@ -133,20 +139,25 @@ private fun SessionPicker(sessions: List<Session>, onOpen: (Session) -> Unit, on
                 Text(repoLabel(selected), fontWeight = FontWeight.SemiBold, color = Color(0xFF1A1A1A))
             }
             Spacer(Modifier.height(10.dp))
-            Button(onClick = { onNew(selected) }, modifier = Modifier.fillMaxWidth()) { Text("＋ 新增 session") }
+            Button(onClick = { onNew(selected) }, modifier = Modifier.fillMaxWidth()) { Text("＋ 新的 Claude 對話") }
             Spacer(Modifier.height(16.dp))
-            Text("已儲存的 session", fontWeight = FontWeight.SemiBold, color = Color(0xFF1A1A1A))
+            Text("Claude 對話（session）", fontWeight = FontWeight.SemiBold, color = Color(0xFF1A1A1A))
             Spacer(Modifier.height(8.dp))
             val repoSessions = sessions.filter { it.target == selected }
             if (repoSessions.isEmpty()) {
-                Text("（這個專案還沒有 session）", color = Color(0xFF797979), fontSize = 12.sp)
+                Text("（這個專案還沒有對話）", color = Color(0xFF797979), fontSize = 12.sp)
             }
             Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState())) {
                 repoSessions.forEach { s ->
-                    Button(
-                        onClick = { onOpen(s) },
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
-                    ) { Text(s.name) }
+                    Column(
+                        Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                            .clickable { onOpen(s) }
+                            .background(Color.White)
+                            .padding(12.dp),
+                    ) {
+                        Text(s.name, fontWeight = FontWeight.Medium, color = Color(0xFF1A1A1A))
+                        Text(sessionPreview(s), fontSize = 11.sp, color = Color(0xFF797979))
+                    }
                 }
             }
         }
