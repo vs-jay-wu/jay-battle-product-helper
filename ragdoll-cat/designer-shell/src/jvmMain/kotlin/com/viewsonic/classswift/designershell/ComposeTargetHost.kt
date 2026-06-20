@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.dp
 import com.viewsonic.classswift.feature.quizcollection.ui.QuizCollectionScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.ClassManagementMenu
 import com.viewsonic.classswift.feature.servicescreens.ui.ComingSoonPrompt
+import com.viewsonic.classswift.feature.servicescreens.ui.JoinClassScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.MyClassScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.QuizMenu
 import com.viewsonic.classswift.feature.servicescreens.ui.SelectOrgAndClassScreen
@@ -62,5 +63,6 @@ fun main() = runDesignerTarget(
         DesignerPage("svc_select_org_class", "Service · Select Org & Class") { Dialog { SelectOrgAndClassScreen() } },
         DesignerPage("svc_my_class", "Service · My Class") { Dialog { MyClassScreen() } },
         DesignerPage("svc_student_mgmt", "Service · Student Management") { Dialog { StudentManagementScreen() } },
+        DesignerPage("svc_join_class", "Service · Join Class") { Dialog { JoinClassScreen() } },
     ),
 )

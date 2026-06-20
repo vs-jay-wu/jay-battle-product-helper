@@ -47,9 +47,16 @@ illustrations copied), `designNode` tags per element, registered as `svc_*` Desi
 - ✅ `SettingMenuWindow` / `ToolsMenuWindow` / `QuizMenuWindow` / `ClassManagementMenuWindow`
   → shared `SubordinateMenu` + `MenuItemRow` (F5F5F5 surface, 24dp black-tinted icon rows)
 
-### Batch 2 — class & org management
-`MyClassWindow`, `JoinClassWindow`, `SelectOrgWindow`, `SelectOrgAndSelectClassWindow`,
-`StudentManagementWindow`.
+### Batch 2 — class & org management — ✅ DONE
+All in `:feature:servicescreens:ui`, real assets via `compose.resources`, `designNode` tags,
+shared `CSButton` (ClassSwiftLoadingButton stand-in) + `QrMatrix` (generated QR, not a placeholder):
+- ✅ `SelectOrgWindow` → `SelectOrgScreen` (350dp card, org list + Sign Out/Select)
+- ✅ `SelectOrgAndSelectClassWindow` → `SelectOrgAndClassScreen` (org dropdown + plan badge + class list)
+- ✅ `MyClassWindow` → `MyClassScreen` (680×393 two-panel: class list + detail/actions)
+- ✅ `StudentManagementWindow` → `StudentManagementScreen` (core: class info + QR + 5-col seat grid;
+  _deferred: Groups tab, more-menu, edit-mode overlay_)
+- ✅ `JoinClassWindow` → `JoinClassScreen` (primary join state: URL + code tiles + QR + attendance grid;
+  _deferred: expanded-QR / empty / disconnected states, leave/remove dialogs & tooltips_)
 
 ### Batch 3 — classroom tools (interactive, self-contained)
 `SpinnerWindow` / `MvbSpinnerWindow`, `BuzzerWindow`, `RandomDrawWindow`,
@@ -80,3 +87,4 @@ _(standalone duplicates → out of scope.)_
 |-------|--------|--------|--------|
 | —     | Quiz Collection | `:feature:quizcollection:ui` | ✅ done (4 states) |
 | 1     | Under / Upcoming Maintenance, Corner Prompt, Coming Soon, Upgrade, Setting/Tools/Quiz/Class menus (9) | `:feature:servicescreens:ui` | ✅ done (real assets, `designNode` tags, 9 `svc_*` pages) |
+| 2     | SelectOrg, SelectOrg&Class, MyClass, StudentManagement (core), JoinClass (primary state) (5) | `:feature:servicescreens:ui` | ✅ done (5 `svc_*` pages; 2 with deferred sub-states noted above) |
