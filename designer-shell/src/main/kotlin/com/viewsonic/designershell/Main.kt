@@ -3,6 +3,7 @@ package com.viewsonic.designershell
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -30,6 +31,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
@@ -51,139 +53,60 @@ private const val BASE = "/Users/jay.wj.wu/ProjectsWork_GitHub/Battle/jay-battle
 private const val FLUTTER_SHOP = "$BASE/flutter_shop"
 private const val RAGDOLL_CAT = "$BASE/ragdoll-cat"
 
-private fun adapterFor(session: Session): TargetAdapter =
-    if (session.target == "flutter") FlutterAdapter(FLUTTER_SHOP) else ComposeAdapter(RAGDOLL_CAT)
-
-/**
- * Standalone Designer Shell — a generic out-of-process control panel. Sessions
- * (one per target + Claude conversation) are saved and switchable; each hosts a
- * target through a [TargetAdapter] (Flutter / Compose) without compiling it in.
- */
-fun main() = application {
-    val store = remember { SessionStore() }
-    val state = rememberWindowState(width = 560.dp, height = 860.dp)
-    Window(onCloseRequest = ::exitApplication, state = state, title = "Designer Shell") {
-        var sessions by remember { mutableStateOf(store.list()) }
-        var active by remember { mutableStateOf<Session?>(null) }
-        var renaming by remember { mutableStateOf(false) }
-
-        fun openNew(target: String) {
-            val s = store.create("對話 ${sessions.count { it.target == target } + 1}", target)
-            sessions = store.list()
-            active = s
-        }
-
-        MenuBar {
-            Menu("Session", mnemonic = 'S') {
-                Item("新的 Flutter 對話") { openNew("flutter") }
-                Item("新的 Compose 對話") { openNew("compose") }
-                if (active != null) {
-                    Item("重新命名對話…") { renaming = true }
-                    Item("關閉(回到清單)") { active = null }
-                }
-                Separator()
-                sessions.forEach { s ->
-                    Item("${if (s.id == active?.id) "● " else "   "}${s.name}  ·  ${s.target}") { active = s }
-                }
-            }
-        }
-
-        val current = active
-        if (renaming && current != null) {
-            RenameDialog(current.name, onConfirm = { newName ->
-                val updated = current.copy(name = newName)
-                store.save(updated)
-                sessions = store.list()
-                active = updated
-                renaming = false
-            }, onDismiss = { renaming = false })
-        }
-
-        when (current) {
-            null -> SessionPicker(sessions, onOpen = { active = it }, onNew = ::openNew)
-            else -> key(current.id) { ControlPanel(current, store) }
-        }
-    }
-}
+private fun adapterFor(target: String): TargetAdapter =
+    if (target == "flutter") FlutterAdapter(FLUTTER_SHOP) else ComposeAdapter(RAGDOLL_CAT)
 
 private fun repoLabel(target: String): String =
     if (target == "flutter") "Flutter · flutter_shop" else "Compose · ragdoll-cat"
 
 private fun sessionPreview(s: Session): String =
-    if (s.transcript.isEmpty()) {
-        "尚無對話"
-    } else {
-        "${s.transcript.size} 則訊息 · ${s.transcript.last().text.take(34).replace("\n", " ")}…"
-    }
+    if (s.transcript.isEmpty()) "尚無對話"
+    else "${s.transcript.size} 則訊息 · ${s.transcript.last().text.take(34).replace("\n", " ")}…"
 
-@Composable
-private fun SessionPicker(sessions: List<Session>, onOpen: (Session) -> Unit, onNew: (String) -> Unit) {
-    var repo by remember { mutableStateOf<String?>(null) }
-    Column(Modifier.fillMaxSize().background(Color(0xFFF4F4F6)).padding(24.dp)) {
-        Text("Designer Shell", fontWeight = FontWeight.Bold, fontSize = 18.sp, color = Color(0xFF1A1A1A))
-        Spacer(Modifier.height(16.dp))
-
-        val selected = repo
-        if (selected == null) {
-            // Step 1 — choose the project (repo).
-            Text("選擇專案", fontWeight = FontWeight.SemiBold, color = Color(0xFF1A1A1A))
-            Spacer(Modifier.height(10.dp))
-            Button(onClick = { repo = "flutter" }, modifier = Modifier.fillMaxWidth()) { Text(repoLabel("flutter")) }
-            Spacer(Modifier.height(8.dp))
-            Button(onClick = { repo = "compose" }, modifier = Modifier.fillMaxWidth()) { Text(repoLabel("compose")) }
-        } else {
-            // Step 2 — sessions for the chosen project.
-            Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
-                TextButton(onClick = { repo = null }) { Text("← 專案") }
-                Spacer(Modifier.width(8.dp))
-                Text(repoLabel(selected), fontWeight = FontWeight.SemiBold, color = Color(0xFF1A1A1A))
+/**
+ * Standalone Designer Shell. Pick a project (repo) → its app launches once and
+ * stays running; the user switches between Claude conversations ("sessions")
+ * that all work on that same app, without rebuilding it.
+ */
+fun main() = application {
+    val store = remember { SessionStore() }
+    val state = rememberWindowState(width = 560.dp, height = 880.dp)
+    Window(onCloseRequest = ::exitApplication, state = state, title = "Designer Shell") {
+        var repo by remember { mutableStateOf<String?>(null) }
+        MenuBar {
+            Menu("專案", mnemonic = 'P') {
+                Item("Flutter · flutter_shop") { repo = "flutter" }
+                Item("Compose · ragdoll-cat") { repo = "compose" }
+                Separator()
+                if (repo != null) Item("切換專案(回到選擇)") { repo = null }
             }
-            Spacer(Modifier.height(10.dp))
-            Button(onClick = { onNew(selected) }, modifier = Modifier.fillMaxWidth()) { Text("＋ 新的 Claude 對話") }
-            Spacer(Modifier.height(16.dp))
-            Text("Claude 對話（session）", fontWeight = FontWeight.SemiBold, color = Color(0xFF1A1A1A))
-            Spacer(Modifier.height(8.dp))
-            val repoSessions = sessions.filter { it.target == selected }
-            if (repoSessions.isEmpty()) {
-                Text("（這個專案還沒有對話）", color = Color(0xFF797979), fontSize = 12.sp)
-            }
-            Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState())) {
-                repoSessions.forEach { s ->
-                    Column(
-                        Modifier.fillMaxWidth().padding(bottom = 8.dp)
-                            .clickable { onOpen(s) }
-                            .background(Color.White)
-                            .padding(12.dp),
-                    ) {
-                        Text(s.name, fontWeight = FontWeight.Medium, color = Color(0xFF1A1A1A))
-                        Text(sessionPreview(s), fontSize = 11.sp, color = Color(0xFF797979))
-                    }
-                }
-            }
+        }
+        when (val r = repo) {
+            null -> RepoPicker(onPick = { repo = it })
+            else -> key(r) { RepoWorkspace(r, store) }
         }
     }
 }
 
 @Composable
-private fun RenameDialog(current: String, onConfirm: (String) -> Unit, onDismiss: () -> Unit) {
-    var text by remember { mutableStateOf(current) }
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text("重新命名 session") },
-        text = {
-            OutlinedTextField(value = text, onValueChange = { text = it }, modifier = Modifier.fillMaxWidth())
-        },
-        confirmButton = { TextButton(onClick = { if (text.isNotBlank()) onConfirm(text.trim()) }) { Text("確定") } },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("取消") } },
-    )
+private fun RepoPicker(onPick: (String) -> Unit) {
+    Column(Modifier.fillMaxSize().background(Color(0xFFF4F4F6)).padding(24.dp)) {
+        Text("Designer Shell", fontWeight = FontWeight.Bold, fontSize = 18.sp, color = Color(0xFF1A1A1A))
+        Text("選擇一個專案 — 選了就會啟動該 app", color = Color(0xFF797979), fontSize = 12.sp)
+        Spacer(Modifier.height(20.dp))
+        Button(onClick = { onPick("flutter") }, modifier = Modifier.fillMaxWidth()) { Text(repoLabel("flutter")) }
+        Spacer(Modifier.height(8.dp))
+        Button(onClick = { onPick("compose") }, modifier = Modifier.fillMaxWidth()) { Text(repoLabel("compose")) }
+    }
 }
 
+/**
+ * One running app (per repo). The adapter is started once and persists; switching
+ * the active Claude session only swaps the conversation — the app is untouched.
+ */
 @Composable
-private fun ControlPanel(session: Session, store: SessionStore) {
-    val adapter = remember { adapterFor(session) }
-    val claude = remember { ClaudeSession(adapter.workingDir, session.claudeSessionId) }
-    val hadHistory = remember { session.transcript.isNotEmpty() }
-    var everStarted by remember { mutableStateOf(false) }
+private fun RepoWorkspace(repo: String, store: SessionStore) {
+    val adapter = remember { adapterFor(repo) }
     var status by remember { mutableStateOf("啟動中…") }
     var designMode by remember { mutableStateOf(false) }
     var selection by remember { mutableStateOf<SelectedNode?>(null) }
@@ -191,27 +114,46 @@ private fun ControlPanel(session: Session, store: SessionStore) {
     var pages by remember { mutableStateOf<List<PageInfo>>(emptyList()) }
     var currentPageId by remember { mutableStateOf<String?>(null) }
 
+    var sessions by remember { mutableStateOf(store.list().filter { it.target == repo }) }
+    var active by remember {
+        mutableStateOf(
+            sessions.firstOrNull() ?: store.create("對話 1", repo).also { sessions = store.list().filter { it.target == repo } },
+        )
+    }
+    var renaming by remember { mutableStateOf(false) }
+
+    // App: started ONCE for this repo, persists across session switches.
     LaunchedEffect(Unit) {
-        claude.seed(session.transcript.map { ClaudeMessage(ClaudeRole.valueOf(it.role), it.text) })
         adapter.onStatus = { status = it; if (it == "已連線") adapter.requestPages() }
         adapter.onSelection = { selection = it }
         adapter.onTree = { tree = it }
         adapter.onPages = { pages = it; if (currentPageId == null) currentPageId = it.firstOrNull()?.id }
-        claude.onComplete = { adapter.hotReload() }
         adapter.start()
     }
-    // Persist the transcript whenever it grows.
-    LaunchedEffect(Unit) {
+    DisposableEffect(Unit) { onDispose { runCatching { adapter.stop() } } }
+
+    // Claude conversation: swaps on session switch; the app/adapter is NOT touched.
+    val claude = remember(active.id) { ClaudeSession(adapter.workingDir, active.claudeSessionId) }
+    val hadHistory = remember(active.id) { active.transcript.isNotEmpty() }
+    var everStarted by remember(active.id) { mutableStateOf(false) }
+    LaunchedEffect(active.id) {
+        claude.seed(active.transcript.map { ClaudeMessage(ClaudeRole.valueOf(it.role), it.text) })
+        claude.onComplete = { adapter.hotReload() }
+    }
+    LaunchedEffect(active.id) {
+        val s = active
         snapshotFlow { claude.transcript.size }.collect {
-            session.transcript = claude.transcript.map { StoredMessage(it.role.name, it.text) }
-            store.save(session)
+            val updated = s.copy(transcript = claude.transcript.map { StoredMessage(it.role.name, it.text) })
+            store.save(updated)
+            sessions = sessions.map { if (it.id == updated.id) updated else it }
         }
     }
-    DisposableEffect(Unit) {
+    DisposableEffect(active.id) {
+        val s = active
+        val c = claude
         onDispose {
-            runCatching { session.transcript = claude.transcript.map { StoredMessage(it.role.name, it.text) }; store.save(session) }
-            runCatching { claude.stop() }
-            runCatching { adapter.stop() }
+            runCatching { store.save(s.copy(transcript = c.transcript.map { StoredMessage(it.role.name, it.text) })) }
+            runCatching { c.stop() }
         }
     }
 
@@ -223,10 +165,33 @@ private fun ControlPanel(session: Session, store: SessionStore) {
         claude.send(buildPrompt(text, selection))
     }
 
+    if (renaming) {
+        RenameDialog(active.name, onConfirm = { newName ->
+            val updated = active.copy(name = newName)
+            store.save(updated)
+            sessions = sessions.map { if (it.id == updated.id) updated else it }
+            active = updated
+            renaming = false
+        }, onDismiss = { renaming = false })
+    }
+
     Column(Modifier.fillMaxSize().background(Color(0xFFF4F4F6)).padding(16.dp)) {
-        Text(session.name, color = Color(0xFF1A1A1A), fontWeight = FontWeight.Bold, fontSize = 16.sp)
-        Text("${adapter.displayName}   ·   $status", color = Color(0xFF797979), fontSize = 12.sp)
-        Spacer(Modifier.height(8.dp))
+        Text(repoLabel(repo), color = Color(0xFF1A1A1A), fontWeight = FontWeight.Bold, fontSize = 16.sp)
+        Text("app：$status", color = Color(0xFF797979), fontSize = 12.sp)
+        Spacer(Modifier.height(10.dp))
+
+        SessionSwitcher(
+            sessions = sessions,
+            active = active,
+            onSwitch = { active = it },
+            onNew = {
+                val s = store.create("對話 ${sessions.size + 1}", repo)
+                sessions = store.list().filter { it.target == repo }
+                active = s
+            },
+            onRename = { renaming = true },
+        )
+        Spacer(Modifier.height(10.dp))
 
         if (pages.size > 1) {
             PagePicker(pages, currentPageId, onSelect = { id ->
@@ -255,59 +220,46 @@ private fun ControlPanel(session: Session, store: SessionStore) {
         Spacer(Modifier.height(12.dp))
         StructureCard(tree, onRefresh = { adapter.requestTree() }, onSelect = { adapter.selectNode(it) }, Modifier.weight(1f))
         Spacer(Modifier.height(12.dp))
-        ClaudeCard(claude, onSend, Modifier.weight(1f))
+        ClaudeCard(active.name, claude, onSend, Modifier.weight(1f))
     }
 }
 
 @Composable
-private fun StructureCard(
-    tree: List<TreeNode>,
-    onRefresh: () -> Unit,
-    onSelect: (TreeNode) -> Unit,
-    modifier: Modifier = Modifier,
+private fun SessionSwitcher(
+    sessions: List<Session>,
+    active: Session,
+    onSwitch: (Session) -> Unit,
+    onNew: () -> Unit,
+    onRename: () -> Unit,
 ) {
-    Column(modifier.fillMaxWidth().background(Color.White).padding(14.dp)) {
-        Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
-            Text("Structure", fontWeight = FontWeight.SemiBold, color = Color(0xFF1A1A1A))
-            Spacer(Modifier.weight(1f))
-            TextButton(onClick = onRefresh) { Text("↻ 重新整理") }
-        }
-        Spacer(Modifier.height(4.dp))
-        if (tree.isEmpty()) {
-            Text("切到「設計」模式後顯示元件樹", color = Color(0xFF797979), fontSize = 12.sp)
-        } else {
-            Column(Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState())) {
-                tree.forEach { TreeRow(it, 0, onSelect) }
+    var expanded by remember { mutableStateOf(false) }
+    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Box {
+            Button(onClick = { expanded = true }) { Text("對話：${active.name}  ▾") }
+            DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                sessions.forEach { s ->
+                    DropdownMenuItem(
+                        text = { Text((if (s.id == active.id) "● " else "   ") + s.name + "   —   " + sessionPreview(s)) },
+                        onClick = { expanded = false; onSwitch(s) },
+                    )
+                }
             }
         }
+        TextButton(onClick = onNew) { Text("＋ 新對話") }
+        TextButton(onClick = onRename) { Text("改名") }
     }
 }
 
 @Composable
-private fun TreeRow(node: TreeNode, depth: Int, onSelect: (TreeNode) -> Unit) {
-    var expanded by remember { mutableStateOf(depth < 2) }
-    Row(
-        Modifier.fillMaxWidth()
-            .clickable { onSelect(node) }
-            .padding(start = (depth * 14).dp, top = 2.dp, bottom = 2.dp),
-        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
-    ) {
-        if (node.children.isNotEmpty()) {
-            Text(
-                if (expanded) "▾ " else "▸ ",
-                fontSize = 11.sp,
-                color = Color(0xFF797979),
-                modifier = Modifier.clickable { expanded = !expanded },
-            )
-        } else {
-            Text("  ", fontSize = 11.sp)
-        }
-        Text(node.label, fontSize = 12.sp, color = Color(0xFF1A1A1A))
-        if (node.line > 0) {
-            Text("  :${node.line}", fontSize = 11.sp, color = Color(0xFF9AA0A6), fontFamily = FontFamily.Monospace)
-        }
-    }
-    if (expanded) node.children.forEach { TreeRow(it, depth + 1, onSelect) }
+private fun RenameDialog(current: String, onConfirm: (String) -> Unit, onDismiss: () -> Unit) {
+    var text by remember { mutableStateOf(current) }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("重新命名對話") },
+        text = { OutlinedTextField(value = text, onValueChange = { text = it }, modifier = Modifier.fillMaxWidth()) },
+        confirmButton = { TextButton(onClick = { if (text.isNotBlank()) onConfirm(text.trim()) }) { Text("確定") } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text("取消") } },
+    )
 }
 
 @Composable
@@ -315,9 +267,7 @@ private fun PagePicker(pages: List<PageInfo>, currentId: String?, onSelect: (Str
     var expanded by remember { mutableStateOf(false) }
     val current = pages.firstOrNull { it.id == currentId } ?: pages.first()
     Column {
-        Button(onClick = { expanded = true }, modifier = Modifier.fillMaxWidth()) {
-            Text("頁面：${current.label}  ▾")
-        }
+        Button(onClick = { expanded = true }, modifier = Modifier.fillMaxWidth()) { Text("頁面：${current.label}  ▾") }
         DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
             pages.forEach { p ->
                 DropdownMenuItem(text = { Text(p.label) }, onClick = { expanded = false; onSelect(p.id) })
@@ -344,10 +294,58 @@ private fun InspectorCard(selection: SelectedNode?) {
 }
 
 @Composable
-private fun ClaudeCard(session: ClaudeSession, onSend: (String) -> Unit, modifier: Modifier = Modifier) {
+private fun StructureCard(
+    tree: List<TreeNode>,
+    onRefresh: () -> Unit,
+    onSelect: (TreeNode) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier.fillMaxWidth().background(Color.White).padding(14.dp)) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text("Structure", fontWeight = FontWeight.SemiBold, color = Color(0xFF1A1A1A))
+            Spacer(Modifier.weight(1f))
+            TextButton(onClick = onRefresh) { Text("↻ 重新整理") }
+        }
+        Spacer(Modifier.height(4.dp))
+        if (tree.isEmpty()) {
+            Text("切到「設計」模式後顯示元件樹", color = Color(0xFF797979), fontSize = 12.sp)
+        } else {
+            Column(Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState())) {
+                tree.forEach { TreeRow(it, 0, onSelect) }
+            }
+        }
+    }
+}
+
+@Composable
+private fun TreeRow(node: TreeNode, depth: Int, onSelect: (TreeNode) -> Unit) {
+    var expanded by remember { mutableStateOf(depth < 2) }
+    Row(
+        Modifier.fillMaxWidth().clickable { onSelect(node) }.padding(start = (depth * 14).dp, top = 2.dp, bottom = 2.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        if (node.children.isNotEmpty()) {
+            Text(
+                if (expanded) "▾ " else "▸ ",
+                fontSize = 11.sp, color = Color(0xFF797979),
+                modifier = Modifier.clickable { expanded = !expanded },
+            )
+        } else {
+            Text("  ", fontSize = 11.sp)
+        }
+        Text(node.label, fontSize = 12.sp, color = Color(0xFF1A1A1A))
+        if (node.line > 0) {
+            Text("  :${node.line}", fontSize = 11.sp, color = Color(0xFF9AA0A6), fontFamily = FontFamily.Monospace)
+        }
+    }
+    if (expanded) node.children.forEach { TreeRow(it, depth + 1, onSelect) }
+}
+
+@Composable
+private fun ClaudeCard(sessionName: String, session: ClaudeSession, onSend: (String) -> Unit, modifier: Modifier = Modifier) {
     var prompt by remember { mutableStateOf("") }
     Column(modifier.fillMaxWidth().background(Color.White).padding(14.dp)) {
-        Text("Claude", fontWeight = FontWeight.SemiBold, color = Color(0xFF1A1A1A))
+        Text("Claude · $sessionName", fontWeight = FontWeight.SemiBold, color = Color(0xFF1A1A1A))
         Spacer(Modifier.height(6.dp))
         Column(Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState())) {
             session.transcript.takeLast(40).forEach { msg ->
@@ -367,10 +365,7 @@ private fun ClaudeCard(session: ClaudeSession, onSend: (String) -> Unit, modifie
             placeholder = { Text("描述想要的變更…") },
         )
         Spacer(Modifier.height(8.dp))
-        Button(
-            onClick = { onSend(prompt); prompt = "" },
-            enabled = prompt.isNotBlank(),
-        ) { Text("送出") }
+        Button(onClick = { onSend(prompt); prompt = "" }, enabled = prompt.isNotBlank()) { Text("送出") }
     }
 }
 
