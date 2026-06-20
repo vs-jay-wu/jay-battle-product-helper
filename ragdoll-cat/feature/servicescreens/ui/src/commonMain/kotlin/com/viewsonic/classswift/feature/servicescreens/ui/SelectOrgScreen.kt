@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -35,8 +36,8 @@ import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.Re
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_close
 import org.jetbrains.compose.resources.painterResource
 
-/** One organization row — name, membership plan, and plan expiry date. */
-data class OrgItem(val name: String, val plan: String, val expiry: String)
+/** One organization row — name, membership plan, plan expiry; [enabled]=false means expired (greyed). */
+data class OrgItem(val name: String, val plan: String, val expiry: String, val enabled: Boolean = true)
 
 /** Sample orgs for the Designer Shell preview. */
 val sampleOrgs = listOf(
@@ -46,23 +47,27 @@ val sampleOrgs = listOf(
     OrgItem("Maplewood Academy", "Standard", "2026/03/15"),
 )
 
+/** `view_item_select_org.xml`: name (14sp bold) on top, plan (left) + expiry (right) below, 10sp #BDBDBD. */
 @Composable
 private fun OrgRow(item: OrgItem, selected: Boolean, onClick: () -> Unit, nodeId: String) {
     val bg = if (selected) BrandBlue else Color.White
-    val nameColor = if (selected) Color.White else Dark2E3133
-    Row(
+    val nameColor = when {
+        !item.enabled -> StrokeC3C7C7 // disabled/expired
+        selected -> Color.White
+        else -> Dark2E3133
+    }
+    Column(
         Modifier.fillMaxWidth()
             .background(bg)
-            .clickable(onClick = onClick)
+            .clickable(enabled = item.enabled, onClick = onClick)
             .padding(horizontal = 16.dp, vertical = 6.dp)
             .designNode(nodeId),
-        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Column(Modifier.weight(1f)) {
-            Text(item.name, color = nameColor, fontSize = 14.sp, fontWeight = FontWeight.Bold)
-            Text(item.plan, color = SubTextBDBDBD, fontSize = 10.sp)
+        Text(item.name, color = nameColor, fontSize = 14.sp, fontWeight = FontWeight.Bold, maxLines = 1)
+        Row(Modifier.fillMaxWidth()) {
+            Text(item.plan, color = SubTextBDBDBD, fontSize = 10.sp, modifier = Modifier.weight(1f))
+            Text(item.expiry, color = SubTextBDBDBD, fontSize = 10.sp)
         }
-        Text(item.expiry, color = SubTextBDBDBD, fontSize = 10.sp)
     }
 }
 
@@ -70,11 +75,14 @@ private fun OrgRow(item: OrgItem, selected: Boolean, onClick: () -> Unit, nodeId
 @Composable
 fun SelectOrgScreen(
     orgs: List<OrgItem> = sampleOrgs,
+    selectedIndex: Int = orgs.indexOfFirst { it.enabled }.coerceAtLeast(0),
+    signOutVisible: Boolean = true,
+    selectEnabled: Boolean = orgs.any { it.enabled },
     onSignOut: () -> Unit = {},
-    onSelect: (OrgItem) -> Unit = {},
+    onSelect: (Int) -> Unit = {},
     onClose: () -> Unit = {},
 ) {
-    var selected by remember { mutableStateOf(0) }
+    var selected by remember(orgs) { mutableStateOf(selectedIndex) }
     Box(
         Modifier.width(350.dp)
             .clip(RoundedCornerShape(10.66.dp))
@@ -110,34 +118,41 @@ fun SelectOrgScreen(
                         "There is no organization",
                         color = StrokeC3C7C7,
                         fontSize = 14.sp,
-                        modifier = Modifier.fillMaxSize().padding(top = 120.dp),
+                        modifier = Modifier.align(Alignment.Center),
                     )
                 } else {
                     LazyColumn(Modifier.fillMaxSize()) {
-                        items(orgs) { org ->
-                            val i = orgs.indexOf(org)
-                            OrgRow(org, i == selected, { selected = i; onSelect(org) }, "select_org_item_$i")
+                        items(orgs.size) { i ->
+                            OrgRow(orgs[i], i == selected, { selected = i; onSelect(i) }, "select_org_item_$i")
+                            if (i < orgs.lastIndex) {
+                                Box(Modifier.fillMaxWidth().height(1.dp).background(StrokeC3C7C7))
+                            }
                         }
                     }
                 }
             }
-            Row(Modifier.width(300.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                CSButton(
-                    "Sign Out",
-                    backgroundColor = Color.White,
-                    textColor = BrandBlue,
-                    borderColor = BrandBlue,
-                    nodeId = "select_org_sign_out",
-                    modifier = Modifier.weight(1f).height(36.dp),
-                    onClick = onSignOut,
-                )
+            // DefaultButtonSelectWindow: 140×36 each; Sign Out on left (hidden when MVB-bound).
+            Row(Modifier.width(300.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+                if (signOutVisible) {
+                    CSButton(
+                        "Sign Out",
+                        backgroundColor = Color.White,
+                        textColor = BrandBlue,
+                        borderColor = BrandBlue,
+                        nodeId = "select_org_sign_out",
+                        modifier = Modifier.width(140.dp).height(36.dp),
+                        onClick = onSignOut,
+                    )
+                } else {
+                    Spacer(Modifier.width(140.dp))
+                }
                 CSButton(
                     "Select",
-                    backgroundColor = BrandBlue,
+                    backgroundColor = if (selectEnabled) BrandBlue else StrokeC3C7C7,
                     textColor = Color.White,
                     nodeId = "select_org_select",
-                    modifier = Modifier.weight(1f).height(36.dp),
-                    onClick = { onSelect(orgs[selected]) },
+                    modifier = Modifier.width(140.dp).height(36.dp),
+                    onClick = { if (selectEnabled) onSelect(selected) },
                 )
             }
         }
