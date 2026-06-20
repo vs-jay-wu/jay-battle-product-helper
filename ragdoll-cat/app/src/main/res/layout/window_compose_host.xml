@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Reusable host for CMP screens shown as window-framework overlays. A migrated window inflates
+    this (WindowComposeHostBinding) and renders its CMP screen into cv_compose_host via
+    ComposeWindowHost — so the shipped window and the Designer Shell preview are one codebase.
+-->
+<androidx.compose.ui.platform.ComposeView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/cv_compose_host"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" />

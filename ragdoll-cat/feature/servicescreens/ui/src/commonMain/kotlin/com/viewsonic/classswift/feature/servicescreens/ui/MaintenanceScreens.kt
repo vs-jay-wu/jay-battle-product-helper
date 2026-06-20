@@ -18,8 +18,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.viewsonic.classswift.core.ui.designNode
@@ -36,7 +40,7 @@ import org.jetbrains.compose.resources.painterResource
 @Composable
 private fun MaintenanceCard(
     title: String,
-    description: String,
+    description: AnnotatedString,
     nodeId: String,
     onGotIt: () -> Unit,
     onClose: () -> Unit,
@@ -97,14 +101,28 @@ private fun MaintenanceCard(
     }
 }
 
+/**
+ * Builds a maintenance description where the date/time is tinted brand blue — mirrors the app's
+ * `MaintenanceAnnouncementsUiManager.replacePlaceholders` (ForegroundColorSpan #0A8CF0). Used for
+ * the Designer Shell preview defaults; the app injects the real converted text.
+ */
+private fun maintenanceDesc(before: String, blueDateTime: String, after: String): AnnotatedString =
+    buildAnnotatedString {
+        append(before)
+        withStyle(SpanStyle(color = BrandBlue)) { append(blueDateTime) }
+        append(after)
+    }
+
 /** CMP port of `UnderMaintenanceWindow` (service path). */
 @Composable
 fun UnderMaintenanceScreen(
     title: String = "ClassSwift is Under Maintenance",
-    description: String =
-        "We’ll be back on Sep. 22, 2025 (Tue) 17:00.\n" +
-            "During maintenance, the ClassSwift application, ClassSwift Hub and account registration will be unavailable.\n" +
-            "Thank you for your patience!",
+    description: AnnotatedString = maintenanceDesc(
+        "We’ll be back on ",
+        "Sep. 22, 2025 (Tue) 17:00",
+        ".\nDuring maintenance, the ClassSwift application, ClassSwift Hub and account " +
+            "registration will be unavailable.\nThank you for your patience!",
+    ),
     onGotIt: () -> Unit = {},
     onClose: () -> Unit = {},
 ) = MaintenanceCard(title, description, "under_maintenance", onGotIt, onClose)
@@ -113,10 +131,12 @@ fun UnderMaintenanceScreen(
 @Composable
 fun UpcomingMaintenanceScreen(
     title: String = "Upcoming Maintenance",
-    description: String =
-        "ClassSwift will be down for scheduled maintenance at Sep. 22, 2025 (Tue) 17:00. " +
-            "During maintenance, ClassSwift APP and Hub will not be accessible.\n\n" +
+    description: AnnotatedString = maintenanceDesc(
+        "ClassSwift will be down for scheduled maintenance at ",
+        "Sep. 22, 2025 (Tue) 17:00",
+        ". During maintenance, ClassSwift APP and Hub will not be accessible.\n\n" +
             "Thank you for your patience as ClassSwift team is working hard to improve your experience.",
+    ),
     onGotIt: () -> Unit = {},
     onClose: () -> Unit = {},
 ) = MaintenanceCard(title, description, "upcoming_maintenance", onGotIt, onClose)
