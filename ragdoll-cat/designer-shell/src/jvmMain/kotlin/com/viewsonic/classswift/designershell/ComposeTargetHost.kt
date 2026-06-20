@@ -10,11 +10,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.viewsonic.classswift.feature.quizcollection.ui.QuizCollectionScreen
+import com.viewsonic.classswift.feature.servicescreens.ui.BuzzerScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.ClassManagementMenu
 import com.viewsonic.classswift.feature.servicescreens.ui.ComingSoonPrompt
 import com.viewsonic.classswift.feature.servicescreens.ui.JoinClassScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.MyClassScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.QuizMenu
+import com.viewsonic.classswift.feature.servicescreens.ui.RandomDrawScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.SelectOrgAndClassScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.SelectOrgScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.SettingMenu
@@ -64,5 +66,7 @@ fun main() = runDesignerTarget(
         DesignerPage("svc_my_class", "Service · My Class") { Dialog { MyClassScreen() } },
         DesignerPage("svc_student_mgmt", "Service · Student Management") { Dialog { StudentManagementScreen() } },
         DesignerPage("svc_join_class", "Service · Join Class") { Dialog { JoinClassScreen() } },
+        DesignerPage("svc_buzzer", "Service · Buzzer") { Dialog { BuzzerScreen() } },
+        DesignerPage("svc_random_draw", "Service · Random Draw") { Dialog { RandomDrawScreen() } },
     ),
 )
