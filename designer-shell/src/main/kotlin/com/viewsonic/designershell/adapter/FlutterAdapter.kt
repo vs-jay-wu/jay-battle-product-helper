@@ -1,5 +1,7 @@
 package com.viewsonic.designershell.adapter
 
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.intOrNull
 import kotlinx.serialization.json.jsonObject
@@ -19,6 +21,7 @@ class FlutterAdapter(private val projectDir: String) : TargetAdapter {
     override val workingDir: File = File(projectDir)
     override var onStatus: (String) -> Unit = {}
     override var onSelection: (SelectedNode) -> Unit = {}
+    override var onTree: (List<TreeNode>) -> Unit = {}
 
     @Volatile private var vm: VmService? = null
     private var process: Process? = null
@@ -51,6 +54,39 @@ class FlutterAdapter(private val projectDir: String) : TargetAdapter {
         val service = vm ?: return
         Thread { runCatching { service.ext("ext.shopdemo.setDesignMode", mapOf("on" to on.toString())) } }
             .apply { isDaemon = true }.start()
+    }
+
+    override fun requestTree() {
+        val service = vm ?: return
+        Thread {
+            val r = runCatching {
+                service.ext("ext.flutter.inspector.getRootWidgetSummaryTree", mapOf("objectGroup" to "tree"))
+            }.getOrNull()
+            val root = r?.get("result")?.jsonObject?.get("result")?.jsonObject
+            onTree(if (root != null) listOf(parseFlutterTree(root)) else emptyList())
+        }.apply { isDaemon = true }.start()
+    }
+
+    override fun selectNode(node: TreeNode) {
+        val service = vm ?: return
+        val id = node.id ?: return
+        Thread {
+            runCatching {
+                service.ext("ext.flutter.inspector.setSelectionById", mapOf("arg" to id, "objectGroup" to "tree"))
+                readSelection(service)?.let(onSelection)
+            }
+        }.apply { isDaemon = true }.start()
+    }
+
+    private fun parseFlutterTree(o: JsonObject): TreeNode {
+        val loc = o["creationLocation"]?.jsonObject
+        return TreeNode(
+            label = o["description"]?.jsonPrimitive?.content ?: "?",
+            file = loc?.get("file")?.jsonPrimitive?.content?.substringAfterLast('/'),
+            line = loc?.get("line")?.jsonPrimitive?.intOrNull ?: 0,
+            id = o["valueId"]?.jsonPrimitive?.content,
+            children = (o["children"] as? JsonArray)?.mapNotNull { (it as? JsonObject)?.let(::parseFlutterTree) } ?: emptyList(),
+        )
     }
 
     override fun hotReload() {

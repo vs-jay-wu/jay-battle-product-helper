@@ -1,6 +1,7 @@
 package com.viewsonic.designershell.adapter
 
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.booleanOrNull
 import kotlinx.serialization.json.buildJsonObject
@@ -27,6 +28,7 @@ class ComposeAdapter(
     override val workingDir: File = File(projectDir)
     override var onStatus: (String) -> Unit = {}
     override var onSelection: (SelectedNode) -> Unit = {}
+    override var onTree: (List<TreeNode>) -> Unit = {}
 
     private val json = Json { ignoreUnknownKeys = true }
     private var process: Process? = null
@@ -70,17 +72,18 @@ class ComposeAdapter(
                 s.getInputStream().bufferedReader().forEachLine { line ->
                     if (line.isBlank()) return@forEachLine
                     val obj = runCatching { json.parseToJsonElement(line).jsonObject }.getOrNull() ?: return@forEachLine
-                    if (obj["type"]?.jsonPrimitive?.content == "selection" &&
-                        obj["found"]?.jsonPrimitive?.booleanOrNull == true
-                    ) {
-                        onSelection(
-                            SelectedNode(
-                                desc = obj["name"]?.jsonPrimitive?.content ?: "?",
-                                file = obj["file"]?.jsonPrimitive?.content ?: "?",
-                                line = obj["line"]?.jsonPrimitive?.intOrNull ?: 0,
-                                col = 0,
-                            ),
-                        )
+                    when (obj["type"]?.jsonPrimitive?.content) {
+                        "selection" -> if (obj["found"]?.jsonPrimitive?.booleanOrNull == true) {
+                            onSelection(
+                                SelectedNode(
+                                    desc = obj["name"]?.jsonPrimitive?.content ?: "?",
+                                    file = obj["file"]?.jsonPrimitive?.content ?: "?",
+                                    line = obj["line"]?.jsonPrimitive?.intOrNull ?: 0,
+                                    col = 0,
+                                ),
+                            )
+                        }
+                        "tree" -> onTree((obj["nodes"] as? JsonArray)?.map(::parseTree) ?: emptyList())
                     }
                 }
             }
@@ -89,6 +92,33 @@ class ComposeAdapter(
 
     override fun setDesignMode(on: Boolean) {
         send(buildJsonObject { put("cmd", "setDesignMode"); put("on", on.toString()) })
+    }
+
+    override fun requestTree() {
+        send(buildJsonObject { put("cmd", "getTree") })
+    }
+
+    override fun selectNode(node: TreeNode) {
+        // Re-select via the node's center point (host hit-tests it like a tap).
+        send(buildJsonObject {
+            put("cmd", "selectAt")
+            put("x", (node.x + node.w / 2).toInt().toString())
+            put("y", (node.y + node.h / 2).toInt().toString())
+        })
+    }
+
+    private fun parseTree(e: kotlinx.serialization.json.JsonElement): TreeNode {
+        val o = e.jsonObject
+        return TreeNode(
+            label = o["label"]?.jsonPrimitive?.content ?: "?",
+            file = o["file"]?.jsonPrimitive?.content,
+            line = o["line"]?.jsonPrimitive?.intOrNull ?: 0,
+            x = o["x"]?.jsonPrimitive?.content?.toFloatOrNull() ?: 0f,
+            y = o["y"]?.jsonPrimitive?.content?.toFloatOrNull() ?: 0f,
+            w = o["w"]?.jsonPrimitive?.content?.toFloatOrNull() ?: 0f,
+            h = o["h"]?.jsonPrimitive?.content?.toFloatOrNull() ?: 0f,
+            children = (o["children"] as? JsonArray)?.map(::parseTree) ?: emptyList(),
+        )
     }
 
     override fun hotReload() {

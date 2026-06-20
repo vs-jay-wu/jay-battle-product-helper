@@ -1,6 +1,7 @@
 package com.viewsonic.designershell
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -40,6 +41,7 @@ import com.viewsonic.designershell.adapter.ComposeAdapter
 import com.viewsonic.designershell.adapter.FlutterAdapter
 import com.viewsonic.designershell.adapter.SelectedNode
 import com.viewsonic.designershell.adapter.TargetAdapter
+import com.viewsonic.designershell.adapter.TreeNode
 
 private const val BASE = "/Users/jay.wj.wu/ProjectsWork_GitHub/Battle/jay-battle-product-helper"
 private const val FLUTTER_SHOP = "$BASE/flutter_shop"
@@ -154,11 +156,13 @@ private fun ControlPanel(session: Session, store: SessionStore) {
     var status by remember { mutableStateOf("啟動中…") }
     var designMode by remember { mutableStateOf(false) }
     var selection by remember { mutableStateOf<SelectedNode?>(null) }
+    var tree by remember { mutableStateOf<List<TreeNode>>(emptyList()) }
 
     LaunchedEffect(Unit) {
         claude.seed(session.transcript.map { ClaudeMessage(ClaudeRole.valueOf(it.role), it.text) })
         adapter.onStatus = { status = it }
         adapter.onSelection = { selection = it }
+        adapter.onTree = { tree = it }
         claude.onComplete = { adapter.hotReload() }
         adapter.start()
     }
@@ -194,6 +198,7 @@ private fun ControlPanel(session: Session, store: SessionStore) {
             FilterChip(selected = designMode, label = { Text("設計") }, onClick = {
                 designMode = true
                 adapter.setDesignMode(true)
+                adapter.requestTree()
             })
             FilterChip(selected = !designMode, label = { Text("互動") }, onClick = {
                 designMode = false
@@ -204,8 +209,61 @@ private fun ControlPanel(session: Session, store: SessionStore) {
 
         InspectorCard(selection)
         Spacer(Modifier.height(12.dp))
+        StructureCard(tree, onRefresh = { adapter.requestTree() }, onSelect = { adapter.selectNode(it) }, Modifier.weight(1f))
+        Spacer(Modifier.height(12.dp))
         ClaudeCard(claude, onSend, Modifier.weight(1f))
     }
+}
+
+@Composable
+private fun StructureCard(
+    tree: List<TreeNode>,
+    onRefresh: () -> Unit,
+    onSelect: (TreeNode) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier.fillMaxWidth().background(Color.White).padding(14.dp)) {
+        Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+            Text("Structure", fontWeight = FontWeight.SemiBold, color = Color(0xFF1A1A1A))
+            Spacer(Modifier.weight(1f))
+            TextButton(onClick = onRefresh) { Text("↻ 重新整理") }
+        }
+        Spacer(Modifier.height(4.dp))
+        if (tree.isEmpty()) {
+            Text("切到「設計」模式後顯示元件樹", color = Color(0xFF797979), fontSize = 12.sp)
+        } else {
+            Column(Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState())) {
+                tree.forEach { TreeRow(it, 0, onSelect) }
+            }
+        }
+    }
+}
+
+@Composable
+private fun TreeRow(node: TreeNode, depth: Int, onSelect: (TreeNode) -> Unit) {
+    var expanded by remember { mutableStateOf(depth < 2) }
+    Row(
+        Modifier.fillMaxWidth()
+            .clickable { onSelect(node) }
+            .padding(start = (depth * 14).dp, top = 2.dp, bottom = 2.dp),
+        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+    ) {
+        if (node.children.isNotEmpty()) {
+            Text(
+                if (expanded) "▾ " else "▸ ",
+                fontSize = 11.sp,
+                color = Color(0xFF797979),
+                modifier = Modifier.clickable { expanded = !expanded },
+            )
+        } else {
+            Text("  ", fontSize = 11.sp)
+        }
+        Text(node.label, fontSize = 12.sp, color = Color(0xFF1A1A1A))
+        if (node.line > 0) {
+            Text("  :${node.line}", fontSize = 11.sp, color = Color(0xFF9AA0A6), fontFamily = FontFamily.Monospace)
+        }
+    }
+    if (expanded) node.children.forEach { TreeRow(it, depth + 1, onSelect) }
 }
 
 @Composable

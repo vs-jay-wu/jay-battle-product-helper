@@ -11,6 +11,19 @@ data class SelectedNode(
     val bounds: String = "",
 )
 
+/** A node in the target's structure tree (Figma-style hierarchy panel). */
+data class TreeNode(
+    val label: String,
+    val file: String?,
+    val line: Int,
+    val id: String? = null, // target-specific selection handle (e.g. Flutter valueId)
+    val x: Float = 0f,
+    val y: Float = 0f,
+    val w: Float = 0f,
+    val h: Float = 0f,
+    val children: List<TreeNode> = emptyList(),
+)
+
 /**
  * A pluggable connection to one running target app. The Designer Shell drives
  * every target through this interface; concrete adapters (Flutter via the Dart
@@ -29,11 +42,20 @@ interface TargetAdapter {
     var onStatus: (String) -> Unit
     var onSelection: (SelectedNode) -> Unit
 
+    /** Receives the target's structure tree after [requestTree]. */
+    var onTree: (List<TreeNode>) -> Unit
+
     /** Launch (if needed) and connect to the target. */
     fun start()
 
     /** Toggle "design mode": taps select instead of (only) acting. */
     fun setDesignMode(on: Boolean)
+
+    /** Ask the target for its current structure tree (answered via [onTree]). */
+    fun requestTree()
+
+    /** Select a node picked from the structure tree (highlights it in the target). */
+    fun selectNode(node: TreeNode)
 
     /** Apply the latest source edits to the running target (hot reload). */
     fun hotReload()
