@@ -23,6 +23,7 @@ kotlin {
             implementation(project(":core:designsystem"))
             implementation(project(":core:ui"))
             implementation(project(":feature:quizcollection:ui"))
+            implementation(project(":feature:servicescreens:ui"))
             implementation(project(":fixtures"))
         }
     }
