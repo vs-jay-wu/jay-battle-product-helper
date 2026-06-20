@@ -23,3 +23,5 @@ internal val RedDB0025 = Color(0xFFDB0025) // color_DB0025 — on-going pill
 internal val Neutral500 = Color(0xFFB2B2B2) // neutral_500 / color_B2B2B2 — my-class sub text
 internal val Green78CB3D = Color(0xFF78CB3D) // color_78CB3D — +New Class
 internal val CloseGray = Color(0xFF5C6266) // bg_close_button / bring-to-front tint
+internal val ScoreGreen = Color(0xFF78CB3D) // selector_student_list_increase_point
+internal val ScoreRed = Color(0xFFF04869) // selector_student_list_decrease_point

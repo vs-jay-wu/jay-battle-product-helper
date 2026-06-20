@@ -17,6 +17,7 @@ import com.viewsonic.classswift.feature.servicescreens.ui.QuizMenu
 import com.viewsonic.classswift.feature.servicescreens.ui.SelectOrgAndClassScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.SelectOrgScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.SettingMenu
+import com.viewsonic.classswift.feature.servicescreens.ui.StudentManagementScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.ToolsMenu
 import com.viewsonic.classswift.feature.servicescreens.ui.UnderMaintenanceScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.UpcomingMaintenanceCornerPrompt
@@ -60,5 +61,6 @@ fun main() = runDesignerTarget(
         DesignerPage("svc_select_org", "Service · Select Organization") { Dialog { SelectOrgScreen() } },
         DesignerPage("svc_select_org_class", "Service · Select Org & Class") { Dialog { SelectOrgAndClassScreen() } },
         DesignerPage("svc_my_class", "Service · My Class") { Dialog { MyClassScreen() } },
+        DesignerPage("svc_student_mgmt", "Service · Student Management") { Dialog { StudentManagementScreen() } },
     ),
 )
