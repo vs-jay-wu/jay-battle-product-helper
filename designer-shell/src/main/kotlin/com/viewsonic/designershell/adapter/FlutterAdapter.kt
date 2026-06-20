@@ -12,7 +12,7 @@ import java.io.File
 
 /**
  * Hosts a native Flutter target out-of-process: launches `flutter run`, talks to
- * the Dart VM Service, drives the ext.shopdemo.* design-mode bridge, and triggers
+ * the Dart VM Service, drives the ext.designer.* design-mode bridge, and triggers
  * hot reload by writing `r` to the flutter tool's stdin.
  */
 class FlutterAdapter(private val projectDir: String) : TargetAdapter {
@@ -43,7 +43,7 @@ class FlutterAdapter(private val projectDir: String) : TargetAdapter {
                 )
             }
             service.onEvent = { event ->
-                if (event["extensionKind"]?.jsonPrimitive?.content == "shopdemo:selection") {
+                if (event["extensionKind"]?.jsonPrimitive?.content == "designer:selection") {
                     readSelection(service)?.let(onSelection)
                 }
             }
@@ -53,7 +53,7 @@ class FlutterAdapter(private val projectDir: String) : TargetAdapter {
 
     override fun setDesignMode(on: Boolean) {
         val service = vm ?: return
-        Thread { runCatching { service.ext("ext.shopdemo.setDesignMode", mapOf("on" to on.toString())) } }
+        Thread { runCatching { service.ext("ext.designer.setDesignMode", mapOf("on" to on.toString())) } }
             .apply { isDaemon = true }.start()
     }
 

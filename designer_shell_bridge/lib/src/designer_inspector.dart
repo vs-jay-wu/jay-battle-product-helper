@@ -5,31 +5,30 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
-/// True while the Designer Shell has put the app in "design mode": the design
-/// overlay absorbs taps and selects the widget under the pointer instead of
-/// letting the app act.
+/// True while the Designer Shell has put the app in "design mode": a tap selects
+/// the widget under the pointer (and reports it to the shell) instead of acting.
 final ValueNotifier<bool> kDesignMode = ValueNotifier<bool>(false);
 
 // Figma-style click-to-drill: repeated taps on the same hit stack step inward.
 List<String> _lastStack = <String>[];
 int _drillIndex = 0;
 
-/// Debug-only bridge for the Designer Shell.
-void registerDevInspector() {
+/// Registers the inspector service extensions the shell drives.
+void registerDesignerInspector() {
   if (!kDebugMode) return;
 
-  developer.registerExtension('ext.shopdemo.setDesignMode', (String m, Map<String, String> params) async {
+  developer.registerExtension('ext.designer.setDesignMode', (String m, Map<String, String> params) async {
     kDesignMode.value = (params['on'] ?? 'true') == 'true';
     return developer.ServiceExtensionResponse.result(jsonEncode(<String, dynamic>{'on': kDesignMode.value}));
   });
 
-  developer.registerExtension('ext.shopdemo.selectAt', (String m, Map<String, String> params) async {
+  developer.registerExtension('ext.designer.selectAt', (String m, Map<String, String> params) async {
     final double x = double.tryParse(params['x'] ?? '') ?? 0;
     final double y = double.tryParse(params['y'] ?? '') ?? 0;
     return developer.ServiceExtensionResponse.result(jsonEncode(selectAt(Offset(x, y))));
   });
 
-  developer.registerExtension('ext.shopdemo.viewSize', (String m, Map<String, String> params) async {
+  developer.registerExtension('ext.designer.viewSize', (String m, Map<String, String> params) async {
     final RenderView view = RendererBinding.instance.renderViews.first;
     final Size s = view.size;
     final double dpr = view.flutterView.devicePixelRatio;
@@ -39,18 +38,17 @@ void registerDevInspector() {
   });
 }
 
-/// Hit-test the design overlay's tap, set the inspector selection, post a
-/// `shopdemo:selection` event for the shell, and return the hit (incl. bounds
-/// for the in-app highlight).
+/// Hit-test [globalPosition], set the inspector selection, post a
+/// `designer:selection` event for the shell, and return the hit.
 Map<String, dynamic> selectAndReport(Offset globalPosition, RenderBox content) {
   final Map<String, dynamic> res = selectAt(globalPosition, content: content);
-  if (res['found'] == true) developer.postEvent('shopdemo:selection', res);
+  if (res['found'] == true) developer.postEvent('designer:selection', res);
   return res;
 }
 
-/// Hit-test [globalPosition], set the inspector selection to the hit element,
-/// and return its type + global bounds. When [content] is given, hit-test that
-/// subtree only (so the design overlay above it is ignored).
+/// Hit-test [globalPosition] and select the widget under it. When [content] is
+/// given, hit-test that subtree only (so the design overlay above it is ignored).
+/// Repeated taps at the same spot drill inward through the widget stack.
 Map<String, dynamic> selectAt(Offset globalPosition, {RenderBox? content}) {
   final HitTestResult result;
   if (content != null && content.hasSize) {
@@ -65,7 +63,6 @@ Map<String, dynamic> selectAt(Offset globalPosition, {RenderBox? content}) {
     result = r;
   }
 
-  // Build the stack of laid-out widgets under the point, dedup by bounds.
   final List<MapEntry<Element, Rect>> stack = <MapEntry<Element, Rect>>[];
   final Set<String> seen = <String>{};
   for (final HitTestEntry entry in result.path) {
@@ -85,7 +82,6 @@ Map<String, dynamic> selectAt(Offset globalPosition, {RenderBox? content}) {
     _drillIndex = 0;
     return <String, dynamic>{'found': false, 'reason': 'no-element'};
   }
-  // Outermost (largest) first; repeated taps on the same stack step inward.
   stack.sort((MapEntry<Element, Rect> a, MapEntry<Element, Rect> b) =>
       (b.value.width * b.value.height).compareTo(a.value.width * a.value.height));
   final List<String> keys = stack
@@ -97,7 +93,7 @@ Map<String, dynamic> selectAt(Offset globalPosition, {RenderBox? content}) {
   final MapEntry<Element, Rect> sel = stack[_drillIndex];
 
   // ignore: invalid_use_of_protected_member
-  WidgetInspectorService.instance.setSelection(sel.key, 'shell-inspector');
+  WidgetInspectorService.instance.setSelection(sel.key, 'designer-shell');
   final Rect r = sel.value;
   return <String, dynamic>{
     'found': true,

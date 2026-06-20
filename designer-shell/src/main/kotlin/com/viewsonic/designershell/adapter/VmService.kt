@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger
 /**
  * Minimal Dart VM Service client (JSON-RPC over the JDK's built-in WebSocket).
  * Used by the Flutter Designer Shell to drive the docking + inspector service
- * extensions registered by flutter_shop (ext.shopdemo.*).
+ * extensions registered by the designer_shell_bridge package (ext.designer.*).
  */
 class VmService private constructor(private val ws: WebSocket) {
 

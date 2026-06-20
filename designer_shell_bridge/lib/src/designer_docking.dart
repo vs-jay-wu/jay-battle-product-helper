@@ -9,19 +9,17 @@ import 'package:window_manager/window_manager.dart';
 bool get _enabled => kDebugMode && !kIsWeb && (Platform.isMacOS || Platform.isWindows || Platform.isLinux);
 
 /// Must run in main() before runApp (desktop debug only).
-Future<void> initWindowManager() async {
+Future<void> initDesignerWindow() async {
   if (!_enabled) return;
   await windowManager.ensureInitialized();
 }
 
-/// Debug-only window-docking bridge for the Designer Shell. The shell drives
-/// these to embed this app's native window into its canvas region.
-void registerDevDocking() {
+/// Window-docking service extensions the shell drives to embed this app's
+/// native window into its canvas region (or to position it precisely).
+void registerDesignerDocking() {
   if (!_enabled) return;
 
-  // Make the window frameless + always-on-top so it can sit flush inside the
-  // shell's canvas region (on=false restores a normal window).
-  developer.registerExtension('ext.shopdemo.dockMode', (String m, Map<String, String> params) async {
+  developer.registerExtension('ext.designer.dockMode', (String m, Map<String, String> params) async {
     final bool on = (params['on'] ?? 'true') == 'true';
     if (on) {
       await windowManager.setAsFrameless();
@@ -36,8 +34,7 @@ void registerDevDocking() {
     return developer.ServiceExtensionResponse.result(jsonEncode(<String, dynamic>{'ok': true}));
   });
 
-  // Position the window at a screen rect (logical pixels, top-left origin).
-  developer.registerExtension('ext.shopdemo.setBounds', (String m, Map<String, String> params) async {
+  developer.registerExtension('ext.designer.setBounds', (String m, Map<String, String> params) async {
     final double x = double.tryParse(params['x'] ?? '') ?? 0;
     final double y = double.tryParse(params['y'] ?? '') ?? 0;
     final double w = double.tryParse(params['w'] ?? '') ?? 400;
@@ -46,8 +43,7 @@ void registerDevDocking() {
     return developer.ServiceExtensionResponse.result(jsonEncode(<String, dynamic>{'ok': true}));
   });
 
-  // Read back the current bounds (for the shell to verify docking).
-  developer.registerExtension('ext.shopdemo.getBounds', (String m, Map<String, String> params) async {
+  developer.registerExtension('ext.designer.getBounds', (String m, Map<String, String> params) async {
     final Rect b = await windowManager.getBounds();
     return developer.ServiceExtensionResponse.result(
       jsonEncode(<String, dynamic>{'x': b.left, 'y': b.top, 'w': b.width, 'h': b.height}),
