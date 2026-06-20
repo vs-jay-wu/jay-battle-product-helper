@@ -89,9 +89,16 @@ Cancel/Start action bar); ported as one parameterized `MvbQuizEditScreen(type)` 
 - ✅ MultipleChoice · ✅ TrueFalse · ✅ ShortAnswer · ✅ Poll · ✅ Audio · ✅ SketchResponse
   → 6 `svc_edit_*` pages. _(standalone duplicates out of scope.)_
 
-### Batch 6 — results, leaderboard & misc
-`BatchQuizResultWindow`, `LeaderboardWindow`, `PushRespondWindow`, `CropImageWindow` /
-`MvbCropImageWindow`, `TutorialWindow` / `InAppTutorialWindow`, `CSSystemDialogWindow`, `ToastWindow`.
+### Batch 6 — results, leaderboard & misc — ✅ DONE
+All in `:feature:servicescreens:ui`, real assets via `compose.resources`, `designNode` tags:
+- ✅ `BatchQuizResultWindow` → `BatchQuizResultScreen` (per-question stacked accuracy bars + legend)
+- ✅ `LeaderboardWindow` → `LeaderboardScreen` (web in app; rendered as real top-3 podium + ranked list)
+- ✅ `PushRespondWindow` → `PushRespondScreen` (Content/Records tabs + submission grid)
+- ✅ `CropImageWindow` / `MvbCropImageWindow` → `CropImageScreen` (drag-hint pill + Cancel)
+- ✅ `CSSystemDialogWindow` → `CSSystemDialogScreen` (372×196 confirm dialog over 60%-white mask)
+- ✅ `ToastWindow` → `ToastScreen` (success/error toast pill)
+- ✅ `InAppTutorialWindow` → `InAppTutorialScreen` (onboarding carousel + dots + Skip/Next)
+- `TutorialWindow` (an 18-line WebView wrapper, redundant with InAppTutorial) → out of scope.
 
 > Each window also has a `WindowModel` (business logic) and possibly viewholders/adapters
 > (list items). Porting = the UI + its sample state; the WindowModel logic stays where it
@@ -107,3 +114,12 @@ Cancel/Start action bar); ported as one parameterized `MvbQuizEditScreen(type)` 
 | 3     | Buzzer, RandomDraw, Timer, Spinner, Settings, Toolbar (6) | `:feature:servicescreens:ui` | ✅ done (6 `svc_*` pages; Settings debug-tool & Toolbar collapsed state out of scope) |
 | 4     | 8 Mvb quiz-start variants (MC/TF/SA/Poll/Audio/Sketch/TextSA/TextTF) | `:feature:servicescreens:ui` | ✅ done (1 shared `MvbQuizStartScreen(type)`, 8 `svc_quiz_*` pages; disclose/result modes deferred) |
 | 5     | 6 Mvb quiz-edit variants (MC/TF/SA/Poll/Audio/Sketch) | `:feature:servicescreens:ui` | ✅ done (1 shared `MvbQuizEditScreen(type)`, 6 `svc_edit_*` pages) |
+| 6     | BatchQuizResult, Leaderboard, PushRespond, CropImage, SystemDialog, Toast, InAppTutorial (7) | `:feature:servicescreens:ui` | ✅ done (7 pages; TutorialWindow webview wrapper out of scope) |
+
+## ✅ Migration complete
+
+All in-scope service-path screens are now on CMP and driveable by the Designer Shell:
+**Quiz Collection (4 states) + Batches 1–6 = 46 `svc_*`/`qc_*` DesignerPages.** The thin
+`TutorialWindow` WebView wrapper and the deferred mid-lesson sub-states (quiz disclose/result
+modes, JoinClass/StudentManagement secondary states) are the only remaining items; they can be
+backfilled on request. Standalone (non-`Mvb`) duplicates were intentionally excluded.

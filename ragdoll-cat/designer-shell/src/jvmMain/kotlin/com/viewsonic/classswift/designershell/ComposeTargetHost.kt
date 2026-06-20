@@ -10,7 +10,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.viewsonic.classswift.feature.quizcollection.ui.QuizCollectionScreen
+import com.viewsonic.classswift.feature.servicescreens.ui.BatchQuizResultScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.BuzzerScreen
+import com.viewsonic.classswift.feature.servicescreens.ui.CSSystemDialogScreen
+import com.viewsonic.classswift.feature.servicescreens.ui.CropImageScreen
+import com.viewsonic.classswift.feature.servicescreens.ui.InAppTutorialScreen
+import com.viewsonic.classswift.feature.servicescreens.ui.LeaderboardScreen
+import com.viewsonic.classswift.feature.servicescreens.ui.PushRespondScreen
+import com.viewsonic.classswift.feature.servicescreens.ui.ToastScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.ClassManagementMenu
 import com.viewsonic.classswift.feature.servicescreens.ui.ComingSoonPrompt
 import com.viewsonic.classswift.feature.servicescreens.ui.JoinClassScreen
@@ -93,5 +100,12 @@ fun main() = runDesignerTarget(
         DesignerPage("svc_edit_poll", "Quiz Edit · Poll") { Dialog { MvbQuizEditScreen(MvbQuizType.POLL) } },
         DesignerPage("svc_edit_audio", "Quiz Edit · Audio") { Dialog { MvbQuizEditScreen(MvbQuizType.AUDIO) } },
         DesignerPage("svc_edit_sketch", "Quiz Edit · Sketch Response") { Dialog { MvbQuizEditScreen(MvbQuizType.SKETCH) } },
+        DesignerPage("svc_batch_result", "Result · Batch Quiz Result") { Dialog { BatchQuizResultScreen() } },
+        DesignerPage("svc_leaderboard", "Result · Leaderboard") { Dialog { LeaderboardScreen() } },
+        DesignerPage("svc_push_respond", "Result · Push Respond") { Dialog { PushRespondScreen() } },
+        DesignerPage("svc_system_dialog", "Misc · System Dialog") { Dialog { CSSystemDialogScreen() } },
+        DesignerPage("svc_toast", "Misc · Toast") { Dialog { ToastScreen() } },
+        DesignerPage("svc_crop_image", "Misc · Crop Image") { Dialog { CropImageScreen() } },
+        DesignerPage("svc_in_app_tutorial", "Misc · In-App Tutorial") { Dialog { InAppTutorialScreen() } },
     ),
 )
