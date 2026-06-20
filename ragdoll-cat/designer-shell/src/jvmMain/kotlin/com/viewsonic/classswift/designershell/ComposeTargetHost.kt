@@ -60,6 +60,18 @@ import kotlin.math.roundToInt
 private val designModeFlow = MutableStateFlow(false)
 private val highlightFlow = MutableStateFlow<Rect?>(null)
 
+/** Switchable pages this target exposes to the shell. Any ragdoll screen can be
+ *  registered here; the shell lists them and asks the host to switch. */
+private class Page(val id: String, val label: String, val content: @Composable () -> Unit)
+
+private val pages: List<Page> = listOf(
+    Page("qc_populated", "Quiz Collection · Populated") { QuizCollectionScreen(Samples.populated, onEvent = {}) },
+    Page("qc_empty", "Quiz Collection · Empty") { QuizCollectionScreen(Samples.empty, onEvent = {}) },
+    Page("qc_loading", "Quiz Collection · Loading") { QuizCollectionScreen(Samples.loading, onEvent = {}) },
+    Page("qc_error", "Quiz Collection · Error") { QuizCollectionScreen(Samples.error, onEvent = {}) },
+)
+private val currentPageFlow = MutableStateFlow(0)
+
 /** Immutable snapshot of located target composables (source file:line), rebuilt
  *  on the UI thread after layout (reading the live slot table off-thread crashes). */
 @Volatile private var cachedGroups: List<Located> = emptyList()
@@ -79,12 +91,13 @@ fun main() {
     Ipc.onCommand = ::handleCommand
     singleWindowApplication(title = "Compose Target · ragdoll-cat") {
         val designMode by designModeFlow.collectAsState()
+        val pageIndex by currentPageFlow.collectAsState()
         val registry = remember { DesignNodeRegistry() }
         var host by remember { mutableStateOf<LayoutCoordinates?>(null) }
         Box(Modifier.fillMaxSize().background(Color.White).onGloballyPositioned { host = it }) {
             CompositionLocalProvider(LocalDesignNodeRegistry provides registry) {
                 Capture {
-                    QuizCollectionScreen(Samples.populated, onEvent = {})
+                    pages[pageIndex].content()
                 }
             }
             if (designMode) DesignOverlay { pos -> handleTap(pos, registry, host) }
@@ -260,6 +273,17 @@ private fun handleCommand(cmd: JsonObject) {
     when (cmd["cmd"]?.jsonPrimitive?.content) {
         "setDesignMode" -> designModeFlow.value = cmd["on"]?.jsonPrimitive?.content == "true"
         "getTree" -> Ipc.send(buildJsonObject { put("type", "tree"); put("nodes", cachedTree) })
+        "getPages" -> Ipc.send(
+            buildJsonObject {
+                put("type", "pages")
+                put("current", currentPageFlow.value)
+                put("pages", JsonArray(pages.map { buildJsonObject { put("id", it.id); put("label", it.label) } }))
+            },
+        )
+        "setPage" -> {
+            val idx = pages.indexOfFirst { it.id == cmd["id"]?.jsonPrimitive?.content }
+            if (idx >= 0) currentPageFlow.value = idx
+        }
         "selectAt" -> {
             // Headless test path (no registry): source-located hit only.
             val x = cmd["x"]?.jsonPrimitive?.content?.toIntOrNull() ?: 0
