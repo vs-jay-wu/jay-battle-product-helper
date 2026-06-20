@@ -11,10 +11,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -23,6 +25,7 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
@@ -42,71 +45,148 @@ private const val BASE = "/Users/jay.wj.wu/ProjectsWork_GitHub/Battle/jay-battle
 private const val FLUTTER_SHOP = "$BASE/flutter_shop"
 private const val RAGDOLL_CAT = "$BASE/ragdoll-cat"
 
+private fun adapterFor(session: Session): TargetAdapter =
+    if (session.target == "flutter") FlutterAdapter(FLUTTER_SHOP) else ComposeAdapter(RAGDOLL_CAT)
+
 /**
- * Standalone Designer Shell — a generic out-of-process control panel. It hosts
- * any target through a [TargetAdapter] (Flutter or Compose today; more later),
- * so a single shell serves many independent app repos without compiling them in.
+ * Standalone Designer Shell — a generic out-of-process control panel. Sessions
+ * (one per target + Claude conversation) are saved and switchable; each hosts a
+ * target through a [TargetAdapter] (Flutter / Compose) without compiling it in.
  */
 fun main() = application {
-    val state = rememberWindowState(width = 560.dp, height = 840.dp)
-    Window(onCloseRequest = ::exitApplication, state = state, title = "Designer Shell · 控制面板") {
-        var adapter by remember { mutableStateOf<TargetAdapter?>(null) }
-        // Switch target from the platform menu bar (macOS top bar / Windows window menu).
-        // Re-selecting remounts the panel via key(a); the old adapter+session are
-        // cleaned up in ControlPanel's onDispose.
+    val store = remember { SessionStore() }
+    val state = rememberWindowState(width = 560.dp, height = 860.dp)
+    Window(onCloseRequest = ::exitApplication, state = state, title = "Designer Shell") {
+        var sessions by remember { mutableStateOf(store.list()) }
+        var active by remember { mutableStateOf<Session?>(null) }
+        var renaming by remember { mutableStateOf(false) }
+
+        fun openNew(target: String) {
+            val label = if (target == "flutter") "Flutter" else "Compose"
+            val s = store.create("$label ${sessions.count { it.target == target } + 1}", target)
+            sessions = store.list()
+            active = s
+        }
+
         MenuBar {
-            Menu("目標", mnemonic = 'T') {
-                Item("Flutter · flutter_shop") { adapter = FlutterAdapter(FLUTTER_SHOP) }
-                Item("Compose · ragdoll-cat") { adapter = ComposeAdapter(RAGDOLL_CAT) }
+            Menu("Session", mnemonic = 'S') {
+                Item("新增 Flutter session") { openNew("flutter") }
+                Item("新增 Compose session") { openNew("compose") }
+                if (active != null) {
+                    Item("重新命名…") { renaming = true }
+                    Item("關閉(回到清單)") { active = null }
+                }
+                Separator()
+                sessions.forEach { s ->
+                    Item("${if (s.id == active?.id) "● " else "   "}${s.name}  ·  ${s.target}") { active = s }
+                }
             }
         }
-        when (val a = adapter) {
-            null -> TargetPicker(onPick = { adapter = it })
-            else -> key(a) { ControlPanel(a) }
+
+        val current = active
+        if (renaming && current != null) {
+            RenameDialog(current.name, onConfirm = { newName ->
+                val updated = current.copy(name = newName)
+                store.save(updated)
+                sessions = store.list()
+                active = updated
+                renaming = false
+            }, onDismiss = { renaming = false })
+        }
+
+        when (current) {
+            null -> SessionPicker(sessions, onOpen = { active = it }, onNew = ::openNew)
+            else -> key(current.id) { ControlPanel(current, store) }
         }
     }
 }
 
 @Composable
-private fun TargetPicker(onPick: (TargetAdapter) -> Unit) {
+private fun SessionPicker(sessions: List<Session>, onOpen: (Session) -> Unit, onNew: (String) -> Unit) {
     Column(Modifier.fillMaxSize().background(Color(0xFFF4F4F6)).padding(24.dp)) {
-        Text("選擇目標 app", fontWeight = FontWeight.Bold, fontSize = 18.sp, color = Color(0xFF1A1A1A))
-        Spacer(Modifier.height(4.dp))
-        Text("Designer Shell 用對應的 adapter 接上去（out-of-process）", color = Color(0xFF797979), fontSize = 12.sp)
+        Text("Designer Shell", fontWeight = FontWeight.Bold, fontSize = 18.sp, color = Color(0xFF1A1A1A))
+        Text("選擇或新增一個 session（每個 session = 一個目標 + Claude 對話）", color = Color(0xFF797979), fontSize = 12.sp)
         Spacer(Modifier.height(20.dp))
-        Button(onClick = { onPick(FlutterAdapter(FLUTTER_SHOP)) }, modifier = Modifier.fillMaxWidth()) {
-            Text("Flutter · flutter_shop")
+        Button(onClick = { onNew("flutter") }, modifier = Modifier.fillMaxWidth()) { Text("＋ 新增 Flutter · flutter_shop") }
+        Spacer(Modifier.height(8.dp))
+        Button(onClick = { onNew("compose") }, modifier = Modifier.fillMaxWidth()) { Text("＋ 新增 Compose · ragdoll-cat") }
+        Spacer(Modifier.height(20.dp))
+        Text("已儲存的 session", fontWeight = FontWeight.SemiBold, color = Color(0xFF1A1A1A))
+        Spacer(Modifier.height(8.dp))
+        if (sessions.isEmpty()) {
+            Text("（還沒有；用上面按鈕新增）", color = Color(0xFF797979), fontSize = 12.sp)
         }
-        Spacer(Modifier.height(12.dp))
-        Button(onClick = { onPick(ComposeAdapter(RAGDOLL_CAT)) }, modifier = Modifier.fillMaxWidth()) {
-            Text("Compose · ragdoll-cat")
+        Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState())) {
+            sessions.forEach { s ->
+                Row(
+                    Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    Button(onClick = { onOpen(s) }, modifier = Modifier.fillMaxWidth()) {
+                        Text("${s.name}   ·   ${s.target}")
+                    }
+                }
+            }
         }
     }
 }
 
 @Composable
-private fun ControlPanel(adapter: TargetAdapter) {
+private fun RenameDialog(current: String, onConfirm: (String) -> Unit, onDismiss: () -> Unit) {
+    var text by remember { mutableStateOf(current) }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("重新命名 session") },
+        text = {
+            OutlinedTextField(value = text, onValueChange = { text = it }, modifier = Modifier.fillMaxWidth())
+        },
+        confirmButton = { TextButton(onClick = { if (text.isNotBlank()) onConfirm(text.trim()) }) { Text("確定") } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text("取消") } },
+    )
+}
+
+@Composable
+private fun ControlPanel(session: Session, store: SessionStore) {
+    val adapter = remember { adapterFor(session) }
+    val claude = remember { ClaudeSession(adapter.workingDir, session.claudeSessionId) }
+    val hadHistory = remember { session.transcript.isNotEmpty() }
+    var everStarted by remember { mutableStateOf(false) }
     var status by remember { mutableStateOf("啟動中…") }
     var designMode by remember { mutableStateOf(false) }
     var selection by remember { mutableStateOf<SelectedNode?>(null) }
-    val session = remember { ClaudeSession(adapter.workingDir) }
 
     LaunchedEffect(Unit) {
+        claude.seed(session.transcript.map { ClaudeMessage(ClaudeRole.valueOf(it.role), it.text) })
         adapter.onStatus = { status = it }
         adapter.onSelection = { selection = it }
-        session.onComplete = { adapter.hotReload() }
+        claude.onComplete = { adapter.hotReload() }
         adapter.start()
     }
-    // When the target is switched (or window closes), tear down this adapter + session.
+    // Persist the transcript whenever it grows.
+    LaunchedEffect(Unit) {
+        snapshotFlow { claude.transcript.size }.collect {
+            session.transcript = claude.transcript.map { StoredMessage(it.role.name, it.text) }
+            store.save(session)
+        }
+    }
     DisposableEffect(Unit) {
         onDispose {
-            runCatching { session.stop() }
+            runCatching { session.transcript = claude.transcript.map { StoredMessage(it.role.name, it.text) }; store.save(session) }
+            runCatching { claude.stop() }
             runCatching { adapter.stop() }
         }
     }
 
+    val onSend: (String) -> Unit = { text ->
+        if (!claude.running) {
+            claude.start(resume = hadHistory && !everStarted)
+            everStarted = true
+        }
+        claude.send(buildPrompt(text, selection))
+    }
+
     Column(Modifier.fillMaxSize().background(Color(0xFFF4F4F6)).padding(16.dp)) {
-        Text("Designer Shell · 控制面板", color = Color(0xFF1A1A1A), fontWeight = FontWeight.Bold, fontSize = 16.sp)
+        Text(session.name, color = Color(0xFF1A1A1A), fontWeight = FontWeight.Bold, fontSize = 16.sp)
         Text("${adapter.displayName}   ·   $status", color = Color(0xFF797979), fontSize = 12.sp)
         Spacer(Modifier.height(12.dp))
 
@@ -124,7 +204,7 @@ private fun ControlPanel(adapter: TargetAdapter) {
 
         InspectorCard(selection)
         Spacer(Modifier.height(12.dp))
-        ClaudeCard(session, selection, Modifier.weight(1f))
+        ClaudeCard(claude, onSend, Modifier.weight(1f))
     }
 }
 
@@ -146,7 +226,7 @@ private fun InspectorCard(selection: SelectedNode?) {
 }
 
 @Composable
-private fun ClaudeCard(session: ClaudeSession, selection: SelectedNode?, modifier: Modifier = Modifier) {
+private fun ClaudeCard(session: ClaudeSession, onSend: (String) -> Unit, modifier: Modifier = Modifier) {
     var prompt by remember { mutableStateOf("") }
     Column(modifier.fillMaxWidth().background(Color.White).padding(14.dp)) {
         Text("Claude", fontWeight = FontWeight.SemiBold, color = Color(0xFF1A1A1A))
@@ -170,11 +250,7 @@ private fun ClaudeCard(session: ClaudeSession, selection: SelectedNode?, modifie
         )
         Spacer(Modifier.height(8.dp))
         Button(
-            onClick = {
-                if (!session.running) session.start()
-                session.send(buildPrompt(prompt, selection))
-                prompt = ""
-            },
+            onClick = { onSend(prompt); prompt = "" },
             enabled = prompt.isNotBlank(),
         ) { Text("送出") }
     }

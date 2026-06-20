@@ -30,11 +30,20 @@ data class ClaudeMessage(val role: ClaudeRole, val text: String)
  * logged-in CLI. Runs with --dangerously-skip-permissions (demo) so edits apply unattended; the
  * file changes are picked up by `hotRunJvm --auto` and hot-reload the canvas.
  */
-class ClaudeSession(private val workingDir: File) {
+class ClaudeSession(
+    private val workingDir: File,
+    private val fixedSessionId: String = UUID.randomUUID().toString(),
+) {
 
     val transcript = mutableStateListOf<ClaudeMessage>()
     var sessionId: String by mutableStateOf(""); private set
     var running: Boolean by mutableStateOf(false); private set
+
+    /** Pre-fill the transcript (e.g. when switching back to a saved session). */
+    fun seed(messages: List<ClaudeMessage>) {
+        transcript.clear()
+        transcript.addAll(messages)
+    }
 
     private var process: Process? = null
     private var writer: BufferedWriter? = null
@@ -44,13 +53,14 @@ class ClaudeSession(private val workingDir: File) {
     /** Invoked (on an IO thread) when a turn finishes — the shell uses this to trigger a reload. */
     var onComplete: (() -> Unit)? = null
 
-    fun start() {
+    /** [resume]=true continues the saved Claude conversation (--resume); otherwise
+     *  starts a fresh one bound to [fixedSessionId]. Does not clear the transcript. */
+    fun start(resume: Boolean = false) {
         stop()
-        transcript.clear()
-        val id = UUID.randomUUID().toString()
-        sessionId = id
+        sessionId = fixedSessionId
+        val sessionFlag = if (resume) "--resume $fixedSessionId" else "--session-id $fixedSessionId"
         val cmd = "claude -p --input-format stream-json --output-format stream-json --verbose " +
-            "--dangerously-skip-permissions --session-id $id"
+            "--dangerously-skip-permissions $sessionFlag"
         // login shell so ~/.local/bin (claude) is on PATH
         val p = ProcessBuilder("/bin/zsh", "-lc", cmd).directory(workingDir).start()
         process = p
