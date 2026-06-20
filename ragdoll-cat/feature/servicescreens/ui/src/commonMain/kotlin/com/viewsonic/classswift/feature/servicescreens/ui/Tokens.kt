@@ -20,3 +20,6 @@ internal val Neutral100 = Color(0xFFF6F6F6) // neutral_100 — class item / plan
 internal val Gray999 = Color(0xFF999999) // color_999999 — plan badge text/icons
 internal val Violet4848F0 = Color(0xFF4848F0) // color_4848F0 — enter button / selected border
 internal val RedDB0025 = Color(0xFFDB0025) // color_DB0025 — on-going pill
+internal val Neutral500 = Color(0xFFB2B2B2) // neutral_500 / color_B2B2B2 — my-class sub text
+internal val Green78CB3D = Color(0xFF78CB3D) // color_78CB3D — +New Class
+internal val CloseGray = Color(0xFF5C6266) // bg_close_button / bring-to-front tint
