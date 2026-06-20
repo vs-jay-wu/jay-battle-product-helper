@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.InternalComposeApi
 import androidx.compose.runtime.currentComposer
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -27,6 +28,7 @@ import com.viewsonic.classswift.feature.quizcollection.ui.QuizCollectionScreen
 import com.viewsonic.classswift.fixtures.Samples
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
+import kotlinx.coroutines.delay
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
@@ -45,9 +47,11 @@ import java.net.ServerSocket
 private var designMode by mutableStateOf(false)
 private var highlight by mutableStateOf<HitResult?>(null)
 
-@Volatile private var capturedData: CompositionData? = null
+/** Immutable snapshot of located target composables, rebuilt on the UI thread
+ *  after each composition (reading the live slot table off-thread crashes). */
+@Volatile private var cachedGroups: List<HitResult> = emptyList()
 
-private data class HitResult(val name: String, val file: String, val line: Int, val pkg: Int, val x: Int, val y: Int, val w: Int, val h: Int)
+private data class HitResult(val name: String, val file: String, val line: Int, val x: Int, val y: Int, val w: Int, val h: Int)
 
 fun main() {
     val port = Ipc.start()
@@ -55,7 +59,7 @@ fun main() {
     Ipc.onCommand = ::handleCommand
     singleWindowApplication(title = "Compose Target · ragdoll-cat") {
         Box(Modifier.fillMaxSize().background(Color.White)) {
-            Capture(onData = { capturedData = it }) {
+            Capture {
                 QuizCollectionScreen(Samples.populated, onEvent = {})
             }
             if (designMode) DesignOverlay()
@@ -65,11 +69,42 @@ fun main() {
 
 @OptIn(InternalComposeApi::class)
 @Composable
-private fun Capture(onData: (CompositionData) -> Unit, content: @Composable () -> Unit) {
+private fun Capture(content: @Composable () -> Unit) {
     currentComposer.collectParameterInformation()
-    onData(currentComposer.compositionData)
+    val data = currentComposer.compositionData
+    // Poll the composition on the UI thread (after layout, when boxes are real and the
+    // slot table is idle between frames). Reading off-thread or pre-layout fails, so we
+    // cache an immutable snapshot here; hit-testing reads the cache from any thread.
+    LaunchedEffect(Unit) {
+        while (true) {
+            delay(400)
+            val snap = snapshotLocated(data)
+            if (snap.isNotEmpty()) cachedGroups = snap
+        }
+    }
     content()
 }
+
+@OptIn(UiToolingDataApi::class)
+private fun snapshotLocated(data: CompositionData): List<HitResult> = runCatching {
+    val out = mutableListOf<HitResult>()
+    var totalLocated = 0
+    fun walk(g: Group) {
+        val loc = g.location
+        val file = loc?.sourceFile
+        val name = g.name
+        if (file != null && name != null && g.box.width > 0 && g.box.height > 0) {
+            totalLocated++
+            if (file in targetFiles) {
+                out.add(HitResult(name, file, loc.lineNumber, g.box.left, g.box.top, g.box.width, g.box.height))
+            }
+        }
+        g.children.forEach(::walk)
+    }
+    walk(data.asTree())
+    if (out.isEmpty()) println("[host] snapshot: located=$totalLocated target=${out.size} files=$targetFiles")
+    out
+}.getOrElse { println("[host] snapshot asTree error: $it"); cachedGroups }
 
 @Composable
 private fun DesignOverlay() {
@@ -97,7 +132,9 @@ private fun DesignOverlay() {
 }
 
 private fun onTap(pos: Offset) {
-    val hit = hitTest(IntOffset(pos.x.toInt(), pos.y.toInt()))
+    val hit = runCatching { hitTest(IntOffset(pos.x.toInt(), pos.y.toInt())) }
+        .onFailure { println("[host] hitTest error: $it") }
+        .getOrNull()
     highlight = hit
     Ipc.send(buildJsonObject {
         put("type", "selection")
@@ -114,38 +151,24 @@ private fun onTap(pos: Offset) {
 private val targetFiles: Set<String> by lazy {
     var dir: java.io.File? = java.io.File(System.getProperty("user.dir"))
     while (dir != null && !java.io.File(dir, "settings.gradle.kts").exists()) dir = dir.parentFile
-    val root = dir ?: java.io.File(System.getProperty("user.dir"))
-    val files = listOf("feature", "core", "app").flatMap { sub ->
+    val root = dir ?: java.io.File("/Users/jay.wj.wu/ProjectsWork_GitHub/Battle/jay-battle-product-helper/ragdoll-cat")
+    val skip = setOf("build", ".gradle", ".git", ".idea", "generated")
+    val files = listOf("feature", "core").flatMap { sub ->
         java.io.File(root, sub).walkTopDown()
+            .onEnter { it.name !in skip }
             .filter { it.isFile && it.extension == "kt" }
             .map { it.name }
             .toList()
     }.toSet()
-    println("targetFiles: ${files.size} kt files under $root")
+    println("[host] targetFiles=${files.size} root=$root userDir=${System.getProperty("user.dir")}")
     files
 }
 
-/** Deepest located composable under [pos] that belongs to the target app. */
-@OptIn(UiToolingDataApi::class)
-private fun hitTest(pos: IntOffset): HitResult? {
-    val data = capturedData ?: return null
-    val located = mutableListOf<Group>()
-    fun walk(g: Group) {
-        if (g.location != null && g.name != null) located.add(g)
-        g.children.forEach(::walk)
-    }
-    walk(data.asTree())
-    val candidates = located.filter { it.box.contains(pos) && it.box.width > 0 && it.box.height > 0 }
-    val hit = candidates
-        .filter { it.location?.sourceFile in targetFiles }
-        .minByOrNull { it.box.width.toLong() * it.box.height.toLong() }
-        ?: return null
-    val loc = hit.location!!
-    return HitResult(
-        hit.name ?: "?", loc.sourceFile ?: "?", loc.lineNumber, loc.packageHash,
-        hit.box.left, hit.box.top, hit.box.width, hit.box.height,
-    )
-}
+/** Deepest located target composable under [pos], from the cached snapshot. */
+private fun hitTest(pos: IntOffset): HitResult? =
+    cachedGroups
+        .filter { pos.x >= it.x && pos.x < it.x + it.w && pos.y >= it.y && pos.y < it.y + it.h }
+        .minByOrNull { it.w.toLong() * it.h.toLong() }
 
 private fun handleCommand(cmd: JsonObject) {
     when (cmd["cmd"]?.jsonPrimitive?.content) {
