@@ -70,11 +70,16 @@ shared `ToolCard` (348×336 tool-window chrome):
   _debug-tool section is debug-build only → out of scope_)
 - ✅ `ToolbarWindow` → `ToolbarScreen` (expanded state: 9 feature icons + Leave/Start/End actions)
 
-### Batch 4 — quiz start (Mvb / service variants only; share a base layout)
-`MvbMultipleChoiceStartWindow`, `MvbTrueFalseStartWindow`, `MvbShortAnswerStartWindow`,
-`MvbPollQuizStartWindow`, `MvbAudioQuizStartWindow`, `MvbSketchResponseStartWindow`,
-`MvbTextShortAnswerStartWindow`, `MvbTextTrueFalseStartWindow`.
-_(standalone duplicates `MultipleChoiceStartWindow` etc. → out of scope, removable.)_
+### Batch 4 — quiz start (Mvb / service variants only; share a base layout) — ✅ DONE
+All 8 variants share the shell (`window_mvb_*_start.xml`) + `panel_mvb_quizzing.xml`; ported as
+one parameterized `MvbQuizStartScreen(type)` in `:feature:servicescreens:ui` rendering the
+**quizzing (start) state**: 853×480 shell, header, question section (type icon+label, stopwatch,
+screenshot frame, option chips), End-and-review, student responses grid.
+- ✅ MultipleChoice (A–D) · ✅ TrueFalse · ✅ ShortAnswer · ✅ Poll (A–D) · ✅ Audio
+  · ✅ SketchResponse · ✅ TextShortAnswer · ✅ TextTrueFalse → 8 `svc_quiz_*` pages.
+- `@color`-referencing vector icons inlined to hex via a reusable resolver.
+- _Deferred: disclose & result modes (mid-lesson, not the start window). Standalone non-Mvb
+  duplicates remain out of scope._
 
 ### Batch 5 — quiz edit (Mvb / service variants only)
 `MvbMultipleChoiceEditWindow`, `MvbTrueFalseEditWindow`, `MvbShortAnswerEditWindow`,
@@ -97,3 +102,4 @@ _(standalone duplicates → out of scope.)_
 | 1     | Under / Upcoming Maintenance, Corner Prompt, Coming Soon, Upgrade, Setting/Tools/Quiz/Class menus (9) | `:feature:servicescreens:ui` | ✅ done (real assets, `designNode` tags, 9 `svc_*` pages) |
 | 2     | SelectOrg, SelectOrg&Class, MyClass, StudentManagement (core), JoinClass (primary state) (5) | `:feature:servicescreens:ui` | ✅ done (5 `svc_*` pages; 2 with deferred sub-states noted above) |
 | 3     | Buzzer, RandomDraw, Timer, Spinner, Settings, Toolbar (6) | `:feature:servicescreens:ui` | ✅ done (6 `svc_*` pages; Settings debug-tool & Toolbar collapsed state out of scope) |
+| 4     | 8 Mvb quiz-start variants (MC/TF/SA/Poll/Audio/Sketch/TextSA/TextTF) | `:feature:servicescreens:ui` | ✅ done (1 shared `MvbQuizStartScreen(type)`, 8 `svc_quiz_*` pages; disclose/result modes deferred) |
