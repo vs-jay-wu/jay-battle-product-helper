@@ -13,6 +13,7 @@ import com.viewsonic.classswift.feature.quizcollection.ui.QuizCollectionScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.ClassManagementMenu
 import com.viewsonic.classswift.feature.servicescreens.ui.ComingSoonPrompt
 import com.viewsonic.classswift.feature.servicescreens.ui.QuizMenu
+import com.viewsonic.classswift.feature.servicescreens.ui.SelectOrgAndClassScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.SelectOrgScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.SettingMenu
 import com.viewsonic.classswift.feature.servicescreens.ui.ToolsMenu
@@ -56,5 +57,6 @@ fun main() = runDesignerTarget(
         DesignerPage("svc_quiz_menu", "Service · Quiz Menu") { Dialog { QuizMenu() } },
         DesignerPage("svc_class_menu", "Service · Class Management Menu") { Dialog { ClassManagementMenu() } },
         DesignerPage("svc_select_org", "Service · Select Organization") { Dialog { SelectOrgScreen() } },
+        DesignerPage("svc_select_org_class", "Service · Select Org & Class") { Dialog { SelectOrgAndClassScreen() } },
     ),
 )
