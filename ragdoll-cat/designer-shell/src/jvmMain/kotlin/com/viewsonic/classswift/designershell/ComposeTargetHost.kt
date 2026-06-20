@@ -14,6 +14,7 @@ import com.viewsonic.classswift.feature.servicescreens.ui.BuzzerScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.ClassManagementMenu
 import com.viewsonic.classswift.feature.servicescreens.ui.ComingSoonPrompt
 import com.viewsonic.classswift.feature.servicescreens.ui.JoinClassScreen
+import com.viewsonic.classswift.feature.servicescreens.ui.MvbQuizEditScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.MvbQuizStartScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.MvbQuizType
 import com.viewsonic.classswift.feature.servicescreens.ui.MyClassScreen
@@ -86,5 +87,11 @@ fun main() = runDesignerTarget(
         DesignerPage("svc_quiz_sketch", "Quiz Start · Sketch Response") { Dialog { MvbQuizStartScreen(MvbQuizType.SKETCH) } },
         DesignerPage("svc_quiz_text_sa", "Quiz Start · Short Answer (Text)") { Dialog { MvbQuizStartScreen(MvbQuizType.TEXT_SHORT_ANSWER) } },
         DesignerPage("svc_quiz_text_tf", "Quiz Start · True/False (Text)") { Dialog { MvbQuizStartScreen(MvbQuizType.TEXT_TRUE_FALSE) } },
+        DesignerPage("svc_edit_mc", "Quiz Edit · Multiple Choice") { Dialog { MvbQuizEditScreen(MvbQuizType.MULTIPLE_CHOICE) } },
+        DesignerPage("svc_edit_tf", "Quiz Edit · True/False") { Dialog { MvbQuizEditScreen(MvbQuizType.TRUE_FALSE) } },
+        DesignerPage("svc_edit_sa", "Quiz Edit · Short Answer") { Dialog { MvbQuizEditScreen(MvbQuizType.SHORT_ANSWER) } },
+        DesignerPage("svc_edit_poll", "Quiz Edit · Poll") { Dialog { MvbQuizEditScreen(MvbQuizType.POLL) } },
+        DesignerPage("svc_edit_audio", "Quiz Edit · Audio") { Dialog { MvbQuizEditScreen(MvbQuizType.AUDIO) } },
+        DesignerPage("svc_edit_sketch", "Quiz Edit · Sketch Response") { Dialog { MvbQuizEditScreen(MvbQuizType.SKETCH) } },
     ),
 )

@@ -81,10 +81,13 @@ screenshot frame, option chips), End-and-review, student responses grid.
 - _Deferred: disclose & result modes (mid-lesson, not the start window). Standalone non-Mvb
   duplicates remain out of scope._
 
-### Batch 5 — quiz edit (Mvb / service variants only)
-`MvbMultipleChoiceEditWindow`, `MvbTrueFalseEditWindow`, `MvbShortAnswerEditWindow`,
-`MvbPollQuizEditWindow`, `MvbAudioQuizEditWindow`, `MvbSketchResponseEditWindow`.
-_(standalone duplicates → out of scope.)_
+### Batch 5 — quiz edit (Mvb / service variants only) — ✅ DONE
+Each `window_mvb_*_edit.xml` is structurally the same editor (header, image upload, `MvbOptionPanel`,
+Cancel/Start action bar); ported as one parameterized `MvbQuizEditScreen(type)` in
+`:feature:servicescreens:ui`: 541×626 card, question-image upload frame, answer-option boxes
+(+ Add for MC/Poll, correct marker), Answer-types/options settings dropdowns, Cancel / Start-question.
+- ✅ MultipleChoice · ✅ TrueFalse · ✅ ShortAnswer · ✅ Poll · ✅ Audio · ✅ SketchResponse
+  → 6 `svc_edit_*` pages. _(standalone duplicates out of scope.)_
 
 ### Batch 6 — results, leaderboard & misc
 `BatchQuizResultWindow`, `LeaderboardWindow`, `PushRespondWindow`, `CropImageWindow` /
@@ -103,3 +106,4 @@ _(standalone duplicates → out of scope.)_
 | 2     | SelectOrg, SelectOrg&Class, MyClass, StudentManagement (core), JoinClass (primary state) (5) | `:feature:servicescreens:ui` | ✅ done (5 `svc_*` pages; 2 with deferred sub-states noted above) |
 | 3     | Buzzer, RandomDraw, Timer, Spinner, Settings, Toolbar (6) | `:feature:servicescreens:ui` | ✅ done (6 `svc_*` pages; Settings debug-tool & Toolbar collapsed state out of scope) |
 | 4     | 8 Mvb quiz-start variants (MC/TF/SA/Poll/Audio/Sketch/TextSA/TextTF) | `:feature:servicescreens:ui` | ✅ done (1 shared `MvbQuizStartScreen(type)`, 8 `svc_quiz_*` pages; disclose/result modes deferred) |
+| 5     | 6 Mvb quiz-edit variants (MC/TF/SA/Poll/Audio/Sketch) | `:feature:servicescreens:ui` | ✅ done (1 shared `MvbQuizEditScreen(type)`, 6 `svc_edit_*` pages) |

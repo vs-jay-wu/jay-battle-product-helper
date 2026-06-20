@@ -29,3 +29,5 @@ internal val Cyan3AC9CC = Color(0xFF3AC9CC) // color_3AC9CC — Upgrade badge
 internal val Sky100 = Color(0xFFD9E7F5) // sky_100 — switch track (checked)
 internal val TrackGray = Color(0x66C3C7C7) // color_66C3C7C7 — switch track (unchecked)
 internal val RedF02B2B = Color(0xFFF02B2B) // color_F02B2B — End Lesson action
+internal val Violet700 = Color(0xFF2E2EB2) // violet_700 — pressed Start quiz
+internal val Neutral200 = Color(0xFFEBEBEB) // neutral_200 — disabled surfaces
