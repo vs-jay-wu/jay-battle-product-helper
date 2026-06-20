@@ -1,9 +1,13 @@
 package com.viewsonic.classswift.ui.window
 
 import android.content.Context
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
+import androidx.compose.ui.graphics.asImageBitmap
 import com.viewsonic.classswift.R
 import com.viewsonic.classswift.data.info.StudentInfo
 import com.viewsonic.classswift.feature.servicescreens.ui.JoinAttendee
@@ -12,6 +16,7 @@ import com.viewsonic.classswift.manager.AccountManager
 import com.viewsonic.classswift.manager.CoroutineManager
 import com.viewsonic.classswift.ui.window.compose.ComposeHostWindow
 import com.viewsonic.classswift.ui.windowmodel.JoinClassWindowModel
+import com.viewsonic.classswift.utils.QRCodeUtils
 import com.viewsonic.classswift.utils.extension.dpToPx
 import com.viewsonic.classswift.windowframework.core.CSWindowManager
 import com.viewsonic.classswift.windowframework.core.data.SizeInPixels
@@ -20,6 +25,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.java.KoinJavaComponent.inject
 
 class JoinClassWindow(val context: Context) : ComposeHostWindow(context) {
@@ -59,11 +65,12 @@ class JoinClassWindow(val context: Context) : ComposeHostWindow(context) {
     @Composable
     override fun Content() {
         val rawList by wModel.studentInfoListFlow.collectAsState()
+        val spinnerVisible by wModel.isSpinnerButtonVisible.collectAsState()
         val display = wModel.getDisplayList(rawList).sortedBy { it.serialNumber }
         val joined = display.count { it.isJoinedClass() }
-        val hasPreRoster = display.any {
-            it.getParticipationState() == StudentInfo.ParticipationState.NOT_JOINED
-        }
+        val hasPreRoster = display.any { it.getParticipationState() == StudentInfo.ParticipationState.NOT_JOINED }
+        val roomLink = wModel.getRoomLink()
+
         JoinClassScreen(
             className = wModel.getClassName(),
             joinUrl = wModel.getDisplayRoomLink(),
@@ -79,7 +86,19 @@ class JoinClassWindow(val context: Context) : ComposeHostWindow(context) {
             capacity = wModel.getMaxStudentCount(),
             isGuestMode = wModel.isGuestMode(),
             showFractionCount = wModel.getClassType().showFractionCount(hasPreRoster),
+            spinnerVisible = spinnerVisible,
+            qr = { m ->
+                // Real scannable QR generated from the full room link (same as the native window).
+                val bitmap by produceState<androidx.compose.ui.graphics.ImageBitmap?>(null, roomLink) {
+                    value = withContext(Dispatchers.IO) {
+                        QRCodeUtils.generateQRCodeWithBackground(roomLink, qrSize = 1080, bgRadius = 10f.dpToPx())?.asImageBitmap()
+                    }
+                }
+                bitmap?.let { Image(it, contentDescription = null, modifier = m.fillMaxSize()) }
+            },
             onClose = { csWindowManager.removeWindow(tag) },
+            onCopyLink = { wModel.onCopyLink() },
+            onSwitchClass = { wModel.onSwitchClass() },
         )
     }
 
