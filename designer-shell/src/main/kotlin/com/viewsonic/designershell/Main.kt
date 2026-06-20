@@ -30,23 +30,45 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
+import com.viewsonic.designershell.adapter.ComposeAdapter
 import com.viewsonic.designershell.adapter.FlutterAdapter
 import com.viewsonic.designershell.adapter.SelectedNode
 import com.viewsonic.designershell.adapter.TargetAdapter
 
-private const val FLUTTER_SHOP =
-    "/Users/jay.wj.wu/ProjectsWork_GitHub/Battle/jay-battle-product-helper/flutter_shop"
+private const val BASE = "/Users/jay.wj.wu/ProjectsWork_GitHub/Battle/jay-battle-product-helper"
+private const val FLUTTER_SHOP = "$BASE/flutter_shop"
+private const val RAGDOLL_CAT = "$BASE/ragdoll-cat"
 
 /**
  * Standalone Designer Shell — a generic out-of-process control panel. It hosts
- * any target through a [TargetAdapter] (Flutter today; Android/etc. later), so a
- * single shell serves many independent app repos without compiling against them.
+ * any target through a [TargetAdapter] (Flutter or Compose today; more later),
+ * so a single shell serves many independent app repos without compiling them in.
  */
 fun main() = application {
     val state = rememberWindowState(width = 560.dp, height = 840.dp)
     Window(onCloseRequest = ::exitApplication, state = state, title = "Designer Shell · 控制面板") {
-        // Target selection will become a picker; for now, the Flutter adapter.
-        ControlPanel(remember { FlutterAdapter(FLUTTER_SHOP) })
+        var adapter by remember { mutableStateOf<TargetAdapter?>(null) }
+        when (val a = adapter) {
+            null -> TargetPicker(onPick = { adapter = it })
+            else -> ControlPanel(a)
+        }
+    }
+}
+
+@Composable
+private fun TargetPicker(onPick: (TargetAdapter) -> Unit) {
+    Column(Modifier.fillMaxSize().background(Color(0xFFF4F4F6)).padding(24.dp)) {
+        Text("選擇目標 app", fontWeight = FontWeight.Bold, fontSize = 18.sp, color = Color(0xFF1A1A1A))
+        Spacer(Modifier.height(4.dp))
+        Text("Designer Shell 用對應的 adapter 接上去（out-of-process）", color = Color(0xFF797979), fontSize = 12.sp)
+        Spacer(Modifier.height(20.dp))
+        Button(onClick = { onPick(FlutterAdapter(FLUTTER_SHOP)) }, modifier = Modifier.fillMaxWidth()) {
+            Text("Flutter · flutter_shop")
+        }
+        Spacer(Modifier.height(12.dp))
+        Button(onClick = { onPick(ComposeAdapter(RAGDOLL_CAT)) }, modifier = Modifier.fillMaxWidth()) {
+            Text("Compose · ragdoll-cat")
+        }
     }
 }
 
