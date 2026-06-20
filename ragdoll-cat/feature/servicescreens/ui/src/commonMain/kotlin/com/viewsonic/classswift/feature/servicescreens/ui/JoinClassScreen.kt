@@ -41,14 +41,27 @@ private fun CodeTile(ch: Char) {
     ) { Text(ch.toString(), color = Dark2E3133, fontSize = 18.sp, fontWeight = FontWeight.Bold) }
 }
 
+/** A class member in the attendance grid; [joined] = has joined (vs a pre-roster student not yet in). */
+data class JoinAttendee(val name: String, val seat: String = "", val joined: Boolean = true)
+
 @Composable
-private fun AttendeeCell(name: String, index: Int, modifier: Modifier = Modifier) {
+private fun AttendeeCell(attendee: JoinAttendee, index: Int, modifier: Modifier = Modifier) {
+    // Joined → coloured avatar; not-yet-joined (pre-roster) → muted grey, matching the native list.
+    val avatar = if (attendee.joined) avatarColors[index % avatarColors.size] else Neutral300
+    val nameColor = if (attendee.joined) Dark2E3133 else Neutral500
     Column(modifier.padding(4.dp), horizontalAlignment = Alignment.CenterHorizontally) {
         Box(
-            Modifier.size(34.dp).clip(CircleShape).background(avatarColors[index % avatarColors.size]),
+            Modifier.size(34.dp).clip(CircleShape).background(avatar),
             contentAlignment = Alignment.Center,
-        ) { Text(name.first().toString(), color = Color.White, fontSize = 15.sp, fontWeight = FontWeight.Bold) }
-        Text(name, color = Dark2E3133, fontSize = 9.sp, maxLines = 1, modifier = Modifier.padding(top = 2.dp))
+        ) {
+            Text(
+                attendee.name.firstOrNull()?.toString().orEmpty(),
+                color = if (attendee.joined) Color.White else CloseGray,
+                fontSize = 15.sp,
+                fontWeight = FontWeight.Bold,
+            )
+        }
+        Text(attendee.name, color = nameColor, fontSize = 9.sp, maxLines = 1, modifier = Modifier.padding(top = 2.dp))
     }
 }
 
@@ -62,8 +75,11 @@ fun JoinClassScreen(
     className: String = "Grade 5 — Mathematics",
     joinUrl: String = "classswift.io/j",
     classCode: String = "CSW4821X",
-    attendees: List<String> = sampleStudents.take(11).map { it.name },
+    attendees: List<JoinAttendee> = sampleStudents.take(11).mapIndexed { i, s -> JoinAttendee(s.name, joined = i % 3 != 0) },
+    joinedCount: Int = attendees.count { it.joined },
     capacity: Int = 30,
+    isGuestMode: Boolean = false,
+    showFractionCount: Boolean = true,
     onClose: () -> Unit = {},
 ) {
     Column(
@@ -87,7 +103,10 @@ fun JoinClassScreen(
         // ---- Class info row ----
         Row(Modifier.fillMaxWidth().height(45.33.dp), verticalAlignment = Alignment.CenterVertically) {
             Text(className, color = Dark2E3133, fontSize = 13.3.sp, fontWeight = FontWeight.Bold, maxLines = 1, modifier = Modifier.weight(1f).designNode("jc_class_name"))
-            CSButton("Switch Class", backgroundColor = Color.White, textColor = Violet4848F0, borderColor = Violet4848F0, textSize = 10.sp, nodeId = "jc_switch", modifier = Modifier.height(28.dp).width(96.dp).padding(start = 4.dp))
+            // Guest mode has no other class to switch to, so the button is hidden (matches native).
+            if (!isGuestMode) {
+                CSButton("Switch Class", backgroundColor = Color.White, textColor = Violet4848F0, borderColor = Violet4848F0, textSize = 10.sp, nodeId = "jc_switch", modifier = Modifier.height(28.dp).width(96.dp).padding(start = 4.dp))
+            }
         }
 
         // ---- Join info card (URL + code tiles | QR) ----
@@ -112,18 +131,19 @@ fun JoinClassScreen(
         Row(Modifier.fillMaxWidth().padding(top = 12.dp), verticalAlignment = Alignment.CenterVertically) {
             Text("Whole Class", color = Dark2E3133, fontSize = 11.sp, fontWeight = FontWeight.Bold)
             Spacer(Modifier.weight(1f))
-            Text("${attendees.size} joined / $capacity students", color = CloseGray, fontSize = 9.sp, modifier = Modifier.designNode("jc_count"))
+            val countText = if (showFractionCount) "$joinedCount joined / $capacity students" else "$joinedCount joined"
+            Text(countText, color = CloseGray, fontSize = 9.sp, modifier = Modifier.designNode("jc_count"))
         }
         Column(
             Modifier.padding(top = 8.dp).weight(1f).fillMaxWidth().clip(RoundedCornerShape(8.dp)).background(Neutral100).padding(8.dp),
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
-            attendees.chunked(4).forEachIndexed { rowIdx, rowNames ->
+            attendees.chunked(4).forEachIndexed { rowIdx, rowAttendees ->
                 Row(Modifier.fillMaxWidth()) {
-                    rowNames.forEachIndexed { i, name ->
-                        AttendeeCell(name, rowIdx * 4 + i, Modifier.weight(1f))
+                    rowAttendees.forEachIndexed { i, attendee ->
+                        AttendeeCell(attendee, rowIdx * 4 + i, Modifier.weight(1f))
                     }
-                    repeat(4 - rowNames.size) { Spacer(Modifier.weight(1f)) }
+                    repeat(4 - rowAttendees.size) { Spacer(Modifier.weight(1f)) }
                 }
             }
         }
