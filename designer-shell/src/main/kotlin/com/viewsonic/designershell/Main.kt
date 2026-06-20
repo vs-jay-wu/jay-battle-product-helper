@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
@@ -106,30 +107,46 @@ fun main() = application {
     }
 }
 
+private fun repoLabel(target: String): String =
+    if (target == "flutter") "Flutter · flutter_shop" else "Compose · ragdoll-cat"
+
 @Composable
 private fun SessionPicker(sessions: List<Session>, onOpen: (Session) -> Unit, onNew: (String) -> Unit) {
+    var repo by remember { mutableStateOf<String?>(null) }
     Column(Modifier.fillMaxSize().background(Color(0xFFF4F4F6)).padding(24.dp)) {
         Text("Designer Shell", fontWeight = FontWeight.Bold, fontSize = 18.sp, color = Color(0xFF1A1A1A))
-        Text("選擇或新增一個 session（每個 session = 一個目標 + Claude 對話）", color = Color(0xFF797979), fontSize = 12.sp)
-        Spacer(Modifier.height(20.dp))
-        Button(onClick = { onNew("flutter") }, modifier = Modifier.fillMaxWidth()) { Text("＋ 新增 Flutter · flutter_shop") }
-        Spacer(Modifier.height(8.dp))
-        Button(onClick = { onNew("compose") }, modifier = Modifier.fillMaxWidth()) { Text("＋ 新增 Compose · ragdoll-cat") }
-        Spacer(Modifier.height(20.dp))
-        Text("已儲存的 session", fontWeight = FontWeight.SemiBold, color = Color(0xFF1A1A1A))
-        Spacer(Modifier.height(8.dp))
-        if (sessions.isEmpty()) {
-            Text("（還沒有；用上面按鈕新增）", color = Color(0xFF797979), fontSize = 12.sp)
-        }
-        Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState())) {
-            sessions.forEach { s ->
-                Row(
-                    Modifier.fillMaxWidth().padding(vertical = 4.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    Button(onClick = { onOpen(s) }, modifier = Modifier.fillMaxWidth()) {
-                        Text("${s.name}   ·   ${s.target}")
-                    }
+        Spacer(Modifier.height(16.dp))
+
+        val selected = repo
+        if (selected == null) {
+            // Step 1 — choose the project (repo).
+            Text("選擇專案", fontWeight = FontWeight.SemiBold, color = Color(0xFF1A1A1A))
+            Spacer(Modifier.height(10.dp))
+            Button(onClick = { repo = "flutter" }, modifier = Modifier.fillMaxWidth()) { Text(repoLabel("flutter")) }
+            Spacer(Modifier.height(8.dp))
+            Button(onClick = { repo = "compose" }, modifier = Modifier.fillMaxWidth()) { Text(repoLabel("compose")) }
+        } else {
+            // Step 2 — sessions for the chosen project.
+            Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+                TextButton(onClick = { repo = null }) { Text("← 專案") }
+                Spacer(Modifier.width(8.dp))
+                Text(repoLabel(selected), fontWeight = FontWeight.SemiBold, color = Color(0xFF1A1A1A))
+            }
+            Spacer(Modifier.height(10.dp))
+            Button(onClick = { onNew(selected) }, modifier = Modifier.fillMaxWidth()) { Text("＋ 新增 session") }
+            Spacer(Modifier.height(16.dp))
+            Text("已儲存的 session", fontWeight = FontWeight.SemiBold, color = Color(0xFF1A1A1A))
+            Spacer(Modifier.height(8.dp))
+            val repoSessions = sessions.filter { it.target == selected }
+            if (repoSessions.isEmpty()) {
+                Text("（這個專案還沒有 session）", color = Color(0xFF797979), fontSize = 12.sp)
+            }
+            Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState())) {
+                repoSessions.forEach { s ->
+                    Button(
+                        onClick = { onOpen(s) },
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                    ) { Text(s.name) }
                 }
             }
         }
