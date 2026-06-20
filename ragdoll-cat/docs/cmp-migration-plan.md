@@ -4,6 +4,26 @@ Goal: bring **every** ragdoll-cat screen onto Compose Multiplatform (CMP) so it
 can be driven by the Designer Shell (`:designer-bridge` → `runDesignerTarget`).
 This is a long-running effort done in batches — one batch per session.
 
+## ⚠️ ACCEPTANCE STANDARD (set after JoinClass verification)
+
+"Done" = **faithful + single source**, verified on-device. Each screen must:
+1. **Faithful XML→Compose**: translate the real `window_*.xml` element-by-element —
+   exact strings, icons, sizes, colors, structure. NOT an approximation. (Real assets
+   via `compose.resources`; `@color` refs inlined to hex.)
+2. **Real runtime data injected** from the WindowModel — never hardcoded samples.
+   Platform-only outputs (network images, **QR codes**, spanned text) injected via a
+   slot/`Local*` (see JoinClass `qr` slot + `QRCodeUtils`; QuizCollection `Thumbnail`).
+3. **Wired into the app**: the real window renders the composable via `ComposeHostWindow`
+   (ComposeView), replacing its XML body; **delete the old `window_*.xml`**.
+4. App builds + installs; the end user sees **zero change**.
+
+> The Batch 1–6 entries below were an earlier **approximation** pass (preview-only,
+> not wired, not pixel-faithful). They must be **redone to this standard**. Status is
+> reset to ⏳ redo-needed except where noted ✅ faithful+wired.
+>
+> ✅ faithful + wired: QuizCollection (body + sidebar), JoinClass.
+> ⏳ wired but fidelity NOT re-audited: UnderMaintenance, UpcomingMaintenance.
+
 ## Scope: SERVICE (MVB) path only
 
 ragdoll-cat (ClassSwift) used to run standalone but now always runs as a **service
