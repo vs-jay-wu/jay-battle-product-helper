@@ -50,6 +50,19 @@ class DesignNodeRegistry {
         return host.localBoundingBoxOf(coords, clipBounds = false)
     }
 
+    /** All tagged nodes containing [point], outermost (largest) first — for Figma-style
+     *  click-to-drill: repeated taps at the same spot step inward through this stack. */
+    fun hitStack(point: Offset, host: LayoutCoordinates): List<DesignNodeInfo> {
+        if (!host.isAttached) return emptyList()
+        val out = mutableListOf<DesignNodeInfo>()
+        nodes.forEach { (id, coords) ->
+            if (!coords.isAttached) return@forEach
+            val rect = host.localBoundingBoxOf(coords, clipBounds = false)
+            if (rect.contains(point)) out.add(DesignNodeInfo(id, rect))
+        }
+        return out.sortedByDescending { it.rect.width * it.rect.height }
+    }
+
     /** The smallest (most specific) tagged node containing [point] in [host]'s space. */
     fun hitTest(point: Offset, host: LayoutCoordinates): DesignNodeInfo? {
         if (!host.isAttached) return null
