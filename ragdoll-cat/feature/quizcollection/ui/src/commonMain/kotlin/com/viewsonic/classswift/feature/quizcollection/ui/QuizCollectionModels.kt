@@ -6,12 +6,27 @@ package com.viewsonic.classswift.feature.quizcollection.ui
  * what the UI renders (already-resolved strings, no API response objects).
  */
 
+/** What kind of sidebar row this is — mirrors the native `MvbQuizCollectionFolderListAdapter`. */
+enum class FolderRowKind {
+    /** The default folder (top), uses the `ic_mvb_qc_default` icon. */
+    DEFAULT,
+
+    /** The "Your folders" expandable section header (person icon + chevron). */
+    YOUR_FOLDERS_HEADER,
+
+    /** A user folder under "Your folders" (folder icon, indented). */
+    FOLDER,
+}
+
 /** A folder row in the sidebar. */
 data class FolderRowUi(
     val id: String,
     val name: String,
     val isSelected: Boolean = false,
     val isOpen: Boolean = false,
+    val kind: FolderRowKind = FolderRowKind.FOLDER,
+    /** Only meaningful for [FolderRowKind.YOUR_FOLDERS_HEADER]: whether the section is expanded. */
+    val isExpanded: Boolean = true,
 )
 
 /** Body of a quiz card: either rendered text, or an image thumbnail. */
@@ -52,5 +67,6 @@ sealed interface QuizCollectionUiState {
 sealed interface QuizCollectionEvent {
     data class QuizClicked(val id: String) : QuizCollectionEvent
     data class FolderClicked(val id: String) : QuizCollectionEvent
+    data object YourFoldersToggled : QuizCollectionEvent
     data object RefreshClicked : QuizCollectionEvent
 }

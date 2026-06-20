@@ -1,5 +1,6 @@
 package com.viewsonic.classswift.fixtures
 
+import com.viewsonic.classswift.feature.quizcollection.ui.FolderRowKind
 import com.viewsonic.classswift.feature.quizcollection.ui.FolderRowUi
 import com.viewsonic.classswift.feature.quizcollection.ui.QuizCardContent
 import com.viewsonic.classswift.feature.quizcollection.ui.QuizCardUi
@@ -11,11 +12,15 @@ import com.viewsonic.classswift.feature.quizcollection.ui.QuizCollectionUiState
  */
 object Samples {
 
+    // Mirrors the native sidebar: a Default folder (selected), then the "Your folders"
+    // expandable header, then user folders indented under it.
     private val folders = listOf(
-        FolderRowUi("f1", "Science Grade 1", isSelected = true, isOpen = true),
-        FolderRowUi("f2", "Science Grade 2"),
-        FolderRowUi("f3", "History"),
-        FolderRowUi("f4", "Mathematics"),
+        FolderRowUi("default", "Default", isSelected = true, kind = FolderRowKind.DEFAULT),
+        FolderRowUi("your_folders", "Your folders", kind = FolderRowKind.YOUR_FOLDERS_HEADER, isExpanded = true),
+        FolderRowUi("f1", "Science Grade 1", kind = FolderRowKind.FOLDER),
+        FolderRowUi("f2", "Science Grade 2", kind = FolderRowKind.FOLDER),
+        FolderRowUi("f3", "History", kind = FolderRowKind.FOLDER),
+        FolderRowUi("f4", "Mathematics", kind = FolderRowKind.FOLDER),
     )
 
     private val quizzes = listOf(

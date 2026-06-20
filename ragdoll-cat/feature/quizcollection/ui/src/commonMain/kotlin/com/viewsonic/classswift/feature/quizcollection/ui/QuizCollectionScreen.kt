@@ -1,5 +1,6 @@
 package com.viewsonic.classswift.feature.quizcollection.ui
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -26,6 +27,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -33,6 +36,13 @@ import com.viewsonic.classswift.core.designsystem.AppTheme
 import com.viewsonic.classswift.core.ui.ChipVariant
 import com.viewsonic.classswift.core.ui.MvbQuizTagChip
 import com.viewsonic.classswift.core.ui.designNode
+import com.viewsonic.classswift.feature.quizcollection.ui.generated.resources.Res
+import com.viewsonic.classswift.feature.quizcollection.ui.generated.resources.ic_chevron_down
+import com.viewsonic.classswift.feature.quizcollection.ui.generated.resources.ic_mvb_qc_default
+import com.viewsonic.classswift.feature.quizcollection.ui.generated.resources.ic_mvb_qc_folder
+import com.viewsonic.classswift.feature.quizcollection.ui.generated.resources.ic_mvb_qc_folder_open
+import com.viewsonic.classswift.feature.quizcollection.ui.generated.resources.ic_mvb_qc_user
+import org.jetbrains.compose.resources.painterResource
 
 /**
  * MVB Quiz Collection — stateless screen. Pure function of [QuizCollectionUiState];
@@ -90,32 +100,102 @@ private fun FolderSidebar(
             .fillMaxHeight()
             .background(tokens.colors.neutral0),
     ) {
-        folders.forEach { folder ->
-            FolderRow(folder) { onEvent(QuizCollectionEvent.FolderClicked(folder.id)) }
+        SidebarRows(folders, onEvent)
+    }
+}
+
+/**
+ * Public sidebar entry point — the SAME folder list the standalone screen draws, so the shipped
+ * MVB window (which embeds this via ComposeView) and the design preview are one codebase.
+ */
+@Composable
+fun QuizCollectionSidebar(
+    folders: List<FolderRowUi>,
+    onEvent: (QuizCollectionEvent) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    AppTheme {
+        Column(modifier.background(AppTheme.tokens.colors.neutral0)) {
+            SidebarRows(folders, onEvent)
         }
     }
 }
 
 @Composable
+private fun SidebarRows(folders: List<FolderRowUi>, onEvent: (QuizCollectionEvent) -> Unit) {
+    folders.forEach { folder ->
+        when (folder.kind) {
+            FolderRowKind.YOUR_FOLDERS_HEADER ->
+                YourFoldersHeader(folder) { onEvent(QuizCollectionEvent.YourFoldersToggled) }
+            else ->
+                FolderRow(folder) { onEvent(QuizCollectionEvent.FolderClicked(folder.id)) }
+        }
+        if (folder.kind == FolderRowKind.DEFAULT) SidebarDivider()
+    }
+}
+
+/** Divider under the default folder (`item_mvb_qc_sidebar_divider.xml`). */
+@Composable
+private fun SidebarDivider() {
+    val tokens = AppTheme.tokens
+    Spacer(
+        Modifier
+            .fillMaxWidth()
+            .padding(horizontal = tokens.spacing.s400)
+            .height(0.66.dp)
+            .background(tokens.colors.neutral300),
+    )
+}
+
+/** A default or user folder row — `item_mvb_qc_folder.xml`: real folder icon + name, selected = violet. */
+@Composable
 private fun FolderRow(folder: FolderRowUi, onClick: () -> Unit) {
     val tokens = AppTheme.tokens
-    val bg = if (folder.isSelected) tokens.colors.neutral300 else tokens.colors.neutral0
+    // User folders are indented deeper (mvb_spacing_600) than the default folder (mvb_spacing_400).
+    val startPad = if (folder.kind == FolderRowKind.FOLDER) tokens.spacing.s600 else tokens.spacing.s400
+    val icon = when {
+        folder.kind == FolderRowKind.DEFAULT -> Res.drawable.ic_mvb_qc_default
+        folder.isSelected -> Res.drawable.ic_mvb_qc_folder_open
+        else -> Res.drawable.ic_mvb_qc_folder
+    }
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .height(32.dp)
-            .background(bg)
+            .clip(RoundedCornerShape(5.33.dp))
+            .background(if (folder.isSelected) tokens.colors.violet50 else tokens.colors.neutral0)
             .clickable(onClick = onClick)
-            .padding(horizontal = tokens.spacing.s400)
+            .padding(start = startPad, end = tokens.spacing.s400)
             .designNode("folder_${folder.id}"),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Spacer(
-            Modifier
-                .size(13.33.dp)
-                .clip(RoundedCornerShape(2.dp))
-                .background(tokens.colors.neutral900),
+        Image(painter = painterResource(icon), contentDescription = null, modifier = Modifier.size(13.33.dp))
+        Spacer(Modifier.width(tokens.spacing.s300))
+        Text(
+            text = folder.name,
+            color = if (folder.isSelected) tokens.colors.primary else tokens.colors.neutral900,
+            fontSize = tokens.type.sm,
+            fontWeight = FontWeight.Medium,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
         )
+    }
+}
+
+/** The "Your folders" expandable section header — `item_mvb_qc_sidebar_header.xml`. */
+@Composable
+private fun YourFoldersHeader(folder: FolderRowUi, onClick: () -> Unit) {
+    val tokens = AppTheme.tokens
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(32.dp)
+            .clickable(onClick = onClick)
+            .padding(horizontal = tokens.spacing.s400)
+            .designNode("folder_header_${folder.id}"),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Image(painter = painterResource(Res.drawable.ic_mvb_qc_user), contentDescription = null, modifier = Modifier.size(13.33.dp))
         Spacer(Modifier.width(tokens.spacing.s300))
         Text(
             text = folder.name,
@@ -124,6 +204,13 @@ private fun FolderRow(folder: FolderRowUi, onClick: () -> Unit) {
             fontWeight = FontWeight.Medium,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.weight(1f),
+        )
+        Image(
+            painter = painterResource(Res.drawable.ic_chevron_down),
+            contentDescription = null,
+            colorFilter = ColorFilter.tint(tokens.colors.neutral900),
+            modifier = Modifier.size(13.33.dp).rotate(if (folder.isExpanded) 180f else 0f),
         )
     }
 }

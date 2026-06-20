@@ -26,6 +26,7 @@ data class AppColors(
     val neutral800: Color = Color(0xFF4D4D4D),
     val neutral900: Color = Color(0xFF333333),
     val primary: Color = Color(0xFF4848F0),
+    val violet50: Color = Color(0xFFEDEDFD),
     val error: Color = Color(0xFFDB0025),
 )
 

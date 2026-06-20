@@ -109,17 +109,10 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/v_mqcw_header_divider">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_mqcw_folders"
+        <androidx.compose.ui.platform.ComposeView
+            android:id="@+id/cv_mqcw_sidemenu"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:overScrollMode="never"
-            android:paddingStart="@dimen/mvb_spacing_300"
-            android:paddingEnd="@dimen/mvb_spacing_300"
-            tools:itemCount="6"
-            tools:listitem="@layout/item_mvb_qc_folder"
-            tools:orientation="vertical" />
+            android:layout_height="match_parent" />
 
         <com.viewsonic.classswift.ui.widget.MvbLoadingAnimation
             android:id="@+id/la_mqcw_folders_loading"

@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.view.ContextThemeWrapper
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.viewsonic.classswift.R
 import com.viewsonic.classswift.data.info.QuizInCollectionInfo
 import com.viewsonic.classswift.data.quiz.QuizType
@@ -14,7 +13,6 @@ import com.viewsonic.classswift.manager.CoroutineManager
 import com.viewsonic.classswift.ui.helper.WindowControlButtonsUiHelper
 import com.viewsonic.classswift.ui.widget.quizcollection.mvb.MvbCollectionQuizDetailView
 import com.viewsonic.classswift.ui.widget.quizcollection.mvb.MvbQuizDetailViewFactory
-import com.viewsonic.classswift.ui.window.adapter.MvbQuizCollectionFolderListAdapter
 import com.viewsonic.classswift.ui.windowmodel.MvbQuizCollectionWindowModel
 import com.viewsonic.classswift.utils.extension.show
 import com.viewsonic.classswift.windowframework.core.CSWindowManager
@@ -40,10 +38,11 @@ class MvbQuizCollectionWindow(
 
     private val coroutineScope: CoroutineScope = CoroutineManager.getScope(this)
 
-    private lateinit var folderAdapter: MvbQuizCollectionFolderListAdapter
-
     /** Lifecycle/savedstate owner for the ComposeView body (this is not an Activity). */
     private val composeHost = ComposeWindowHost()
+
+    /** Separate host for the folder sidemenu ComposeView (one lifecycle per ComposeView). */
+    private val sidebarHost = ComposeWindowHost()
 
     /** Currently displayed detail view (null while in list mode). Re-created on quiz change. */
     private var detailView: MvbCollectionQuizDetailView? = null
@@ -77,13 +76,15 @@ class MvbQuizCollectionWindow(
     override fun onViewCreated() {
         super.onViewCreated()
         initHeader()
-        initFolderList()
         setupComposeBody()
         observeUiState()
         windowModel.loadFolders()
     }
 
     private fun setupComposeBody() {
+        sidebarHost.attach(binding.cvMqcwSidemenu) {
+            MvbQuizCollectionSidebar(windowModel)
+        }
         composeHost.attach(binding.cvMqcwComposeBody) {
             MvbQuizCollectionComposeBody(windowModel)
         }
@@ -102,26 +103,11 @@ class MvbQuizCollectionWindow(
         )
     }
 
-    private fun initFolderList() {
-        folderAdapter = MvbQuizCollectionFolderListAdapter(
-            onFolderClick = { folderInfo -> windowModel.selectFolder(folderInfo.folder.id) },
-            onYourFoldersHeaderClick = { windowModel.toggleYourFoldersExpanded() },
-        )
-        binding.rvMqcwFolders.apply {
-            layoutManager = LinearLayoutManager(context)
-            adapter = folderAdapter
-        }
-    }
-
     private fun observeUiState() {
         coroutineScope.launch(Dispatchers.Main) {
             windowModel.uiStateFlow.collectLatest { state ->
-                folderAdapter.submitList(
-                    MvbQuizCollectionFolderListAdapter.buildItems(
-                        folders = state.folders,
-                        isYourFoldersExpanded = state.isYourFoldersExpanded,
-                    ),
-                )
+                // Folder sidemenu is now rendered by MvbQuizCollectionSidebar (ComposeView),
+                // which observes uiState directly — no adapter to feed here.
                 applyFolderLoading(state.isLoadingFolders)
                 binding.tvMqcwBreadcrumbCurrent.text =
                     state.folders.firstOrNull { it.folder.id == state.selectedFolderId }
@@ -218,6 +204,7 @@ class MvbQuizCollectionWindow(
     override fun onDestroy() {
         super.onDestroy()
         composeHost.destroy()
+        sidebarHost.destroy()
         coroutineScope.cancel()
     }
 }
