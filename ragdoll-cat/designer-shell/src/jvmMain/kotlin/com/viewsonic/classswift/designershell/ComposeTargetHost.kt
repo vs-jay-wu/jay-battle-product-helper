@@ -37,6 +37,7 @@ import com.viewsonic.classswift.fixtures.Samples
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.jsonObject
@@ -62,6 +63,9 @@ private val highlightFlow = MutableStateFlow<Rect?>(null)
 /** Immutable snapshot of located target composables (source file:line), rebuilt
  *  on the UI thread after layout (reading the live slot table off-thread crashes). */
 @Volatile private var cachedGroups: List<Located> = emptyList()
+
+/** Latest structure tree (target composables, hierarchy) for the shell. */
+@Volatile private var cachedTree: JsonArray = JsonArray(emptyList())
 
 private data class Located(val name: String, val file: String, val line: Int, val x: Int, val y: Int, val w: Int, val h: Int)
 
@@ -98,10 +102,38 @@ private fun Capture(content: @Composable () -> Unit) {
             delay(400)
             val snap = snapshotLocated(data)
             if (snap.isNotEmpty()) cachedGroups = snap
+            val tree = buildTree(data)
+            if (tree.isNotEmpty()) cachedTree = JsonArray(tree)
         }
     }
     content()
 }
+
+/** Hierarchy of target composables (parent/child preserved, framework groups
+ *  collapsed) for the shell's structure tree. */
+@OptIn(UiToolingDataApi::class)
+private fun buildTree(data: CompositionData): List<JsonObject> = runCatching {
+    fun walk(g: Group): List<JsonObject> {
+        val childTrees = g.children.flatMap { walk(it) }
+        val loc = g.location
+        val file = loc?.sourceFile
+        val name = g.name
+        return if (file != null && name != null && file in targetFiles && g.box.width > 0 && g.box.height > 0) {
+            listOf(
+                buildJsonObject {
+                    put("label", name)
+                    put("file", file)
+                    put("line", loc.lineNumber)
+                    put("x", g.box.left); put("y", g.box.top); put("w", g.box.width); put("h", g.box.height)
+                    put("children", JsonArray(childTrees))
+                },
+            )
+        } else {
+            childTrees // collapse non-target group, lift its target descendants
+        }
+    }
+    walk(data.asTree())
+}.getOrElse { emptyList() }
 
 @OptIn(UiToolingDataApi::class)
 private fun snapshotLocated(data: CompositionData): List<Located> = runCatching {
@@ -227,6 +259,7 @@ private val targetFiles: Set<String> by lazy {
 private fun handleCommand(cmd: JsonObject) {
     when (cmd["cmd"]?.jsonPrimitive?.content) {
         "setDesignMode" -> designModeFlow.value = cmd["on"]?.jsonPrimitive?.content == "true"
+        "getTree" -> Ipc.send(buildJsonObject { put("type", "tree"); put("nodes", cachedTree) })
         "selectAt" -> {
             // Headless test path (no registry): source-located hit only.
             val x = cmd["x"]?.jsonPrimitive?.content?.toIntOrNull() ?: 0
