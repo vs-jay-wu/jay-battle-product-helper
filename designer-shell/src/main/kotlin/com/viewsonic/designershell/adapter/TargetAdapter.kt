@@ -11,6 +11,9 @@ data class SelectedNode(
     val bounds: String = "",
 )
 
+/** A switchable page/screen the target exposes. */
+data class PageInfo(val id: String, val label: String)
+
 /** A node in the target's structure tree (Figma-style hierarchy panel). */
 data class TreeNode(
     val label: String,
@@ -45,6 +48,9 @@ interface TargetAdapter {
     /** Receives the target's structure tree after [requestTree]. */
     var onTree: (List<TreeNode>) -> Unit
 
+    /** Receives the target's switchable pages after [requestPages]. */
+    var onPages: (List<PageInfo>) -> Unit
+
     /** Launch (if needed) and connect to the target. */
     fun start()
 
@@ -56,6 +62,12 @@ interface TargetAdapter {
 
     /** Select a node picked from the structure tree (highlights it in the target). */
     fun selectNode(node: TreeNode)
+
+    /** Ask the target for its switchable pages (answered via [onPages]). */
+    fun requestPages()
+
+    /** Switch the target to the given page. */
+    fun setPage(id: String)
 
     /** Apply the latest source edits to the running target (hot reload). */
     fun hotReload()

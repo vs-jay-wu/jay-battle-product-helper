@@ -29,6 +29,7 @@ class ComposeAdapter(
     override var onStatus: (String) -> Unit = {}
     override var onSelection: (SelectedNode) -> Unit = {}
     override var onTree: (List<TreeNode>) -> Unit = {}
+    override var onPages: (List<PageInfo>) -> Unit = {}
 
     private val json = Json { ignoreUnknownKeys = true }
     private var process: Process? = null
@@ -84,6 +85,12 @@ class ComposeAdapter(
                             )
                         }
                         "tree" -> onTree((obj["nodes"] as? JsonArray)?.map(::parseTree) ?: emptyList())
+                        "pages" -> onPages(
+                            (obj["pages"] as? JsonArray)?.map {
+                                val p = it.jsonObject
+                                PageInfo(p["id"]?.jsonPrimitive?.content ?: "", p["label"]?.jsonPrimitive?.content ?: "?")
+                            } ?: emptyList(),
+                        )
                     }
                 }
             }
@@ -96,6 +103,14 @@ class ComposeAdapter(
 
     override fun requestTree() {
         send(buildJsonObject { put("cmd", "getTree") })
+    }
+
+    override fun requestPages() {
+        send(buildJsonObject { put("cmd", "getPages") })
+    }
+
+    override fun setPage(id: String) {
+        send(buildJsonObject { put("cmd", "setPage"); put("id", id) })
     }
 
     override fun selectNode(node: TreeNode) {

@@ -14,6 +14,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -39,6 +41,7 @@ import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import com.viewsonic.designershell.adapter.ComposeAdapter
 import com.viewsonic.designershell.adapter.FlutterAdapter
+import com.viewsonic.designershell.adapter.PageInfo
 import com.viewsonic.designershell.adapter.SelectedNode
 import com.viewsonic.designershell.adapter.TargetAdapter
 import com.viewsonic.designershell.adapter.TreeNode
@@ -157,12 +160,15 @@ private fun ControlPanel(session: Session, store: SessionStore) {
     var designMode by remember { mutableStateOf(false) }
     var selection by remember { mutableStateOf<SelectedNode?>(null) }
     var tree by remember { mutableStateOf<List<TreeNode>>(emptyList()) }
+    var pages by remember { mutableStateOf<List<PageInfo>>(emptyList()) }
+    var currentPageId by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(Unit) {
         claude.seed(session.transcript.map { ClaudeMessage(ClaudeRole.valueOf(it.role), it.text) })
-        adapter.onStatus = { status = it }
+        adapter.onStatus = { status = it; if (it == "已連線") adapter.requestPages() }
         adapter.onSelection = { selection = it }
         adapter.onTree = { tree = it }
+        adapter.onPages = { pages = it; if (currentPageId == null) currentPageId = it.firstOrNull()?.id }
         claude.onComplete = { adapter.hotReload() }
         adapter.start()
     }
@@ -192,7 +198,17 @@ private fun ControlPanel(session: Session, store: SessionStore) {
     Column(Modifier.fillMaxSize().background(Color(0xFFF4F4F6)).padding(16.dp)) {
         Text(session.name, color = Color(0xFF1A1A1A), fontWeight = FontWeight.Bold, fontSize = 16.sp)
         Text("${adapter.displayName}   ·   $status", color = Color(0xFF797979), fontSize = 12.sp)
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(8.dp))
+
+        if (pages.size > 1) {
+            PagePicker(pages, currentPageId, onSelect = { id ->
+                currentPageId = id
+                adapter.setPage(id)
+                selection = null
+                if (designMode) adapter.requestTree()
+            })
+            Spacer(Modifier.height(8.dp))
+        }
 
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             FilterChip(selected = designMode, label = { Text("設計") }, onClick = {
@@ -264,6 +280,22 @@ private fun TreeRow(node: TreeNode, depth: Int, onSelect: (TreeNode) -> Unit) {
         }
     }
     if (expanded) node.children.forEach { TreeRow(it, depth + 1, onSelect) }
+}
+
+@Composable
+private fun PagePicker(pages: List<PageInfo>, currentId: String?, onSelect: (String) -> Unit) {
+    var expanded by remember { mutableStateOf(false) }
+    val current = pages.firstOrNull { it.id == currentId } ?: pages.first()
+    Column {
+        Button(onClick = { expanded = true }, modifier = Modifier.fillMaxWidth()) {
+            Text("頁面：${current.label}  ▾")
+        }
+        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            pages.forEach { p ->
+                DropdownMenuItem(text = { Text(p.label) }, onClick = { expanded = false; onSelect(p.id) })
+            }
+        }
+    }
 }
 
 @Composable

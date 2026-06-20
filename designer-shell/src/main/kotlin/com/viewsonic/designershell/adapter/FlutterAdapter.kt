@@ -22,6 +22,7 @@ class FlutterAdapter(private val projectDir: String) : TargetAdapter {
     override var onStatus: (String) -> Unit = {}
     override var onSelection: (SelectedNode) -> Unit = {}
     override var onTree: (List<TreeNode>) -> Unit = {}
+    override var onPages: (List<PageInfo>) -> Unit = {}
 
     @Volatile private var vm: VmService? = null
     private var process: Process? = null
@@ -54,6 +55,15 @@ class FlutterAdapter(private val projectDir: String) : TargetAdapter {
         val service = vm ?: return
         Thread { runCatching { service.ext("ext.shopdemo.setDesignMode", mapOf("on" to on.toString())) } }
             .apply { isDaemon = true }.start()
+    }
+
+    override fun requestPages() {
+        // flutter_shop is a single screen for now.
+        onPages(listOf(PageInfo("storefront", "Storefront")))
+    }
+
+    override fun setPage(id: String) {
+        // No-op: single page. (A multi-screen flutter app would navigate here.)
     }
 
     override fun requestTree() {
