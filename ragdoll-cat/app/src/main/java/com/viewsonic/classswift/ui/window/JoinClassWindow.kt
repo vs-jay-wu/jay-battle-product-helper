@@ -10,6 +10,7 @@ import androidx.compose.runtime.produceState
 import androidx.compose.ui.graphics.asImageBitmap
 import com.viewsonic.classswift.R
 import com.viewsonic.classswift.data.info.StudentInfo
+import com.viewsonic.classswift.feature.servicescreens.ui.AttendeeState
 import com.viewsonic.classswift.feature.servicescreens.ui.JoinAttendee
 import com.viewsonic.classswift.feature.servicescreens.ui.JoinClassScreen
 import com.viewsonic.classswift.manager.AccountManager
@@ -76,10 +77,16 @@ class JoinClassWindow(val context: Context) : ComposeHostWindow(context) {
             joinUrl = wModel.getDisplayRoomLink(),
             classCode = wModel.getClassCode(),
             attendees = display.map {
+                val state = when (it.getParticipationState()) {
+                    StudentInfo.ParticipationState.JOINED -> AttendeeState.JOINED
+                    StudentInfo.ParticipationState.JOINING -> AttendeeState.JOINING
+                    else -> AttendeeState.NOT_JOINED
+                }
                 JoinAttendee(
-                    name = it.displayName.ifBlank { it.displaySeatNumber },
-                    seat = it.displaySeatNumber,
-                    joined = it.isJoinedClass(),
+                    name = if (state == AttendeeState.JOINING) context.getString(R.string.join_class_student_joining) else it.getActualDisplayName(context),
+                    state = state,
+                    // Mirrors AvatarPicker.pick: studentId hash → one of the 4 joined avatars.
+                    avatarIndex = if (it.studentId.isNotEmpty()) it.studentId.hashCode().mod(4) else it.serialNumber.mod(4),
                 )
             },
             joinedCount = joined,

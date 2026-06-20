@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,6 +31,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.viewsonic.classswift.core.ui.designNode
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.Res
+import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_avatar_student_01
+import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_avatar_student_02
+import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_avatar_student_03
+import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_avatar_student_04
+import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_avatar_student_joining
+import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_avatar_student_not_joined
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_class_management
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_close
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_copy_link
@@ -45,14 +50,18 @@ import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_zoom_in
 import org.jetbrains.compose.resources.painterResource
 
-private val avatarColors = listOf(
-    Color(0xFF0A8CF0), Color(0xFF78CB3D), Color(0xFFF4BA00), Color(0xFFF04869),
-    Color(0xFF4848F0), Color(0xFF00B5AD), Color(0xFFFF7A45), Color(0xFF9254DE),
-)
 private val Divider = Color(0xFFE6E6E6)
+private val Neutral400Grey = Color(0xFFCFCFCF)
+private val Neutral600Grey = Color(0xFF999999)
+private val joinedAvatars = listOf(
+    Res.drawable.ic_avatar_student_01, Res.drawable.ic_avatar_student_02,
+    Res.drawable.ic_avatar_student_03, Res.drawable.ic_avatar_student_04,
+)
 
-/** A class member; [joined] = has joined (vs a pre-roster student not yet in). */
-data class JoinAttendee(val name: String, val seat: String = "", val joined: Boolean = true)
+enum class AttendeeState { JOINED, NOT_JOINED, JOINING }
+
+/** A class member; mirrors `item_join_class_student.xml`: name on top + avatar illustration below. */
+data class JoinAttendee(val name: String, val state: AttendeeState = AttendeeState.JOINED, val avatarIndex: Int = 0)
 
 /** `item_class_code_tile.xml`: 18×34.66dp, neutral_300 bg radius 5.33, #333333 14.4sp bold. */
 @Composable
@@ -64,14 +73,29 @@ private fun CodeTile(ch: Char) {
     ) { Text(ch.toString(), color = Neutral900, fontSize = 14.4.sp, fontWeight = FontWeight.Bold) }
 }
 
+/** `item_join_class_student.xml`: 69.33dp white card, name (10sp, 2 lines, top) + avatar (42×24, bottom). */
 @Composable
-private fun AttendeeCell(attendee: JoinAttendee, index: Int, modifier: Modifier = Modifier) {
-    val avatar = if (attendee.joined) avatarColors[index % avatarColors.size] else Neutral300
-    Column(modifier.padding(4.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-        Box(Modifier.size(34.dp).clip(CircleShape).background(avatar), contentAlignment = Alignment.Center) {
-            Text(attendee.name.firstOrNull()?.toString().orEmpty(), color = if (attendee.joined) Color.White else CloseGray, fontSize = 15.sp, fontWeight = FontWeight.Bold)
-        }
-        Text(attendee.name, color = if (attendee.joined) Dark2E3133 else Gray999, fontSize = 9.sp, maxLines = 1, modifier = Modifier.padding(top = 2.dp))
+private fun AttendeeCell(attendee: JoinAttendee, modifier: Modifier = Modifier) {
+    val avatar = when (attendee.state) {
+        AttendeeState.JOINED -> joinedAvatars[attendee.avatarIndex.mod(joinedAvatars.size)]
+        AttendeeState.NOT_JOINED -> Res.drawable.ic_avatar_student_not_joined
+        AttendeeState.JOINING -> Res.drawable.ic_avatar_student_joining
+    }
+    val nameColor = when (attendee.state) {
+        AttendeeState.JOINED -> Neutral900
+        AttendeeState.NOT_JOINED -> Neutral400Grey
+        AttendeeState.JOINING -> Neutral600Grey
+    }
+    Column(
+        modifier.padding(2.dp).height(69.33.dp).clip(RoundedCornerShape(5.33.dp)).background(Color.White),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(
+            attendee.name, color = nameColor, fontSize = 10.sp, maxLines = 2, overflow = TextOverflow.Ellipsis,
+            textAlign = TextAlign.Center, modifier = Modifier.padding(horizontal = 5.33.dp).height(24.67.dp).fillMaxWidth(),
+        )
+        Spacer(Modifier.weight(1f))
+        Image(painterResource(avatar), null, Modifier.padding(bottom = 4.dp).width(42.dp).height(24.dp))
     }
 }
 
@@ -87,7 +111,7 @@ fun JoinClassScreen(
     joinUrl: String = "s.mvb.fyi/join",
     classCode: String = "31730488",
     attendees: List<JoinAttendee> = emptyList(),
-    joinedCount: Int = attendees.count { it.joined },
+    joinedCount: Int = attendees.count { it.state == AttendeeState.JOINED },
     capacity: Int = 14,
     isGuestMode: Boolean = false,
     showFractionCount: Boolean = true,
@@ -183,9 +207,9 @@ fun JoinClassScreen(
                 }
             } else {
                 Column(Modifier.padding(top = 4.dp).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                    attendees.chunked(4).forEachIndexed { rowIdx, rowAttendees ->
+                    attendees.chunked(4).forEach { rowAttendees ->
                         Row(Modifier.fillMaxWidth()) {
-                            rowAttendees.forEachIndexed { i, a -> AttendeeCell(a, rowIdx * 4 + i, Modifier.weight(1f)) }
+                            rowAttendees.forEach { a -> AttendeeCell(a, Modifier.weight(1f)) }
                             repeat(4 - rowAttendees.size) { Spacer(Modifier.weight(1f)) }
                         }
                     }
