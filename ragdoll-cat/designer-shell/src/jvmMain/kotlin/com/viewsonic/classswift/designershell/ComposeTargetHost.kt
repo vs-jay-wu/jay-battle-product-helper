@@ -9,9 +9,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.InternalComposeApi
 import androidx.compose.runtime.currentComposer
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.tooling.CompositionData
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -29,6 +28,7 @@ import com.viewsonic.classswift.fixtures.Samples
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
@@ -44,8 +44,10 @@ import java.net.ServerSocket
  * CHR (`hotRunJvm` / `reload`) provides hot reload.
  */
 
-private var designMode by mutableStateOf(false)
-private var highlight by mutableStateOf<HitResult?>(null)
+// StateFlows so writes from the IPC thread reliably trigger recomposition
+// (a bare mutableStateOf written off the UI thread may not notify observers).
+private val designModeFlow = MutableStateFlow(false)
+private val highlightFlow = MutableStateFlow<HitResult?>(null)
 
 /** Immutable snapshot of located target composables, rebuilt on the UI thread
  *  after each composition (reading the live slot table off-thread crashes). */
@@ -58,6 +60,7 @@ fun main() {
     println("HOST_READY port=$port")
     Ipc.onCommand = ::handleCommand
     singleWindowApplication(title = "Compose Target · ragdoll-cat") {
+        val designMode by designModeFlow.collectAsState()
         Box(Modifier.fillMaxSize().background(Color.White)) {
             Capture {
                 QuizCollectionScreen(Samples.populated, onEvent = {})
@@ -114,13 +117,16 @@ private fun DesignOverlay() {
             awaitPointerEventScope {
                 while (true) {
                     val event = awaitPointerEvent()
+                    // Detect the press BEFORE consuming — changedToDown() returns false once consumed.
+                    val down = event.changes.firstOrNull { it.changedToDown() }
                     event.changes.forEach { it.consume() }
-                    event.changes.firstOrNull { it.changedToDown() }?.let { onTap(it.position) }
+                    if (down != null) onTap(down.position)
                 }
             }
         },
     ) {
         val density = LocalDensity.current
+        val highlight by highlightFlow.collectAsState()
         highlight?.let { h ->
             Box(
                 Modifier.offset { IntOffset(h.x, h.y) }
@@ -135,7 +141,7 @@ private fun onTap(pos: Offset) {
     val hit = runCatching { hitTest(IntOffset(pos.x.toInt(), pos.y.toInt())) }
         .onFailure { println("[host] hitTest error: $it") }
         .getOrNull()
-    highlight = hit
+    highlightFlow.value = hit
     Ipc.send(buildJsonObject {
         put("type", "selection")
         put("found", hit != null)
@@ -172,7 +178,7 @@ private fun hitTest(pos: IntOffset): HitResult? =
 
 private fun handleCommand(cmd: JsonObject) {
     when (cmd["cmd"]?.jsonPrimitive?.content) {
-        "setDesignMode" -> designMode = cmd["on"]?.jsonPrimitive?.content == "true"
+        "setDesignMode" -> designModeFlow.value = cmd["on"]?.jsonPrimitive?.content == "true"
         "selectAt" -> {
             val x = cmd["x"]?.jsonPrimitive?.content?.toIntOrNull() ?: 0
             val y = cmd["y"]?.jsonPrimitive?.content?.toIntOrNull() ?: 0
