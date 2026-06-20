@@ -157,6 +157,14 @@ private fun RepoWorkspace(repo: String, store: SessionStore) {
         }
     }
 
+    // Auto-refresh the structure tree while in design mode (manual ↻ still forces it).
+    LaunchedEffect(designMode) {
+        while (designMode) {
+            adapter.requestTree()
+            kotlinx.coroutines.delay(1500)
+        }
+    }
+
     val onSend: (String) -> Unit = { text ->
         if (!claude.running) {
             claude.start(resume = hadHistory && !everStarted)
