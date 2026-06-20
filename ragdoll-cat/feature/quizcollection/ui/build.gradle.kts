@@ -23,6 +23,19 @@ kotlin {
     }
 }
 
+// Keep Compose source info so the Designer Shell can map a tapped composable
+// back to its source file:line (ui-tooling-data). Dev tooling only.
+// Keep Compose source info so the Designer Shell can map a tapped composable to
+// its source file:line (ui-tooling-data). The composeCompiler{} DSL does NOT
+// reach this KMP+Android module's compilations, so force the raw compiler flag.
+// Dev tooling only.
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>>().configureEach {
+    compilerOptions {
+        freeCompilerArgs.add("-P")
+        freeCompilerArgs.add("plugin:androidx.compose.compiler.plugins.kotlin:sourceInformation=true")
+    }
+}
+
 android {
     namespace = "com.viewsonic.classswift.feature.quizcollection.ui"
     compileSdk = 35
