@@ -20,6 +20,8 @@ import com.viewsonic.classswift.feature.servicescreens.ui.RandomDrawScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.SelectOrgAndClassScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.SelectOrgScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.SettingMenu
+import com.viewsonic.classswift.feature.servicescreens.ui.SettingsScreen
+import com.viewsonic.classswift.feature.servicescreens.ui.ToolbarScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.SpinnerScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.StudentManagementScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.TimerToolScreen
@@ -72,5 +74,7 @@ fun main() = runDesignerTarget(
         DesignerPage("svc_random_draw", "Service · Random Draw") { Dialog { RandomDrawScreen() } },
         DesignerPage("svc_timer", "Service · Timer") { Dialog { TimerToolScreen() } },
         DesignerPage("svc_spinner", "Service · Spinner") { Dialog { SpinnerScreen() } },
+        DesignerPage("svc_settings", "Service · Settings") { Dialog { SettingsScreen() } },
+        DesignerPage("svc_toolbar", "Service · Toolbar") { Dialog { ToolbarScreen() } },
     ),
 )

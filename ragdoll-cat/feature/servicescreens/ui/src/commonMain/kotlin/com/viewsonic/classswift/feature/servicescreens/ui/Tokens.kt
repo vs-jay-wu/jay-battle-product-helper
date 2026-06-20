@@ -25,3 +25,7 @@ internal val Green78CB3D = Color(0xFF78CB3D) // color_78CB3D — +New Class
 internal val CloseGray = Color(0xFF5C6266) // bg_close_button / bring-to-front tint
 internal val ScoreGreen = Color(0xFF78CB3D) // selector_student_list_increase_point
 internal val ScoreRed = Color(0xFFF04869) // selector_student_list_decrease_point
+internal val Cyan3AC9CC = Color(0xFF3AC9CC) // color_3AC9CC — Upgrade badge
+internal val Sky100 = Color(0xFFD9E7F5) // sky_100 — switch track (checked)
+internal val TrackGray = Color(0x66C3C7C7) // color_66C3C7C7 — switch track (unchecked)
+internal val RedF02B2B = Color(0xFFF02B2B) // color_F02B2B — End Lesson action

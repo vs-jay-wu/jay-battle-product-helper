@@ -58,9 +58,17 @@ shared `CSButton` (ClassSwiftLoadingButton stand-in) + `QrMatrix` (generated QR,
 - ✅ `JoinClassWindow` → `JoinClassScreen` (primary join state: URL + code tiles + QR + attendance grid;
   _deferred: expanded-QR / empty / disconnected states, leave/remove dialogs & tooltips_)
 
-### Batch 3 — classroom tools (interactive, self-contained)
-`SpinnerWindow` / `MvbSpinnerWindow`, `BuzzerWindow`, `RandomDrawWindow`,
-`TimerToolWindow`, `SettingsWindow`, `ToolbarWindow`.
+### Batch 3 — classroom tools (interactive, self-contained) — ✅ DONE
+All in `:feature:servicescreens:ui`, real assets via `compose.resources`, `designNode` tags,
+shared `ToolCard` (348×336 tool-window chrome):
+- ✅ `BuzzerWindow` → `BuzzerScreen` (title, time, big blue Start circle)
+- ✅ `RandomDrawWindow` → `RandomDrawScreen` (title + blue dice circle, real `ic_dice`)
+- ✅ `TimerToolWindow` → `TimerToolScreen` (MM:SS digits, Timer/Stopwatch radios, Start)
+- ✅ `MvbSpinnerWindow` → `SpinnerScreen` (MVB header + Canvas spinner wheel; `ic_mvb_spinner`
+  @color refs inlined to hex). _(standalone `SpinnerWindow` → out of scope per MVB-service rule.)_
+- ✅ `SettingsWindow` → `SettingsScreen` (language spinner, translation switch, tutorial;
+  _debug-tool section is debug-build only → out of scope_)
+- ✅ `ToolbarWindow` → `ToolbarScreen` (expanded state: 9 feature icons + Leave/Start/End actions)
 
 ### Batch 4 — quiz start (Mvb / service variants only; share a base layout)
 `MvbMultipleChoiceStartWindow`, `MvbTrueFalseStartWindow`, `MvbShortAnswerStartWindow`,
@@ -88,3 +96,4 @@ _(standalone duplicates → out of scope.)_
 | —     | Quiz Collection | `:feature:quizcollection:ui` | ✅ done (4 states) |
 | 1     | Under / Upcoming Maintenance, Corner Prompt, Coming Soon, Upgrade, Setting/Tools/Quiz/Class menus (9) | `:feature:servicescreens:ui` | ✅ done (real assets, `designNode` tags, 9 `svc_*` pages) |
 | 2     | SelectOrg, SelectOrg&Class, MyClass, StudentManagement (core), JoinClass (primary state) (5) | `:feature:servicescreens:ui` | ✅ done (5 `svc_*` pages; 2 with deferred sub-states noted above) |
+| 3     | Buzzer, RandomDraw, Timer, Spinner, Settings, Toolbar (6) | `:feature:servicescreens:ui` | ✅ done (6 `svc_*` pages; Settings debug-tool & Toolbar collapsed state out of scope) |
