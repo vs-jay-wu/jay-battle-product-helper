@@ -10,3 +10,6 @@ internal val SoonYellow = Color(0xFFF4BA00) // color_F4BA00 — "Soon" badge
 internal val MenuBgF5F5F5 = Color(0xFFF5F5F5) // color_F5F5F5 — subordinate menu surface
 internal val MenuBorderBDBDBD = Color(0xFFBDBDBD) // color_BDBDBD — subordinate menu border
 internal val CornerBorderD6D6D6 = Color(0xFFD6D6D6) // color_D6D6D6 — corner-prompt border
+internal val WindowBgF5F5F5 = Color(0xFFF5F5F5) // common_window_bg — cs window surface
+internal val StrokeC3C7C7 = Color(0xFFC3C7C7) // common_stroke_color — cs window / card border
+internal val SubTextBDBDBD = Color(0xFFBDBDBD) // window_item_select_org_sub_text — sub text
