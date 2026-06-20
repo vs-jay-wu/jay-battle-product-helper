@@ -28,31 +28,25 @@ import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_maintenance
 import org.jetbrains.compose.resources.painterResource
 
-private val textColor = Color(0xFF2E3133)
-private val brandBlue = Color(0xFF0A8CF0)
-private val borderColor = Color(0xFFC2C2C2)
-
 /**
- * CMP port of ragdoll-cat's `UnderMaintenanceWindow` (service path). Faithful to
- * `window_under_maintenance.xml`: 413dp card, maintenance illustration, title,
- * description, blue "Got it" button, close icon.
+ * Shared 413dp maintenance card — faithful to `window_under_maintenance.xml` /
+ * `window_upcoming_maintenance.xml` (identical layout, different copy): illustration,
+ * title, description, blue "Got it" button, close icon.
  */
 @Composable
-fun UnderMaintenanceScreen(
-    title: String = "ClassSwift is Under Maintenance",
-    description: String =
-        "We’ll be back on Sep. 22, 2025 (Tue) 17:00.\n" +
-            "During maintenance, the ClassSwift application, ClassSwift Hub and account registration will be unavailable.\n" +
-            "Thank you for your patience!",
-    onGotIt: () -> Unit = {},
-    onClose: () -> Unit = {},
+private fun MaintenanceCard(
+    title: String,
+    description: String,
+    nodeId: String,
+    onGotIt: () -> Unit,
+    onClose: () -> Unit,
 ) {
     Box(
         Modifier.width(413.dp)
             .clip(RoundedCornerShape(8.dp))
             .background(Color.White)
-            .border(1.33.dp, borderColor, RoundedCornerShape(8.dp))
-            .designNode("under_maintenance"),
+            .border(1.33.dp, BorderC2C2C2, RoundedCornerShape(8.dp))
+            .designNode(nodeId),
     ) {
         Column(
             Modifier.fillMaxWidth().padding(horizontal = 26.66.dp),
@@ -61,31 +55,31 @@ fun UnderMaintenanceScreen(
             Image(
                 painter = painterResource(Res.drawable.ic_maintenance),
                 contentDescription = null,
-                modifier = Modifier.padding(top = 21.33.dp).size(207.dp, 155.dp).designNode("um_image"),
+                modifier = Modifier.padding(top = 21.33.dp).size(207.dp, 155.dp).designNode("${nodeId}_image"),
             )
             Text(
                 title,
-                color = textColor,
+                color = Dark2E3133,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.padding(top = 6.66.dp).fillMaxWidth().designNode("um_title"),
+                modifier = Modifier.padding(top = 6.66.dp).fillMaxWidth().designNode("${nodeId}_title"),
             )
             Text(
                 description,
-                color = textColor,
+                color = Dark2E3133,
                 fontSize = 13.3.sp,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.padding(top = 16.dp).fillMaxWidth().designNode("um_description"),
+                modifier = Modifier.padding(top = 16.dp).fillMaxWidth().designNode("${nodeId}_description"),
             )
             Box(
                 Modifier.padding(top = 16.dp, bottom = 26.66.dp)
                     .fillMaxWidth()
                     .height(37.5.dp)
                     .clip(RoundedCornerShape(5.33.dp))
-                    .background(brandBlue)
+                    .background(BrandBlue)
                     .clickable(onClick = onGotIt)
-                    .designNode("um_got_it"),
+                    .designNode("${nodeId}_got_it"),
                 contentAlignment = Alignment.Center,
             ) {
                 Text("Got it", color = Color.White, fontSize = 16.sp)
@@ -98,7 +92,31 @@ fun UnderMaintenanceScreen(
                 .padding(top = 10.7.dp, end = 10.7.dp)
                 .size(21.3.dp)
                 .clickable(onClick = onClose)
-                .designNode("um_close"),
+                .designNode("${nodeId}_close"),
         )
     }
 }
+
+/** CMP port of `UnderMaintenanceWindow` (service path). */
+@Composable
+fun UnderMaintenanceScreen(
+    title: String = "ClassSwift is Under Maintenance",
+    description: String =
+        "We’ll be back on Sep. 22, 2025 (Tue) 17:00.\n" +
+            "During maintenance, the ClassSwift application, ClassSwift Hub and account registration will be unavailable.\n" +
+            "Thank you for your patience!",
+    onGotIt: () -> Unit = {},
+    onClose: () -> Unit = {},
+) = MaintenanceCard(title, description, "under_maintenance", onGotIt, onClose)
+
+/** CMP port of `UpcomingMaintenanceWindow` (service path) — same card, scheduled-downtime copy. */
+@Composable
+fun UpcomingMaintenanceScreen(
+    title: String = "Upcoming Maintenance",
+    description: String =
+        "ClassSwift will be down for scheduled maintenance at Sep. 22, 2025 (Tue) 17:00. " +
+            "During maintenance, ClassSwift APP and Hub will not be accessible.\n\n" +
+            "Thank you for your patience as ClassSwift team is working hard to improve your experience.",
+    onGotIt: () -> Unit = {},
+    onClose: () -> Unit = {},
+) = MaintenanceCard(title, description, "upcoming_maintenance", onGotIt, onClose)

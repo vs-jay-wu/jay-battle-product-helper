@@ -10,7 +10,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.viewsonic.classswift.feature.quizcollection.ui.QuizCollectionScreen
+import com.viewsonic.classswift.feature.servicescreens.ui.ClassManagementMenu
+import com.viewsonic.classswift.feature.servicescreens.ui.ComingSoonPrompt
+import com.viewsonic.classswift.feature.servicescreens.ui.QuizMenu
+import com.viewsonic.classswift.feature.servicescreens.ui.SettingMenu
+import com.viewsonic.classswift.feature.servicescreens.ui.ToolsMenu
 import com.viewsonic.classswift.feature.servicescreens.ui.UnderMaintenanceScreen
+import com.viewsonic.classswift.feature.servicescreens.ui.UpcomingMaintenanceCornerPrompt
+import com.viewsonic.classswift.feature.servicescreens.ui.UpcomingMaintenanceScreen
+import com.viewsonic.classswift.feature.servicescreens.ui.UpgradePrompt
 import com.viewsonic.classswift.fixtures.Samples
 import com.viewsonic.designer.bridge.DesignerPage
 import com.viewsonic.designer.bridge.runDesignerTarget
@@ -38,5 +46,13 @@ fun main() = runDesignerTarget(
         DesignerPage("qc_loading", "Quiz Collection · Loading") { QuizCollectionScreen(Samples.loading, onEvent = {}) },
         DesignerPage("qc_error", "Quiz Collection · Error") { QuizCollectionScreen(Samples.error, onEvent = {}) },
         DesignerPage("svc_under_maintenance", "Service · Under Maintenance") { Dialog { UnderMaintenanceScreen() } },
+        DesignerPage("svc_upcoming_maintenance", "Service · Upcoming Maintenance") { Dialog { UpcomingMaintenanceScreen() } },
+        DesignerPage("svc_upcoming_corner", "Service · Upcoming Maintenance (corner)") { Dialog { UpcomingMaintenanceCornerPrompt() } },
+        DesignerPage("svc_coming_soon", "Service · Coming Soon Prompt") { Dialog { ComingSoonPrompt() } },
+        DesignerPage("svc_upgrade", "Service · Upgrade Prompt") { Dialog { UpgradePrompt() } },
+        DesignerPage("svc_setting_menu", "Service · Setting Menu") { Dialog { SettingMenu() } },
+        DesignerPage("svc_tools_menu", "Service · Tools Menu") { Dialog { ToolsMenu() } },
+        DesignerPage("svc_quiz_menu", "Service · Quiz Menu") { Dialog { QuizMenu() } },
+        DesignerPage("svc_class_menu", "Service · Class Management Menu") { Dialog { ClassManagementMenu() } },
     ),
 )

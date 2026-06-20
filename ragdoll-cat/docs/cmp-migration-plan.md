@@ -21,7 +21,7 @@ means the screens we port are the ones the live MVB-bound app uses.)
 ## Scale (why batches)
 
 - ~673 `.kt` in `:app`, ~60 screen windows total — **~35 in scope** after dropping standalone duplicates.
-- Done so far: **2** — Quiz Collection (`:feature:quizcollection:ui`, 4 states) + Under Maintenance (`:feature:servicescreens:ui`).
+- Done so far: **Quiz Collection** (`:feature:quizcollection:ui`, 4 states) + **all of Batch 1** (9 screens, `:feature:servicescreens:ui`).
 
 ## Per-screen process (the recipe)
 
@@ -38,14 +38,14 @@ Ordered by value × tractability. Each batch = one session.
 ### ✅ Done
 - Quiz Collection (`QuizCollectionScreen`, 4 states).
 
-### Batch 1 — simple menus & prompts (static, fast wins)
-`SettingMenuWindow`, `ToolsMenuWindow`, `QuizMenuWindow`, `ClassManagementMenuWindow`,
-`UpgradePromptWindow`, `ComingSoonPromptWindow`, **✅ `UnderMaintenanceWindow`**,
-`UpcomingMaintenanceWindow`, `UpcomingMaintenanceCornerPromptWindow`.
-
-Batch-1 home: `:feature:servicescreens:ui` (created). Each prompt is its own faithful
-port (distinct icon/colors/copy) — `ComingSoonPrompt` (`color_F4BA00`),
-`UpgradePrompt` (`ic_premium`), etc. — not copy-paste of one card. Remaining: 8.
+### Batch 1 — simple menus & prompts (static, fast wins) — ✅ DONE
+All in `:feature:servicescreens:ui`, real assets via `compose.resources` (17 icons + 2
+illustrations copied), `designNode` tags per element, registered as `svc_*` DesignerPages:
+- ✅ `UnderMaintenanceWindow` / `UpcomingMaintenanceWindow` → shared `MaintenanceCard` (413dp card)
+- ✅ `UpcomingMaintenanceCornerPromptWindow` → 360dp left-rounded corner toast
+- ✅ `ComingSoonPromptWindow` / `UpgradePromptWindow` → black toolbar prompt + `SOON` pill (+ `ic_premium`)
+- ✅ `SettingMenuWindow` / `ToolsMenuWindow` / `QuizMenuWindow` / `ClassManagementMenuWindow`
+  → shared `SubordinateMenu` + `MenuItemRow` (F5F5F5 surface, 24dp black-tinted icon rows)
 
 ### Batch 2 — class & org management
 `MyClassWindow`, `JoinClassWindow`, `SelectOrgWindow`, `SelectOrgAndSelectClassWindow`,
@@ -79,4 +79,4 @@ _(standalone duplicates → out of scope.)_
 | Batch | Screen | Module | Status |
 |-------|--------|--------|--------|
 | —     | Quiz Collection | `:feature:quizcollection:ui` | ✅ done (4 states) |
-| 1     | Under Maintenance | `:feature:servicescreens:ui` | ✅ done (real `ic_maintenance`/`ic_close`, `designNode` tags) |
+| 1     | Under / Upcoming Maintenance, Corner Prompt, Coming Soon, Upgrade, Setting/Tools/Quiz/Class menus (9) | `:feature:servicescreens:ui` | ✅ done (real assets, `designNode` tags, 9 `svc_*` pages) |
