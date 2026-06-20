@@ -10,6 +10,10 @@ import 'package:flutter/widgets.dart';
 /// letting the app act.
 final ValueNotifier<bool> kDesignMode = ValueNotifier<bool>(false);
 
+// Figma-style click-to-drill: repeated taps on the same hit stack step inward.
+List<String> _lastStack = <String>[];
+int _drillIndex = 0;
+
 /// Debug-only bridge for the Designer Shell.
 void registerDevInspector() {
   if (!kDebugMode) return;
@@ -61,30 +65,43 @@ Map<String, dynamic> selectAt(Offset globalPosition, {RenderBox? content}) {
     result = r;
   }
 
-  Element? hitElement;
+  // Build the stack of laid-out widgets under the point, dedup by bounds.
+  final List<MapEntry<Element, Rect>> stack = <MapEntry<Element, Rect>>[];
+  final Set<String> seen = <String>{};
   for (final HitTestEntry entry in result.path) {
     final Object target = entry.target;
-    if (target is RenderObject) {
+    if (target is RenderBox && target.attached && target.hasSize) {
       final Object? creator = target.debugCreator;
       if (creator is DebugCreator) {
-        hitElement = creator.element;
-        break;
+        final Offset tl = target.localToGlobal(Offset.zero);
+        final Rect r = tl & target.size;
+        final String key = '${r.left.round()},${r.top.round()},${r.width.round()},${r.height.round()}';
+        if (seen.add(key)) stack.add(MapEntry<Element, Rect>(creator.element, r));
       }
     }
   }
-  if (hitElement == null) return <String, dynamic>{'found': false, 'reason': 'no-element'};
-
-  // Same call the in-app inspector tap uses; lets getSelectedSummaryWidget resolve
-  // the nearest user widget + creationLocation.
-  // ignore: invalid_use_of_protected_member
-  WidgetInspectorService.instance.setSelection(hitElement, 'shell-inspector');
-
-  final RenderObject? ro = hitElement.renderObject;
-  Map<String, dynamic> bounds = <String, dynamic>{};
-  if (ro is RenderBox && ro.hasSize) {
-    final Offset tl = ro.localToGlobal(Offset.zero);
-    bounds = <String, dynamic>{'x': tl.dx, 'y': tl.dy, 'w': ro.size.width, 'h': ro.size.height};
+  if (stack.isEmpty) {
+    _lastStack = <String>[];
+    _drillIndex = 0;
+    return <String, dynamic>{'found': false, 'reason': 'no-element'};
   }
+  // Outermost (largest) first; repeated taps on the same stack step inward.
+  stack.sort((MapEntry<Element, Rect> a, MapEntry<Element, Rect> b) =>
+      (b.value.width * b.value.height).compareTo(a.value.width * a.value.height));
+  final List<String> keys = stack
+      .map((MapEntry<Element, Rect> e) =>
+          '${e.value.left.round()},${e.value.top.round()},${e.value.width.round()},${e.value.height.round()}')
+      .toList();
+  _drillIndex = listEquals(keys, _lastStack) ? (_drillIndex + 1) % stack.length : 0;
+  _lastStack = keys;
+  final MapEntry<Element, Rect> sel = stack[_drillIndex];
 
-  return <String, dynamic>{'found': true, 'type': hitElement.widget.runtimeType.toString(), ...bounds};
+  // ignore: invalid_use_of_protected_member
+  WidgetInspectorService.instance.setSelection(sel.key, 'shell-inspector');
+  final Rect r = sel.value;
+  return <String, dynamic>{
+    'found': true,
+    'type': sel.key.widget.runtimeType.toString(),
+    'x': r.left, 'y': r.top, 'w': r.width, 'h': r.height,
+  };
 }
