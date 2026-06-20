@@ -16,8 +16,10 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -27,6 +29,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.MenuBar
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
@@ -48,9 +51,18 @@ fun main() = application {
     val state = rememberWindowState(width = 560.dp, height = 840.dp)
     Window(onCloseRequest = ::exitApplication, state = state, title = "Designer Shell · 控制面板") {
         var adapter by remember { mutableStateOf<TargetAdapter?>(null) }
+        // Switch target from the platform menu bar (macOS top bar / Windows window menu).
+        // Re-selecting remounts the panel via key(a); the old adapter+session are
+        // cleaned up in ControlPanel's onDispose.
+        MenuBar {
+            Menu("目標", mnemonic = 'T') {
+                Item("Flutter · flutter_shop") { adapter = FlutterAdapter(FLUTTER_SHOP) }
+                Item("Compose · ragdoll-cat") { adapter = ComposeAdapter(RAGDOLL_CAT) }
+            }
+        }
         when (val a = adapter) {
             null -> TargetPicker(onPick = { adapter = it })
-            else -> ControlPanel(a)
+            else -> key(a) { ControlPanel(a) }
         }
     }
 }
@@ -84,6 +96,13 @@ private fun ControlPanel(adapter: TargetAdapter) {
         adapter.onSelection = { selection = it }
         session.onComplete = { adapter.hotReload() }
         adapter.start()
+    }
+    // When the target is switched (or window closes), tear down this adapter + session.
+    DisposableEffect(Unit) {
+        onDispose {
+            runCatching { session.stop() }
+            runCatching { adapter.stop() }
+        }
     }
 
     Column(Modifier.fillMaxSize().background(Color(0xFFF4F4F6)).padding(16.dp)) {
