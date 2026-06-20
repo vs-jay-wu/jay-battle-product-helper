@@ -86,16 +86,18 @@ private fun AttendeeCell(attendee: JoinAttendee, modifier: Modifier = Modifier) 
         AttendeeState.NOT_JOINED -> Neutral400Grey
         AttendeeState.JOINING -> Neutral600Grey
     }
+    // Layout per item_join_class_student.xml: empty top, then name (bottom-anchored to the avatar),
+    // then the avatar flush to the card bottom.
     Column(
         modifier.padding(2.dp).height(69.33.dp).clip(RoundedCornerShape(5.33.dp)).background(Color.White),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+        Spacer(Modifier.weight(1f))
         Text(
             attendee.name, color = nameColor, fontSize = 10.sp, maxLines = 2, overflow = TextOverflow.Ellipsis,
-            textAlign = TextAlign.Center, modifier = Modifier.padding(horizontal = 5.33.dp).height(24.67.dp).fillMaxWidth(),
+            textAlign = TextAlign.Center, modifier = Modifier.width(54.dp).height(24.67.dp),
         )
-        Spacer(Modifier.weight(1f))
-        Image(painterResource(avatar), null, Modifier.padding(bottom = 4.dp).width(42.dp).height(24.dp))
+        Image(painterResource(avatar), null, Modifier.width(42.dp).height(24.dp))
     }
 }
 
