@@ -10,32 +10,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.viewsonic.classswift.feature.quizcollection.ui.QuizCollectionScreen
-import com.viewsonic.classswift.feature.servicescreens.ui.BatchQuizResultScreen
+import com.viewsonic.classswift.feature.servicescreens.ui.BatchQuizResultList
 import com.viewsonic.classswift.feature.servicescreens.ui.BuzzerScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.CSSystemDialogScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.CropImageScreen
-import com.viewsonic.classswift.feature.servicescreens.ui.InAppTutorialScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.LeaderboardScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.PushRespondScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.ToastScreen
-import com.viewsonic.classswift.feature.servicescreens.ui.ClassManagementMenu
 import com.viewsonic.classswift.feature.servicescreens.ui.ComingSoonPrompt
 import com.viewsonic.classswift.feature.servicescreens.ui.JoinClassScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.MvbQuizEditScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.MvbQuizStartScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.MvbQuizType
-import com.viewsonic.classswift.feature.servicescreens.ui.MyClassScreen
-import com.viewsonic.classswift.feature.servicescreens.ui.QuizMenu
 import com.viewsonic.classswift.feature.servicescreens.ui.RandomDrawScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.SelectOrgAndClassScreen
-import com.viewsonic.classswift.feature.servicescreens.ui.SelectOrgScreen
-import com.viewsonic.classswift.feature.servicescreens.ui.SettingMenu
-import com.viewsonic.classswift.feature.servicescreens.ui.SettingsScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.ToolbarScreen
-import com.viewsonic.classswift.feature.servicescreens.ui.SpinnerScreen
+import com.viewsonic.classswift.feature.servicescreens.ui.SpinnerHeader
 import com.viewsonic.classswift.feature.servicescreens.ui.StudentManagementScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.TimerToolScreen
-import com.viewsonic.classswift.feature.servicescreens.ui.ToolsMenu
 import com.viewsonic.classswift.feature.servicescreens.ui.UnderMaintenanceScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.UpcomingMaintenanceCornerPrompt
 import com.viewsonic.classswift.feature.servicescreens.ui.UpcomingMaintenanceScreen
@@ -71,20 +63,13 @@ fun main() = runDesignerTarget(
         DesignerPage("svc_upcoming_corner", "Service · Upcoming Maintenance (corner)") { Dialog { UpcomingMaintenanceCornerPrompt() } },
         DesignerPage("svc_coming_soon", "Service · Coming Soon Prompt") { Dialog { ComingSoonPrompt() } },
         DesignerPage("svc_upgrade", "Service · Upgrade Prompt") { Dialog { UpgradePrompt() } },
-        DesignerPage("svc_setting_menu", "Service · Setting Menu") { Dialog { SettingMenu() } },
-        DesignerPage("svc_tools_menu", "Service · Tools Menu") { Dialog { ToolsMenu() } },
-        DesignerPage("svc_quiz_menu", "Service · Quiz Menu") { Dialog { QuizMenu() } },
-        DesignerPage("svc_class_menu", "Service · Class Management Menu") { Dialog { ClassManagementMenu() } },
-        DesignerPage("svc_select_org", "Service · Select Organization") { Dialog { SelectOrgScreen() } },
         DesignerPage("svc_select_org_class", "Service · Select Org & Class") { Dialog { SelectOrgAndClassScreen() } },
-        DesignerPage("svc_my_class", "Service · My Class") { Dialog { MyClassScreen() } },
         DesignerPage("svc_student_mgmt", "Service · Student Management") { Dialog { StudentManagementScreen() } },
         DesignerPage("svc_join_class", "Service · Join Class") { Dialog { JoinClassScreen() } },
         DesignerPage("svc_buzzer", "Service · Buzzer") { Dialog { BuzzerScreen() } },
         DesignerPage("svc_random_draw", "Service · Random Draw") { Dialog { RandomDrawScreen() } },
         DesignerPage("svc_timer", "Service · Timer") { Dialog { TimerToolScreen() } },
-        DesignerPage("svc_spinner", "Service · Spinner") { Dialog { SpinnerScreen() } },
-        DesignerPage("svc_settings", "Service · Settings") { Dialog { SettingsScreen() } },
+        DesignerPage("svc_spinner", "Service · Spinner") { Dialog { SpinnerHeader() } },
         DesignerPage("svc_toolbar", "Service · Toolbar") { Dialog { ToolbarScreen() } },
         DesignerPage("svc_quiz_mc", "Quiz Start · Multiple Choice") { Dialog { MvbQuizStartScreen(MvbQuizType.MULTIPLE_CHOICE) } },
         DesignerPage("svc_quiz_tf", "Quiz Start · True/False") { Dialog { MvbQuizStartScreen(MvbQuizType.TRUE_FALSE) } },
@@ -100,12 +85,11 @@ fun main() = runDesignerTarget(
         DesignerPage("svc_edit_poll", "Quiz Edit · Poll") { Dialog { MvbQuizEditScreen(MvbQuizType.POLL) } },
         DesignerPage("svc_edit_audio", "Quiz Edit · Audio") { Dialog { MvbQuizEditScreen(MvbQuizType.AUDIO) } },
         DesignerPage("svc_edit_sketch", "Quiz Edit · Sketch Response") { Dialog { MvbQuizEditScreen(MvbQuizType.SKETCH) } },
-        DesignerPage("svc_batch_result", "Result · Batch Quiz Result") { Dialog { BatchQuizResultScreen() } },
+        DesignerPage("svc_batch_result", "Result · Batch Quiz Result") { Dialog { BatchQuizResultList() } },
         DesignerPage("svc_leaderboard", "Result · Leaderboard") { Dialog { LeaderboardScreen() } },
         DesignerPage("svc_push_respond", "Result · Push Respond") { Dialog { PushRespondScreen() } },
         DesignerPage("svc_system_dialog", "Misc · System Dialog") { Dialog { CSSystemDialogScreen() } },
         DesignerPage("svc_toast", "Misc · Toast") { Dialog { ToastScreen() } },
         DesignerPage("svc_crop_image", "Misc · Crop Image") { Dialog { CropImageScreen() } },
-        DesignerPage("svc_in_app_tutorial", "Misc · In-App Tutorial") { Dialog { InAppTutorialScreen() } },
     ),
 )
