@@ -18,6 +18,7 @@ internal val Neutral800 = Color(0xFF4D4D4D) // neutral_800 — dropdown border
 internal val Neutral300 = Color(0xFFE5E5E5) // neutral_300 — dividers, light borders
 internal val Neutral100 = Color(0xFFF6F6F6) // neutral_100 — class item / plan badge surface
 internal val Gray999 = Color(0xFF999999) // color_999999 — plan badge text/icons
+internal val Gray666 = Color(0xFF666666) // color_666666 — sketch "Not submitted" cell text
 internal val Violet4848F0 = Color(0xFF4848F0) // color_4848F0 — enter button / selected border / answered header
 internal val Violet100EDEDFD = Color(0xFFEDEDFD) // color_EDEDFD (violet_50) — answered student cell / selected option bg
 internal val Violet100DADAFC = Color(0xFFDADAFC) // color_DADAFC (violet_100) — "Suggested answer" pill bg

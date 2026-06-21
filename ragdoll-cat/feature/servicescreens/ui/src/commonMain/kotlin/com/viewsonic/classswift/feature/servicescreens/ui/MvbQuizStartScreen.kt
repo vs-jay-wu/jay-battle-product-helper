@@ -661,7 +661,7 @@ private fun ResultOverview(correctLabels: List<String>, correct: Int, incorrect:
 
 /** Show-students'-name toggle row (`ll_show_students_name`) — label + a small violet switch. */
 @Composable
-private fun ShowNamesToggle(checked: Boolean, onToggle: (Boolean) -> Unit) {
+internal fun ShowNamesToggle(checked: Boolean, onToggle: (Boolean) -> Unit) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Text("Show students' name", color = Neutral900, fontSize = 9.33.sp, fontWeight = FontWeight.Medium)
         Spacer(Modifier.width(5.33.dp))

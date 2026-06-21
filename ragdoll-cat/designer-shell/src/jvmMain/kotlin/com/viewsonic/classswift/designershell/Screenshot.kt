@@ -175,6 +175,13 @@ fun main() {
             submitted = 11, notSubmitted = 2, responders = sketchResponders,
         )
     }
+    // Student-responses tab → status cards (Click to view / Handed back / Not submitted / Absent).
+    renderTall("$dir/quiz_sketch_result_cards.png") {
+        MvbSketchResponseScreen(
+            state = SketchPanelState.RESULT, questionTitle = "1. Sketch response",
+            submitted = 11, notSubmitted = 2, responders = sketchResponders, startOnOverview = false,
+        )
+    }
     println("SHOTS_DONE -> $dir")
 }
 

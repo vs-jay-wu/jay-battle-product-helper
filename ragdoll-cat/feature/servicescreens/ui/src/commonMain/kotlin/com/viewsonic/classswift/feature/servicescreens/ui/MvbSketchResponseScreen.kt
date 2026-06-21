@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -42,6 +43,7 @@ import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_chevron_left_16
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_chevron_right_16
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_close
+import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_hand_finger_tilt
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_minus_32dp
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_mvb_quizzing_header
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_mvb_quizzing_options
@@ -54,6 +56,78 @@ import kotlin.math.roundToInt
 
 /** Sketch Response has two mutually-exclusive panels (mirrors [com.viewsonic.classswift.ui.windowmodel.quiz.enums.SketchState]). */
 enum class SketchPanelState { ANSWERING, RESULT }
+
+/** Sketch result student-card state (mirrors `SketchStudentStatus`; SUBMITTED is unused in Sprint 20). */
+enum class SketchCardStatus { CLICK_TO_VIEW, HANDED_BACK, NOT_SUBMITTED, ABSENT }
+
+/** One student in the sketch result student-responses grid. [status] drives the card; the handwriting
+ *  itself opens in the native review widget on click (step 3). */
+data class SketchResponder(val seat: String, val name: String, val status: SketchCardStatus)
+
+internal val sampleSketchResponders: List<SketchResponder> = List(14) { i ->
+    val seat = "%02d".format(i + 1)
+    val name = sampleStudentNames[i % sampleStudentNames.size]
+    when {
+        i == 4 -> SketchResponder(seat, name, SketchCardStatus.ABSENT)
+        i % 5 == 3 -> SketchResponder(seat, name, SketchCardStatus.NOT_SUBMITTED)
+        i % 7 == 6 -> SketchResponder(seat, name, SketchCardStatus.HANDED_BACK)
+        else -> SketchResponder(seat, name, SketchCardStatus.CLICK_TO_VIEW)
+    }
+}
+
+/** One sketch result student card (`item_mvb_sketch_student_card`): name bar over a status body —
+ *  Click-to-view (hand icon) / Handed back (green chip) / Not submitted / Absent. Green states are
+ *  tappable (→ native review widget). [showName] hides the whole name bar when the toggle is off. */
+@Composable
+private fun SketchStudentCard(r: SketchResponder, showName: Boolean, modifier: Modifier, onClick: () -> Unit) {
+    val shape = RoundedCornerShape(8.dp)
+    val green = r.status == SketchCardStatus.CLICK_TO_VIEW || r.status == SketchCardStatus.HANDED_BACK
+    val cardBg: Color
+    val headerBg: Color
+    val headerText: Color
+    var border = false
+    when (r.status) {
+        SketchCardStatus.CLICK_TO_VIEW, SketchCardStatus.HANDED_BACK -> {
+            cardBg = GreenE7F7D0; headerBg = Green48720F; headerText = Color.White
+        }
+        SketchCardStatus.NOT_SUBMITTED -> {
+            cardBg = Color.White; headerBg = Neutral300; headerText = Neutral900; border = true
+        }
+        SketchCardStatus.ABSENT -> {
+            cardBg = Neutral200; headerBg = Neutral200; headerText = Neutral500; border = true
+        }
+    }
+    Column(
+        modifier.height(66.67.dp).clip(shape).background(cardBg)
+            .then(if (border) Modifier.border(0.66.dp, Neutral300, shape) else Modifier)
+            .then(if (green) Modifier.clickable(onClick = onClick) else Modifier).designNode("sketch_card_${r.seat}"),
+    ) {
+        if (showName) {
+            Text(
+                r.name, color = headerText, fontSize = 8.sp, fontWeight = FontWeight.Bold, textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                maxLines = 1, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+                modifier = Modifier.fillMaxWidth().height(23.33.dp).background(headerBg).padding(horizontal = 4.dp).wrapContentHeight(Alignment.CenterVertically),
+            )
+        }
+        Box(Modifier.fillMaxSize().padding(4.dp), contentAlignment = Alignment.Center) {
+            when (r.status) {
+                SketchCardStatus.CLICK_TO_VIEW -> Row(verticalAlignment = Alignment.CenterVertically) {
+                    Image(painterResource(Res.drawable.ic_hand_finger_tilt), null, Modifier.size(13.dp), colorFilter = ColorFilter.tint(Neutral900))
+                    Text("Click to view", color = Neutral900, fontSize = 9.33.sp, modifier = Modifier.padding(start = 2.66.dp))
+                }
+                SketchCardStatus.HANDED_BACK -> Row(
+                    Modifier.clip(RoundedCornerShape(50)).border(1.dp, Green48720F, RoundedCornerShape(50)).padding(horizontal = 8.dp, vertical = 1.33.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Image(painterResource(Res.drawable.ic_check_green_small), null, Modifier.padding(end = 2.66.dp).size(10.dp))
+                    Text("Handed back", color = Green48720F, fontSize = 9.33.sp, fontWeight = FontWeight.Medium)
+                }
+                SketchCardStatus.NOT_SUBMITTED -> Text("Not submitted", color = Gray666, fontSize = 9.33.sp)
+                SketchCardStatus.ABSENT -> Text("Absent", color = Neutral500, fontSize = 9.33.sp)
+            }
+        }
+    }
+}
 
 /** The sketch question preview / answering screenshot frame: 169dp white box, neutral300 hairline. */
 @Composable
@@ -129,15 +203,17 @@ fun MvbSketchResponseScreen(
     notSubmitted: Int = 0,
     startOnOverview: Boolean = true,
     responders: List<QuizResponder> = sampleResponders,
+    sketchResponders: List<SketchResponder> = sampleSketchResponders,
     questionScreenshot: @Composable (Modifier) -> Unit = {},
     questionPreview: @Composable (Modifier) -> Unit = {},
-    studentResponses: @Composable () -> Unit = {},
+    onCardClick: (SketchResponder) -> Unit = {},
     onClose: () -> Unit = {},
     onMinimize: () -> Unit = {},
     onRefresh: () -> Unit = {},
     onCollectAndMark: () -> Unit = {},
 ) {
     var overview by remember { mutableStateOf(startOnOverview) }
+    var showNames by remember { mutableStateOf(true) }
     val cardHeight = if (state == SketchPanelState.RESULT) 522.67.dp else 480.dp
     Box(Modifier.padding(8.dp)) {
         Column(
@@ -154,7 +230,7 @@ fun MvbSketchResponseScreen(
             Box(Modifier.fillMaxWidth().height(1.dp).background(Color(0xFFE6E6E6)))
             when (state) {
                 SketchPanelState.ANSWERING -> AnsweringPanel(Modifier.weight(1f).fillMaxWidth(), inProgressLabel, stopwatch, responders, questionScreenshot, onRefresh, onCollectAndMark)
-                SketchPanelState.RESULT -> ResultPanel(Modifier.weight(1f).fillMaxWidth(), questionTitle, submitted, notSubmitted, overview, { overview = it }, questionPreview, studentResponses, onRefresh)
+                SketchPanelState.RESULT -> ResultPanel(Modifier.weight(1f).fillMaxWidth(), questionTitle, submitted, notSubmitted, overview, { overview = it }, questionPreview, sketchResponders, showNames, { showNames = it }, onCardClick, onRefresh)
             }
         }
     }
@@ -236,7 +312,10 @@ private fun ResultPanel(
     overview: Boolean,
     onSelectTab: (Boolean) -> Unit,
     questionPreview: @Composable (Modifier) -> Unit,
-    studentResponses: @Composable () -> Unit,
+    sketchResponders: List<SketchResponder>,
+    showNames: Boolean,
+    onToggleNames: (Boolean) -> Unit,
+    onCardClick: (SketchResponder) -> Unit,
     onRefresh: () -> Unit,
 ) {
     val total = submitted + notSubmitted
@@ -288,7 +367,20 @@ private fun ResultPanel(
                             }
                         }
                     } else {
-                        studentResponses()
+                        Column(Modifier.fillMaxSize()) {
+                            ShowNamesToggle(showNames, onToggleNames)
+                            Column(
+                                Modifier.padding(top = 10.66.dp).fillMaxWidth().weight(1f).verticalScroll(rememberScrollState()),
+                                verticalArrangement = Arrangement.spacedBy(10.66.dp),
+                            ) {
+                                sketchResponders.chunked(4).forEach { rowItems ->
+                                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.66.dp)) {
+                                        rowItems.forEach { r -> SketchStudentCard(r, showNames, Modifier.weight(1f)) { onCardClick(r) } }
+                                        repeat(4 - rowItems.size) { Spacer(Modifier.weight(1f)) }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
