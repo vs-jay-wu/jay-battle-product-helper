@@ -3,18 +3,20 @@ package com.viewsonic.classswift.ui.window.tool.mvb
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
-import android.view.LayoutInflater
 import android.webkit.WebChromeClient
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import androidx.appcompat.view.ContextThemeWrapper
-import androidx.core.view.isVisible
-import com.google.android.material.R
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.viewinterop.AndroidView
 import com.viewsonic.classswift.data.spinner.SpinnerStudentInfo
-import com.viewsonic.classswift.databinding.WindowMvbSpinnerBinding
+import com.viewsonic.classswift.feature.servicescreens.ui.SpinnerScreen
 import com.viewsonic.classswift.manager.CoroutineManager
 import com.viewsonic.classswift.ui.webInterface.SpinnerWebInterface
+import com.viewsonic.classswift.ui.widget.NetworkDisconnectView
+import com.viewsonic.classswift.ui.window.compose.ComposeHostWindow
 import com.viewsonic.classswift.ui.windowmodel.tool.mvb.spinner.MvbSpinnerUiEvent
 import com.viewsonic.classswift.ui.windowmodel.tool.mvb.spinner.MvbSpinnerUiState
 import com.viewsonic.classswift.ui.windowmodel.tool.mvb.spinner.MvbSpinnerWindowModel
@@ -22,17 +24,20 @@ import com.viewsonic.classswift.utils.extension.dpToPx
 import com.viewsonic.classswift.windowframework.core.CSWindowManager
 import com.viewsonic.classswift.windowframework.core.data.SizeInPixels
 import com.viewsonic.classswift.windowframework.core.enums.WindowTag
-import com.viewsonic.classswift.windowframework.core.interfaces.IWindow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.java.KoinJavaComponent
 import timber.log.Timber
 
-class MvbSpinnerWindow(
-    val context: Context
-) : IWindow<WindowMvbSpinnerBinding>, SpinnerWebInterface.SpinnerListener {
+/**
+ * MVB Spinner (service path) — faithful hybrid: the window chrome (header + divider + loading) is
+ * Compose (SpinnerScreen), the spinner wheel stays a real WebView, and the offline overlay stays the
+ * shared NetworkDisconnectView custom widget — both embedded via AndroidView.
+ */
+class MvbSpinnerWindow(val context: Context) : ComposeHostWindow(context), SpinnerWebInterface.SpinnerListener {
 
     private val windowModel: MvbSpinnerWindowModel by KoinJavaComponent.inject(MvbSpinnerWindowModel::class.java)
     private val csWindowManager: CSWindowManager by KoinJavaComponent.inject(CSWindowManager::class.java)
@@ -40,26 +45,15 @@ class MvbSpinnerWindow(
 
     override var tag: WindowTag = WindowTag.MVB_SPINNER
     override var size: SizeInPixels = SizeInPixels(570.67f.dpToPx().toInt(), 472f.dpToPx().toInt())
-    override val binding: WindowMvbSpinnerBinding = WindowMvbSpinnerBinding.inflate(
-        LayoutInflater.from(
-            ContextThemeWrapper(
-                context,
-                R.style.Theme_MaterialComponents
-            )
-        )
-    )
+    override fun getCurrentSize(): SizeInPixels = size
 
-    init {
-        initWindowModel()
-        initClickedAction()
-        initWebView()
-    }
+    private val loading = MutableStateFlow(true)
+    private val networkDisconnected = MutableStateFlow(false)
 
-    @SuppressLint("SetJavaScriptEnabled")
-    private fun initWebView() {
-        with(binding.wvWebView) {
+    @get:SuppressLint("SetJavaScriptEnabled")
+    private val webView: WebView by lazy {
+        WebView(context).apply {
             setBackgroundColor(Color.TRANSPARENT)
-
             settings.apply {
                 javaScriptEnabled = true
                 domStorageEnabled = true
@@ -71,7 +65,6 @@ class MvbSpinnerWindow(
                 setSupportZoom(true)
                 cacheMode = WebSettings.LOAD_NO_CACHE
             }
-
             webViewClient = object : WebViewClient() {
                 override fun onPageFinished(view: WebView?, url: String?) {
                     super.onPageFinished(view, url)
@@ -79,114 +72,93 @@ class MvbSpinnerWindow(
                     windowModel.onWebPageFinished()
                 }
             }
-
             webChromeClient = WebChromeClient()
-
-            val spinnerWebInterface = SpinnerWebInterface(context = context).apply {
-                setSpinnerCallbackListener(listener = this@MvbSpinnerWindow)
-            }
-
-            addJavascriptInterface(spinnerWebInterface, "asyncBridge")
+            addJavascriptInterface(
+                SpinnerWebInterface(context = context).apply { setSpinnerCallbackListener(this@MvbSpinnerWindow) },
+                "asyncBridge",
+            )
         }
+    }
 
-        // 等 prefetch 完成才 loadUrl，避免 web JS 啟動時 getStudentList()
-        // 早於 fetch 完成而拿到 manager 的空 / 舊 cache。
+    // Same offline mask widget as the XML (app:cardRadius=mvb_radius_400=10.66dp); its own tap brings
+    // the window + toolbar to the top, the alert's "Close" closes the window (mirrors bindCloseAction).
+    private val networkDisconnectView: NetworkDisconnectView by lazy {
+        NetworkDisconnectView(context).apply {
+            radius = 10.66f.dpToPx()
+            setCloseClickListener { csWindowManager.removeWindow(WindowTag.MVB_SPINNER) }
+            setOnClickListener {
+                coroutineScope.launch(Dispatchers.Main) {
+                    csWindowManager.bringWindowToTop(WindowTag.MVB_SPINNER)
+                    csWindowManager.bringWindowToTop(WindowTag.TOOLBAR)
+                }
+            }
+        }
+    }
+
+    override fun onViewCreated() {
+        super.onViewCreated()
+        initWindowModel()
+        // Load only after prefetch so web JS doesn't read an empty/stale student cache.
         coroutineScope.launch {
             windowModel.awaitPrefetchReady()
             val url = windowModel.getUrl()
             withContext(Dispatchers.Main) {
                 Timber.d("Loading URL after prefetch ready: $url")
-                binding.wvWebView.loadUrl(url)
+                webView.loadUrl(url)
             }
         }
     }
 
-    private fun initClickedAction() {
-        with(binding) {
-            ivBtnClose.setOnClickListener {
-                csWindowManager.removeWindow(WindowTag.MVB_SPINNER)
-            }
-
-            ivBtnMinimize.setOnClickListener {
-                csWindowManager.minimizeWindow(WindowTag.MVB_SPINNER)
-            }
-
-            ndvNetworkDisconnectMask.setOnClickListener {
-                coroutineScope.launch(Dispatchers.Main) {
-                    csWindowManager.let {
-                        it.bringWindowToTop(tag)
-                        it.bringWindowToTop(WindowTag.TOOLBAR)
-                    }
-                }
-            }
-
-            // VSFT-8799: the disconnect mask overlays the header close button, so the
-            // alert's own "Close" must trigger it — same wiring as other NetworkDisconnectView hosts.
-            ndvNetworkDisconnectMask.bindCloseAction(ivBtnClose)
-        }
+    @Composable
+    override fun Content() {
+        val isLoading by loading.collectAsState()
+        val offline by networkDisconnected.collectAsState()
+        SpinnerScreen(
+            loading = isLoading,
+            networkDisconnected = offline,
+            onMinimize = { csWindowManager.minimizeWindow(WindowTag.MVB_SPINNER) },
+            onClose = { csWindowManager.removeWindow(WindowTag.MVB_SPINNER) },
+            web = { m -> AndroidView(factory = { webView }, modifier = m) },
+            disconnectMask = { m -> AndroidView(factory = { networkDisconnectView }, modifier = m) },
+        )
     }
 
     private fun initWindowModel() {
         coroutineScope.launch {
-            windowModel.uiEventFlow.collect { event ->
+            windowModel.uiStateFlow.collect { state ->
                 withContext(Dispatchers.Main) {
-                    handleUiEventUpdate(event = event)
+                    loading.value = state is MvbSpinnerUiState.Loading
                 }
             }
         }
         coroutineScope.launch {
-            windowModel.uiStateFlow.collect { state ->
+            windowModel.uiEventFlow.collect { event ->
                 withContext(Dispatchers.Main) {
-                    handleUiStateUpdate(state = state)
+                    when (event) {
+                        is MvbSpinnerUiEvent.NetworkStatusChange -> networkDisconnected.value = !event.isNetworkConnected
+                    }
                 }
             }
         }
     }
 
-    private fun handleUiEventUpdate(event: MvbSpinnerUiEvent) {
-        when (event) {
-            is MvbSpinnerUiEvent.NetworkStatusChange -> {
-                handleNetworkStatusChange(isNetworkConnected = event.isNetworkConnected)
-            }
-        }
-    }
+    // SpinnerWebInterface.SpinnerListener — JS bridge callbacks
+    override fun onGetStudentList(): SpinnerStudentInfo = windowModel.getCurrentStudentList(context)
 
-    private fun handleUiStateUpdate(state: MvbSpinnerUiState) {
-        when (state) {
-            is MvbSpinnerUiState.Loading -> {
-                binding.clLoading.isVisible = true
-                binding.wvWebView.isVisible = false
-            }
-            is MvbSpinnerUiState.Ready -> {
-                binding.clLoading.isVisible = false
-                binding.wvWebView.isVisible = true
-            }
-        }
-    }
-
-    private fun handleNetworkStatusChange(isNetworkConnected: Boolean) {
-        binding.ndvNetworkDisconnectMask.isVisible = !isNetworkConnected
-    }
-
-    //SpinnerWebInterface SpinnerListener
-    override fun onGetStudentList(): SpinnerStudentInfo {
-        return windowModel.getCurrentStudentList(context)
-    }
-
-    //SpinnerWebInterface SpinnerListener
     override fun onStudentPicked(studentId: String) {
         Timber.d("onStudentPicked: $studentId")
         windowModel.sendSelectedStudentEvent(studentId = studentId)
         windowModel.sendSpinnerClickedAmplitudeEvent(studentId = studentId)
     }
 
-    //SpinnerWebInterface SpinnerListener
     override fun onStudentRemoved(studentId: String) {
         Timber.d("onStudentRemoved: $studentId")
         windowModel.sendSpinnerRemoveClickedAmplitudeEvent(studentId = studentId)
     }
 
     override fun onDestroy() {
+        super.onDestroy()
+        webView.destroy()
         windowModel.onCleared()
         CoroutineManager.cancelScope(windowModel)
         CoroutineManager.cancelScope(this)
