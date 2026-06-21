@@ -12,6 +12,8 @@ import androidx.compose.ui.unit.sp
 import com.viewsonic.classswift.feature.servicescreens.ui.BarStyle
 import com.viewsonic.classswift.feature.servicescreens.ui.MvbQuizStartScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.MvbQuizType
+import com.viewsonic.classswift.feature.servicescreens.ui.MvbSketchResponseScreen
+import com.viewsonic.classswift.feature.servicescreens.ui.SketchPanelState
 import com.viewsonic.classswift.feature.servicescreens.ui.QuizPanelState
 import com.viewsonic.classswift.feature.servicescreens.ui.QuizResponder
 import com.viewsonic.classswift.feature.servicescreens.ui.ResponderState
@@ -151,7 +153,40 @@ fun main() {
             ),
         )
     }
+    // Sketch Response (step 1): ANSWERING (monitoring grid + "Collect all and mark") and RESULT
+    // (question preview + Submitted/Not-submitted bars + Overview pie). Student-responses tab = step 2.
+    val sketchResponders = List(14) { i ->
+        val seat = "%02d".format(i + 1)
+        when {
+            i == 4 -> QuizResponder(seat, "Daniel Wu", ResponderState.ABSENT)
+            i % 5 == 4 -> QuizResponder(seat, "Olivia Yang", ResponderState.NOT_SUBMITTED)
+            else -> QuizResponder(seat, "Student $seat", ResponderState.ANSWERED, correct = true)
+        }
+    }
+    render("$dir/quiz_sketch_answering.png") {
+        MvbSketchResponseScreen(
+            state = SketchPanelState.ANSWERING, inProgressLabel = "1 sketch in progress",
+            stopwatch = "01:23", responders = sketchResponders,
+        )
+    }
+    renderTall("$dir/quiz_sketch_result.png") {
+        MvbSketchResponseScreen(
+            state = SketchPanelState.RESULT, questionTitle = "1. Sketch response",
+            submitted = 11, notSubmitted = 2, responders = sketchResponders,
+        )
+    }
     println("SHOTS_DONE -> $dir")
+}
+
+/** Sketch result shell is 853×522.67dp (taller than the 480dp quiz shell) + 8dp shadow padding. */
+private fun renderTall(path: String, content: @Composable () -> Unit) {
+    val scene = ImageComposeScene(width = 1738, height = 1078, density = Density(2f), content = content)
+    try {
+        val data = scene.render().encodeToData(EncodedImageFormat.PNG) ?: error("PNG encode failed")
+        File(path).writeBytes(data.bytes)
+    } finally {
+        scene.close()
+    }
 }
 
 private fun render(path: String, content: @Composable () -> Unit) {

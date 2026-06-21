@@ -96,7 +96,7 @@ enum class MvbQuizType(val label: String, val chips: List<String>) {
 enum class QuizPanelState { QUIZZING, DISCLOSE, RESULT }
 
 @Composable
-private fun SectionLabel(icon: DrawableResource, text: String) {
+internal fun SectionLabel(icon: DrawableResource, text: String) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Image(painterResource(icon), null, Modifier.size(16.dp), colorFilter = ColorFilter.tint(Neutral900))
         Text(text, color = Neutral900, fontSize = 10.67.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 2.66.dp))
@@ -363,7 +363,7 @@ private fun AudioControl(r: QuizResponder) {
 /** One answering cell — `item_mvb_quiz_answering.xml`: number+name header over a state body
  *  (Submitted / Not submitted / Absent), colored per [QuizResponder.state]. */
 @Composable
-private fun AnsweringCell(r: QuizResponder, modifier: Modifier = Modifier, resultMode: Boolean = false, showName: Boolean = true, audio: Boolean = false, onClick: (() -> Unit)? = null) {
+internal fun AnsweringCell(r: QuizResponder, modifier: Modifier = Modifier, resultMode: Boolean = false, showName: Boolean = true, audio: Boolean = false, onClick: (() -> Unit)? = null) {
     val shape = RoundedCornerShape(8.dp)
     val cardBg: Color
     val headerBg: Color
@@ -465,7 +465,7 @@ private fun ResultBarChip(text: String, bg: Color, textColor: Color, border: Col
 /** A result option bar — `CSResultOptionBarItem`: chips row (label + "Correct answer" + responses
  *  count) over a ratio track whose fill is colored + WCAG-patterned; non-highlighted bars dim to 0.2. */
 @Composable
-private fun ResultOptionBar(bar: ResultBar, highlighted: Boolean, onClick: () -> Unit) {
+internal fun ResultOptionBar(bar: ResultBar, highlighted: Boolean, onClick: () -> Unit) {
     val fillShape = RoundedCornerShape(50)
     val fraction = if (bar.outOf <= 0) 0f else bar.count.toFloat() / bar.outOf
     Column(
@@ -558,7 +558,7 @@ private fun AnalyticChip(icon: DrawableResource?, label: String, count: Int, mod
 /** Answer-distribution pie — `CSAnswerPieChart`: correct/incorrect/no-answer arcs from top, each with
  *  its WCAG pattern + a neutral_300 wedge border. */
 @Composable
-private fun PieChart(correct: Int, incorrect: Int, noAnswer: Int, modifier: Modifier = Modifier) {
+internal fun PieChart(correct: Int, incorrect: Int, noAnswer: Int, modifier: Modifier = Modifier) {
     val total = (correct + incorrect + noAnswer).coerceAtLeast(1)
     val segs = listOf(Triple(correct, BarStyle.CORRECT, Green48720F), Triple(incorrect, BarStyle.INCORRECT, RedDB0025), Triple(noAnswer, BarStyle.NEUTRAL, Neutral500))
     Canvas(modifier) {
@@ -585,7 +585,7 @@ private fun PieChart(correct: Int, incorrect: Int, noAnswer: Int, modifier: Modi
 
 /** Pie legend item — WCAG swatch + "<rate> %". */
 @Composable
-private fun LegendItem(style: BarStyle, color: Color, text: String) {
+internal fun LegendItem(style: BarStyle, color: Color, text: String) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Box(Modifier.size(16.dp).clip(RoundedCornerShape(1.33.dp)).background(color).wcagPattern(style))
         Text(text, color = Neutral900, fontSize = 9.33.sp, modifier = Modifier.padding(start = 5.33.dp))
