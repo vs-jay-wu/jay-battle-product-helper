@@ -226,10 +226,11 @@ private fun AnsweringCell(r: QuizResponder, modifier: Modifier = Modifier, resul
     when (r.state) {
         ResponderState.ANSWERED -> {
             // Quizzing: violet "Submitted". Result: green/red by correctness, showing the answer.
-            // Audio has no correctness — the card stays violet in result too (item_mvb_quiz_audio_answering).
+            // Audio has no correctness → answered maps to correct=true (submitted = green, per the
+            // audio ViewHolder which paints the answered result card green / violet in quizzing).
             val ok = r.correct == true
-            cardBg = if (!resultMode || audio) Violet100EDEDFD else if (ok) GreenE7F7D0 else RedFFECEF
-            headerBg = if (!resultMode || audio) Violet4848F0 else if (ok) Green48720F else RedDB0025
+            cardBg = if (!resultMode) Violet100EDEDFD else if (ok) GreenE7F7D0 else RedFFECEF
+            headerBg = if (!resultMode) Violet4848F0 else if (ok) Green48720F else RedDB0025
             headerText = Color.White
             bodyText = if (resultMode) r.answer ?: "Submitted" else "Submitted"; bodyColor = Neutral900
         }

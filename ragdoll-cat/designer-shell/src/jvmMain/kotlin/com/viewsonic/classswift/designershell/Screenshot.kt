@@ -58,7 +58,7 @@ fun main() {
     // answered cells show a play/pause control + time (Student-responses tab).
     // Mixed cell states: 0 playing (pause icon), 1-3 paused/init (play icon), 4 loading (spinner), 6 not submitted.
     val audioResponders = saNames.take(5).mapIndexed { i, n ->
-        QuizResponder("%02d".format(i + 1), n, ResponderState.ANSWERED, audioTime = "0:1$i", audioPlaying = i == 0, audioLoading = i == 4)
+        QuizResponder("%02d".format(i + 1), n, ResponderState.ANSWERED, correct = true, audioTime = "0:1$i", audioPlaying = i == 0, audioLoading = i == 4)
     } + QuizResponder("06", "Olivia Yang", ResponderState.NOT_SUBMITTED)
     val audioBars = listOf(
         ResultBar("Submitted", 5, 6, false, BarStyle.CORRECT),

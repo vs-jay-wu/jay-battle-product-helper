@@ -109,7 +109,7 @@ fun main() = runDesignerTarget(
             Dialog {
                 val names = listOf("Brandon Wang", "Emily Chen", "Marcus Lee", "Sophia Liu", "Daniel Wu", "Olivia Yang")
                 val responders = names.take(5).mapIndexed { i, n ->
-                    QuizResponder("%02d".format(i + 1), n, ResponderState.ANSWERED, audioTime = "0:1$i", audioPlaying = i == 0, audioLoading = i == 4)
+                    QuizResponder("%02d".format(i + 1), n, ResponderState.ANSWERED, correct = true, audioTime = "0:1$i", audioPlaying = i == 0, audioLoading = i == 4)
                 } + QuizResponder("06", names[5], ResponderState.NOT_SUBMITTED)
                 MvbQuizStartScreen(
                     type = MvbQuizType.AUDIO, state = QuizPanelState.RESULT, audioMode = true, options = emptyList(),
