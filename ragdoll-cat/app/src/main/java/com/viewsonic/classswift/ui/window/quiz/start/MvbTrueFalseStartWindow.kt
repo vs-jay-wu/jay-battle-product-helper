@@ -97,7 +97,7 @@ class MvbTrueFalseStartWindow(val context: Context) : ComposeHostWindow(context)
     private var hasTriggeredResultState: Boolean = false
 
     override var tag: WindowTag = WindowTag.MVB_TRUE_FALSE_START_QUIZ
-    override var size: SizeInPixels = SizeInPixels(853f.dpToPx().toInt(), 480f.dpToPx().toInt())
+    override var size: SizeInPixels = SizeInPixels(869f.dpToPx().toInt(), 496f.dpToPx().toInt()) // 853×480 shell + 8dp shadow padding
     override fun getCurrentSize(): SizeInPixels = size
 
     private data class Ui(

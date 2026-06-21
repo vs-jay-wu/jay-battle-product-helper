@@ -57,3 +57,15 @@ tasks.register<JavaExec>("runFlutterShell") {
     mainClass.set("com.viewsonic.classswift.designershell.flutter.FlutterShellKt")
     System.getProperty("flutter.vm")?.let { systemProperty("flutter.vm", it) }
 }
+
+// Headless screenshot of quiz-start states to PNGs (dev verification).
+// Run: ./gradlew :designer-shell:screenshotQuiz -Dshot.dir=/abs/dir
+tasks.register<JavaExec>("screenshotQuiz") {
+    group = "verification"
+    description = "Render quiz-start states to PNGs."
+    dependsOn("jvmMainClasses")
+    val mainComp = kotlin.targets.getByName("jvm").compilations.getByName("main")
+    classpath(mainComp.output.allOutputs, mainComp.runtimeDependencyFiles)
+    mainClass.set("com.viewsonic.classswift.designershell.ScreenshotKt")
+    systemProperty("shot.dir", System.getProperty("shot.dir") ?: "/tmp")
+}

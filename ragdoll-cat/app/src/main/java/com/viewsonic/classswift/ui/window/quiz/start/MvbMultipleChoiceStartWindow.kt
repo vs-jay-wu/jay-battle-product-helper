@@ -97,7 +97,7 @@ class MvbMultipleChoiceStartWindow(val context: Context) : ComposeHostWindow(con
     private var hasTriggeredResultState: Boolean = false
 
     override var tag: WindowTag = WindowTag.MVB_MULTIPLE_CHOICE_START_QUIZ
-    override var size: SizeInPixels = SizeInPixels(853f.dpToPx().toInt(), 480f.dpToPx().toInt())
+    override var size: SizeInPixels = SizeInPixels(869f.dpToPx().toInt(), 496f.dpToPx().toInt()) // 853×480 shell + 8dp shadow padding
     override fun getCurrentSize(): SizeInPixels = size
 
     private val isMultiSelect: Boolean get() = QuizSharedUiInfo.quizType == QuizType.MULTIPLE_SELECT

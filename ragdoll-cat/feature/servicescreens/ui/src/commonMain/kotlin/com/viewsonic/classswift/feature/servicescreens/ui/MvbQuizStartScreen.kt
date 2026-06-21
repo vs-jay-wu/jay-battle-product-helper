@@ -10,6 +10,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -33,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
@@ -312,8 +314,10 @@ private fun ResultOptionBar(bar: ResultBar, highlighted: Boolean, onClick: () ->
 private fun ResultTabs(overviewActive: Boolean, onSelect: (Boolean) -> Unit) {
     @Composable
     fun Tab(label: String, active: Boolean, node: String, onClick: () -> Unit) {
-        Column(Modifier.clickable(onClick = onClick).padding(horizontal = 10.66.dp).padding(top = 5.33.dp).designNode(node)) {
-            Text(label, color = if (active) Violet4848F0 else Neutral900, fontSize = 9.33.sp)
+        // width(IntrinsicSize.Max) so the column wraps to the text — the underline fills the text
+        // width (not the whole row, which would push the other tab off-screen).
+        Column(Modifier.width(IntrinsicSize.Max).clickable(onClick = onClick).padding(horizontal = 10.66.dp).padding(top = 5.33.dp).designNode(node)) {
+            Text(label, color = if (active) Violet4848F0 else Neutral900, fontSize = 9.33.sp, maxLines = 1)
             Box(Modifier.padding(top = 5.33.dp).fillMaxWidth().height(1.33.dp).background(if (active) Violet4848F0 else Color.Transparent))
         }
     }
@@ -342,12 +346,12 @@ private fun ResultOptionsArea(bars: List<ResultBar>, highlighted: Int?, onBarCli
     }
 }
 
-/** Correct-answer badge — `CSResultCorrectAnswerBadge`: bordered white chip with the big answer letter. */
+/** Correct-answer badge — `CSResultCorrectAnswerBadge`: a 48dp white CIRCLE (oval) with neutral_300
+ *  border and the big answer letter centered. */
 @Composable
 private fun CorrectAnswerBadge(label: String) {
     Box(
-        Modifier.height(32.dp).clip(RoundedCornerShape(5.33.dp)).background(Color.White)
-            .border(0.66.dp, Neutral300, RoundedCornerShape(5.33.dp)).padding(horizontal = 10.dp),
+        Modifier.size(48.dp).clip(CircleShape).background(Color.White).border(0.66.dp, Neutral300, CircleShape),
         contentAlignment = Alignment.Center,
     ) { Text(label, color = Neutral900, fontSize = 24.sp, fontWeight = FontWeight.Bold) }
 }
@@ -401,34 +405,49 @@ private fun LegendItem(style: BarStyle, color: Color, text: String) {
 /** Result Overview tab content — `sv_result_overview_content`: correct-answer card (badges +
  *  3 analytic chips) + pie chart + WCAG legend. */
 @Composable
-private fun ResultOverview(correctLabels: List<String>, correct: Int, incorrect: Int, noAnswer: Int) {
+private fun ResultOverview(correctLabels: List<String>, correct: Int, incorrect: Int, noAnswer: Int, pollMode: Boolean) {
     val attendance = correct + incorrect + noAnswer
     fun rate(n: Int) = if (attendance <= 0) 0 else (n * 100f / attendance).roundToInt()
-    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
+    Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState())) {
         Column(
             Modifier.fillMaxWidth().clip(RoundedCornerShape(10.66.dp)).background(Neutral100)
                 .border(1.33.dp, Neutral300, RoundedCornerShape(10.66.dp)).padding(horizontal = 16.dp, vertical = 10.66.dp),
         ) {
-            Text("Correct answer", color = Neutral900, fontSize = 12.sp, fontWeight = FontWeight.Bold)
-            Row(Modifier.padding(top = 5.33.dp), horizontalArrangement = Arrangement.spacedBy(5.33.dp)) {
-                correctLabels.forEach { CorrectAnswerBadge(it) }
+            if (!pollMode) {
+                // No correct answer in a poll → skip the correct-answer label + badges.
+                Text("Correct answer", color = Neutral900, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                Row(Modifier.padding(top = 5.33.dp), horizontalArrangement = Arrangement.spacedBy(5.33.dp)) {
+                    correctLabels.forEach { CorrectAnswerBadge(it) }
+                }
+                Box(Modifier.padding(top = 10.66.dp).fillMaxWidth().height(0.66.dp).background(Neutral300))
             }
-            Box(Modifier.padding(top = 10.66.dp).fillMaxWidth().height(0.66.dp).background(Neutral300))
             Row(Modifier.padding(top = 5.33.dp).fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                AnalyticChip(Res.drawable.ic_check_white, "Answered correctly", correct, Modifier.weight(1f))
-                Box(Modifier.width(0.66.dp).height(45.dp).background(Neutral300))
-                AnalyticChip(Res.drawable.ic_cross, "Answered incorrectly", incorrect, Modifier.weight(1f))
-                Box(Modifier.width(0.66.dp).height(45.dp).background(Neutral300))
-                AnalyticChip(null, "Not submitted", noAnswer, Modifier.weight(1f))
+                if (pollMode) {
+                    AnalyticChip(null, "Submitted", correct, Modifier.weight(1f))
+                    Box(Modifier.width(0.66.dp).height(45.dp).background(Neutral300))
+                    AnalyticChip(null, "Not submitted", noAnswer, Modifier.weight(1f))
+                } else {
+                    AnalyticChip(Res.drawable.ic_check_white, "Answered correctly", correct, Modifier.weight(1f))
+                    Box(Modifier.width(0.66.dp).height(45.dp).background(Neutral300))
+                    AnalyticChip(Res.drawable.ic_cross, "Answered incorrectly", incorrect, Modifier.weight(1f))
+                    Box(Modifier.width(0.66.dp).height(45.dp).background(Neutral300))
+                    AnalyticChip(null, "Not submitted", noAnswer, Modifier.weight(1f))
+                }
             }
         }
         PieChart(correct, incorrect, noAnswer, Modifier.padding(top = 16.dp).size(160.dp).align(Alignment.CenterHorizontally))
         Row(Modifier.padding(top = 16.dp, bottom = 10.66.dp).align(Alignment.CenterHorizontally)) {
-            LegendItem(BarStyle.CORRECT, Green48720F, "Correct rate ${rate(correct)}%")
-            Spacer(Modifier.width(10.66.dp))
-            LegendItem(BarStyle.INCORRECT, RedDB0025, "Incorrect rate ${rate(incorrect)}%")
-            Spacer(Modifier.width(10.66.dp))
-            LegendItem(BarStyle.NEUTRAL, Neutral500, "Not submitted ${rate(noAnswer)}%")
+            if (pollMode) {
+                LegendItem(BarStyle.CORRECT, Green48720F, "Submitted ${rate(correct)}%")
+                Spacer(Modifier.width(10.66.dp))
+                LegendItem(BarStyle.NEUTRAL, Neutral500, "Not submitted ${rate(noAnswer)}%")
+            } else {
+                LegendItem(BarStyle.CORRECT, Green48720F, "Correct rate ${rate(correct)}%")
+                Spacer(Modifier.width(10.66.dp))
+                LegendItem(BarStyle.INCORRECT, RedDB0025, "Incorrect rate ${rate(incorrect)}%")
+                Spacer(Modifier.width(10.66.dp))
+                LegendItem(BarStyle.NEUTRAL, Neutral500, "Not submitted ${rate(noAnswer)}%")
+            }
         }
     }
 }
@@ -448,6 +467,7 @@ fun MvbQuizStartScreen(
     stopwatch: String = "00:00",
     options: List<String> = type.chips,
     multiSelectDisclose: Boolean = false,
+    pollMode: Boolean = false,
     responders: List<QuizResponder> = sampleResponders,
     resultBars: List<ResultBar> = sampleResultBars,
     screenshot: @Composable (Modifier) -> Unit = {},
@@ -457,11 +477,13 @@ fun MvbQuizStartScreen(
     onPublishDisclose: (List<Int>) -> Unit = {},
 ) {
     var discloseSelected by remember { mutableStateOf<Set<Int>>(emptySet()) }
-    var resultOverview by remember { mutableStateOf(false) }
+    var resultOverview by remember { mutableStateOf(true) } // result defaults to the Overview tab (pie), as in the original
     var highlightedBar by remember { mutableStateOf<Int?>(null) }
-    Column(
-        Modifier.size(853.dp, 480.dp).clip(RoundedCornerShape(10.66.dp)).background(Color.White).designNode("mvb_quiz_start"),
-    ) {
+    // 8dp outer padding gives the elevation shadow room (mirrors the window shell's outer padding).
+    Box(Modifier.padding(8.dp)) {
+      Column(
+        Modifier.size(853.dp, 480.dp).shadow(5.33.dp, RoundedCornerShape(10.66.dp)).background(Color.White).designNode("mvb_quiz_start"),
+      ) {
         // ---- Header ----
         Row(Modifier.fillMaxWidth().height(32.dp).background(Color.White).padding(horizontal = 10.66.dp), verticalAlignment = Alignment.CenterVertically) {
             Image(painterResource(Res.drawable.ic_mvb_quizzing_header), null, Modifier.size(21.33.dp))
@@ -564,7 +586,7 @@ fun MvbQuizStartScreen(
                         val noAns = resultBars.filter { it.style == BarStyle.NEUTRAL }.sumOf { it.count }
                         val correctLabels = resultBars.filter { it.isCorrect }.map { it.label }
                         Box(Modifier.weight(1f).fillMaxWidth().padding(top = 10.66.dp)) {
-                            ResultOverview(correctLabels, correct, incorrect, noAns)
+                            ResultOverview(correctLabels, correct, incorrect, noAns, pollMode)
                         }
                     } else {
                         val hlBar = highlightedBar?.let { resultBars.getOrNull(it) }
@@ -586,5 +608,6 @@ fun MvbQuizStartScreen(
                 }
             }
         }
+      }
     }
 }
