@@ -28,6 +28,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -757,6 +758,9 @@ fun MvbQuizStartScreen(
     latexHeight: (key: String) -> Dp = { 0.dp },
     onLatexBounds: (key: String, text: String, pos: Offset, sizePx: IntSize) -> Unit = { _, _, _, _ -> },
     onLatexHidden: (key: String) -> Unit = {},
+    // Open/close of the student-answer popup. The text windows hide their native KatexView overlays
+    // while it's open, since those siblings draw over the (Compose) popup scrim.
+    onAnswerPopupChange: (open: Boolean) -> Unit = {},
     responders: List<QuizResponder> = sampleResponders,
     resultBars: List<ResultBar> = sampleResultBars,
     screenshot: @Composable (Modifier) -> Unit = {},
@@ -777,6 +781,7 @@ fun MvbQuizStartScreen(
     var highlightedBar by remember { mutableStateOf<Int?>(null) }
     var showNames by remember { mutableStateOf(true) }
     var popupResponder by remember { mutableStateOf<QuizResponder?>(null) }
+    LaunchedEffect(popupResponder != null) { onAnswerPopupChange(popupResponder != null) }
     // 8dp outer padding gives the elevation shadow room (mirrors the window shell's outer padding).
     Box(Modifier.padding(8.dp)) {
       Column(

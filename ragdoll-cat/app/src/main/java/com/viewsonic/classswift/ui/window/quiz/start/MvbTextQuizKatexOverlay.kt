@@ -30,6 +30,10 @@ class MvbTextQuizKatexOverlay(private val binding: WindowMvbTextQuizBinding) {
     private val listenerKeys = mutableSetOf<String>()
     private val lastRect = mutableMapOf<String, IntArray>() // [left, top, width]
 
+    // While an answer popup (a Compose overlay inside the ComposeView) is open, the native KatexViews
+    // — siblings drawn ON TOP of the ComposeView — must be hidden, else they bleed over the popup scrim.
+    private var suppressed = false
+
     private fun viewFor(key: String): KatexView? = when (key) {
         "question" -> binding.cskvQuestion
         "content_0" -> binding.cskvContent0
@@ -47,9 +51,10 @@ class MvbTextQuizKatexOverlay(private val binding: WindowMvbTextQuizBinding) {
         val view = viewFor(key) ?: return
         val left = pos.x.roundToInt()
         val top = pos.y.roundToInt()
+        val wantVisible = if (suppressed) View.GONE else View.VISIBLE
         val prev = lastRect[key]
         val moved = prev == null || prev[0] != left || prev[1] != top || prev[2] != widthPx
-        if (moved || view.visibility != View.VISIBLE) {
+        if (moved || view.visibility != wantVisible) {
             lastRect[key] = intArrayOf(left, top, widthPx)
             val lp = view.layoutParams as FrameLayout.LayoutParams
             lp.width = widthPx
@@ -57,7 +62,7 @@ class MvbTextQuizKatexOverlay(private val binding: WindowMvbTextQuizBinding) {
             lp.leftMargin = left
             lp.topMargin = top
             view.layoutParams = lp
-            view.visibility = View.VISIBLE
+            view.visibility = wantVisible
         }
         view.setText(text)
         if (fixedHeightPx == null && listenerKeys.add(key)) {
@@ -71,6 +76,15 @@ class MvbTextQuizKatexOverlay(private val binding: WindowMvbTextQuizBinding) {
     fun hide(key: String) {
         viewFor(key)?.visibility = View.GONE
         lastRect.remove(key)
+    }
+
+    /** Hide all overlays while a Compose answer popup is open (they would otherwise draw over its
+     *  scrim); restore the previously-positioned ones when it closes. */
+    fun setSuppressed(value: Boolean) {
+        if (suppressed == value) return
+        suppressed = value
+        val visibility = if (value) View.GONE else View.VISIBLE
+        lastRect.keys.forEach { viewFor(it)?.visibility = visibility }
     }
 
     fun release() {

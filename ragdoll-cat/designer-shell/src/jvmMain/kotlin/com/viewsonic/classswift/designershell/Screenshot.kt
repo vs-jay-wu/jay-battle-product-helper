@@ -121,6 +121,25 @@ fun main() {
             startDiscloseRevealed = true, startDiscloseSelected = 1,
         )
     }
+    // Text Short Answer: neutral100 text question box (slot) + submission overview + answer popup —
+    // like the image short answer but the question is text/LaTeX, not a screenshot. No options/disclose.
+    val textSaQuestion = "Explain in your own words why the sky appears blue during the day."
+    val textSaSlot: @Composable (androidx.compose.ui.Modifier) -> Unit = { m ->
+        Text(textSaQuestion, color = Color(0xFF333333), fontSize = 10.67.sp, modifier = m)
+    }
+    render("$dir/quiz_text_sa_quizzing.png") {
+        MvbQuizStartScreen(
+            type = MvbQuizType.TEXT_SHORT_ANSWER, state = QuizPanelState.QUIZZING, options = emptyList(),
+            joined = 4, capacity = 5, responders = saResponders, screenshot = textSaSlot,
+        )
+    }
+    render("$dir/quiz_text_sa_result.png") {
+        MvbQuizStartScreen(
+            type = MvbQuizType.TEXT_SHORT_ANSWER, state = QuizPanelState.RESULT,
+            submissionMode = true, answerPopup = true, options = emptyList(),
+            joined = 4, capacity = 5, responders = saResponders, resultBars = saBars, screenshot = textSaSlot,
+        )
+    }
     // All-not-submitted TF result → full gray crosshatch pie (apples-to-apples vs the old build).
     render("$dir/quiz_tf_result_allns.png") {
         MvbQuizStartScreen(
