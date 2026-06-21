@@ -1,5 +1,6 @@
 package com.viewsonic.classswift.feature.servicescreens.ui
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -33,8 +34,14 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -46,12 +53,14 @@ import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_check_cross_circle
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_check_white
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_close
+import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_cross
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_mvb_quizzing_header
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_mvb_quizzing_options
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_mvb_quizzing_responses
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_mvb_quizzing_stopwatch
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
+import kotlin.math.roundToInt
 
 /** The 8 service-path quiz-start variants — label + option-chip layout. (The quizzing panel's
  *  type icon is the shared `ic_check_cross_circle`, per panel_mvb_quizzing.xml, not per-type.) */
@@ -224,8 +233,8 @@ private fun barColor(style: BarStyle) = when (style) {
 }
 
 /** WCAG accessibility overlay (`WcagPatternTiles`): correct=dots, incorrect=slashes, no-answer=cross-hatch,
- *  drawn in 8dp tiles at ~8% black so the bar/segment color stays vivid. */
-private fun Modifier.wcagPattern(style: BarStyle): Modifier = drawBehind {
+ *  drawn in 8dp tiles at ~8% black so the bar/segment color stays vivid. Shared by bars + pie chart. */
+private fun DrawScope.drawWcag(style: BarStyle) {
     val tile = 8.dp.toPx()
     val c = Color(0x14000000)
     val sw = 1.dp.toPx().coerceAtLeast(2f)
@@ -241,6 +250,8 @@ private fun Modifier.wcagPattern(style: BarStyle): Modifier = drawBehind {
         BarStyle.NEUTRAL -> { slashesForward(); slashesBack() }
     }
 }
+
+private fun Modifier.wcagPattern(style: BarStyle): Modifier = drawBehind { drawWcag(style) }
 
 @Composable
 private fun ResultBarChip(text: String, bg: Color, textColor: Color, border: Color? = null, circle: Boolean = false) {
@@ -312,6 +323,97 @@ private fun ResultOptionsArea(bars: List<ResultBar>, highlighted: Int?, onBarCli
             bars.forEachIndexed { i, bar ->
                 ResultOptionBar(bar, highlighted == null || highlighted == i) { onBarClick(i) }
             }
+        }
+    }
+}
+
+/** Correct-answer badge — `CSResultCorrectAnswerBadge`: bordered white chip with the big answer letter. */
+@Composable
+private fun CorrectAnswerBadge(label: String) {
+    Box(
+        Modifier.height(32.dp).clip(RoundedCornerShape(5.33.dp)).background(Color.White)
+            .border(0.66.dp, Neutral300, RoundedCornerShape(5.33.dp)).padding(horizontal = 10.dp),
+        contentAlignment = Alignment.Center,
+    ) { Text(label, color = Neutral900, fontSize = 24.sp, fontWeight = FontWeight.Bold) }
+}
+
+/** One analytic chip — `CSResultAnalyticChip`: (icon +) label, big count, "students". */
+@Composable
+private fun AnalyticChip(icon: DrawableResource?, label: String, count: Int, modifier: Modifier = Modifier) {
+    Column(modifier.padding(vertical = 5.33.dp, horizontal = 5.33.dp)) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            if (icon != null) Image(painterResource(icon), null, Modifier.padding(end = 2.66.dp).size(8.dp), colorFilter = ColorFilter.tint(Neutral900))
+            Text(label, color = Neutral900, fontSize = 8.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+        }
+        Text("$count", color = Neutral900, fontSize = 32.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(top = 5.33.dp))
+        Text("students", color = Neutral900, fontSize = 8.sp)
+    }
+}
+
+/** Answer-distribution pie — `CSAnswerPieChart`: correct/incorrect/no-answer arcs from top, each with
+ *  its WCAG pattern + a neutral_300 wedge border. */
+@Composable
+private fun PieChart(correct: Int, incorrect: Int, noAnswer: Int, modifier: Modifier = Modifier) {
+    val total = (correct + incorrect + noAnswer).coerceAtLeast(1)
+    val segs = listOf(Triple(correct, BarStyle.CORRECT, Green48720F), Triple(incorrect, BarStyle.INCORRECT, RedDB0025), Triple(noAnswer, BarStyle.NEUTRAL, Neutral500))
+    Canvas(modifier) {
+        val border = 4.dp.toPx()
+        val tl = Offset(border / 2f, border / 2f)
+        val sz = Size(size.width - border, size.height - border)
+        val arcRect = Rect(tl, sz)
+        var start = -90f
+        segs.forEach { (count, style, color) ->
+            if (count <= 0) return@forEach
+            val sweep = count.toFloat() / total * 360f
+            drawArc(color, start, sweep, useCenter = true, topLeft = tl, size = sz)
+            val wedge = Path().apply { moveTo(center.x, center.y); arcTo(arcRect, start, sweep, false); close() }
+            clipPath(wedge) { drawWcag(style) }
+            drawPath(wedge, Neutral300, style = Stroke(width = border))
+            start += sweep
+        }
+    }
+}
+
+/** Pie legend item — WCAG swatch + "<rate> %". */
+@Composable
+private fun LegendItem(style: BarStyle, color: Color, text: String) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Box(Modifier.size(16.dp).clip(RoundedCornerShape(1.33.dp)).background(color).wcagPattern(style))
+        Text(text, color = Neutral900, fontSize = 9.33.sp, modifier = Modifier.padding(start = 5.33.dp))
+    }
+}
+
+/** Result Overview tab content — `sv_result_overview_content`: correct-answer card (badges +
+ *  3 analytic chips) + pie chart + WCAG legend. */
+@Composable
+private fun ResultOverview(correctLabels: List<String>, correct: Int, incorrect: Int, noAnswer: Int) {
+    val attendance = correct + incorrect + noAnswer
+    fun rate(n: Int) = if (attendance <= 0) 0 else (n * 100f / attendance).roundToInt()
+    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
+        Column(
+            Modifier.fillMaxWidth().clip(RoundedCornerShape(10.66.dp)).background(Neutral100)
+                .border(1.33.dp, Neutral300, RoundedCornerShape(10.66.dp)).padding(horizontal = 16.dp, vertical = 10.66.dp),
+        ) {
+            Text("Correct answer", color = Neutral900, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+            Row(Modifier.padding(top = 5.33.dp), horizontalArrangement = Arrangement.spacedBy(5.33.dp)) {
+                correctLabels.forEach { CorrectAnswerBadge(it) }
+            }
+            Box(Modifier.padding(top = 10.66.dp).fillMaxWidth().height(0.66.dp).background(Neutral300))
+            Row(Modifier.padding(top = 5.33.dp).fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                AnalyticChip(Res.drawable.ic_check_white, "Answered correctly", correct, Modifier.weight(1f))
+                Box(Modifier.width(0.66.dp).height(45.dp).background(Neutral300))
+                AnalyticChip(Res.drawable.ic_cross, "Answered incorrectly", incorrect, Modifier.weight(1f))
+                Box(Modifier.width(0.66.dp).height(45.dp).background(Neutral300))
+                AnalyticChip(null, "Not submitted", noAnswer, Modifier.weight(1f))
+            }
+        }
+        PieChart(correct, incorrect, noAnswer, Modifier.padding(top = 16.dp).size(160.dp).align(Alignment.CenterHorizontally))
+        Row(Modifier.padding(top = 16.dp, bottom = 10.66.dp).align(Alignment.CenterHorizontally)) {
+            LegendItem(BarStyle.CORRECT, Green48720F, "Correct rate ${rate(correct)}%")
+            Spacer(Modifier.width(10.66.dp))
+            LegendItem(BarStyle.INCORRECT, RedDB0025, "Incorrect rate ${rate(incorrect)}%")
+            Spacer(Modifier.width(10.66.dp))
+            LegendItem(BarStyle.NEUTRAL, Neutral500, "Not submitted ${rate(noAnswer)}%")
         }
     }
 }
@@ -421,9 +523,12 @@ fun MvbQuizStartScreen(
                         Box(Modifier.padding(top = 10.66.dp)) { ResultTabs(resultOverview) { resultOverview = it } }
                     }
                     if (result && resultOverview) {
-                        // Overview content (pie chart / badges / analytics) is 2b-iii-b.
-                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            Text("Overview", color = Neutral500, fontSize = 10.sp)
+                        val correct = resultBars.filter { it.style == BarStyle.CORRECT }.sumOf { it.count }
+                        val incorrect = resultBars.filter { it.style == BarStyle.INCORRECT }.sumOf { it.count }
+                        val noAns = resultBars.filter { it.style == BarStyle.NEUTRAL }.sumOf { it.count }
+                        val correctLabels = resultBars.filter { it.isCorrect }.map { it.label }
+                        Box(Modifier.weight(1f).fillMaxWidth().padding(top = 10.66.dp)) {
+                            ResultOverview(correctLabels, correct, incorrect, noAns)
                         }
                     } else {
                         val hlBar = highlightedBar?.let { resultBars.getOrNull(it) }
