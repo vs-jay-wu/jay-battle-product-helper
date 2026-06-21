@@ -14,7 +14,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -27,101 +30,118 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.viewsonic.classswift.core.ui.designNode
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.Res
-import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_add
+import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_arrow_clockwise
+import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_camera_viewfinder
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_cross
+import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_image_corners
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_minus_32dp
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_quiz_v2
 import org.jetbrains.compose.resources.painterResource
 
-/** How the answer area of the quiz editor is configured per quiz type. */
-private data class EditConfig(val boxes: List<String>, val canAddOption: Boolean, val answerType: String, val answerOptions: String)
+/** Image-upload lifecycle of the quiz editor (mirrors MvbImageUploadView's progress/uploaded/failed states). */
+enum class EditImageState { UPLOADING, UPLOADED, FAILED }
 
-private fun configFor(type: MvbQuizType): EditConfig = when (type) {
-    MvbQuizType.MULTIPLE_CHOICE -> EditConfig(listOf("A", "B", "C", "D"), true, "Single answer", "4")
-    MvbQuizType.POLL -> EditConfig(listOf("A", "B", "C", "D"), true, "Poll", "4")
-    MvbQuizType.TRUE_FALSE, MvbQuizType.TEXT_TRUE_FALSE -> EditConfig(listOf("T", "F"), false, "True / False", "2")
-    MvbQuizType.SHORT_ANSWER, MvbQuizType.TEXT_SHORT_ANSWER -> EditConfig(emptyList(), false, "Short answer", "—")
-    MvbQuizType.AUDIO -> EditConfig(emptyList(), false, "Audio recording", "—")
-    MvbQuizType.SKETCH -> EditConfig(emptyList(), false, "Sketch response", "—")
-}
-
+/** The question-image upload area (`MvbImageUploadView`): 277.33dp white framed box that shows the
+ *  upload progress, the uploaded screenshot (+ "Capture again"), or a failed state (+ "Try again"). */
 @Composable
-private fun OptionBox(label: String, correct: Boolean) {
+private fun EditImageArea(
+    state: EditImageState,
+    progress: Int,
+    image: @Composable (Modifier) -> Unit,
+    onCaptureAgain: () -> Unit,
+    onTryAgain: () -> Unit,
+) {
+    val shape = RoundedCornerShape(5.33.dp)
     Box(
-        Modifier.size(40.dp).clip(RoundedCornerShape(5.33.dp))
-            .background(if (correct) BrandBlue else Neutral100)
-            .border(1.dp, if (correct) BrandBlue else Neutral300, RoundedCornerShape(5.33.dp))
-            .designNode("edit_opt_$label"),
+        Modifier.fillMaxWidth().height(277.33.dp).clip(shape).background(Color.White).border(0.66.dp, Neutral300, shape).designNode("edit_image"),
         contentAlignment = Alignment.Center,
-    ) { Text(label, color = if (correct) Color.White else Neutral900, fontSize = 14.sp, fontWeight = FontWeight.Bold) }
-}
-
-/** A labelled settings dropdown row (Answer types / Answer options). */
-@Composable
-private fun SettingDropdown(label: String, value: String, nodeId: String, modifier: Modifier = Modifier) {
-    Column(modifier) {
-        Text(label, color = Neutral500, fontSize = 9.33.sp)
-        Row(
-            Modifier.padding(top = 4.dp).fillMaxWidth().height(37.33.dp)
-                .clip(RoundedCornerShape(5.33.dp)).background(Color.White).border(1.dp, Neutral300, RoundedCornerShape(5.33.dp))
-                .padding(horizontal = 10.dp).designNode(nodeId),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(value, color = Neutral900, fontSize = 10.67.sp, modifier = Modifier.weight(1f))
-            Text("▾", color = Neutral500, fontSize = 10.sp)
+    ) {
+        when (state) {
+            EditImageState.UPLOADED -> {
+                image(Modifier.fillMaxSize().padding(2.66.dp).clip(shape))
+                Row(
+                    Modifier.align(Alignment.BottomEnd).padding(6.66.dp).height(32.dp).clip(RoundedCornerShape(5.33.dp))
+                        .background(Neutral100).clickable(onClick = onCaptureAgain).padding(horizontal = 16.dp).designNode("edit_capture_again"),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Image(painterResource(Res.drawable.ic_camera_viewfinder), null, Modifier.size(13.3.dp), colorFilter = ColorFilter.tint(Neutral900))
+                    Text("Capture again", color = Neutral900, fontSize = 10.66.sp, fontWeight = FontWeight.Medium, modifier = Modifier.padding(start = 5.33.dp))
+                }
+            }
+            EditImageState.UPLOADING -> Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                CircularProgressIndicator(Modifier.size(32.dp), color = Violet4848F0, strokeWidth = 2.dp)
+                LinearProgressIndicator(
+                    progress = { progress / 100f },
+                    modifier = Modifier.padding(top = 10.66.dp).width(200.dp).height(4.dp).clip(RoundedCornerShape(50)),
+                    color = Violet4848F0,
+                    trackColor = Neutral100,
+                )
+                Text("Preparing question $progress%", color = Neutral900, fontSize = 10.66.sp, modifier = Modifier.padding(top = 10.66.dp))
+            }
+            EditImageState.FAILED -> Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Image(painterResource(Res.drawable.ic_image_corners), null, Modifier.size(21.33.dp))
+                Text("Failed to show image", color = Neutral900, fontSize = 10.66.sp, modifier = Modifier.padding(top = 2.66.dp))
+                Row(
+                    Modifier.padding(top = 10.66.dp).height(37.33.dp).clip(RoundedCornerShape(5.33.dp)).background(Violet4848F0)
+                        .clickable(onClick = onTryAgain).padding(horizontal = 16.dp).designNode("edit_try_again"),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Image(painterResource(Res.drawable.ic_arrow_clockwise), null, Modifier.size(16.dp), colorFilter = ColorFilter.tint(Color.White))
+                    Text("Try again", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Medium, modifier = Modifier.padding(start = 5.33.dp))
+                }
+            }
         }
     }
 }
 
 /**
- * CMP port of the 6 `Mvb*EditWindow` quiz-editor variants (service path): 541×626 card, header,
- * question-image upload frame, option panel (answer boxes + add, answer-type/options settings),
- * Cancel / Start-question action bar. Differs per type via [configFor].
+ * CMP port of the `Mvb*EditWindow` quiz editors (service path): a 541.33×426.66 card — header,
+ * the question-image upload area, and a Cancel / Start-question action bar. This image-only variant
+ * covers True/False, Short Answer, Audio and Sketch; Multiple-Choice / Poll add an option panel (step 2).
+ * The uploaded screenshot is drawn by the window (Coil) via the [image] slot.
  */
 @Composable
-fun MvbQuizEditScreen(type: MvbQuizType = MvbQuizType.MULTIPLE_CHOICE, onClose: () -> Unit = {}) {
-    val cfg = configFor(type)
-    Box(Modifier.size(541.33.dp, 626.dp).padding(8.dp)) {
+fun MvbQuizEditScreen(
+    type: MvbQuizType = MvbQuizType.TRUE_FALSE,
+    imageState: EditImageState = EditImageState.UPLOADING,
+    progress: Int = 0,
+    startEnabled: Boolean = false,
+    image: @Composable (Modifier) -> Unit = {},
+    onClose: () -> Unit = {},
+    onMinimize: () -> Unit = {},
+    onCaptureAgain: () -> Unit = {},
+    onTryAgain: () -> Unit = {},
+    onCancel: () -> Unit = {},
+    onStart: () -> Unit = {},
+) {
+    @Suppress("UNUSED_EXPRESSION") type // image-only editor is type-agnostic; option panel uses it (step 2)
+    val cardShape = RoundedCornerShape(5.33.dp)
+    Box(Modifier.size(541.33.dp, 426.66.dp).padding(8.dp)) {
         Column(
-            Modifier.fillMaxSize().clip(RoundedCornerShape(5.33.dp)).background(Color.White).border(0.66.dp, Neutral300, RoundedCornerShape(5.33.dp)).designNode("mvb_quiz_edit"),
+            Modifier.fillMaxSize().clip(cardShape).background(Color.White).border(0.66.dp, Neutral300, cardShape).designNode("mvb_quiz_edit"),
         ) {
             // Header
-            Row(Modifier.fillMaxWidth().padding(start = 10.66.dp, end = 10.66.dp, top = 4.dp, bottom = 4.dp), verticalAlignment = Alignment.CenterVertically) {
+            Row(Modifier.fillMaxWidth().padding(horizontal = 10.66.dp, vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
                 Image(painterResource(Res.drawable.ic_quiz_v2), null, Modifier.size(21.33.dp))
                 Text("Question", color = Neutral900, fontSize = 10.66.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 5.33.dp).weight(1f).designNode("edit_title"))
-                Image(painterResource(Res.drawable.ic_minus_32dp), "Minimize", Modifier.size(24.dp).padding(4.dp))
-                Image(painterResource(Res.drawable.ic_cross), "Close", Modifier.size(24.dp).padding(4.dp).clickable(onClick = onClose).designNode("edit_close"))
+                Image(painterResource(Res.drawable.ic_minus_32dp), "Minimize", Modifier.size(24.dp).clickable(onClick = onMinimize).padding(4.dp), colorFilter = ColorFilter.tint(Neutral900))
+                Image(painterResource(Res.drawable.ic_cross), "Close", Modifier.size(24.dp).clickable(onClick = onClose).padding(4.dp).designNode("edit_close"))
             }
             Box(Modifier.fillMaxWidth().height(0.66.dp).background(Color(0xFFE6E6E6)))
             Column(Modifier.fillMaxSize().padding(16.dp)) {
-                // Question image upload frame
-                Box(
-                    Modifier.fillMaxWidth().height(277.33.dp).clip(RoundedCornerShape(5.33.dp)).background(Color.White).border(0.66.dp, Neutral300, RoundedCornerShape(5.33.dp)).designNode("edit_image"),
-                    contentAlignment = Alignment.Center,
-                ) { Text("Tap to add a question image", color = Neutral500, fontSize = 11.sp) }
-
-                // Answer option panel
-                if (cfg.boxes.isNotEmpty()) {
-                    Row(Modifier.padding(top = 16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-                        cfg.boxes.forEachIndexed { i, b -> OptionBox(b, correct = i == 0 && type != MvbQuizType.POLL) }
-                        if (cfg.canAddOption) {
-                            Box(
-                                Modifier.size(24.dp).clip(RoundedCornerShape(5.33.dp)).background(Neutral100).clickable {}.designNode("edit_add_option"),
-                                contentAlignment = Alignment.Center,
-                            ) { Image(painterResource(Res.drawable.ic_add), "Add option", Modifier.size(16.dp), colorFilter = ColorFilter.tint(Neutral900)) }
-                        }
-                    }
-                }
-                Row(Modifier.padding(top = 16.dp).fillMaxWidth().clip(RoundedCornerShape(3.dp)).background(Neutral100).padding(8.dp), horizontalArrangement = Arrangement.spacedBy(10.66.dp)) {
-                    SettingDropdown("Answer types", cfg.answerType, "edit_answer_type", Modifier.weight(1f))
-                    SettingDropdown("Answer options", cfg.answerOptions, "edit_answer_options", Modifier.weight(1f))
-                }
-
+                EditImageArea(imageState, progress, image, onCaptureAgain, onTryAgain)
                 Spacer(Modifier.weight(1f))
                 // Action bar
-                Row(Modifier.fillMaxWidth().height(37.33.dp), horizontalArrangement = Arrangement.spacedBy(10.66.dp)) {
-                    CSButton("Cancel question", backgroundColor = Color.White, textColor = Neutral900, borderColor = Neutral300, textSize = 12.sp, nodeId = "edit_cancel", modifier = Modifier.weight(1f).height(37.33.dp))
-                    CSButton("Start question", backgroundColor = Violet4848F0, textColor = Color.White, textSize = 12.sp, nodeId = "edit_start", modifier = Modifier.weight(1f).height(37.33.dp))
+                Row(Modifier.padding(top = 16.dp).fillMaxWidth().height(37.33.dp), horizontalArrangement = Arrangement.spacedBy(10.66.dp)) {
+                    CSButton("Cancel question", backgroundColor = Color.White, textColor = Neutral900, borderColor = Neutral300, textSize = 12.sp, nodeId = "edit_cancel", onClick = onCancel, modifier = Modifier.weight(1f).fillMaxSize())
+                    CSButton(
+                        "Start question",
+                        backgroundColor = if (startEnabled) Violet4848F0 else Neutral200,
+                        textColor = if (startEnabled) Color.White else Neutral500,
+                        textSize = 12.sp, nodeId = "edit_start",
+                        onClick = { if (startEnabled) onStart() },
+                        modifier = Modifier.weight(1f).fillMaxSize(),
+                    )
                 }
             }
         }

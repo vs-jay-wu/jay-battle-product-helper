@@ -12,6 +12,10 @@ import androidx.compose.ui.unit.sp
 import com.viewsonic.classswift.feature.servicescreens.ui.BarStyle
 import com.viewsonic.classswift.feature.servicescreens.ui.MvbQuizStartScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.MvbQuizType
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import com.viewsonic.classswift.feature.servicescreens.ui.EditImageState
+import com.viewsonic.classswift.feature.servicescreens.ui.MvbQuizEditScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.MvbSketchResponseScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.SketchPanelState
 import com.viewsonic.classswift.feature.servicescreens.ui.QuizPanelState
@@ -182,7 +186,32 @@ fun main() {
             submitted = 11, notSubmitted = 2, responders = sketchResponders, startOnOverview = false,
         )
     }
+    // Quiz editor (image-only variant: TF / Short Answer / Audio / Sketch) — upload progress /
+    // uploaded (+ Capture again) / failed (+ Try again) states. The uploaded image is a window slot.
+    renderEdit("$dir/quiz_edit_uploading.png") {
+        MvbQuizEditScreen(imageState = EditImageState.UPLOADING, progress = 40)
+    }
+    renderEdit("$dir/quiz_edit_uploaded.png") {
+        MvbQuizEditScreen(
+            imageState = EditImageState.UPLOADED, startEnabled = true,
+            image = { m -> Box(m.background(Color(0xFFDFE3E6))) },
+        )
+    }
+    renderEdit("$dir/quiz_edit_failed.png") {
+        MvbQuizEditScreen(imageState = EditImageState.FAILED)
+    }
     println("SHOTS_DONE -> $dir")
+}
+
+/** Quiz editor card is 541.33×426.66dp (incl. its own 8dp shadow padding). */
+private fun renderEdit(path: String, content: @Composable () -> Unit) {
+    val scene = ImageComposeScene(width = 1083, height = 854, density = Density(2f), content = content)
+    try {
+        val data = scene.render().encodeToData(EncodedImageFormat.PNG) ?: error("PNG encode failed")
+        File(path).writeBytes(data.bytes)
+    } finally {
+        scene.close()
+    }
 }
 
 /** Sketch result shell is 853×522.67dp (taller than the 480dp quiz shell) + 8dp shadow padding. */
