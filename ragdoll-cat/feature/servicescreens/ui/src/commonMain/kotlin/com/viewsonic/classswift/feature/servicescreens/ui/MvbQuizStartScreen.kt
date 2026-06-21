@@ -27,6 +27,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,6 +42,8 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.Path
@@ -51,6 +54,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.viewsonic.classswift.core.ui.designNode
@@ -183,22 +187,58 @@ private fun DiscloseSelectorArea(options: List<String>, selected: Set<Int>, mult
 }
 
 /** Text-variant disclose option (`view_mvb_text_quiz_disclose_option`). [content]/[reason] are the
- *  option text (plain here; native renders LaTeX via a KatexView), [isSuggested] marks the AI/correct
- *  answer whose reason + "Suggested answer" pill appear once the reveal button is tapped. */
-data class TextDiscloseOption(val content: String, val reason: String = "", val isSuggested: Boolean = false)
+ *  option text; [contentIsLatex]/[reasonIsLatex] route that part through a native KatexView overlay
+ *  (the window positions it over a transparent hole) instead of Compose text. [isSuggested] marks the
+ *  AI/correct answer whose reason + "Suggested answer" pill appear once the reveal button is tapped. */
+data class TextDiscloseOption(
+    val content: String,
+    val reason: String = "",
+    val isSuggested: Boolean = false,
+    val contentIsLatex: Boolean = false,
+    val reasonIsLatex: Boolean = false,
+)
+
+/** A transparent placeholder for a native LaTeX view (`view_mvb_text_quiz_disclose_option`'s KatexView):
+ *  reserves [latexHeight] (fed back once the native view measures), reports its bounds for positioning,
+ *  and signals [onLatexHidden] when it leaves composition (state change / reason hidden). */
+@Composable
+private fun LatexHole(
+    key: String,
+    text: String,
+    topPad: Dp,
+    latexHeight: (String) -> Dp,
+    onLatexBounds: (String, String, Offset, IntSize) -> Unit,
+    onLatexHidden: (String) -> Unit,
+) {
+    DisposableEffect(key) { onDispose { onLatexHidden(key) } }
+    Box(
+        Modifier.fillMaxWidth().padding(top = topPad).height(latexHeight(key).coerceAtLeast(1.dp))
+            .onGloballyPositioned { onLatexBounds(key, text, it.positionInRoot(), it.size) },
+    )
+}
 
 /** One text-disclose option row: tappable card (selected = violet50 + 1.33 violet500 border, else
  *  neutral100 + 0.66 neutral300 border) with a 24dp radio in the top-end corner, the content, and —
- *  when [revealed] and this is the suggested answer — a "Suggested answer" pill + neutral650 reason. */
+ *  when [revealed] and this is the suggested answer — a "Suggested answer" pill + neutral650 reason.
+ *  LaTeX content/reason render through native KatexView overlays (holes) instead of Compose text. */
 @Composable
-private fun TextDiscloseOptionItem(option: TextDiscloseOption, selected: Boolean, revealed: Boolean, onClick: () -> Unit) {
+private fun TextDiscloseOptionItem(
+    index: Int,
+    option: TextDiscloseOption,
+    selected: Boolean,
+    revealed: Boolean,
+    latexHeight: (String) -> Dp,
+    onLatexBounds: (String, String, Offset, IntSize) -> Unit,
+    onLatexHidden: (String) -> Unit,
+    onClick: () -> Unit,
+) {
     val shape = RoundedCornerShape(10.66.dp)
     val showSuggested = option.isSuggested && revealed
     Box(
         Modifier.fillMaxWidth().heightIn(min = 41.32.dp).clip(shape)
             .background(if (selected) Violet100EDEDFD else Neutral100)
             .border(if (selected) 1.33.dp else 0.66.dp, if (selected) Violet4848F0 else Neutral300, shape)
-            .clickable(onClick = onClick).designNode("qs_text_disclose_${option.content}"),
+            .clickable(onClick = onClick).designNode("qs_text_disclose_$index"),
     ) {
         Box(Modifier.align(Alignment.TopEnd).padding(top = 8.66.dp, end = 10.66.dp)) { RadioIndicator(selected, 24.dp, 9.78.dp) }
         Column(Modifier.fillMaxWidth().padding(horizontal = 10.66.dp).padding(bottom = 10.66.dp)) {
@@ -212,12 +252,21 @@ private fun TextDiscloseOptionItem(option: TextDiscloseOption, selected: Boolean
                     Text("Suggested answer", color = Neutral900, fontSize = 8.sp, modifier = Modifier.padding(start = 2.66.dp))
                 }
             }
-            Text(
-                option.content, color = Neutral900, fontSize = 10.67.sp,
-                modifier = Modifier.padding(top = if (showSuggested) 5.33.dp else 10.66.dp).designNode("qs_text_disclose_content_${option.content}"),
-            )
+            val contentTop = if (showSuggested) 5.33.dp else 10.66.dp
+            if (option.contentIsLatex) {
+                LatexHole("content_$index", option.content, contentTop, latexHeight, onLatexBounds, onLatexHidden)
+            } else {
+                Text(
+                    option.content, color = Neutral900, fontSize = 10.67.sp,
+                    modifier = Modifier.padding(top = contentTop).designNode("qs_text_disclose_content_$index"),
+                )
+            }
             if (showSuggested && option.reason.isNotEmpty()) {
-                Text(option.reason, color = Neutral650, fontSize = 10.67.sp, modifier = Modifier.padding(top = 5.33.dp).designNode("qs_text_disclose_reason_${option.content}"))
+                if (option.reasonIsLatex) {
+                    LatexHole("reason_$index", option.reason, 5.33.dp, latexHeight, onLatexBounds, onLatexHidden)
+                } else {
+                    Text(option.reason, color = Neutral650, fontSize = 10.67.sp, modifier = Modifier.padding(top = 5.33.dp).designNode("qs_text_disclose_reason_$index"))
+                }
             }
         }
     }
@@ -227,7 +276,16 @@ private fun TextDiscloseOptionItem(option: TextDiscloseOption, selected: Boolean
  *  "Select the correct answer") with a "Suggested answer"/"Applied" reveal button on the right, over
  *  the vertical option rows. Tapping reveal shows every suggested option's reason + pill. */
 @Composable
-private fun TextDiscloseArea(options: List<TextDiscloseOption>, selected: Int?, revealed: Boolean, onSelect: (Int) -> Unit, onReveal: () -> Unit) {
+private fun TextDiscloseArea(
+    options: List<TextDiscloseOption>,
+    selected: Int?,
+    revealed: Boolean,
+    latexHeight: (String) -> Dp,
+    onLatexBounds: (String, String, Offset, IntSize) -> Unit,
+    onLatexHidden: (String) -> Unit,
+    onSelect: (Int) -> Unit,
+    onReveal: () -> Unit,
+) {
     Column(Modifier.fillMaxWidth()) {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Image(painterResource(Res.drawable.ic_checkmark), null, Modifier.size(16.dp), colorFilter = ColorFilter.tint(Neutral900))
@@ -247,7 +305,9 @@ private fun TextDiscloseArea(options: List<TextDiscloseOption>, selected: Int?, 
             }
         }
         Column(Modifier.padding(top = 10.66.dp).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.66.dp)) {
-            options.forEachIndexed { i, opt -> TextDiscloseOptionItem(opt, selected == i, revealed) { onSelect(i) } }
+            options.forEachIndexed { i, opt ->
+                TextDiscloseOptionItem(i, opt, selected == i, revealed, latexHeight, onLatexBounds, onLatexHidden) { onSelect(i) }
+            }
         }
     }
 }
@@ -692,6 +752,11 @@ fun MvbQuizStartScreen(
     textDiscloseOptions: List<TextDiscloseOption> = emptyList(), // TEXT_TRUE_FALSE disclose rows
     startDiscloseRevealed: Boolean = false, // preview hook: start with the AI reason/pill revealed
     startDiscloseSelected: Int? = null, // preview hook: pre-select a disclose option index
+    // LaTeX overlay bridge (TEXT_*): the window positions native KatexViews over the holes the panel
+    // leaves for LaTeX content/reason and feeds back their measured height. No-ops for plain text.
+    latexHeight: (key: String) -> Dp = { 0.dp },
+    onLatexBounds: (key: String, text: String, pos: Offset, sizePx: IntSize) -> Unit = { _, _, _, _ -> },
+    onLatexHidden: (key: String) -> Unit = {},
     responders: List<QuizResponder> = sampleResponders,
     resultBars: List<ResultBar> = sampleResultBars,
     screenshot: @Composable (Modifier) -> Unit = {},
@@ -763,6 +828,7 @@ fun MvbQuizStartScreen(
                         if (useTextDisclose) {
                             TextDiscloseArea(
                                 textDiscloseOptions, textDiscloseSelected, answersRevealed,
+                                latexHeight = latexHeight, onLatexBounds = onLatexBounds, onLatexHidden = onLatexHidden,
                                 onSelect = { textDiscloseSelected = it }, onReveal = { answersRevealed = true },
                             )
                         } else {

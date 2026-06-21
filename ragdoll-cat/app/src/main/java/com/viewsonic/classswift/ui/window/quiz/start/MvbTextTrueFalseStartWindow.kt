@@ -2,8 +2,6 @@ package com.viewsonic.classswift.ui.window.quiz.start
 
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
-import android.widget.FrameLayout
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,13 +19,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -80,7 +76,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.java.KoinJavaComponent.inject
-import kotlin.math.roundToInt
 
 /**
  * MvbTextTrueFalseStartWindow — CMP port (text variant). Shares [TrueFalseWindowModel] logic / socket
@@ -103,24 +98,25 @@ class MvbTextTrueFalseStartWindow(val context: Context) : IWindow<WindowMvbTextQ
 
     private val coroutineScope: CoroutineScope = CoroutineManager.getScope(this)
     private val composeHost = ComposeWindowHost()
+    private val katexOverlay by lazy { MvbTextQuizKatexOverlay(binding) }
     private var quizCancelJob: Job? = null
     private var stopwatchJob: Job? = null
     private var hasTriggeredResultState: Boolean = false
 
-    /** Disclose rows from the runtime quiz options (content + AI reason + suggested flag). */
+    /** Disclose rows from the runtime quiz options (content + AI reason + suggested + LaTeX flags). */
     private val discloseOptions: List<TextDiscloseOption> by lazy {
         QuizSharedUiInfo.quizOptionList.map {
-            TextDiscloseOption(content = it.content, reason = it.reason, isSuggested = it.isCorrectAnswer())
+            TextDiscloseOption(
+                content = it.content,
+                reason = it.reason,
+                isSuggested = it.isCorrectAnswer(),
+                contentIsLatex = it.content.isLatexContent(),
+                reasonIsLatex = it.reason.isLatexContent(),
+            )
         }
     }
     private val discloseOptionIds: List<Int> by lazy { QuizSharedUiInfo.quizOptionList.map { it.optionId } }
     private val isQuestionLatex: Boolean by lazy { QuizSharedUiInfo.quizContent.isLatexContent() }
-
-    // Last applied question-overlay rect (px, root space) — skip redundant layout churn.
-    private var katexLeft = -1
-    private var katexTop = -1
-    private var katexWidth = -1
-    private var katexHeight = -1
 
     override var tag: WindowTag = WindowTag.MVB_TEXT_TRUE_FALSE_START_QUIZ
     override var size: SizeInPixels = SizeInPixels(869f.dpToPx().toInt(), 496f.dpToPx().toInt()) // 853×480 shell + 8dp shadow padding
@@ -179,6 +175,9 @@ class MvbTextTrueFalseStartWindow(val context: Context) : IWindow<WindowMvbTextQ
                 responders = s.responders,
                 resultBars = s.resultBars,
                 textDiscloseOptions = discloseOptions,
+                latexHeight = { key -> katexOverlay.heights[key] ?: 0.dp },
+                onLatexBounds = { key, text, pos, sizePx -> katexOverlay.position(key, text, pos, sizePx.width, fixedHeightPx = null) },
+                onLatexHidden = { key -> katexOverlay.hide(key) },
                 screenshot = { m -> QuestionContent(m) },
                 onClose = { showCloseConfirmDialog() },
                 onMinimize = {
@@ -215,33 +214,16 @@ class MvbTextTrueFalseStartWindow(val context: Context) : IWindow<WindowMvbTextQ
 
     /**
      * The question region (slot). Plain text → pure Compose; LaTeX → a transparent hole whose bounds
-     * drive the native [KatexView][binding.cskvQuestion] overlay (positioned in [positionQuestionKatex]).
+     * drive the native KatexView overlay (fixed to the 169dp box height, no feedback needed).
      */
     @Composable
     private fun QuestionContent(modifier: Modifier) {
         val content = QuizSharedUiInfo.quizContent
         if (isQuestionLatex) {
-            Box(modifier.onGloballyPositioned { positionQuestionKatex(it.positionInRoot(), it.size, content) })
+            Box(modifier.onGloballyPositioned { katexOverlay.position("question", content, it.positionInRoot(), it.size.width, fixedHeightPx = it.size.height) })
         } else {
             OT(content, Color(0xFF333333), 10.67.sp, modifier = modifier)
         }
-    }
-
-    /** Place the native KatexView over the Compose question box (px, root space); idempotent. */
-    private fun positionQuestionKatex(pos: Offset, sizePx: IntSize, text: String) {
-        val left = pos.x.roundToInt()
-        val top = pos.y.roundToInt()
-        if (left == katexLeft && top == katexTop && sizePx.width == katexWidth && sizePx.height == katexHeight) return
-        katexLeft = left; katexTop = top; katexWidth = sizePx.width; katexHeight = sizePx.height
-        val kv = binding.cskvQuestion
-        val lp = (kv.layoutParams as FrameLayout.LayoutParams)
-        lp.width = sizePx.width
-        lp.height = sizePx.height
-        lp.leftMargin = left
-        lp.topMargin = top
-        kv.layoutParams = lp
-        if (kv.visibility != View.VISIBLE) kv.visibility = View.VISIBLE
-        kv.setText(text)
     }
 
     // ---- State pump: live quizzing UI → Compose Ui ----
@@ -469,7 +451,7 @@ class MvbTextTrueFalseStartWindow(val context: Context) : IWindow<WindowMvbTextQ
 
     override fun onDestroy() {
         composeHost.destroy()
-        binding.cskvQuestion.release()
+        katexOverlay.release()
         stopwatchJob?.cancel()
         quizCommonWindowModel.removeOpenedQuizWindowTag(tag)
         quizCommonWindowModel.onCleared()

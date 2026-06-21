@@ -24,4 +24,42 @@
         android:textSize="@dimen/quiz_mvb_text_md"
         android:visibility="gone" />
 
+    <!-- Disclose option LaTeX overlays (TF has exactly 2 options). content = neutral_900,
+         reason = neutral_650; positioned over the Compose holes at runtime, height fed back. -->
+    <com.viewsonic.classswift.ui.widget.KatexView
+        android:id="@+id/cskv_content_0"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="start|top"
+        android:textColor="@color/neutral_900"
+        android:textSize="@dimen/quiz_mvb_text_md"
+        android:visibility="gone" />
+
+    <com.viewsonic.classswift.ui.widget.KatexView
+        android:id="@+id/cskv_content_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="start|top"
+        android:textColor="@color/neutral_900"
+        android:textSize="@dimen/quiz_mvb_text_md"
+        android:visibility="gone" />
+
+    <com.viewsonic.classswift.ui.widget.KatexView
+        android:id="@+id/cskv_reason_0"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="start|top"
+        android:textColor="@color/neutral_650"
+        android:textSize="@dimen/quiz_mvb_text_md"
+        android:visibility="gone" />
+
+    <com.viewsonic.classswift.ui.widget.KatexView
+        android:id="@+id/cskv_reason_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="start|top"
+        android:textColor="@color/neutral_650"
+        android:textSize="@dimen/quiz_mvb_text_md"
+        android:visibility="gone" />
+
 </FrameLayout>
