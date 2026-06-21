@@ -4,14 +4,18 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.ServiceInfo
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
+import com.viewsonic.classswift.BuildConfig
 import com.viewsonic.classswift.R
 import com.viewsonic.classswift.data.clientapp.ClientAppInfo
 import com.viewsonic.classswift.data.clientapp.myviewboard.MyViewBoardBinder
@@ -22,6 +26,7 @@ import com.viewsonic.classswift.manager.AccountManager
 import com.viewsonic.classswift.manager.PendingClassEntryWindowManager
 import com.viewsonic.classswift.ui.helper.JoinClassWindowOpener
 import com.viewsonic.classswift.ui.window.JoinClassWindow
+import com.viewsonic.classswift.ui.window.quiz.start.DebugTextTrueFalseQuizWindow
 import com.viewsonic.classswift.ui.window.SelectOrgAndSelectClassWindow
 import com.viewsonic.classswift.ui.window.UpcomingMaintenanceWindow
 import com.viewsonic.classswift.uimanager.maintenance.MaintenanceAnnouncementsUiManager
@@ -48,6 +53,8 @@ class ClassSwiftService : Service() {
     companion object {
         const val CHANNEL_ID = "ClassSwiftServiceChannel"
         const val NOTIFICATION_ID = 1
+        // DEBUG-only adb hook to open the Text True/False panel with sample data (see registerDebugQuizReceiver).
+        private const val DEBUG_ACTION_OPEN_TEXT_TF = "com.viewsonic.classswift.DEBUG_OPEN_TEXT_TF"
         private var _currentBoundClientSet: MutableSet<ClientAppInfo> = mutableSetOf()
         private val _isServiceStartedFlow = MutableStateFlow(false)
         val isServiceStartedFlow: StateFlow<Boolean> = _isServiceStartedFlow.asStateFlow()
@@ -107,6 +114,32 @@ class ClassSwiftService : Service() {
         createNotificationChannel()
         CSWindowManager.reset()
         CSWindowManager.addOnWindowChangedListener(myViewBoardWindowStateListener)
+        registerDebugQuizReceiver()
+    }
+
+    /**
+     * DEBUG ONLY — opens [DebugTextTrueFalseQuizWindow] (CMP Text True/False panel + native KatexView
+     * overlay) on an adb broadcast, for eyeballing the rendering without dispatching a real quiz:
+     *   adb shell am broadcast -a com.viewsonic.classswift.DEBUG_OPEN_TEXT_TF -p <applicationId>
+     * Registered only in debug builds and torn down in [onDestroy]; never present in release.
+     */
+    private var debugQuizReceiver: BroadcastReceiver? = null
+
+    private fun registerDebugQuizReceiver() {
+        if (!BuildConfig.DEBUG) return
+        val receiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                Timber.d("[debugQuizReceiver] opening DebugTextTrueFalseQuizWindow")
+                CSWindowManager.createWindow(DebugTextTrueFalseQuizWindow(this@ClassSwiftService), Gravity.CENTER)
+            }
+        }
+        debugQuizReceiver = receiver
+        ContextCompat.registerReceiver(
+            this,
+            receiver,
+            IntentFilter(DEBUG_ACTION_OPEN_TEXT_TF),
+            ContextCompat.RECEIVER_EXPORTED,
+        )
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -127,6 +160,8 @@ class ClassSwiftService : Service() {
         refreshMyViewBoardBoundState()
         myViewBoardBinder.onServiceDestroyed()
         CSWindowManager.removeOnWindowChangedListener(myViewBoardWindowStateListener)
+        debugQuizReceiver?.let { runCatching { unregisterReceiver(it) } }
+        debugQuizReceiver = null
         clearAllWindow()
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
