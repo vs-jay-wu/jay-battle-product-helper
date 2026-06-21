@@ -117,9 +117,11 @@ fun MyClassScreen(
     studentCount: String = "35",
     phase: MyClassPhase = MyClassPhase.LIST,
     enterEnabled: Boolean = true,
+    newClassEnabled: Boolean = true,
     onSelect: (String) -> Unit = {},
     onDelete: (String) -> Unit = {},
     onEnter: () -> Unit = {},
+    onNewClass: () -> Unit = {},
     onBack: () -> Unit = {},
     onHub: () -> Unit = {},
     onRefresh: () -> Unit = {},
@@ -168,9 +170,14 @@ fun MyClassScreen(
                         }
                     }
                     Box(Modifier.fillMaxWidth().height(1.dp).background(StrokeC3C7C7))
-                    // +New Class — disabled in step 1 (wired in step 2)
-                    Box(Modifier.fillMaxWidth().height(50.dp).designNode("mc_add_class"), contentAlignment = Alignment.Center) {
-                        Text("+New Class", color = StrokeC3C7C7, fontSize = 16.sp, fontWeight = FontWeight.Medium)
+                    // +New Class (window_my_class_new_class: green #78CB3D enabled / C3C7C7 disabled)
+                    Box(
+                        Modifier.fillMaxWidth().height(50.dp)
+                            .then(if (newClassEnabled) Modifier.clickable(onClick = onNewClass) else Modifier)
+                            .designNode("mc_add_class"),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Text("+New Class", color = if (newClassEnabled) Color(0xFF78CB3D) else StrokeC3C7C7, fontSize = 16.sp, fontWeight = FontWeight.Medium)
                     }
                 }
             }

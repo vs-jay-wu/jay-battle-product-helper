@@ -54,7 +54,12 @@ class MyClassWindow(val context: Context) : ComposeHostWindow(context) {
     override var size: SizeInPixels = SizeInPixels(680f.dpToPx().toInt(), 393f.dpToPx().toInt())
     override fun getCurrentSize(): SizeInPixels = size
 
-    private data class Ui(val classes: List<ClassroomInfo>, val selectedId: String?, val phase: MyClassPhase)
+    private data class Ui(
+        val classes: List<ClassroomInfo>,
+        val selectedId: String?,
+        val phase: MyClassPhase,
+        val creating: Boolean = false,
+    )
     private val ui = MutableStateFlow(Ui(emptyList(), null, MyClassPhase.LOADING))
 
     override fun onCreate() {
@@ -77,9 +82,11 @@ class MyClassWindow(val context: Context) : ComposeHostWindow(context) {
             studentCount = selected?.maxStudentCount?.toString() ?: "-",
             phase = state.phase,
             enterEnabled = (selected?.maxStudentCount ?: 0) > 0 && selected?.isLessonOnGoing() != true,
+            newClassEnabled = !state.creating,
             onSelect = { id -> ui.update { it.copy(selectedId = id) } },
             onDelete = { id -> state.classes.firstOrNull { it.id == id }?.let { confirmDelete(it) } },
             onEnter = { selected?.let { enterClass(it) } },
+            onNewClass = { addNewClass() },
             onBack = { goBackToSelectOrg() },
             onHub = { openHub() },
             onRefresh = { ui.update { it.copy(phase = MyClassPhase.LOADING) }; wModel.refreshClassPage() },
@@ -103,8 +110,10 @@ class MyClassWindow(val context: Context) : ComposeHostWindow(context) {
                             }
                         }
                         is ClassUIEvent.AddClass -> ui.update { s ->
-                            s.copy(classes = s.classes + event.classInfo, phase = MyClassPhase.LIST)
+                            // New class is appended and auto-selected (mirrors the original add flow).
+                            s.copy(classes = s.classes + event.classInfo, selectedId = event.classInfo.id, phase = MyClassPhase.LIST, creating = false)
                         }
+                        ClassUIEvent.EnableAddClassButton -> ui.update { it.copy(creating = false) }
                         is ClassUIEvent.DeleteClassSuccess -> {
                             dialogWindow?.dismiss()
                             ui.update { s ->
@@ -136,6 +145,18 @@ class MyClassWindow(val context: Context) : ComposeHostWindow(context) {
                 .build()
             dialogWindow?.show()
         }
+    }
+
+    /** +New Class — auto-name "New Class$i" (first free index), then create. Mirrors the original. */
+    private fun addNewClass() {
+        if (ui.value.creating) return
+        val prefix = context.getString(R.string.my_class_action_new_class)
+        val names = ui.value.classes.map { it.displayName }
+        val count = ui.value.classes.size
+        val classNum = (1..count).firstOrNull { i -> names.none { it == "$prefix$i" } } ?: -1
+        val newName = if (classNum != -1) "$prefix$classNum" else "$prefix${if (count > 0) count + 1 else 1}"
+        ui.update { it.copy(creating = true) }
+        wModel.createClassroom(newName)
     }
 
     private fun enterClass(classInfo: ClassroomInfo) {
