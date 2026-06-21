@@ -35,12 +35,8 @@ import androidx.compose.ui.unit.sp
 import com.viewsonic.classswift.core.ui.designNode
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.Res
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_arrow_clockwise_16
+import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_check_cross_circle
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_close
-import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_mvb_qc_chip_audio
-import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_mvb_qc_chip_multiple_choice
-import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_mvb_qc_chip_poll
-import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_mvb_qc_chip_short_answer
-import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_mvb_qc_chip_true_false
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_mvb_quizzing_header
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_mvb_quizzing_options
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_mvb_quizzing_responses
@@ -48,16 +44,17 @@ import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 
-/** The 8 service-path quiz-start variants — type icon, label, and option-chip layout. */
-enum class MvbQuizType(val icon: DrawableResource, val label: String, val chips: List<String>) {
-    MULTIPLE_CHOICE(Res.drawable.ic_mvb_qc_chip_multiple_choice, "Multiple Selection", listOf("A", "B", "C", "D")),
-    TRUE_FALSE(Res.drawable.ic_mvb_qc_chip_true_false, "True/False", listOf("True", "False")),
-    SHORT_ANSWER(Res.drawable.ic_mvb_qc_chip_short_answer, "Short Answer", emptyList()),
-    POLL(Res.drawable.ic_mvb_qc_chip_poll, "Poll", listOf("A", "B", "C", "D")),
-    AUDIO(Res.drawable.ic_mvb_qc_chip_audio, "Audio", emptyList()),
-    SKETCH(Res.drawable.ic_mvb_qc_chip_short_answer, "Sketch Response", emptyList()),
-    TEXT_SHORT_ANSWER(Res.drawable.ic_mvb_qc_chip_short_answer, "Short Answer (Text)", emptyList()),
-    TEXT_TRUE_FALSE(Res.drawable.ic_mvb_qc_chip_true_false, "True/False (Text)", listOf("True", "False")),
+/** The 8 service-path quiz-start variants — label + option-chip layout. (The quizzing panel's
+ *  type icon is the shared `ic_check_cross_circle`, per panel_mvb_quizzing.xml, not per-type.) */
+enum class MvbQuizType(val label: String, val chips: List<String>) {
+    MULTIPLE_CHOICE("Multiple Selection", listOf("A", "B", "C", "D")),
+    TRUE_FALSE("True/False", listOf("True", "False")),
+    SHORT_ANSWER("Short Answer", emptyList()),
+    POLL("Poll", listOf("A", "B", "C", "D")),
+    AUDIO("Audio", emptyList()),
+    SKETCH("Sketch Response", emptyList()),
+    TEXT_SHORT_ANSWER("Short Answer (Text)", emptyList()),
+    TEXT_TRUE_FALSE("True/False (Text)", listOf("True", "False")),
 }
 
 @Composable
@@ -161,7 +158,7 @@ fun MvbQuizStartScreen(
             // Left: question section
             Column(Modifier.width(333.33.dp).fillMaxHeight().padding(16.dp)) {
                 Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                    Image(painterResource(type.icon), null, Modifier.size(16.dp), colorFilter = ColorFilter.tint(Neutral900))
+                    Image(painterResource(Res.drawable.ic_check_cross_circle), null, Modifier.size(16.dp), colorFilter = ColorFilter.tint(Neutral900))
                     Text(type.label, color = Neutral900, fontSize = 10.67.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 2.66.dp).designNode("qs_type"))
                     Spacer(Modifier.weight(1f))
                     Image(painterResource(Res.drawable.ic_mvb_quizzing_stopwatch), null, Modifier.size(16.dp))
