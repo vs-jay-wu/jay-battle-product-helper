@@ -429,9 +429,13 @@ fun MvbQuizStartScreen(
     state: QuizPanelState = QuizPanelState.QUIZZING,
     joined: Int = 21,
     capacity: Int = 30,
+    stopwatch: String = "00:00",
     responders: List<QuizResponder> = sampleResponders,
     resultBars: List<ResultBar> = sampleResultBars,
+    screenshot: @Composable (Modifier) -> Unit = {},
     onClose: () -> Unit = {},
+    onEndAndReview: () -> Unit = {},
+    onPublishDisclose: (Int) -> Unit = {},
 ) {
     var discloseSelected by remember { mutableStateOf<Int?>(null) }
     var resultOverview by remember { mutableStateOf(false) }
@@ -456,15 +460,15 @@ fun MvbQuizStartScreen(
                     Spacer(Modifier.weight(1f))
                     if (state == QuizPanelState.QUIZZING) {
                         Image(painterResource(Res.drawable.ic_mvb_quizzing_stopwatch), null, Modifier.size(16.dp))
-                        Text("00:00", color = Neutral500, fontSize = 12.sp, fontWeight = FontWeight.Medium, modifier = Modifier.padding(start = 2.66.dp).designNode("qs_stopwatch"))
+                        Text(stopwatch, color = Neutral500, fontSize = 12.sp, fontWeight = FontWeight.Medium, modifier = Modifier.padding(start = 2.66.dp).designNode("qs_stopwatch"))
                     }
                 }
-                // Screenshot preview (empty capture frame)
+                // Screenshot of the captured question — injected by the window (slot); empty frame in preview.
                 Box(
                     Modifier.padding(top = 10.66.dp).fillMaxWidth().height(169.dp)
                         .clip(RoundedCornerShape(8.dp)).background(Color.White).border(0.66.dp, Neutral300, RoundedCornerShape(8.dp))
                         .designNode("qs_screenshot"),
-                )
+                ) { screenshot(Modifier.fillMaxSize().clip(RoundedCornerShape(8.dp))) }
                 // Mid area: options (QUIZZING) / answer selector (DISCLOSE) / result bars (RESULT)
                 when (state) {
                     QuizPanelState.DISCLOSE -> Box(Modifier.padding(top = 10.66.dp)) {
@@ -488,6 +492,7 @@ fun MvbQuizStartScreen(
                         Box(
                             Modifier.padding(top = 10.66.dp).fillMaxWidth().height(37.33.dp)
                                 .clip(RoundedCornerShape(5.33.dp)).background(if (enabled) Violet4848F0 else Neutral200)
+                                .clickable(enabled = enabled) { discloseSelected?.let(onPublishDisclose) }
                                 .designNode("qs_disclose_publish"),
                             contentAlignment = Alignment.Center,
                         ) { Text("Show question(s) result", color = if (enabled) Color.White else Neutral500, fontSize = 12.sp, fontWeight = FontWeight.Medium) }
@@ -495,6 +500,7 @@ fun MvbQuizStartScreen(
                     QuizPanelState.QUIZZING -> Box(
                         Modifier.padding(top = 10.66.dp).fillMaxWidth().height(37.33.dp)
                             .clip(RoundedCornerShape(5.33.dp)).background(Color.White).border(0.66.dp, RedDB0025, RoundedCornerShape(5.33.dp))
+                            .clickable(onClick = onEndAndReview)
                             .designNode("qs_end_review"),
                         contentAlignment = Alignment.Center,
                     ) { Text("End and review question", color = RedDB0025, fontSize = 12.sp, fontWeight = FontWeight.Medium) }
