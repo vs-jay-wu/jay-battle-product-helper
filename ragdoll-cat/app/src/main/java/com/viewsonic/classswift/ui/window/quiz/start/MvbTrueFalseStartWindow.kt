@@ -157,7 +157,7 @@ class MvbTrueFalseStartWindow(val context: Context) : ComposeHostWindow(context)
                     unclosedMissionUiManager.notifyMissionMinimizedIfNeeded(MissionType.QUIZ)
                 },
                 onEndAndReview = { endQuiz() },
-                onPublishDisclose = { optionIndex -> sendDiscloseAnswer(optionIndex) },
+                onPublishDisclose = { indices -> sendDiscloseAnswer(indices) },
             )
             if (!s.hasNetwork) {
                 Box(Modifier.align(Alignment.BottomCenter).fillMaxWidth().padding(16.dp).clip(RoundedCornerShape(8.dp)).background(Color(0xFF2E3133)).padding(horizontal = 16.dp, vertical = 10.dp)) {
@@ -416,10 +416,10 @@ class MvbTrueFalseStartWindow(val context: Context) : ComposeHostWindow(context)
         }
     }
 
-    /** [optionIndex] is the chip index in [MvbQuizType.TRUE_FALSE.chips] (0=True, 1=False). */
-    private fun sendDiscloseAnswer(optionIndex: Int) {
-        val optionId = if (optionIndex == 0) TrueFalseWindowModel.TRUE_OPTION_INDEX else TrueFalseWindowModel.FALSE_OPTION_INDEX
-        quizStartWindowModel.discloseAnswer(listOf(optionId))
+    /** [indices] are chip indices in [MvbQuizType.TRUE_FALSE.chips] (0=True, 1=False); single-select. */
+    private fun sendDiscloseAnswer(indices: List<Int>) {
+        val ids = indices.map { if (it == 0) TrueFalseWindowModel.TRUE_OPTION_INDEX else TrueFalseWindowModel.FALSE_OPTION_INDEX }
+        quizStartWindowModel.discloseAnswer(ids)
     }
 
     override fun onDestroy() {

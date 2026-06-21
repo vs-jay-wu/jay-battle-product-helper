@@ -108,10 +108,24 @@ private fun RadioIndicator(checked: Boolean) {
     }
 }
 
-/** A disclose answer option — `widget_disclose_answer_option_item`: big centered label with a
- *  radio in the top-end corner; selected swaps to #EDEDFD card + #4848F0 border. */
+/** Checkbox indicator — `bg_disclose_checkbox_*`: 21.33dp rounded square; checked = #4848F0 fill
+ *  with a white check, unchecked = white + black border. */
 @Composable
-private fun DiscloseOptionItem(label: String, checked: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
+private fun CheckboxIndicator(checked: Boolean) {
+    val shape = RoundedCornerShape(5.33.dp)
+    if (checked) {
+        Box(Modifier.size(21.33.dp).clip(shape).background(Violet4848F0), contentAlignment = Alignment.Center) {
+            Image(painterResource(Res.drawable.ic_check_white), null, Modifier.size(12.dp))
+        }
+    } else {
+        Box(Modifier.size(21.33.dp).clip(shape).background(Color.White).border(0.66.dp, Color.Black, shape))
+    }
+}
+
+/** A disclose answer option — `widget_disclose_answer_option_item`: big centered label with a
+ *  radio (single) / checkbox (multi) in the top-end corner; selected swaps to #EDEDFD + #4848F0 border. */
+@Composable
+private fun DiscloseOptionItem(label: String, checked: Boolean, multi: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
     val shape = RoundedCornerShape(10.66.dp)
     Box(
         modifier.fillMaxHeight().clip(shape)
@@ -120,14 +134,14 @@ private fun DiscloseOptionItem(label: String, checked: Boolean, onClick: () -> U
             .clickable(onClick = onClick).designNode("qs_disclose_$label"),
     ) {
         Text(label, color = Neutral900, fontSize = 27.sp, fontWeight = FontWeight.Bold, modifier = Modifier.align(Alignment.Center))
-        Box(Modifier.align(Alignment.TopEnd).padding(4.dp)) { RadioIndicator(checked) }
+        Box(Modifier.align(Alignment.TopEnd).padding(4.dp)) { if (multi) CheckboxIndicator(checked) else RadioIndicator(checked) }
     }
 }
 
-/** Disclose selector — `ll_disclose_selector_area`: titled white card over a row of single-select
- *  answer options (mirrors `CSDiscloseAnswerOptionGroup`, SINGLE mode). */
+/** Disclose selector — `ll_disclose_selector_area`: titled white card over a row of answer options
+ *  (mirrors `CSDiscloseAnswerOptionGroup`; [multi] = MULTIPLE selection mode). */
 @Composable
-private fun DiscloseSelectorArea(options: List<String>, selected: Int?, onSelect: (Int) -> Unit) {
+private fun DiscloseSelectorArea(options: List<String>, selected: Set<Int>, multi: Boolean, onToggle: (Int) -> Unit) {
     Column(
         Modifier.fillMaxWidth().clip(RoundedCornerShape(8.dp)).background(Color.White).border(0.66.dp, Neutral300, RoundedCornerShape(8.dp))
             .padding(horizontal = 6.66.dp).padding(top = 10.66.dp, bottom = 16.dp),
@@ -138,7 +152,7 @@ private fun DiscloseSelectorArea(options: List<String>, selected: Int?, onSelect
         }
         Row(Modifier.padding(top = 10.66.dp).fillMaxWidth().height(67.33.dp), horizontalArrangement = Arrangement.spacedBy(10.66.dp)) {
             options.forEachIndexed { i, label ->
-                DiscloseOptionItem(label, checked = selected == i, onClick = { onSelect(i) }, modifier = Modifier.weight(1f))
+                DiscloseOptionItem(label, checked = i in selected, multi = multi, onClick = { onToggle(i) }, modifier = Modifier.weight(1f))
             }
         }
     }
@@ -427,19 +441,22 @@ private fun ResultOverview(correctLabels: List<String>, correct: Int, incorrect:
 @Composable
 fun MvbQuizStartScreen(
     type: MvbQuizType = MvbQuizType.MULTIPLE_CHOICE,
+    typeSubtitle: String? = null,
     state: QuizPanelState = QuizPanelState.QUIZZING,
     joined: Int = 21,
     capacity: Int = 30,
     stopwatch: String = "00:00",
+    options: List<String> = type.chips,
+    multiSelectDisclose: Boolean = false,
     responders: List<QuizResponder> = sampleResponders,
     resultBars: List<ResultBar> = sampleResultBars,
     screenshot: @Composable (Modifier) -> Unit = {},
     onClose: () -> Unit = {},
     onMinimize: () -> Unit = {},
     onEndAndReview: () -> Unit = {},
-    onPublishDisclose: (Int) -> Unit = {},
+    onPublishDisclose: (List<Int>) -> Unit = {},
 ) {
-    var discloseSelected by remember { mutableStateOf<Int?>(null) }
+    var discloseSelected by remember { mutableStateOf<Set<Int>>(emptySet()) }
     var resultOverview by remember { mutableStateOf(false) }
     var highlightedBar by remember { mutableStateOf<Int?>(null) }
     Column(
@@ -461,6 +478,9 @@ fun MvbQuizStartScreen(
                 Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                     Image(painterResource(Res.drawable.ic_check_cross_circle), null, Modifier.size(16.dp), colorFilter = ColorFilter.tint(Neutral900))
                     Text(type.label, color = Neutral900, fontSize = 10.67.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 2.66.dp).designNode("qs_type"))
+                    if (typeSubtitle != null) {
+                        Text(typeSubtitle, color = Gray999, fontSize = 8.sp, modifier = Modifier.padding(start = 5.33.dp).designNode("qs_type_subtitle"))
+                    }
                     Spacer(Modifier.weight(1f))
                     if (state == QuizPanelState.QUIZZING) {
                         Image(painterResource(Res.drawable.ic_mvb_quizzing_stopwatch), null, Modifier.size(16.dp))
@@ -476,15 +496,21 @@ fun MvbQuizStartScreen(
                 // Mid area: options (QUIZZING) / answer selector (DISCLOSE) / result bars (RESULT)
                 when (state) {
                     QuizPanelState.DISCLOSE -> Box(Modifier.padding(top = 10.66.dp)) {
-                        DiscloseSelectorArea(type.chips, discloseSelected) { discloseSelected = it }
+                        DiscloseSelectorArea(options, discloseSelected, multiSelectDisclose) { i ->
+                            discloseSelected = when {
+                                !multiSelectDisclose -> setOf(i)
+                                i in discloseSelected -> discloseSelected - i
+                                else -> discloseSelected + i
+                            }
+                        }
                     }
                     QuizPanelState.RESULT -> Box(Modifier.padding(top = 10.66.dp)) {
                         ResultOptionsArea(resultBars, highlightedBar) { i -> highlightedBar = if (highlightedBar == i) null else i }
                     }
-                    QuizPanelState.QUIZZING -> if (type.chips.isNotEmpty()) {
+                    QuizPanelState.QUIZZING -> if (options.isNotEmpty()) {
                         Box(Modifier.padding(top = 10.66.dp)) { SectionLabel(Res.drawable.ic_mvb_quizzing_options, "Options") }
                         Row(Modifier.padding(top = 10.66.dp).fillMaxWidth().height(67.33.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            type.chips.forEach { OptionChip(it, Modifier.weight(1f).designNode("qs_chip_$it")) }
+                            options.forEach { OptionChip(it, Modifier.weight(1f).designNode("qs_chip_$it")) }
                         }
                     }
                 }
@@ -492,11 +518,11 @@ fun MvbQuizStartScreen(
                 // Bottom action: End-and-review (QUIZZING) / Show-result (DISCLOSE) / none (RESULT)
                 when (state) {
                     QuizPanelState.DISCLOSE -> {
-                        val enabled = discloseSelected != null
+                        val enabled = discloseSelected.isNotEmpty()
                         Box(
                             Modifier.padding(top = 10.66.dp).fillMaxWidth().height(37.33.dp)
                                 .clip(RoundedCornerShape(5.33.dp)).background(if (enabled) Violet4848F0 else Neutral200)
-                                .clickable(enabled = enabled) { discloseSelected?.let(onPublishDisclose) }
+                                .clickable(enabled = enabled) { onPublishDisclose(discloseSelected.sorted()) }
                                 .designNode("qs_disclose_publish"),
                             contentAlignment = Alignment.Center,
                         ) { Text("Show question(s) result", color = if (enabled) Color.White else Neutral500, fontSize = 12.sp, fontWeight = FontWeight.Medium) }
