@@ -20,9 +20,13 @@ import com.viewsonic.classswift.feature.servicescreens.ui.ToastScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.ComingSoonPrompt
 import com.viewsonic.classswift.feature.servicescreens.ui.JoinClassScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.MvbQuizEditScreen
+import com.viewsonic.classswift.feature.servicescreens.ui.BarStyle
 import com.viewsonic.classswift.feature.servicescreens.ui.MvbQuizStartScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.MvbQuizType
 import com.viewsonic.classswift.feature.servicescreens.ui.QuizPanelState
+import com.viewsonic.classswift.feature.servicescreens.ui.QuizResponder
+import com.viewsonic.classswift.feature.servicescreens.ui.ResponderState
+import com.viewsonic.classswift.feature.servicescreens.ui.ResultBar
 import com.viewsonic.classswift.feature.servicescreens.ui.RandomDrawScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.SelectOrgAndClassScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.ToolbarScreen
@@ -75,6 +79,30 @@ fun main() = runDesignerTarget(
         DesignerPage("svc_quiz_tf_result", "Quiz Start · True/False (Result)") { Dialog { MvbQuizStartScreen(MvbQuizType.TRUE_FALSE, state = QuizPanelState.RESULT) } },
         DesignerPage("svc_quiz_tf", "Quiz Start · True/False") { Dialog { MvbQuizStartScreen(MvbQuizType.TRUE_FALSE) } },
         DesignerPage("svc_quiz_sa", "Quiz Start · Short Answer") { Dialog { MvbQuizStartScreen(MvbQuizType.SHORT_ANSWER) } },
+        DesignerPage("svc_quiz_sa_result", "Quiz Start · Short Answer (Result)") {
+            Dialog {
+                val names = listOf("Brandon Wang", "Emily Chen", "Marcus Lee", "Sophia Liu", "Daniel Wu", "Olivia Yang")
+                val answers = listOf(
+                    "Photosynthesis converts sunlight, water and CO2 into glucose and oxygen.",
+                    "Mitochondria is the powerhouse of the cell.",
+                    "Because the water evaporates, condenses into clouds, then falls as rain.",
+                    "42",
+                    "It expands when heated.",
+                )
+                val responders = answers.mapIndexed { i, a ->
+                    QuizResponder("%02d".format(i + 1), names[i], ResponderState.ANSWERED, answer = a)
+                } + QuizResponder("06", names[5], ResponderState.NOT_SUBMITTED)
+                MvbQuizStartScreen(
+                    type = MvbQuizType.SHORT_ANSWER, state = QuizPanelState.RESULT,
+                    submissionMode = true, answerPopup = true, options = emptyList(),
+                    joined = 5, capacity = 6, responders = responders,
+                    resultBars = listOf(
+                        ResultBar("Submitted", 5, 6, false, BarStyle.CORRECT),
+                        ResultBar("Not submitted", 1, 6, false, BarStyle.NEUTRAL),
+                    ),
+                )
+            }
+        },
         DesignerPage("svc_quiz_poll", "Quiz Start · Poll") { Dialog { MvbQuizStartScreen(MvbQuizType.POLL) } },
         DesignerPage("svc_quiz_audio", "Quiz Start · Audio") { Dialog { MvbQuizStartScreen(MvbQuizType.AUDIO) } },
         DesignerPage("svc_quiz_sketch", "Quiz Start · Sketch Response") { Dialog { MvbQuizStartScreen(MvbQuizType.SKETCH) } },
