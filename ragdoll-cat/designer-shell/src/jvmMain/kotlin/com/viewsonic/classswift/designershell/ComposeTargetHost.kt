@@ -26,7 +26,6 @@ import com.viewsonic.classswift.feature.servicescreens.ui.RandomDrawScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.SelectOrgAndClassScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.ToolbarScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.SpinnerHeader
-import com.viewsonic.classswift.feature.servicescreens.ui.StudentManagementScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.TimerToolScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.UnderMaintenanceScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.UpcomingMaintenanceCornerPrompt
@@ -64,7 +63,6 @@ fun main() = runDesignerTarget(
         DesignerPage("svc_coming_soon", "Service · Coming Soon Prompt") { Dialog { ComingSoonPrompt() } },
         DesignerPage("svc_upgrade", "Service · Upgrade Prompt") { Dialog { UpgradePrompt() } },
         DesignerPage("svc_select_org_class", "Service · Select Org & Class") { Dialog { SelectOrgAndClassScreen() } },
-        DesignerPage("svc_student_mgmt", "Service · Student Management") { Dialog { StudentManagementScreen() } },
         DesignerPage("svc_join_class", "Service · Join Class") { Dialog { JoinClassScreen() } },
         DesignerPage("svc_buzzer", "Service · Buzzer") { Dialog { BuzzerScreen() } },
         DesignerPage("svc_random_draw", "Service · Random Draw") { Dialog { RandomDrawScreen() } },

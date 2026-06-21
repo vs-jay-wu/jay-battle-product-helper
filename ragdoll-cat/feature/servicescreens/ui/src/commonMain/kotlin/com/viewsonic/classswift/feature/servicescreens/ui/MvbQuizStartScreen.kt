@@ -92,7 +92,7 @@ fun MvbQuizStartScreen(
     type: MvbQuizType = MvbQuizType.MULTIPLE_CHOICE,
     joined: Int = 21,
     capacity: Int = 30,
-    responders: List<String> = sampleStudents.take(21).map { it.name },
+    responders: List<String> = sampleStudentNames.take(21),
     onClose: () -> Unit = {},
 ) {
     Column(

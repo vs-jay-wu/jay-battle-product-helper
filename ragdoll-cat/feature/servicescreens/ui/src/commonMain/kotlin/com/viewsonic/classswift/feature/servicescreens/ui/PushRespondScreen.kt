@@ -50,7 +50,7 @@ private fun Tab(label: String, selected: Boolean, onClick: () -> Unit, nodeId: S
  * Content / Records tabs, and a grid of student submission cards. */
 @Composable
 fun PushRespondScreen(
-    submissions: List<String> = sampleStudents.take(12).map { it.name },
+    submissions: List<String> = sampleStudentNames.take(12),
     onClose: () -> Unit = {},
 ) {
     var tab by remember { mutableStateOf(0) }

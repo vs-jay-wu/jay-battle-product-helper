@@ -99,7 +99,6 @@ import com.viewsonic.classswift.ui.window.ComingSoonPromptWindow
 import com.viewsonic.classswift.ui.window.SelectOrgAndSelectClassWindow
 import com.viewsonic.classswift.ui.window.QuizCollectionWindow
 import com.viewsonic.classswift.ui.window.JoinClassWindow
-import com.viewsonic.classswift.ui.window.StudentManagementWindow
 import com.viewsonic.classswift.ui.window.TutorialWindow
 import com.viewsonic.classswift.ui.window.UnderMaintenanceWindow
 import com.viewsonic.classswift.ui.window.UpcomingMaintenanceCornerPromptWindow
@@ -135,7 +134,6 @@ import com.viewsonic.classswift.ui.windowmodel.LeaderboardWindowModel
 import com.viewsonic.classswift.ui.windowmodel.QuizCollectionWindowModel
 import com.viewsonic.classswift.ui.windowmodel.SelectOrgAndSelectClassWindowModel
 import com.viewsonic.classswift.ui.windowmodel.JoinClassWindowModel
-import com.viewsonic.classswift.ui.windowmodel.StudentManagementWindowModel
 import com.viewsonic.classswift.ui.windowmodel.ToolbarManager
 import com.viewsonic.classswift.ui.windowmodel.quiz.AudioStartWindowModel
 import com.viewsonic.classswift.ui.windowmodel.quiz.BatchQuizResultWindowModel
@@ -337,7 +335,6 @@ object KoinModules {
     private val windowModule = module {
         factory { ComingSoonPromptWindow(androidContext().localizedContext()) }
         factory { UpgradePromptWindow(androidContext().localizedContext()) }
-        factory { StudentManagementWindow(androidContext().localizedContext()) }
         factory { JoinClassWindow(androidContext().localizedContext()) }
         factory { SelectOrgAndSelectClassWindow(androidContext().localizedContext()) }
         factory { ShortAnswerEditWindow(androidContext().localizedContext()) }
@@ -395,7 +392,6 @@ object KoinModules {
 
     private val windowModelModule = module {
         factory { SelectOrgAndSelectClassWindowModel(androidContext().localizedContext(), get(), get(), get(), get(), get(), get()) }
-        factory { StudentManagementWindowModel(get(), get(), get(), get(), get(), get(), get(), get()) }
         factory { JoinClassWindowModel(get(), get(), get(), get(), get(), get(), get(), get()) }
         factory { QuizCommonWindowModel(get(), get(), get(), get()) }
         factory { QuizEditWindowModel(get(), get(), get(), get()) }
