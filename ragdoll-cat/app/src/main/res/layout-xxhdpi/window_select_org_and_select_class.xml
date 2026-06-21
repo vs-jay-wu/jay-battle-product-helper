@@ -173,13 +173,14 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/flow_org_plan" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_select_class"
+        <!-- Class list — Compose (SelectClassList) replaces the RecyclerView + SelectOrgAndClassAdapter.
+             Same constraints/margins as rv_select_class. -->
+        <androidx.compose.ui.platform.ComposeView
+            android:id="@+id/cv_class_list"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginTop="@dimen/mvb_spacing_400"
             android:layout_marginBottom="@dimen/mvb_spacing_600"
-            android:clipToPadding="false"
             android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@id/ll_bottom_buttons"
             app:layout_constraintEnd_toEndOf="parent"

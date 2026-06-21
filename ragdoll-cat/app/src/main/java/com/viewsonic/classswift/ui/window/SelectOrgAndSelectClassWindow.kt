@@ -2,7 +2,6 @@ package com.viewsonic.classswift.ui.window
 
 import android.content.Context
 import android.graphics.Color
-import android.graphics.Rect
 import android.graphics.drawable.ColorDrawable
 import android.text.Editable
 import android.text.TextWatcher
@@ -12,8 +11,9 @@ import android.view.WindowManager
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import androidx.appcompat.view.ContextThemeWrapper
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import com.viewsonic.classswift.R
 import com.viewsonic.classswift.data.clientapp.myviewboard.event.EventWindowStateChangedPayload
 import com.viewsonic.classswift.data.clientapp.myviewboard.notifier.MyViewBoardEventNotifier
@@ -23,11 +23,14 @@ import com.viewsonic.classswift.databinding.ItemOrgDropdownRowBinding
 import com.viewsonic.classswift.databinding.WindowDeleteClassDialogBinding
 import com.viewsonic.classswift.databinding.WindowRenameClassDialogBinding
 import com.viewsonic.classswift.databinding.WindowSelectOrgAndSelectClassBinding
+import com.viewsonic.classswift.feature.servicescreens.ui.ClassItem
+import com.viewsonic.classswift.feature.servicescreens.ui.ClassRosterType
+import com.viewsonic.classswift.feature.servicescreens.ui.SelectClassList
 import com.viewsonic.classswift.manager.AccountManager
 import com.viewsonic.classswift.manager.CoroutineManager
 import com.viewsonic.classswift.manager.SocketManager
 import com.viewsonic.classswift.ui.widget.LoadingButtonState
-import com.viewsonic.classswift.ui.window.adapter.SelectOrgAndClassAdapter
+import com.viewsonic.classswift.ui.window.quiz.mvb.ComposeWindowHost
 import com.viewsonic.classswift.ui.windowmodel.SelectOrgAndSelectClassWindowModel
 import com.viewsonic.classswift.ui.windowmodel.SelectOrgAndSelectClassWindowModel.ClassUIEvent
 import com.viewsonic.classswift.utils.DisplayUtils
@@ -41,6 +44,7 @@ import com.viewsonic.classswift.windowframework.core.interfaces.IWindow
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.java.KoinJavaComponent.inject
@@ -52,7 +56,7 @@ import java.util.Locale
 
 class SelectOrgAndSelectClassWindow(
     val context: Context
-) : IWindow<WindowSelectOrgAndSelectClassBinding>, SelectOrgAndClassAdapter.OnItemInteractionListener {
+) : IWindow<WindowSelectOrgAndSelectClassBinding> {
 
     private val csWindowManager: CSWindowManager by inject(CSWindowManager::class.java)
     private val accountManager: AccountManager by inject(AccountManager::class.java)
@@ -65,7 +69,14 @@ class SelectOrgAndSelectClassWindow(
 
     override var tag: WindowTag = WindowTag.CS_SELECT_ORG_AND_CLASS
     private val wModel: SelectOrgAndSelectClassWindowModel by inject(SelectOrgAndSelectClassWindowModel::class.java)
-    private val selectClassAdapter = SelectOrgAndClassAdapter(context, this)
+
+    // Class list is now Compose (cv_class_list). The window owns the list state that
+    // SelectOrgAndClassAdapter previously held: the items, the selected id, and the
+    // tail loading placeholder shown while a new class is being created.
+    private val composeHost = ComposeWindowHost()
+    private val classItemsFlow = MutableStateFlow<List<ClassroomInfo>>(emptyList())
+    private val selectedIdFlow = MutableStateFlow<String?>(null)
+    private val loadingPlaceholderFlow = MutableStateFlow(false)
 
     private val widthPx: Int = WINDOW_WIDTH_DP.dpToPx().toInt()
     private val heightPx: Int = WINDOW_HEIGHT_DP.dpToPx().toInt()
@@ -78,16 +89,8 @@ class SelectOrgAndSelectClassWindow(
         )
     )
 
-    override fun getCurrentSize(): SizeInPixels {
-        if (binding.root.width <= 0 || binding.root.height <= 0) {
-            binding.root.measure(
-                View.MeasureSpec.makeMeasureSpec(widthPx, View.MeasureSpec.EXACTLY),
-                View.MeasureSpec.makeMeasureSpec(heightPx, View.MeasureSpec.EXACTLY)
-            )
-            return SizeInPixels(binding.root.measuredWidth, binding.root.measuredHeight)
-        }
-        return SizeInPixels(binding.root.width, binding.root.height)
-    }
+    // Fixed-size window; never measure (the body is a detached ComposeView, which must not be measured).
+    override fun getCurrentSize(): SizeInPixels = SizeInPixels(widthPx, heightPx)
 
     override fun onCreate() {
         socketManager.connect()
@@ -99,12 +102,13 @@ class SelectOrgAndSelectClassWindow(
 
     override fun onDestroy() {
         super.onDestroy()
+        composeHost.destroy()
         uiCollectJob?.cancel()
         coroutineScope.cancel()
         wModel.onCleared()
     }
 
-    override fun onItemSelected(classroomInfo: ClassroomInfo) {
+    private fun onItemSelected(classroomInfo: ClassroomInfo) {
         if (classroomInfo.maxStudentCount > 0) {
             binding.buttonEnterClass.setState(LoadingButtonState.ENABLE)
         } else {
@@ -112,22 +116,10 @@ class SelectOrgAndSelectClassWindow(
         }
     }
 
-    override fun onItemDelete(classroomInfo: ClassroomInfo) {
-        showDeleteClassDialog(classroomInfo)
-    }
-
-    override fun onItemRename(classroomInfo: ClassroomInfo) {
-        showRenameClassDialog(classroomInfo)
-    }
-
-    override fun onCreateClass() {
-        createNewClass()
-    }
-
     private fun initView() {
         setupOrgDropdown()
         bindPlanBadge(accountManager.selectedOrg)
-        setupRecyclerView()
+        initClassList()
         setupButtons()
         setLoadingUi()
         // Clear AllCaps after all setup (setState may re-apply transformation)
@@ -136,6 +128,82 @@ class SelectOrgAndSelectClassWindow(
             binding.buttonEnterClass.clearTextTransformation()
         }, INITIAL_CLEAR_TRANSFORMATION_DELAY_MS)
     }
+
+    private fun initClassList() {
+        composeHost.attach(binding.cvClassList) {
+            val items by classItemsFlow.collectAsState()
+            val selectedId by selectedIdFlow.collectAsState()
+            val loading by loadingPlaceholderFlow.collectAsState()
+            SelectClassList(
+                items = items.map { it.toClassItem(items) },
+                selectedId = selectedId ?: "",
+                loadingPlaceholder = loading,
+                createEnabled = !loading,
+                createClassLabel = context.getString(R.string.my_class_action_create_class),
+                onCreateClass = { createNewClass() },
+                onSelect = { item -> onClassSelected(item.id) },
+                onRename = { item -> findClass(item.id)?.let { showRenameClassDialog(it) } },
+                onDelete = { item -> findClass(item.id)?.let { showDeleteClassDialog(it) } },
+            )
+        }
+    }
+
+    private fun findClass(id: String): ClassroomInfo? = classItemsFlow.value.firstOrNull { it.id == id }
+
+    private fun onClassSelected(id: String) {
+        selectedIdFlow.value = id
+        findClass(id)?.let { onItemSelected(it) }
+    }
+
+    /** Map a ClassroomInfo to the Compose row model; delete is allowed only when >1 class and not ongoing/roster. */
+    private fun ClassroomInfo.toClassItem(all: List<ClassroomInfo>): ClassItem {
+        val rosterType = when (originType) {
+            ClassroomInfo.OriginType.GOOGLE_CLASSROOM -> ClassRosterType.GOOGLE_CLASSROOM
+            ClassroomInfo.OriginType.CLASS_LINK -> ClassRosterType.CLASS_LINK
+            else -> ClassRosterType.NONE
+        }
+        return ClassItem(
+            id = id,
+            name = displayName,
+            ongoing = isLessonOnGoing(),
+            rosterType = rosterType,
+            deletable = all.size > 1 && !isLessonOnGoing() && !isRoster(),
+        )
+    }
+
+    // ── Class-list state ops (formerly SelectOrgAndClassAdapter) ──────────────────────────────
+
+    private fun setClassItems(list: List<ClassroomInfo>) {
+        classItemsFlow.value = list
+        selectedIdFlow.value = list.firstOrNull()?.id
+    }
+
+    /** Insert above the non-ongoing block and select it — mirrors addItemToTopOfNonOngoingAndSelect. */
+    private fun addClassToTopOfNonOngoingAndSelect(newItem: ClassroomInfo) {
+        val (ongoing, nonOngoing) = classItemsFlow.value.partition { it.isLessonOnGoing() }
+        classItemsFlow.value = ongoing + newItem + nonOngoing
+        selectedIdFlow.value = newItem.id
+    }
+
+    private fun updateSelectedClass(item: ClassroomInfo) {
+        val selectedId = selectedIdFlow.value ?: return
+        classItemsFlow.value = classItemsFlow.value.map { if (it.id == selectedId) item else it }
+    }
+
+    private fun removeClass(item: ClassroomInfo) {
+        val current = classItemsFlow.value
+        val index = current.indexOfFirst { it.id == item.id }
+        if (index == -1) return
+        val result = current.toMutableList().apply { removeAt(index) }
+        classItemsFlow.value = result
+        // If the removed class was selected, fall back to the neighbour at the same index (or the last).
+        if (selectedIdFlow.value == item.id) {
+            selectedIdFlow.value = result.getOrNull(index.coerceAtMost(result.lastIndex))?.id
+        }
+    }
+
+    private fun getSelectedClassOrNull(): ClassroomInfo? =
+        classItemsFlow.value.firstOrNull { it.id == selectedIdFlow.value }
 
     private fun setupOrgDropdown() {
         if (wModel.isMultiOrg) {
@@ -226,27 +294,6 @@ class SelectOrgAndSelectClassWindow(
         return SimpleDateFormat(END_DATE_PATTERN, Locale.ROOT).format(Date(millis))
     }
 
-    private fun setupRecyclerView() {
-        binding.rvSelectClass.apply {
-            layoutManager = LinearLayoutManager(context)
-            adapter = selectClassAdapter
-            addItemDecoration(ItemTopSpacingDecoration(ITEM_TOP_SPACING_DP.dpToPx().toInt()))
-        }
-    }
-
-    /** Top spacing applied to every row except the first (the create-class header). */
-    private class ItemTopSpacingDecoration(private val topPx: Int) : RecyclerView.ItemDecoration() {
-        override fun getItemOffsets(
-            outRect: Rect,
-            view: View,
-            parent: RecyclerView,
-            state: RecyclerView.State
-        ) {
-            val position = parent.getChildAdapterPosition(view)
-            if (position != 0) outRect.top = topPx
-        }
-    }
-
     private fun setupButtons() {
         binding.buttonClose.setOnClickListener {
             handleExitClassSwift()
@@ -262,7 +309,7 @@ class SelectOrgAndSelectClassWindow(
                 showErrorToast(context.getString(R.string.error_msg_general_try_again))
                 return@setOnClickListener
             }
-            val selected = selectClassAdapter.getSelectedItemOrNull() ?: return@setOnClickListener
+            val selected = getSelectedClassOrNull() ?: return@setOnClickListener
             binding.buttonEnterClass.setState(LoadingButtonState.LOADING)
             wModel.createLesson(selected, tag)
         }
@@ -287,12 +334,12 @@ class SelectOrgAndSelectClassWindow(
     private fun createNewClass() {
         setClassCreatingState(true)
         val now = LocalDateTime.now()
-        val existingNames = selectClassAdapter.currentList.map { it.displayName }
+        val existingNames = classItemsFlow.value.map { it.displayName }
         wModel.createTimestampClassroom(now, existingNames)
     }
 
     private fun setClassCreatingState(isCreating: Boolean) {
-        selectClassAdapter.showLoadingPlaceholder = isCreating
+        loadingPlaceholderFlow.value = isCreating
         if (isCreating) {
             binding.buttonEnterClass.setState(LoadingButtonState.DISABLE)
         } else {
@@ -342,7 +389,7 @@ class SelectOrgAndSelectClassWindow(
         bindPlanBadge(state.org)
         // Clear previous org's classes so AddClass doesn't append to stale list
         // when the new org is empty and a default class is auto-created.
-        selectClassAdapter.setItems(emptyList())
+        setClassItems(emptyList())
         setLoadingUi()
         binding.buttonEnterClass.setState(LoadingButtonState.DISABLE)
     }
@@ -352,22 +399,20 @@ class SelectOrgAndSelectClassWindow(
             wModel.createDefaultClass()
             return
         }
-        selectClassAdapter.setItems(state.classList) {
-            updateEnterClassButtonState()
-        }
+        setClassItems(state.classList)
+        updateEnterClassButtonState()
         showClassListUi()
     }
 
     private fun onAddClass(state: ClassUIEvent.AddClass) {
-        selectClassAdapter.addItemToTopOfNonOngoingAndSelect(state.classInfo) {
-            updateEnterClassButtonState()
-        }
+        addClassToTopOfNonOngoingAndSelect(state.classInfo)
+        updateEnterClassButtonState()
         showClassListUi()
     }
 
     private fun onUpdateClassInfo(state: ClassUIEvent.UpdateClassInfo) {
         showSuccessToast(context.getString(R.string.my_class_success_msg_save_class_name))
-        selectClassAdapter.updateSelectItem(state.classInfo)
+        updateSelectedClass(state.classInfo)
     }
 
     private fun onUpdateClassInfoFailed() {
@@ -376,7 +421,7 @@ class SelectOrgAndSelectClassWindow(
 
     private fun onDeleteClassSuccess(state: ClassUIEvent.DeleteClassSuccess) {
         csWindowManager.removeWindow(deleteDialogTag)
-        selectClassAdapter.removeItem(state.classInfo)
+        removeClass(state.classInfo)
         showSuccessToast(context.getString(R.string.my_class_success_msg_delete_class))
         updateEnterClassButtonState()
     }
@@ -484,7 +529,7 @@ class SelectOrgAndSelectClassWindow(
                     csWindowManager.removeWindow(renameDialogTag)
                     return@setOnClickListener
                 }
-                if (selectClassAdapter.currentList.any { it.displayName == newName && it.id != classroomInfo.id }) {
+                if (classItemsFlow.value.any { it.displayName == newName && it.id != classroomInfo.id }) {
                     // Show inline error, stay in dialog
                     dialogBinding.tvError.text = context.getString(R.string.my_class_error_msg_class_already_exists)
                     dialogBinding.tvError.visibility = View.VISIBLE
@@ -507,7 +552,7 @@ class SelectOrgAndSelectClassWindow(
     }
 
     private fun updateEnterClassButtonState() {
-        val selected = selectClassAdapter.getSelectedItemOrNull() ?: return
+        val selected = getSelectedClassOrNull() ?: return
         val canEnter = selected.maxStudentCount > 0
         binding.buttonEnterClass.setState(if (canEnter) LoadingButtonState.ENABLE else LoadingButtonState.DISABLE)
     }
@@ -516,7 +561,7 @@ class SelectOrgAndSelectClassWindow(
         binding.apply {
             cpiProgress.visibility = View.VISIBLE
             llRefresh.visibility = View.GONE
-            rvSelectClass.visibility = View.GONE
+            cvClassList.visibility = View.GONE
         }
     }
 
@@ -524,7 +569,7 @@ class SelectOrgAndSelectClassWindow(
         binding.apply {
             cpiProgress.visibility = View.GONE
             llRefresh.visibility = View.VISIBLE
-            rvSelectClass.visibility = View.GONE
+            cvClassList.visibility = View.GONE
         }
     }
 
@@ -532,7 +577,7 @@ class SelectOrgAndSelectClassWindow(
         binding.apply {
             cpiProgress.visibility = View.GONE
             llRefresh.visibility = View.GONE
-            rvSelectClass.visibility = View.VISIBLE
+            cvClassList.visibility = View.VISIBLE
         }
     }
 
@@ -552,8 +597,6 @@ class SelectOrgAndSelectClassWindow(
         // construction time and the layout XML defines the same dimensions.
         private const val WINDOW_WIDTH_DP: Float = 333.33f
         private const val WINDOW_HEIGHT_DP: Float = 453.33f
-
-        private const val ITEM_TOP_SPACING_DP: Float = 8f
 
         private const val ORG_POPUP_PADDING_DP: Float = 5.33f
         private const val ORG_POPUP_MIN_WIDTH_DP: Float = 133.33f

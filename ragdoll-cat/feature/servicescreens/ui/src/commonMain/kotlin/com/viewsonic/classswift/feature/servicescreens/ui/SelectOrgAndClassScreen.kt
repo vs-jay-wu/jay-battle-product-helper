@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -120,20 +121,63 @@ private fun OngoingBadge() {
     }
 }
 
+/** view_item_create_class.xml: 32dp, white radius_600 + neutral_300 1dp border, plus + label.
+ *  Disabled (alpha 0.5, non-clickable) while a class is being created (loading placeholder shown). */
 @Composable
-private fun CreateClassRow(onClick: () -> Unit) {
+private fun CreateClassRow(label: String = "Create a new class", enabled: Boolean = true, onClick: () -> Unit = {}) {
     Row(
         Modifier.fillMaxWidth().height(32.dp)
+            .alpha(if (enabled) 1f else 0.5f)
             .clip(RoundedCornerShape(8.dp))
             .background(Color.White)
             .border(1.dp, Neutral300, RoundedCornerShape(8.dp))
-            .clickable(onClick = onClick)
+            .then(if (enabled) Modifier.clickable(onClick = onClick) else Modifier)
             .designNode("soc_create_class"),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Image(painterResource(Res.drawable.ic_plus), null, Modifier.size(13.33.dp))
-        Text("Create a new class", color = Neutral900, fontSize = 10.67.sp, fontWeight = FontWeight.Medium, modifier = Modifier.padding(start = 5.33.dp))
+        Text(label, color = Neutral900, fontSize = 10.67.sp, fontWeight = FontWeight.Medium, modifier = Modifier.padding(start = 5.33.dp))
+    }
+}
+
+/** view_item_class_loading.xml: a 45.33dp neutral_100 placeholder shown at the tail while creating. */
+@Composable
+private fun LoadingRow() {
+    Box(Modifier.fillMaxWidth().height(45.33.dp).clip(RoundedCornerShape(5.33.dp)).background(Neutral100).designNode("soc_class_loading"))
+}
+
+/**
+ * The class list hosted in `cv_class_list` (SelectOrgAndSelectClassWindow) — replaces the
+ * RecyclerView + SelectOrgAndClassAdapter. Create-class header, class rows (selected by [selectedId]),
+ * and an optional loading placeholder at the tail. Window chrome/buttons/loading/toasts stay native.
+ */
+@Composable
+fun SelectClassList(
+    items: List<ClassItem>,
+    selectedId: String,
+    loadingPlaceholder: Boolean = false,
+    createEnabled: Boolean = true,
+    createClassLabel: String = "Create a new class",
+    onCreateClass: () -> Unit = {},
+    onSelect: (ClassItem) -> Unit = {},
+    onRename: (ClassItem) -> Unit = {},
+    onDelete: (ClassItem) -> Unit = {},
+    modifier: Modifier = Modifier,
+) {
+    LazyColumn(modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        item { CreateClassRow(label = createClassLabel, enabled = createEnabled, onClick = onCreateClass) }
+        items(items, key = { it.id }) { c ->
+            ClassRow(
+                item = c,
+                selected = c.id == selectedId,
+                onClick = { onSelect(c) },
+                onRename = { onRename(c) },
+                onDelete = { onDelete(c) },
+                nodeId = "soc_class_${c.id}",
+            )
+        }
+        if (loadingPlaceholder) item { LoadingRow() }
     }
 }
 
@@ -232,7 +276,7 @@ fun SelectOrgAndClassScreen(
                 Modifier.weight(1f).fillMaxWidth().padding(top = 10.66.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                item { CreateClassRow(onCreateClass) }
+                item { CreateClassRow(onClick = onCreateClass) }
                 itemsIndexed(classes) { i, c ->
                     ClassRow(
                         item = c,
