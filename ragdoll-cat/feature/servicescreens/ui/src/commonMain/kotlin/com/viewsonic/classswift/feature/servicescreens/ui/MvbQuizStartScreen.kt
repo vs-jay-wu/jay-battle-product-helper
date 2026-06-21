@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -53,6 +54,8 @@ import androidx.compose.ui.unit.sp
 import com.viewsonic.classswift.core.ui.designNode
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.Res
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_arrow_clockwise_16
+import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_audio_pause_outline
+import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_audio_play_outline
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_check_cross_circle
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_check_white
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_close
@@ -173,6 +176,10 @@ data class QuizResponder(
     val state: ResponderState,
     val answer: String? = null,
     val correct: Boolean? = null,
+    // Audio quiz (result mode): an answered cell shows a play/pause control + time instead of text.
+    val audioPlaying: Boolean = false,
+    val audioTime: String? = null,
+    val audioLoading: Boolean = false,
 )
 
 internal val sampleResponders: List<QuizResponder> = List(18) { i ->
@@ -188,10 +195,27 @@ internal val sampleResponders: List<QuizResponder> = List(18) { i ->
     }
 }
 
+/** Audio answer control inside a result cell — play/pause icon + elapsed time, or an indeterminate
+ *  spinner while the recording loads (`item_mvb_quiz_audio_answering`: ll_audio / cpi_progress_indicator). */
+@Composable
+private fun AudioControl(r: QuizResponder) {
+    if (r.audioLoading) {
+        CircularProgressIndicator(Modifier.size(21.dp), color = Neutral900, strokeWidth = 1.dp)
+    } else {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Image(
+                painterResource(if (r.audioPlaying) Res.drawable.ic_audio_pause_outline else Res.drawable.ic_audio_play_outline),
+                null, Modifier.size(13.dp), colorFilter = ColorFilter.tint(Neutral900),
+            )
+            Text(r.audioTime ?: "0:00", color = Neutral900, fontSize = 9.33.sp, modifier = Modifier.padding(start = 2.dp))
+        }
+    }
+}
+
 /** One answering cell — `item_mvb_quiz_answering.xml`: number+name header over a state body
  *  (Submitted / Not submitted / Absent), colored per [QuizResponder.state]. */
 @Composable
-private fun AnsweringCell(r: QuizResponder, modifier: Modifier = Modifier, resultMode: Boolean = false, showName: Boolean = true, onClick: (() -> Unit)? = null) {
+private fun AnsweringCell(r: QuizResponder, modifier: Modifier = Modifier, resultMode: Boolean = false, showName: Boolean = true, audio: Boolean = false, onClick: (() -> Unit)? = null) {
     val shape = RoundedCornerShape(8.dp)
     val cardBg: Color
     val headerBg: Color
@@ -229,7 +253,11 @@ private fun AnsweringCell(r: QuizResponder, modifier: Modifier = Modifier, resul
             modifier = Modifier.fillMaxWidth().height(23.33.dp).background(headerBg).padding(horizontal = 4.dp).wrapContentHeight(Alignment.CenterVertically),
         )
         Box(Modifier.fillMaxSize().padding(horizontal = 10.66.dp, vertical = 4.dp), contentAlignment = Alignment.Center) {
-            Text(bodyText, color = bodyColor, fontSize = 9.33.sp, textAlign = TextAlign.Center, maxLines = 3, overflow = TextOverflow.Ellipsis)
+            if (audio && resultMode && r.state == ResponderState.ANSWERED) {
+                AudioControl(r)
+            } else {
+                Text(bodyText, color = bodyColor, fontSize = 9.33.sp, textAlign = TextAlign.Center, maxLines = 3, overflow = TextOverflow.Ellipsis)
+            }
         }
     }
 }
@@ -414,10 +442,13 @@ private fun LegendItem(style: BarStyle, color: Color, text: String) {
     }
 }
 
-/** Overview flavor: GRADED (TF/MC — correct answer + correct/incorrect/no-answer), POLL (no correct
- *  answer; "Submitted"/"Not submitted" legend) or SUBMISSION (short-answer/audio/sketch — same 2-chip
- *  layout as POLL but the submitted legend reads "Correct rate", per the old `MvbShortAnswerStartWindow`). */
-enum class OverviewMode { GRADED, POLL, SUBMISSION }
+/** Overview flavor (all no-correct-answer ones share the 2-chip + 2-segment-pie layout, differing only
+ *  in the submitted chip icon / legend text):
+ *  - GRADED (TF/MC): correct-answer badge + correct/incorrect/no-answer.
+ *  - POLL: "Submitted"/"Not submitted" legend, no chip icon.
+ *  - SUBMISSION (short answer): submitted legend reads "Correct rate" (per old MvbShortAnswerStartWindow).
+ *  - AUDIO: like POLL ("Submitted" legend) but the Submitted chip carries a check icon. */
+enum class OverviewMode { GRADED, POLL, SUBMISSION, AUDIO }
 
 /** Result Overview tab content — `sv_result_overview_content`: correct-answer card (badges +
  *  3 analytic chips) + pie chart + WCAG legend. */
@@ -441,7 +472,7 @@ private fun ResultOverview(correctLabels: List<String>, correct: Int, incorrect:
             }
             Row(Modifier.padding(top = 5.33.dp).fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                 if (noCorrect) {
-                    AnalyticChip(null, "Submitted", correct, Modifier.weight(1f))
+                    AnalyticChip(if (mode == OverviewMode.AUDIO) Res.drawable.ic_check_white else null, "Submitted", correct, Modifier.weight(1f))
                     Box(Modifier.width(0.66.dp).height(45.dp).background(Neutral300))
                     AnalyticChip(null, "Not submitted", noAnswer, Modifier.weight(1f))
                 } else {
@@ -456,7 +487,7 @@ private fun ResultOverview(correctLabels: List<String>, correct: Int, incorrect:
         PieChart(correct, incorrect, noAnswer, Modifier.padding(top = 16.dp).size(160.dp).align(Alignment.CenterHorizontally))
         Row(Modifier.padding(top = 16.dp, bottom = 10.66.dp).align(Alignment.CenterHorizontally)) {
             when (mode) {
-                OverviewMode.POLL -> {
+                OverviewMode.POLL, OverviewMode.AUDIO -> {
                     LegendItem(BarStyle.CORRECT, Green48720F, "Submitted ${rate(correct)}%")
                     Spacer(Modifier.width(10.66.dp))
                     LegendItem(BarStyle.NEUTRAL, Neutral500, "Not submitted ${rate(noAnswer)}%")
@@ -567,6 +598,7 @@ fun MvbQuizStartScreen(
     pollMode: Boolean = false,
     submissionMode: Boolean = false,
     answerPopup: Boolean = false,
+    audioMode: Boolean = false,
     responders: List<QuizResponder> = sampleResponders,
     resultBars: List<ResultBar> = sampleResultBars,
     screenshot: @Composable (Modifier) -> Unit = {},
@@ -574,6 +606,7 @@ fun MvbQuizStartScreen(
     onMinimize: () -> Unit = {},
     onEndAndReview: () -> Unit = {},
     onPublishDisclose: (List<Int>) -> Unit = {},
+    onAudioToggle: (QuizResponder) -> Unit = {},
 ) {
     var discloseSelected by remember { mutableStateOf<Set<Int>>(emptySet()) }
     var resultOverview by remember { mutableStateOf(true) } // result defaults to the Overview tab (pie), as in the original
@@ -688,6 +721,7 @@ fun MvbQuizStartScreen(
                         val correctLabels = resultBars.filter { it.isCorrect }.map { it.label }
                         val overviewMode = when {
                             pollMode -> OverviewMode.POLL
+                            audioMode -> OverviewMode.AUDIO
                             submissionMode -> OverviewMode.SUBMISSION
                             else -> OverviewMode.GRADED
                         }
@@ -697,8 +731,8 @@ fun MvbQuizStartScreen(
                     } else {
                         val hlBar = highlightedBar?.let { resultBars.getOrNull(it) }
                         Column(Modifier.padding(top = 10.66.dp).fillMaxWidth().weight(1f)) {
-                            // Show-students'-name toggle — result + popup mode (short-answer/audio/sketch) only.
-                            if (result && answerPopup) {
+                            // Show-students'-name toggle — result + popup/audio mode (short-answer/audio) only.
+                            if (result && (answerPopup || audioMode)) {
                                 Box(Modifier.fillMaxWidth().padding(bottom = 10.66.dp)) { ShowNamesToggle(showNames) { showNames = it } }
                             }
                             Column(
@@ -709,8 +743,12 @@ fun MvbQuizStartScreen(
                                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.66.dp)) {
                                         rowItems.forEach { r ->
                                             val match = hlBar == null || if (hlBar.style == BarStyle.NEUTRAL) r.state != ResponderState.ANSWERED else r.answer == hlBar.label
-                                            val click = if (result && answerPopup && r.state == ResponderState.ANSWERED) ({ popupResponder = r }) else null
-                                            AnsweringCell(r, Modifier.weight(1f).alpha(if (match) 1f else 0.2f), resultMode = result, showName = showNames, onClick = click)
+                                            val click: (() -> Unit)? = when {
+                                                result && answerPopup && r.state == ResponderState.ANSWERED -> ({ popupResponder = r })
+                                                result && audioMode && r.state == ResponderState.ANSWERED -> ({ onAudioToggle(r) })
+                                                else -> null
+                                            }
+                                            AnsweringCell(r, Modifier.weight(1f).alpha(if (match) 1f else 0.2f), resultMode = result, showName = showNames, audio = audioMode, onClick = click)
                                         }
                                         repeat(4 - rowItems.size) { Spacer(Modifier.weight(1f)) }
                                     }

@@ -105,6 +105,22 @@ fun main() = runDesignerTarget(
         },
         DesignerPage("svc_quiz_poll", "Quiz Start · Poll") { Dialog { MvbQuizStartScreen(MvbQuizType.POLL) } },
         DesignerPage("svc_quiz_audio", "Quiz Start · Audio") { Dialog { MvbQuizStartScreen(MvbQuizType.AUDIO) } },
+        DesignerPage("svc_quiz_audio_result", "Quiz Start · Audio (Result)") {
+            Dialog {
+                val names = listOf("Brandon Wang", "Emily Chen", "Marcus Lee", "Sophia Liu", "Daniel Wu", "Olivia Yang")
+                val responders = names.take(5).mapIndexed { i, n ->
+                    QuizResponder("%02d".format(i + 1), n, ResponderState.ANSWERED, audioTime = "0:1$i", audioPlaying = i == 0, audioLoading = i == 4)
+                } + QuizResponder("06", names[5], ResponderState.NOT_SUBMITTED)
+                MvbQuizStartScreen(
+                    type = MvbQuizType.AUDIO, state = QuizPanelState.RESULT, audioMode = true, options = emptyList(),
+                    joined = 5, capacity = 6, responders = responders,
+                    resultBars = listOf(
+                        ResultBar("Submitted", 5, 6, false, BarStyle.CORRECT),
+                        ResultBar("Not submitted", 1, 6, false, BarStyle.NEUTRAL),
+                    ),
+                )
+            }
+        },
         DesignerPage("svc_quiz_sketch", "Quiz Start · Sketch Response") { Dialog { MvbQuizStartScreen(MvbQuizType.SKETCH) } },
         DesignerPage("svc_quiz_text_sa", "Quiz Start · Short Answer (Text)") { Dialog { MvbQuizStartScreen(MvbQuizType.TEXT_SHORT_ANSWER) } },
         DesignerPage("svc_quiz_text_tf", "Quiz Start · True/False (Text)") { Dialog { MvbQuizStartScreen(MvbQuizType.TEXT_TRUE_FALSE) } },

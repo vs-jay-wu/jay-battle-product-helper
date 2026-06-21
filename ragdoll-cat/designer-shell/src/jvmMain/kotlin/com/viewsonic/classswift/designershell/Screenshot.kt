@@ -54,6 +54,21 @@ fun main() {
             joined = 4, capacity = 5, responders = saResponders, resultBars = saBars,
         )
     }
+    // Audio result → submission overview with a check-icon Submitted chip + "Submitted" legend;
+    // answered cells show a play/pause control + time (Student-responses tab).
+    val audioResponders = saNames.take(5).mapIndexed { i, n ->
+        QuizResponder("%02d".format(i + 1), n, ResponderState.ANSWERED, audioTime = "0:1${i}", audioPlaying = i == 0)
+    } + QuizResponder("06", "Olivia Yang", ResponderState.NOT_SUBMITTED)
+    render("$dir/quiz_audio_result.png") {
+        MvbQuizStartScreen(
+            type = MvbQuizType.AUDIO, state = QuizPanelState.RESULT, audioMode = true, options = emptyList(),
+            joined = 5, capacity = 6, responders = audioResponders,
+            resultBars = listOf(
+                ResultBar("Submitted", 5, 6, false, BarStyle.CORRECT),
+                ResultBar("Not submitted", 1, 6, false, BarStyle.NEUTRAL),
+            ),
+        )
+    }
     // All-not-submitted TF result → full gray crosshatch pie (apples-to-apples vs the old build).
     render("$dir/quiz_tf_result_allns.png") {
         MvbQuizStartScreen(
