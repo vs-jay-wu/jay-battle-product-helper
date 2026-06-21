@@ -25,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -36,7 +37,9 @@ import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.Re
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_broadcast
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_calendar_clock
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_chevron_down
+import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_classlink
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_close
+import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_google_classroom
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_org_building
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_pen_straight_line
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_plan_badge_check
@@ -45,14 +48,28 @@ import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_trash_can
 import org.jetbrains.compose.resources.painterResource
 
-/** A class the teacher can enter; `ongoing` shows the red live-lesson pill. */
-data class ClassItem(val name: String, val ongoing: Boolean = false)
+/** Roster origin — drives the left icon (roster classes can't be renamed/deleted). */
+enum class ClassRosterType { NONE, GOOGLE_CLASSROOM, CLASS_LINK }
+
+/**
+ * A class the teacher can enter, mirroring `ClassroomInfo` as used by `SelectOrgAndClassAdapter`:
+ * `ongoing` (lesson in progress) shows the red pill and hides actions; a roster class
+ * ([rosterType] != NONE) shows its origin icon and hides actions; otherwise rename + delete show,
+ * with delete dimmed/disabled when [deletable] is false (only 1 class left, or ongoing/roster).
+ */
+data class ClassItem(
+    val id: String = "",
+    val name: String,
+    val ongoing: Boolean = false,
+    val rosterType: ClassRosterType = ClassRosterType.NONE,
+    val deletable: Boolean = true,
+)
 
 val sampleClasses = listOf(
-    ClassItem("Grade 5 — Mathematics"),
-    ClassItem("Grade 5 — Science", ongoing = true),
-    ClassItem("Homeroom 5A"),
-    ClassItem("After-school Robotics"),
+    ClassItem(name = "Grade 5 — Mathematics"),
+    ClassItem(name = "Grade 5 — Science", ongoing = true),
+    ClassItem(name = "Homeroom 5A", rosterType = ClassRosterType.GOOGLE_CLASSROOM),
+    ClassItem(name = "After-school Robotics"),
 )
 
 @Composable
@@ -104,12 +121,13 @@ private fun OngoingBadge() {
 }
 
 @Composable
-private fun CreateClassRow() {
+private fun CreateClassRow(onClick: () -> Unit) {
     Row(
         Modifier.fillMaxWidth().height(32.dp)
             .clip(RoundedCornerShape(8.dp))
             .background(Color.White)
             .border(1.dp, Neutral300, RoundedCornerShape(8.dp))
+            .clickable(onClick = onClick)
             .designNode("soc_create_class"),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
@@ -120,7 +138,14 @@ private fun CreateClassRow() {
 }
 
 @Composable
-private fun ClassRow(item: ClassItem, selected: Boolean, onClick: () -> Unit, nodeId: String) {
+private fun ClassRow(
+    item: ClassItem,
+    selected: Boolean,
+    onClick: () -> Unit,
+    onRename: () -> Unit,
+    onDelete: () -> Unit,
+    nodeId: String,
+) {
     val shape = RoundedCornerShape(5.33.dp)
     var m = Modifier.fillMaxWidth().height(45.33.dp).clip(shape).background(Neutral100)
     if (selected) m = m.border(1.33.dp, Violet4848F0, shape)
@@ -128,6 +153,14 @@ private fun ClassRow(item: ClassItem, selected: Boolean, onClick: () -> Unit, no
         m.clickable(onClick = onClick).padding(10.67.dp).designNode(nodeId),
         verticalAlignment = Alignment.CenterVertically,
     ) {
+        // Roster classes (Google Classroom / ClassLink) show their origin icon on the left.
+        when (item.rosterType) {
+            ClassRosterType.GOOGLE_CLASSROOM ->
+                Image(painterResource(Res.drawable.ic_google_classroom), null, Modifier.padding(end = 5.33.dp).size(21.33.dp))
+            ClassRosterType.CLASS_LINK ->
+                Image(painterResource(Res.drawable.ic_classlink), null, Modifier.padding(end = 5.33.dp).size(21.33.dp))
+            ClassRosterType.NONE -> Unit
+        }
         Text(
             item.name,
             color = Neutral900,
@@ -136,11 +169,25 @@ private fun ClassRow(item: ClassItem, selected: Boolean, onClick: () -> Unit, no
             maxLines = 1,
             modifier = Modifier.weight(1f),
         )
-        if (item.ongoing) {
-            OngoingBadge()
-        } else {
-            Image(painterResource(Res.drawable.ic_pen_straight_line), "Rename", Modifier.size(26.67.dp).padding(8.dp))
-            Image(painterResource(Res.drawable.ic_trash_can), "Delete", Modifier.size(26.67.dp).padding(8.dp))
+        when {
+            // Ongoing lesson → red pill, no actions.
+            item.ongoing -> OngoingBadge()
+            // Roster classes can't be renamed/deleted → no actions.
+            item.rosterType != ClassRosterType.NONE -> Unit
+            else -> {
+                Image(
+                    painterResource(Res.drawable.ic_pen_straight_line), "Rename",
+                    Modifier.size(26.67.dp).clickable(onClick = onRename).padding(8.dp),
+                )
+                // Delete dimmed + non-clickable when not deletable (only 1 class left).
+                Image(
+                    painterResource(Res.drawable.ic_trash_can), "Delete",
+                    Modifier.size(26.67.dp)
+                        .then(if (item.deletable) Modifier.clickable(onClick = onDelete) else Modifier)
+                        .padding(8.dp)
+                        .alpha(if (item.deletable) 1f else 0.3f),
+                )
+            }
         }
     }
 }
@@ -155,6 +202,10 @@ fun SelectOrgAndClassScreen(
     onExit: () -> Unit = {},
     onEnter: (ClassItem) -> Unit = {},
     onClose: () -> Unit = {},
+    onCreateClass: () -> Unit = {},
+    onSelect: (ClassItem) -> Unit = {},
+    onRename: (ClassItem) -> Unit = {},
+    onDelete: (ClassItem) -> Unit = {},
 ) {
     var selected by remember { mutableStateOf(0) }
     Box(Modifier.width(333.33.dp).height(453.33.dp)) {
@@ -181,9 +232,16 @@ fun SelectOrgAndClassScreen(
                 Modifier.weight(1f).fillMaxWidth().padding(top = 10.66.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                item { CreateClassRow() }
+                item { CreateClassRow(onCreateClass) }
                 itemsIndexed(classes) { i, c ->
-                    ClassRow(c, i == selected, { selected = i; onEnter(c) }, "soc_class_$i")
+                    ClassRow(
+                        item = c,
+                        selected = i == selected,
+                        onClick = { selected = i; onSelect(c) },
+                        onRename = { onRename(c) },
+                        onDelete = { onDelete(c) },
+                        nodeId = "soc_class_$i",
+                    )
                 }
             }
             Row(
