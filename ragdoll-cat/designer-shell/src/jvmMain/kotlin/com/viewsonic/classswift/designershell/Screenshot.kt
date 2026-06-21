@@ -6,9 +6,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.ImageComposeScene
 import androidx.compose.ui.unit.Density
+import com.viewsonic.classswift.feature.servicescreens.ui.BarStyle
 import com.viewsonic.classswift.feature.servicescreens.ui.MvbQuizStartScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.MvbQuizType
 import com.viewsonic.classswift.feature.servicescreens.ui.QuizPanelState
+import com.viewsonic.classswift.feature.servicescreens.ui.ResultBar
 import org.jetbrains.skia.EncodedImageFormat
 import java.io.File
 
@@ -20,6 +22,16 @@ fun main() {
     render("$dir/quiz_tf_result.png") { MvbQuizStartScreen(type = MvbQuizType.TRUE_FALSE, state = QuizPanelState.RESULT) }
     render("$dir/quiz_tf_quizzing.png") { MvbQuizStartScreen(type = MvbQuizType.TRUE_FALSE, state = QuizPanelState.QUIZZING) }
     render("$dir/quiz_tf_disclose.png") { MvbQuizStartScreen(type = MvbQuizType.TRUE_FALSE, state = QuizPanelState.DISCLOSE) }
+    val pollBars = listOf(
+        ResultBar("A", 8, 19, false, BarStyle.CORRECT),
+        ResultBar("B", 6, 19, false, BarStyle.CORRECT),
+        ResultBar("C", 3, 19, false, BarStyle.CORRECT),
+        ResultBar("D", 0, 19, false, BarStyle.CORRECT),
+        ResultBar("Not submitted", 2, 19, false, BarStyle.NEUTRAL),
+    )
+    render("$dir/quiz_poll_result.png") {
+        MvbQuizStartScreen(type = MvbQuizType.POLL, state = QuizPanelState.RESULT, pollMode = true, options = listOf("A", "B", "C", "D"), resultBars = pollBars)
+    }
     println("SHOTS_DONE -> $dir")
 }
 
