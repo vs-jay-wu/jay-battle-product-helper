@@ -1,305 +1,179 @@
 package com.viewsonic.classswift.ui.window.tool
 
 import android.content.Context
-import android.view.LayoutInflater
-import android.view.View
-import android.view.WindowManager.LayoutParams
-import androidx.appcompat.view.ContextThemeWrapper
-import androidx.core.content.ContextCompat
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import com.viewsonic.classswift.R
-import com.viewsonic.classswift.databinding.WindowTimerToolBinding
+import com.viewsonic.classswift.feature.servicescreens.ui.TimerToolScreen
 import com.viewsonic.classswift.manager.CoroutineManager
 import com.viewsonic.classswift.manager.SoundEffectManager
+import com.viewsonic.classswift.ui.window.compose.ComposeHostWindow
 import com.viewsonic.classswift.ui.windowmodel.tool.TimerToolWindowModel
-import com.viewsonic.classswift.utils.extension.fade
+import com.viewsonic.classswift.utils.extension.dpToPx
 import com.viewsonic.classswift.windowframework.core.CSWindowManager
 import com.viewsonic.classswift.windowframework.core.data.SizeInPixels
-import com.viewsonic.classswift.ui.windowmodel.tool.enums.TimerToolStatus
 import com.viewsonic.classswift.windowframework.core.enums.WindowTag
-import com.viewsonic.classswift.windowframework.core.interfaces.IWindow
-import com.viewsonic.classswift.ui.windowmodel.tool.listener.OnTimerNumberPickerListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.java.KoinJavaComponent.inject
 
-class TimerToolWindow(val context: Context) : IWindow<WindowTimerToolBinding> {
+/**
+ * Timer/Stopwatch tool (service path) wired via a ComposeView. Reproduces the native state machine
+ * (timer countdown with stepper picker + "Time's up", stopwatch run/pause/continue) and plays the
+ * tik/ding sounds from TimerToolWindowModel.
+ */
+class TimerToolWindow(val context: Context) : ComposeHostWindow(context) {
     private val coroutineScope: CoroutineScope = CoroutineManager.getScope(this)
     private val csWindowManager: CSWindowManager by inject(CSWindowManager::class.java)
     private val soundEffectManager: SoundEffectManager by inject(SoundEffectManager::class.java)
     private val windowModel: TimerToolWindowModel by inject(TimerToolWindowModel::class.java)
-    private var timeOption: TimerToolType = TimerToolType.TIMER
-    private var timerToolStatus = TimerToolStatus.STOP
-    private var soundTik = R.raw.timer_tik
-    private var soundDing = R.raw.timer_ding
+    private val soundTik = R.raw.timer_tik
+    private val soundDing = R.raw.timer_ding
 
     override var tag: WindowTag = WindowTag.TIMER_TOOL
+    override var size: SizeInPixels = SizeInPixels(346.66f.dpToPx().toInt(), 336f.dpToPx().toInt())
+    override fun getCurrentSize(): SizeInPixels = size
 
-    override var size: SizeInPixels = SizeInPixels(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
-
-    override val binding: WindowTimerToolBinding = WindowTimerToolBinding.inflate(
-        LayoutInflater.from(
-            ContextThemeWrapper(
-                context,
-                com.google.android.material.R.style.Theme_MaterialComponents
-            )
-        )
+    private enum class Mode { TIMER, STOPWATCH }
+    private enum class Status { STOP, RUNNING, TIMER_FINISHED, SW_PAUSED }
+    private data class Ui(
+        val mode: Mode = Mode.TIMER,
+        val status: Status = Status.STOP,
+        val digits: List<Int> = listOf(0, 0, 0, 0),
+        val display: String = "00:00",
+        val timesUp: Boolean = false,
     )
-
-    override fun getCurrentSize(): SizeInPixels {
-        if (binding.root.width <= 0 || binding.root.height <= 0) {
-            binding.root.measure(
-                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
-                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
-            )
-            return SizeInPixels(binding.root.measuredWidth, binding.root.measuredHeight)
-        }
-        return SizeInPixels(binding.root.width, binding.root.height)
-    }
-
+    private val ui = MutableStateFlow(Ui())
 
     override fun onViewCreated() {
         super.onViewCreated()
-        setTimerPicker()
-        setButton()
         initCollection()
         soundEffectManager.preload(soundTik)
         soundEffectManager.preload(soundDing)
     }
 
-    private fun setTimerPicker() {
-        binding.cstnpMinuteTens.setTimerNumberPickerClickListener(timerNumberPickerListener)
-        binding.cstnpMinuteUnits.setTimerNumberPickerClickListener(timerNumberPickerListener)
-        binding.cstnpSecondTens.setTimerNumberPickerClickListener(timerNumberPickerListener)
-        binding.cstnpSecondUnits.setTimerNumberPickerClickListener(timerNumberPickerListener)
+    @Composable
+    override fun Content() {
+        val s by ui.collectAsState()
+        TimerToolScreen(
+            title = if (s.mode == Mode.TIMER) context.getString(R.string.common_timer) else context.getString(R.string.common_stopwatch),
+            showPicker = s.mode == Mode.TIMER && s.status == Status.STOP,
+            digits = s.digits,
+            display = s.display,
+            timesUp = s.timesUp,
+            timerSelected = s.mode == Mode.TIMER,
+            timerRadioEnabled = !(s.mode == Mode.STOPWATCH && (s.status == Status.RUNNING || s.status == Status.SW_PAUSED)),
+            stopwatchRadioEnabled = !(s.mode == Mode.TIMER && s.status == Status.RUNNING),
+            startText = when (s.status) {
+                Status.RUNNING -> context.getString(R.string.common_stop)
+                Status.TIMER_FINISHED -> context.getString(R.string.common_try_again)
+                else -> context.getString(R.string.common_start)
+            },
+            startEnabled = if (s.mode == Mode.STOPWATCH) true else s.digits.any { it != 0 },
+            showStopwatchControls = s.status == Status.SW_PAUSED,
+            onUp = { i -> step(i, up = true) },
+            onDown = { i -> step(i, up = false) },
+            onStart = { onStart() },
+            onContinue = { onContinue() },
+            onStopwatchTryAgain = { onStopwatchTryAgain() },
+            onSelectTimer = { selectMode(Mode.TIMER) },
+            onSelectStopwatch = { selectMode(Mode.STOPWATCH) },
+            onClose = { csWindowManager.removeWindow(tag) },
+        )
     }
 
-    private val timerNumberPickerListener = object : OnTimerNumberPickerListener {
-        override fun onClick(value: String) {
-            binding.buttonStart.isEnabled = getTime() != "0000"
+    private fun step(index: Int, up: Boolean) {
+        val base = if (index == 0 || index == 2) 6 else 10
+        ui.update { s ->
+            val d = s.digits.toMutableList()
+            d[index] = if (up) (d[index] + 1) % base else (d[index] + base - 1) % base
+            s.copy(digits = d)
         }
     }
 
-    private fun getTime() =
-        "${binding.cstnpMinuteTens.getValue()}${binding.cstnpMinuteUnits.getValue()}${binding.cstnpSecondTens.getValue()}${binding.cstnpSecondUnits.getValue()}"
+    private fun timeString() = ui.value.digits.joinToString("")
 
-
-    private fun setButton() {
-        binding.buttonClose.setOnClickListener {
-            csWindowManager.removeWindow(tag)
-        }
-
-        binding.buttonStart.setOnClickListener {
-            if (timeOption == TimerToolType.TIMER) {
-                timerAction()
-            } else {
-                stopwatchAction()
+    private fun onStart() {
+        val s = ui.value
+        if (s.mode == Mode.TIMER) {
+            when (s.status) {
+                Status.STOP -> { windowModel.timerStart(timeString()); ui.update { it.copy(status = Status.RUNNING, timesUp = false) } }
+                Status.RUNNING -> { windowModel.timerStop(); resetTimer() }
+                Status.TIMER_FINISHED -> resetTimer()
+                else -> Unit
+            }
+        } else {
+            when (s.status) {
+                Status.STOP -> { windowModel.stopwatchStart(); ui.update { it.copy(status = Status.RUNNING) } }
+                Status.RUNNING -> { windowModel.stopwatchStop(); ui.update { it.copy(status = Status.SW_PAUSED) } }
+                else -> Unit
             }
         }
+    }
 
-        binding.rgOption.setOnCheckedChangeListener { _, id ->
-            when (id) {
-                binding.rbTimer.id -> {
-                    timeOption = TimerToolType.TIMER
-                    binding.tvTitle.text = context.getString(R.string.common_timer)
-                    binding.clTimepicker.visibility = View.VISIBLE
-                    binding.buttonStart.isEnabled = false
-                    timerReset()
-                }
+    private fun onContinue() {
+        windowModel.stopwatchContinue()
+        ui.update { it.copy(status = Status.RUNNING) }
+    }
 
-                binding.rbStopwatch.id -> {
-                    timeOption = TimerToolType.STOPWATCH
-                    binding.tvTitle.text = context.getString(R.string.common_stopwatch)
-                    binding.clTimepicker.visibility = View.INVISIBLE
-                    binding.buttonStart.isEnabled = true
-                    resetTimerNumberPicker()
-                    stopwatchReset()
-                }
-            }
-        }
+    private fun onStopwatchTryAgain() {
+        windowModel.stopwatchReset()
+        ui.update { it.copy(status = Status.STOP, display = "00:00") }
+    }
 
-        binding.buttonContinue.setOnClickListener {
-            windowModel.stopwatchContinue()
-            binding.buttonStart.text = context.getString(R.string.common_stop)
-            timerToolStatus = TimerToolStatus.START
-            binding.rbTimer.isEnabled = false
-            showStopwatchButton(false)
-        }
+    private fun resetTimer() {
+        ui.update { it.copy(status = Status.STOP, display = "00:00", timesUp = false) }
+        soundEffectManager.stop(soundTik)
+    }
 
-        //stopwatch 所使用的 try again
-        binding.buttonTryAgain.setOnClickListener {
+    private fun selectMode(mode: Mode) {
+        if (mode == Mode.TIMER) {
             windowModel.stopwatchReset()
-            binding.buttonStart.text = context.getString(R.string.common_start)
-            timerToolStatus = TimerToolStatus.STOP
-            showStopwatchButton(false)
+            ui.value = Ui(mode = Mode.TIMER, status = Status.STOP)
+        } else {
+            windowModel.stopwatchReset()
+            ui.value = Ui(mode = Mode.STOPWATCH, status = Status.STOP, display = "00:00")
         }
     }
-
-    private fun timerAction() {
-        when (timerToolStatus) {
-            TimerToolStatus.STOP -> {
-                timerToolStatus = TimerToolStatus.START
-                binding.tvTime.visibility = View.VISIBLE
-                showTimerNumberPicker(false)
-                binding.buttonStart.text = context.getString(R.string.common_stop)
-                binding.rbStopwatch.isEnabled = false
-                windowModel.timerStart(getTime())
-                soundEffectManager.stop(soundTik)
-            }
-
-            TimerToolStatus.START -> {
-                windowModel.timerStop()
-                timerReset()
-            }
-
-            TimerToolStatus.TRY_AGAIN -> {
-                timerReset()
-            }
-
-            else -> {}
-        }
-    }
-
-    private fun stopwatchAction() {
-        when (timerToolStatus) {
-            TimerToolStatus.STOP -> {
-                timerToolStatus = TimerToolStatus.START
-                windowModel.stopwatchStart()
-                binding.buttonStart.text = context.getString(R.string.common_stop)
-                binding.rbTimer.isEnabled = false
-            }
-
-            TimerToolStatus.START -> {
-                windowModel.stopwatchStop()
-                binding.rbTimer.isEnabled = true
-                showStopwatchButton(true)
-            }
-
-            else -> {}
-        }
-
-    }
-
 
     private fun initCollection() {
         coroutineScope.launch(Dispatchers.IO) {
             windowModel.timeSharedFlow.collect { time ->
                 withContext(Dispatchers.Main) {
-                    when (timeOption) {
-                        TimerToolType.TIMER -> {
-                            if (time != "finish") {
-                                binding.tvTime.text = time
-                                binding.tvColon.fade()
-                            } else {
-                                //countdown end
-                                binding.tvColon.visibility = View.INVISIBLE
-                                binding.tvTime.text = context.getString(R.string.tools_timer_times_up)
-                                binding.tvTime.letterSpacing = 0f
-                                binding.tvTime.setTextColor(ContextCompat.getColor(context, R.color.red_600))
-                                binding.buttonStart.text = context.getString(R.string.common_try_again)
-                                timerToolStatus = TimerToolStatus.TRY_AGAIN
-                                binding.rbStopwatch.isEnabled = true
-                            }
+                    if (ui.value.mode == Mode.TIMER) {
+                        if (time != "finish") {
+                            ui.update { it.copy(display = time) }
+                        } else {
+                            ui.update { it.copy(display = context.getString(R.string.tools_timer_times_up), timesUp = true, status = Status.TIMER_FINISHED) }
                         }
-
-                        TimerToolType.STOPWATCH -> {
-                            binding.tvTime.text = time
-                        }
+                    } else {
+                        ui.update { it.copy(display = time) }
                     }
-
                 }
             }
         }
-
         coroutineScope.launch(Dispatchers.IO) {
             windowModel.soundPlaySharedFlow.collect { sound ->
                 withContext(Dispatchers.Main) {
                     when (sound) {
-                        TimerToolWindowModel.SOUND_TIK -> {
-                            soundEffectManager.play(soundTik)
-                        }
-
-                        TimerToolWindowModel.SOUND_DING -> {
-                            soundEffectManager.play(soundDing)
-                        }
+                        TimerToolWindowModel.SOUND_TIK -> soundEffectManager.play(soundTik)
+                        TimerToolWindowModel.SOUND_DING -> soundEffectManager.play(soundDing)
                     }
                 }
             }
         }
     }
 
-    private fun timerReset() {
-        binding.tvColon.visibility = View.VISIBLE
-        showTimerNumberPicker(true)
-        binding.tvTime.setTextColor(ContextCompat.getColor(context, R.color.neutral_900))
-        binding.buttonStart.text = context.getString(R.string.common_start)
-        binding.tvTime.visibility = View.INVISIBLE
-        binding.tvTime.text = "00:00"
-        binding.tvTime.letterSpacing = 0.5f
-        timerToolStatus = TimerToolStatus.STOP
-        binding.rbStopwatch.isEnabled = true
-        soundEffectManager.stop(soundTik)
-        showStopwatchButton(false)
-    }
-
-    private fun resetTimerNumberPicker() {
-        binding.cstnpMinuteTens.setValue("0")
-        binding.cstnpMinuteUnits.setValue("0")
-        binding.cstnpSecondTens.setValue("0")
-        binding.cstnpSecondUnits.setValue("0")
-    }
-
-    private fun stopwatchReset() {
-        binding.clTimepicker.visibility = View.INVISIBLE
-        binding.tvTime.visibility = View.VISIBLE
-        binding.tvTime.setTextColor(ContextCompat.getColor(context, R.color.neutral_900))
-        binding.buttonStart.text = context.getString(R.string.common_start)
-        binding.buttonStart.visibility = View.VISIBLE
-        timerToolStatus = TimerToolStatus.STOP
-        showStopwatchButton(false)
-        windowModel.stopwatchReset()
-        binding.tvTime.letterSpacing = 0.3f
-    }
-
-
-    private fun showTimerNumberPicker(isShow: Boolean) {
-        val visibility = if (isShow) {
-            View.VISIBLE
-        } else {
-            View.INVISIBLE
-        }
-        binding.cstnpMinuteTens.visibility = visibility
-        binding.cstnpMinuteUnits.visibility = visibility
-        binding.cstnpSecondTens.visibility = visibility
-        binding.cstnpSecondUnits.visibility = visibility
-    }
-
-    private fun showStopwatchButton(isShow: Boolean) {
-        binding.buttonStart.visibility = if (isShow) {
-            View.INVISIBLE
-        } else {
-            View.VISIBLE
-        }
-        val visibility = if (isShow) {
-            View.VISIBLE
-        } else {
-            View.INVISIBLE
-        }
-        binding.buttonTryAgain.visibility = visibility
-        binding.buttonContinue.visibility = visibility
-    }
-
-
     override fun onDestroy() {
+        super.onDestroy()
         coroutineScope.cancel()
         windowModel.onCleared()
         soundEffectManager.release()
-    }
-
-    enum class TimerToolType {
-        TIMER,
-        STOPWATCH
     }
 }
