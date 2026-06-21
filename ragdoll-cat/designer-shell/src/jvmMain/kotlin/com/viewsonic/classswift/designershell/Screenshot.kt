@@ -10,6 +10,8 @@ import com.viewsonic.classswift.feature.servicescreens.ui.BarStyle
 import com.viewsonic.classswift.feature.servicescreens.ui.MvbQuizStartScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.MvbQuizType
 import com.viewsonic.classswift.feature.servicescreens.ui.QuizPanelState
+import com.viewsonic.classswift.feature.servicescreens.ui.QuizResponder
+import com.viewsonic.classswift.feature.servicescreens.ui.ResponderState
 import com.viewsonic.classswift.feature.servicescreens.ui.ResultBar
 import org.jetbrains.skia.EncodedImageFormat
 import java.io.File
@@ -31,6 +33,26 @@ fun main() {
     )
     render("$dir/quiz_poll_result.png") {
         MvbQuizStartScreen(type = MvbQuizType.POLL, state = QuizPanelState.RESULT, pollMode = true, options = listOf("A", "B", "C", "D"), resultBars = pollBars)
+    }
+    // Short-answer result → submission overview (Submitted / Not submitted, "Correct rate" legend).
+    val saNames = listOf("Brandon Wang", "Emily Chen", "Marcus Lee", "Sophia Liu", "Daniel Wu")
+    val saResponders = listOf(
+        "I think the answer is photosynthesis because plants convert sunlight.",
+        "Mitochondria is the powerhouse of the cell.",
+        "Because the water cycle evaporates and condenses.",
+        "42",
+    ).mapIndexed { i, ans -> QuizResponder("%02d".format(i + 1), saNames[i], ResponderState.ANSWERED, answer = ans) } +
+        QuizResponder("05", saNames[4], ResponderState.NOT_SUBMITTED)
+    val saBars = listOf(
+        ResultBar("Submitted", 4, 5, false, BarStyle.CORRECT),
+        ResultBar("Not submitted", 1, 5, false, BarStyle.NEUTRAL),
+    )
+    render("$dir/quiz_sa_result.png") {
+        MvbQuizStartScreen(
+            type = MvbQuizType.SHORT_ANSWER, state = QuizPanelState.RESULT,
+            submissionMode = true, answerPopup = true, options = emptyList(),
+            joined = 4, capacity = 5, responders = saResponders, resultBars = saBars,
+        )
     }
     // All-not-submitted TF result → full gray crosshatch pie (apples-to-apples vs the old build).
     render("$dir/quiz_tf_result_allns.png") {

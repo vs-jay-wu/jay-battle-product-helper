@@ -34,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
@@ -57,6 +58,7 @@ import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_close
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_cross
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_minus_32dp
+import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_previous_arrow
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_mvb_quizzing_header
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_mvb_quizzing_options
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_mvb_quizzing_responses
@@ -70,7 +72,7 @@ import kotlin.math.roundToInt
 enum class MvbQuizType(val label: String, val chips: List<String>) {
     MULTIPLE_CHOICE("Multiple choice", listOf("A", "B", "C", "D")),
     TRUE_FALSE("True or false", listOf("T", "F")),
-    SHORT_ANSWER("Short Answer", emptyList()),
+    SHORT_ANSWER("Short answer", emptyList()),
     POLL("Poll", listOf("A", "B", "C", "D")),
     AUDIO("Audio", emptyList()),
     SKETCH("Sketch Response", emptyList()),
@@ -189,7 +191,7 @@ internal val sampleResponders: List<QuizResponder> = List(18) { i ->
 /** One answering cell — `item_mvb_quiz_answering.xml`: number+name header over a state body
  *  (Submitted / Not submitted / Absent), colored per [QuizResponder.state]. */
 @Composable
-private fun AnsweringCell(r: QuizResponder, modifier: Modifier = Modifier, resultMode: Boolean = false) {
+private fun AnsweringCell(r: QuizResponder, modifier: Modifier = Modifier, resultMode: Boolean = false, showName: Boolean = true, onClick: (() -> Unit)? = null) {
     val shape = RoundedCornerShape(8.dp)
     val cardBg: Color
     val headerBg: Color
@@ -218,10 +220,11 @@ private fun AnsweringCell(r: QuizResponder, modifier: Modifier = Modifier, resul
     Column(
         modifier.height(66.67.dp).clip(shape).background(cardBg)
             .then(if (border.second) Modifier.border(0.66.dp, border.first, shape) else Modifier)
+            .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
             .designNode("qs_responder_${r.seat}"),
     ) {
         Text(
-            "${r.seat}  ${r.name}", color = headerText, fontSize = 8.sp, fontWeight = FontWeight.Medium,
+            if (showName) "${r.seat}  ${r.name}" else r.seat, color = headerText, fontSize = 8.sp, fontWeight = FontWeight.Medium,
             textAlign = TextAlign.Center, maxLines = 1, overflow = TextOverflow.Ellipsis,
             modifier = Modifier.fillMaxWidth().height(23.33.dp).background(headerBg).padding(horizontal = 4.dp).wrapContentHeight(Alignment.CenterVertically),
         )
@@ -411,19 +414,25 @@ private fun LegendItem(style: BarStyle, color: Color, text: String) {
     }
 }
 
+/** Overview flavor: GRADED (TF/MC — correct answer + correct/incorrect/no-answer), POLL (no correct
+ *  answer; "Submitted"/"Not submitted" legend) or SUBMISSION (short-answer/audio/sketch — same 2-chip
+ *  layout as POLL but the submitted legend reads "Correct rate", per the old `MvbShortAnswerStartWindow`). */
+enum class OverviewMode { GRADED, POLL, SUBMISSION }
+
 /** Result Overview tab content — `sv_result_overview_content`: correct-answer card (badges +
  *  3 analytic chips) + pie chart + WCAG legend. */
 @Composable
-private fun ResultOverview(correctLabels: List<String>, correct: Int, incorrect: Int, noAnswer: Int, pollMode: Boolean) {
+private fun ResultOverview(correctLabels: List<String>, correct: Int, incorrect: Int, noAnswer: Int, mode: OverviewMode) {
     val attendance = correct + incorrect + noAnswer
     fun rate(n: Int) = if (attendance <= 0) 0 else (n * 100f / attendance).roundToInt()
+    val noCorrect = mode != OverviewMode.GRADED
     Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState())) {
         Column(
             Modifier.fillMaxWidth().clip(RoundedCornerShape(10.66.dp)).background(Neutral100)
                 .border(1.33.dp, Neutral300, RoundedCornerShape(10.66.dp)).padding(horizontal = 16.dp, vertical = 10.66.dp),
         ) {
-            if (!pollMode) {
-                // No correct answer in a poll → skip the correct-answer label + badges.
+            if (!noCorrect) {
+                // No correct answer in a poll / submission quiz → skip the correct-answer label + badges.
                 Text("Correct answer", color = Neutral900, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                 Row(Modifier.padding(top = 5.33.dp), horizontalArrangement = Arrangement.spacedBy(5.33.dp)) {
                     correctLabels.forEach { CorrectAnswerBadge(it) }
@@ -431,7 +440,7 @@ private fun ResultOverview(correctLabels: List<String>, correct: Int, incorrect:
                 Box(Modifier.padding(top = 10.66.dp).fillMaxWidth().height(0.66.dp).background(Neutral300))
             }
             Row(Modifier.padding(top = 5.33.dp).fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                if (pollMode) {
+                if (noCorrect) {
                     AnalyticChip(null, "Submitted", correct, Modifier.weight(1f))
                     Box(Modifier.width(0.66.dp).height(45.dp).background(Neutral300))
                     AnalyticChip(null, "Not submitted", noAnswer, Modifier.weight(1f))
@@ -446,16 +455,95 @@ private fun ResultOverview(correctLabels: List<String>, correct: Int, incorrect:
         }
         PieChart(correct, incorrect, noAnswer, Modifier.padding(top = 16.dp).size(160.dp).align(Alignment.CenterHorizontally))
         Row(Modifier.padding(top = 16.dp, bottom = 10.66.dp).align(Alignment.CenterHorizontally)) {
-            if (pollMode) {
-                LegendItem(BarStyle.CORRECT, Green48720F, "Submitted ${rate(correct)}%")
-                Spacer(Modifier.width(10.66.dp))
-                LegendItem(BarStyle.NEUTRAL, Neutral500, "Not submitted ${rate(noAnswer)}%")
-            } else {
-                LegendItem(BarStyle.CORRECT, Green48720F, "Correct rate ${rate(correct)}%")
-                Spacer(Modifier.width(10.66.dp))
-                LegendItem(BarStyle.INCORRECT, RedDB0025, "Incorrect rate ${rate(incorrect)}%")
-                Spacer(Modifier.width(10.66.dp))
-                LegendItem(BarStyle.NEUTRAL, Neutral500, "Not submitted ${rate(noAnswer)}%")
+            when (mode) {
+                OverviewMode.POLL -> {
+                    LegendItem(BarStyle.CORRECT, Green48720F, "Submitted ${rate(correct)}%")
+                    Spacer(Modifier.width(10.66.dp))
+                    LegendItem(BarStyle.NEUTRAL, Neutral500, "Not submitted ${rate(noAnswer)}%")
+                }
+                OverviewMode.SUBMISSION -> {
+                    LegendItem(BarStyle.CORRECT, Green48720F, "Correct rate ${rate(correct)}%")
+                    Spacer(Modifier.width(10.66.dp))
+                    LegendItem(BarStyle.NEUTRAL, Neutral500, "Not submitted ${rate(noAnswer)}%")
+                }
+                OverviewMode.GRADED -> {
+                    LegendItem(BarStyle.CORRECT, Green48720F, "Correct rate ${rate(correct)}%")
+                    Spacer(Modifier.width(10.66.dp))
+                    LegendItem(BarStyle.INCORRECT, RedDB0025, "Incorrect rate ${rate(incorrect)}%")
+                    Spacer(Modifier.width(10.66.dp))
+                    LegendItem(BarStyle.NEUTRAL, Neutral500, "Not submitted ${rate(noAnswer)}%")
+                }
+            }
+        }
+    }
+}
+
+/** Show-students'-name toggle row (`ll_show_students_name`) — label + a small violet switch. */
+@Composable
+private fun ShowNamesToggle(checked: Boolean, onToggle: (Boolean) -> Unit) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Text("Show students' name", color = Neutral900, fontSize = 9.33.sp, fontWeight = FontWeight.Medium)
+        Spacer(Modifier.width(5.33.dp))
+        // Compact track+thumb switch (mirrors selector_mvb_audio_switch_*: violet on, neutral off).
+        val track = if (checked) Violet4848F0 else Neutral300
+        Box(
+            Modifier.width(34.dp).height(20.dp).clip(RoundedCornerShape(50)).background(track)
+                .clickable { onToggle(!checked) }.padding(2.dp),
+            contentAlignment = if (checked) Alignment.CenterEnd else Alignment.CenterStart,
+        ) { Box(Modifier.size(16.dp).clip(CircleShape).background(Color.White)) }
+    }
+}
+
+/** Short-answer student-answer popup (`fl_student_answer_popup`): a 480×288 white card over a 35%-black
+ *  scrim — scrollable answer in a violet-bordered box, a show-names toggle, prev/name-chip/next, close. */
+@Composable
+private fun StudentAnswerPopup(
+    responder: QuizResponder,
+    showNames: Boolean,
+    hasPrev: Boolean,
+    hasNext: Boolean,
+    onToggleNames: (Boolean) -> Unit,
+    onPrev: () -> Unit,
+    onNext: () -> Unit,
+    onClose: () -> Unit,
+) {
+    Box(Modifier.fillMaxSize().background(Color(0x59000000)), contentAlignment = Alignment.Center) {
+        Column(
+            Modifier.width(480.dp).height(288.dp).shadow(8.dp, RoundedCornerShape(10.66.dp)).background(Color.White)
+                .padding(top = 10.66.dp, bottom = 16.dp).padding(horizontal = 10.66.dp)
+                .designNode("qs_answer_popup"),
+        ) {
+            Box(
+                Modifier.fillMaxWidth().weight(1f).clip(RoundedCornerShape(10.66.dp))
+                    .border(1.33.dp, Violet4848F0, RoundedCornerShape(10.66.dp)),
+            ) {
+                Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 21.33.dp, vertical = 16.dp)) {
+                    Text(responder.answer.orEmpty(), color = Neutral900, fontSize = 28.sp)
+                }
+            }
+            Row(Modifier.padding(top = 16.dp).fillMaxWidth().height(32.dp), verticalAlignment = Alignment.CenterVertically) {
+                ShowNamesToggle(showNames, onToggleNames)
+                Spacer(Modifier.weight(1f))
+                Image(
+                    painterResource(Res.drawable.ic_previous_arrow), "Previous",
+                    Modifier.size(32.dp).alpha(if (hasPrev) 1f else 0.3f).then(if (hasPrev) Modifier.clickable(onClick = onPrev) else Modifier).padding(8.dp).designNode("qs_popup_prev"),
+                    colorFilter = ColorFilter.tint(Neutral900),
+                )
+                Box(
+                    Modifier.padding(horizontal = 5.33.dp).height(32.dp).clip(RoundedCornerShape(8.dp)).background(Neutral100).padding(horizontal = 13.33.dp),
+                    contentAlignment = Alignment.Center,
+                ) { Text(if (showNames) responder.name else responder.seat, color = Neutral900, fontSize = 13.33.sp, fontWeight = FontWeight.Medium, maxLines = 1) }
+                Image(
+                    painterResource(Res.drawable.ic_previous_arrow), "Next",
+                    Modifier.size(32.dp).rotate(180f).alpha(if (hasNext) 1f else 0.3f).then(if (hasNext) Modifier.clickable(onClick = onNext) else Modifier).padding(8.dp).designNode("qs_popup_next"),
+                    colorFilter = ColorFilter.tint(Neutral900),
+                )
+                Spacer(Modifier.weight(1f))
+                Image(
+                    painterResource(Res.drawable.ic_close), "Close",
+                    Modifier.size(32.dp).clip(CircleShape).clickable(onClick = onClose).padding(6.66.dp).designNode("qs_popup_close"),
+                    colorFilter = ColorFilter.tint(Neutral900),
+                )
             }
         }
     }
@@ -477,6 +565,8 @@ fun MvbQuizStartScreen(
     options: List<String> = type.chips,
     multiSelectDisclose: Boolean = false,
     pollMode: Boolean = false,
+    submissionMode: Boolean = false,
+    answerPopup: Boolean = false,
     responders: List<QuizResponder> = sampleResponders,
     resultBars: List<ResultBar> = sampleResultBars,
     screenshot: @Composable (Modifier) -> Unit = {},
@@ -488,6 +578,8 @@ fun MvbQuizStartScreen(
     var discloseSelected by remember { mutableStateOf<Set<Int>>(emptySet()) }
     var resultOverview by remember { mutableStateOf(true) } // result defaults to the Overview tab (pie), as in the original
     var highlightedBar by remember { mutableStateOf<Int?>(null) }
+    var showNames by remember { mutableStateOf(true) }
+    var popupResponder by remember { mutableStateOf<QuizResponder?>(null) }
     // 8dp outer padding gives the elevation shadow room (mirrors the window shell's outer padding).
     Box(Modifier.padding(8.dp)) {
       Column(
@@ -594,22 +686,34 @@ fun MvbQuizStartScreen(
                         val incorrect = resultBars.filter { it.style == BarStyle.INCORRECT }.sumOf { it.count }
                         val noAns = resultBars.filter { it.style == BarStyle.NEUTRAL }.sumOf { it.count }
                         val correctLabels = resultBars.filter { it.isCorrect }.map { it.label }
+                        val overviewMode = when {
+                            pollMode -> OverviewMode.POLL
+                            submissionMode -> OverviewMode.SUBMISSION
+                            else -> OverviewMode.GRADED
+                        }
                         Box(Modifier.weight(1f).fillMaxWidth().padding(top = 10.66.dp)) {
-                            ResultOverview(correctLabels, correct, incorrect, noAns, pollMode)
+                            ResultOverview(correctLabels, correct, incorrect, noAns, overviewMode)
                         }
                     } else {
                         val hlBar = highlightedBar?.let { resultBars.getOrNull(it) }
-                        Column(
-                            Modifier.padding(top = 10.66.dp).fillMaxWidth().weight(1f).verticalScroll(rememberScrollState()),
-                            verticalArrangement = Arrangement.spacedBy(10.66.dp),
-                        ) {
-                            responders.chunked(4).forEach { rowItems ->
-                                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.66.dp)) {
-                                    rowItems.forEach { r ->
-                                        val match = hlBar == null || if (hlBar.style == BarStyle.NEUTRAL) r.state != ResponderState.ANSWERED else r.answer == hlBar.label
-                                        AnsweringCell(r, Modifier.weight(1f).alpha(if (match) 1f else 0.2f), resultMode = result)
+                        Column(Modifier.padding(top = 10.66.dp).fillMaxWidth().weight(1f)) {
+                            // Show-students'-name toggle — result + popup mode (short-answer/audio/sketch) only.
+                            if (result && answerPopup) {
+                                Box(Modifier.fillMaxWidth().padding(bottom = 10.66.dp)) { ShowNamesToggle(showNames) { showNames = it } }
+                            }
+                            Column(
+                                Modifier.fillMaxWidth().weight(1f).verticalScroll(rememberScrollState()),
+                                verticalArrangement = Arrangement.spacedBy(10.66.dp),
+                            ) {
+                                responders.chunked(4).forEach { rowItems ->
+                                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.66.dp)) {
+                                        rowItems.forEach { r ->
+                                            val match = hlBar == null || if (hlBar.style == BarStyle.NEUTRAL) r.state != ResponderState.ANSWERED else r.answer == hlBar.label
+                                            val click = if (result && answerPopup && r.state == ResponderState.ANSWERED) ({ popupResponder = r }) else null
+                                            AnsweringCell(r, Modifier.weight(1f).alpha(if (match) 1f else 0.2f), resultMode = result, showName = showNames, onClick = click)
+                                        }
+                                        repeat(4 - rowItems.size) { Spacer(Modifier.weight(1f)) }
                                     }
-                                    repeat(4 - rowItems.size) { Spacer(Modifier.weight(1f)) }
                                 }
                             }
                         }
@@ -617,6 +721,19 @@ fun MvbQuizStartScreen(
                 }
             }
         }
+      }
+      // Student-answer popup overlays the whole window (short-answer / audio result mode).
+      popupResponder?.let { r ->
+          val answered = responders.filter { it.state == ResponderState.ANSWERED }
+          val idx = answered.indexOfFirst { it.seat == r.seat }
+          StudentAnswerPopup(
+              responder = r, showNames = showNames,
+              hasPrev = idx > 0, hasNext = idx in 0 until answered.lastIndex,
+              onToggleNames = { showNames = it },
+              onPrev = { if (idx > 0) popupResponder = answered[idx - 1] },
+              onNext = { if (idx in 0 until answered.lastIndex) popupResponder = answered[idx + 1] },
+              onClose = { popupResponder = null },
+          )
       }
     }
 }
