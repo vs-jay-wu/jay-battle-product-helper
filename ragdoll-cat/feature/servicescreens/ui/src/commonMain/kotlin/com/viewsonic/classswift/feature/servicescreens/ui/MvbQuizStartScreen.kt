@@ -29,7 +29,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.font.FontWeight
@@ -134,23 +137,33 @@ private fun DiscloseSelectorArea(options: List<String>, selected: Int?, onSelect
 /** A student's answering status during a live quiz (mirrors `AnsweringState`). */
 enum class ResponderState { ANSWERED, NOT_SUBMITTED, ABSENT }
 
-/** One student in the quizzing responses grid; [answer] shown only when answers are disclosed. */
-data class QuizResponder(val seat: String, val name: String, val state: ResponderState, val answer: String? = null)
+/** One student in the responses grid. [answer] = their submitted answer (shown in result mode);
+ *  [correct] = whether it matches the disclosed answer (drives green/red in result mode). */
+data class QuizResponder(
+    val seat: String,
+    val name: String,
+    val state: ResponderState,
+    val answer: String? = null,
+    val correct: Boolean? = null,
+)
 
 internal val sampleResponders: List<QuizResponder> = List(18) { i ->
     val name = sampleStudentNames[i % sampleStudentNames.size]
-    val state = when {
-        i == 4 -> ResponderState.ABSENT
-        i % 6 == 5 -> ResponderState.NOT_SUBMITTED
-        else -> ResponderState.ANSWERED
+    val seat = "%02d".format(i + 1)
+    when {
+        i == 4 -> QuizResponder(seat, name, ResponderState.ABSENT)
+        i % 6 == 5 -> QuizResponder(seat, name, ResponderState.NOT_SUBMITTED)
+        else -> {
+            val isTrue = i % 3 != 0
+            QuizResponder(seat, name, ResponderState.ANSWERED, answer = if (isTrue) "T" else "F", correct = isTrue)
+        }
     }
-    QuizResponder(seat = "%02d".format(i + 1), name = name, state = state)
 }
 
 /** One answering cell — `item_mvb_quiz_answering.xml`: number+name header over a state body
  *  (Submitted / Not submitted / Absent), colored per [QuizResponder.state]. */
 @Composable
-private fun AnsweringCell(r: QuizResponder, modifier: Modifier = Modifier) {
+private fun AnsweringCell(r: QuizResponder, modifier: Modifier = Modifier, resultMode: Boolean = false) {
     val shape = RoundedCornerShape(8.dp)
     val cardBg: Color
     val headerBg: Color
@@ -160,8 +173,12 @@ private fun AnsweringCell(r: QuizResponder, modifier: Modifier = Modifier) {
     var border: Pair<Color, Boolean> = Color.Transparent to false
     when (r.state) {
         ResponderState.ANSWERED -> {
-            cardBg = Violet100EDEDFD; headerBg = Violet4848F0; headerText = Color.White
-            bodyText = r.answer ?: "Submitted"; bodyColor = Neutral900
+            // Quizzing: violet "Submitted". Result: green/red by correctness, showing the answer.
+            val ok = r.correct == true
+            cardBg = if (!resultMode) Violet100EDEDFD else if (ok) GreenE7F7D0 else RedFFECEF
+            headerBg = if (!resultMode) Violet4848F0 else if (ok) Green48720F else RedDB0025
+            headerText = Color.White
+            bodyText = if (resultMode) r.answer ?: "Submitted" else "Submitted"; bodyColor = Neutral900
         }
         ResponderState.NOT_SUBMITTED -> {
             cardBg = Color.White; headerBg = Color.White; headerText = Neutral900
@@ -188,6 +205,117 @@ private fun AnsweringCell(r: QuizResponder, modifier: Modifier = Modifier) {
     }
 }
 
+/** Bar / pie segment styling for a result option (mirrors `CSResultOptionBarItem.BarStyle`). */
+enum class BarStyle { CORRECT, INCORRECT, NEUTRAL }
+
+/** One result option bar: [count] of [outOf] responders chose it. */
+data class ResultBar(val label: String, val count: Int, val outOf: Int, val isCorrect: Boolean, val style: BarStyle)
+
+internal val sampleResultBars = listOf(
+    ResultBar("T", 12, 19, isCorrect = true, BarStyle.CORRECT),
+    ResultBar("F", 5, 19, isCorrect = false, BarStyle.INCORRECT),
+    ResultBar("Not submitted", 2, 19, isCorrect = false, BarStyle.NEUTRAL),
+)
+
+private fun barColor(style: BarStyle) = when (style) {
+    BarStyle.CORRECT -> Green48720F
+    BarStyle.INCORRECT -> RedDB0025
+    BarStyle.NEUTRAL -> Neutral500
+}
+
+/** WCAG accessibility overlay (`WcagPatternTiles`): correct=dots, incorrect=slashes, no-answer=cross-hatch,
+ *  drawn in 8dp tiles at ~8% black so the bar/segment color stays vivid. */
+private fun Modifier.wcagPattern(style: BarStyle): Modifier = drawBehind {
+    val tile = 8.dp.toPx()
+    val c = Color(0x14000000)
+    val sw = 1.dp.toPx().coerceAtLeast(2f)
+    fun slashesForward() { var o = -size.height; while (o < size.width) { drawLine(c, Offset(o, size.height), Offset(o + size.height, 0f), sw); o += tile } }
+    fun slashesBack() { var o = -size.height; while (o < size.width) { drawLine(c, Offset(o, 0f), Offset(o + size.height, size.height), sw); o += tile } }
+    when (style) {
+        BarStyle.CORRECT -> {
+            val r = 1.dp.toPx().coerceAtLeast(2f)
+            var y = 0f
+            while (y < size.height) { var x = 0f; while (x < size.width) { drawCircle(c, r, Offset(x + tile * 0.25f, y + tile * 0.25f)); drawCircle(c, r, Offset(x + tile * 0.75f, y + tile * 0.75f)); x += tile }; y += tile }
+        }
+        BarStyle.INCORRECT -> slashesForward()
+        BarStyle.NEUTRAL -> { slashesForward(); slashesBack() }
+    }
+}
+
+@Composable
+private fun ResultBarChip(text: String, bg: Color, textColor: Color, border: Color? = null, circle: Boolean = false) {
+    val shape = RoundedCornerShape(50)
+    var m = Modifier.height(13.33.dp).clip(shape).background(bg)
+    if (border != null) m = m.border(1.33.dp, border, shape)
+    m = if (circle) m.width(13.33.dp) else m.padding(horizontal = 5.33.dp)
+    Box(m, contentAlignment = Alignment.Center) {
+        Text(text, color = textColor, fontSize = 8.sp, fontWeight = FontWeight.Medium, maxLines = 1)
+    }
+}
+
+/** A result option bar — `CSResultOptionBarItem`: chips row (label + "Correct answer" + responses
+ *  count) over a ratio track whose fill is colored + WCAG-patterned; non-highlighted bars dim to 0.2. */
+@Composable
+private fun ResultOptionBar(bar: ResultBar, highlighted: Boolean, onClick: () -> Unit) {
+    val fillShape = RoundedCornerShape(50)
+    val fraction = if (bar.outOf <= 0) 0f else bar.count.toFloat() / bar.outOf
+    Column(
+        Modifier.fillMaxWidth().alpha(if (highlighted) 1f else 0.2f).clickable(onClick = onClick)
+            .padding(vertical = 5.33.dp).designNode("qs_result_bar_${bar.label}"),
+    ) {
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            ResultBarChip(bar.label, Neutral100, Neutral900, circle = bar.label.length <= 1)
+            if (bar.isCorrect) {
+                Spacer(Modifier.width(5.33.dp))
+                ResultBarChip("Correct answer", Violet4848F0, Color.White)
+            }
+            Spacer(Modifier.weight(1f))
+            ResultBarChip(if (bar.count == 1) "1 response" else "${bar.count} responses", Color.Transparent, Neutral900, border = Neutral300)
+        }
+        Box(Modifier.padding(top = 5.33.dp).fillMaxWidth().height(10.66.dp).clip(fillShape).background(Neutral100)) {
+            Box(
+                (if (bar.count <= 0) Modifier.width(5.33.dp) else Modifier.fillMaxWidth(fraction.coerceAtLeast(0.02f)))
+                    .fillMaxHeight().clip(fillShape).background(barColor(bar.style)).wcagPattern(bar.style),
+            )
+        }
+    }
+}
+
+/** Result Overview / Student-responses tab bar (`ll_result_tabs`). */
+@Composable
+private fun ResultTabs(overviewActive: Boolean, onSelect: (Boolean) -> Unit) {
+    @Composable
+    fun Tab(label: String, active: Boolean, node: String, onClick: () -> Unit) {
+        Column(Modifier.clickable(onClick = onClick).padding(horizontal = 10.66.dp).padding(top = 5.33.dp).designNode(node)) {
+            Text(label, color = if (active) Violet4848F0 else Neutral900, fontSize = 9.33.sp)
+            Box(Modifier.padding(top = 5.33.dp).fillMaxWidth().height(1.33.dp).background(if (active) Violet4848F0 else Color.Transparent))
+        }
+    }
+    Row(Modifier.fillMaxWidth()) {
+        Tab("Overview", overviewActive, "qs_tab_overview") { onSelect(true) }
+        Spacer(Modifier.width(10.66.dp))
+        Tab("Student responses", !overviewActive, "qs_tab_student") { onSelect(false) }
+    }
+}
+
+/** Left result options area — `ll_result_options_area`: title + hint + the option bars
+ *  (no bar selected → all bars full-alpha; selecting one dims the rest). */
+@Composable
+private fun ResultOptionsArea(bars: List<ResultBar>, highlighted: Int?, onBarClick: (Int) -> Unit) {
+    Column(Modifier.fillMaxWidth()) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Image(painterResource(Res.drawable.ic_mvb_quizzing_options), null, Modifier.size(16.dp))
+            Text("Options", color = Neutral900, fontSize = 10.67.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 2.66.dp))
+            Text("Click an option to highlight students", color = Neutral900, fontSize = 8.sp, fontWeight = FontWeight.Medium, modifier = Modifier.padding(start = 5.33.dp))
+        }
+        Column(Modifier.padding(top = 5.33.dp).fillMaxWidth()) {
+            bars.forEachIndexed { i, bar ->
+                ResultOptionBar(bar, highlighted == null || highlighted == i) { onBarClick(i) }
+            }
+        }
+    }
+}
+
 /**
  * CMP port of the 8 `Mvb*StartWindow` quiz-start variants (service path), shared 853×480 shell +
  * `panel_mvb_quizzing`. [state] toggles the unified panel: QUIZZING (option chips + stopwatch +
@@ -200,9 +328,12 @@ fun MvbQuizStartScreen(
     joined: Int = 21,
     capacity: Int = 30,
     responders: List<QuizResponder> = sampleResponders,
+    resultBars: List<ResultBar> = sampleResultBars,
     onClose: () -> Unit = {},
 ) {
     var discloseSelected by remember { mutableStateOf<Int?>(null) }
+    var resultOverview by remember { mutableStateOf(false) }
+    var highlightedBar by remember { mutableStateOf<Int?>(null) }
     Column(
         Modifier.size(853.dp, 480.dp).clip(RoundedCornerShape(10.66.dp)).background(Color.White).designNode("mvb_quiz_start"),
     ) {
@@ -232,34 +363,40 @@ fun MvbQuizStartScreen(
                         .clip(RoundedCornerShape(8.dp)).background(Color.White).border(0.66.dp, Neutral300, RoundedCornerShape(8.dp))
                         .designNode("qs_screenshot"),
                 )
-                // Options (QUIZZING) / answer selector (DISCLOSE)
-                if (state == QuizPanelState.DISCLOSE) {
-                    Box(Modifier.padding(top = 10.66.dp)) {
+                // Mid area: options (QUIZZING) / answer selector (DISCLOSE) / result bars (RESULT)
+                when (state) {
+                    QuizPanelState.DISCLOSE -> Box(Modifier.padding(top = 10.66.dp)) {
                         DiscloseSelectorArea(type.chips, discloseSelected) { discloseSelected = it }
                     }
-                } else if (type.chips.isNotEmpty()) {
-                    Box(Modifier.padding(top = 10.66.dp)) { SectionLabel(Res.drawable.ic_mvb_quizzing_options, "Options") }
-                    Row(Modifier.padding(top = 10.66.dp).fillMaxWidth().height(67.33.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        type.chips.forEach { OptionChip(it, Modifier.weight(1f).designNode("qs_chip_$it")) }
+                    QuizPanelState.RESULT -> Box(Modifier.padding(top = 10.66.dp)) {
+                        ResultOptionsArea(resultBars, highlightedBar) { i -> highlightedBar = if (highlightedBar == i) null else i }
+                    }
+                    QuizPanelState.QUIZZING -> if (type.chips.isNotEmpty()) {
+                        Box(Modifier.padding(top = 10.66.dp)) { SectionLabel(Res.drawable.ic_mvb_quizzing_options, "Options") }
+                        Row(Modifier.padding(top = 10.66.dp).fillMaxWidth().height(67.33.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            type.chips.forEach { OptionChip(it, Modifier.weight(1f).designNode("qs_chip_$it")) }
+                        }
                     }
                 }
                 Spacer(Modifier.weight(1f))
-                // Bottom action: End-and-review (QUIZZING) / Show-result (DISCLOSE)
-                if (state == QuizPanelState.DISCLOSE) {
-                    val enabled = discloseSelected != null
-                    Box(
-                        Modifier.padding(top = 10.66.dp).fillMaxWidth().height(37.33.dp)
-                            .clip(RoundedCornerShape(5.33.dp)).background(if (enabled) Violet4848F0 else Neutral200)
-                            .designNode("qs_disclose_publish"),
-                        contentAlignment = Alignment.Center,
-                    ) { Text("Show question(s) result", color = if (enabled) Color.White else Neutral500, fontSize = 12.sp, fontWeight = FontWeight.Medium) }
-                } else {
-                    Box(
+                // Bottom action: End-and-review (QUIZZING) / Show-result (DISCLOSE) / none (RESULT)
+                when (state) {
+                    QuizPanelState.DISCLOSE -> {
+                        val enabled = discloseSelected != null
+                        Box(
+                            Modifier.padding(top = 10.66.dp).fillMaxWidth().height(37.33.dp)
+                                .clip(RoundedCornerShape(5.33.dp)).background(if (enabled) Violet4848F0 else Neutral200)
+                                .designNode("qs_disclose_publish"),
+                            contentAlignment = Alignment.Center,
+                        ) { Text("Show question(s) result", color = if (enabled) Color.White else Neutral500, fontSize = 12.sp, fontWeight = FontWeight.Medium) }
+                    }
+                    QuizPanelState.QUIZZING -> Box(
                         Modifier.padding(top = 10.66.dp).fillMaxWidth().height(37.33.dp)
                             .clip(RoundedCornerShape(5.33.dp)).background(Color.White).border(0.66.dp, RedDB0025, RoundedCornerShape(5.33.dp))
                             .designNode("qs_end_review"),
                         contentAlignment = Alignment.Center,
                     ) { Text("End and review question", color = RedDB0025, fontSize = 12.sp, fontWeight = FontWeight.Medium) }
+                    QuizPanelState.RESULT -> Unit
                 }
             }
             // Right: student responses
@@ -279,14 +416,29 @@ fun MvbQuizStartScreen(
                         Spacer(Modifier.weight(1f))
                         Text("$joined/$capacity", color = Neutral900, fontSize = 10.67.sp, fontWeight = FontWeight.Bold, modifier = Modifier.designNode("qs_count"))
                     }
-                    Column(
-                        Modifier.padding(top = 10.66.dp).fillMaxWidth().weight(1f).verticalScroll(rememberScrollState()),
-                        verticalArrangement = Arrangement.spacedBy(10.66.dp),
-                    ) {
-                        responders.chunked(4).forEach { rowItems ->
-                            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.66.dp)) {
-                                rowItems.forEach { r -> AnsweringCell(r, Modifier.weight(1f)) }
-                                repeat(4 - rowItems.size) { Spacer(Modifier.weight(1f)) }
+                    val result = state == QuizPanelState.RESULT
+                    if (result) {
+                        Box(Modifier.padding(top = 10.66.dp)) { ResultTabs(resultOverview) { resultOverview = it } }
+                    }
+                    if (result && resultOverview) {
+                        // Overview content (pie chart / badges / analytics) is 2b-iii-b.
+                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            Text("Overview", color = Neutral500, fontSize = 10.sp)
+                        }
+                    } else {
+                        val hlBar = highlightedBar?.let { resultBars.getOrNull(it) }
+                        Column(
+                            Modifier.padding(top = 10.66.dp).fillMaxWidth().weight(1f).verticalScroll(rememberScrollState()),
+                            verticalArrangement = Arrangement.spacedBy(10.66.dp),
+                        ) {
+                            responders.chunked(4).forEach { rowItems ->
+                                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.66.dp)) {
+                                    rowItems.forEach { r ->
+                                        val match = hlBar == null || if (hlBar.style == BarStyle.NEUTRAL) r.state != ResponderState.ANSWERED else r.answer == hlBar.label
+                                        AnsweringCell(r, Modifier.weight(1f).alpha(if (match) 1f else 0.2f), resultMode = result)
+                                    }
+                                    repeat(4 - rowItems.size) { Spacer(Modifier.weight(1f)) }
+                                }
                             }
                         }
                     }
