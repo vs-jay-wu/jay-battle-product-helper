@@ -16,6 +16,7 @@ import com.viewsonic.classswift.feature.servicescreens.ui.QuizPanelState
 import com.viewsonic.classswift.feature.servicescreens.ui.QuizResponder
 import com.viewsonic.classswift.feature.servicescreens.ui.ResponderState
 import com.viewsonic.classswift.feature.servicescreens.ui.ResultBar
+import com.viewsonic.classswift.feature.servicescreens.ui.TextDiscloseOption
 import org.jetbrains.skia.EncodedImageFormat
 import java.io.File
 
@@ -95,6 +96,29 @@ fun main() {
     render("$dir/quiz_text_tf_result.png") {
         MvbQuizStartScreen(
             type = MvbQuizType.TEXT_TRUE_FALSE, state = QuizPanelState.RESULT, screenshot = textTfSlot,
+        )
+    }
+    // Text TF disclose (step 2): vertical option rows + "Suggested answer" reveal button. Default
+    // (nothing picked / not revealed) and the revealed+selected state (pill + reason + "Applied").
+    val textTfDiscloseOptions = listOf(
+        TextDiscloseOption("True"),
+        TextDiscloseOption(
+            "False",
+            reason = "The Tang Dynasty is conventionally described as a golden age, so the statement is false.",
+            isSuggested = true,
+        ),
+    )
+    render("$dir/quiz_text_tf_disclose.png") {
+        MvbQuizStartScreen(
+            type = MvbQuizType.TEXT_TRUE_FALSE, state = QuizPanelState.DISCLOSE,
+            textDiscloseOptions = textTfDiscloseOptions, screenshot = textTfSlot,
+        )
+    }
+    render("$dir/quiz_text_tf_disclose_revealed.png") {
+        MvbQuizStartScreen(
+            type = MvbQuizType.TEXT_TRUE_FALSE, state = QuizPanelState.DISCLOSE,
+            textDiscloseOptions = textTfDiscloseOptions, screenshot = textTfSlot,
+            startDiscloseRevealed = true, startDiscloseSelected = 1,
         )
     }
     // All-not-submitted TF result → full gray crosshatch pie (apples-to-apples vs the old build).

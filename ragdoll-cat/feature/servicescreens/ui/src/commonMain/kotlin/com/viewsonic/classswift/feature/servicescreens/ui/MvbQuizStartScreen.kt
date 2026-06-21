@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -49,6 +50,7 @@ import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.viewsonic.classswift.core.ui.designNode
@@ -58,8 +60,10 @@ import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_audio_play_outline
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_check_cross_circle
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_check_white
+import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_checkmark
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_close
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_cross
+import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_sparkles
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_minus_32dp
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_previous_arrow
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_mvb_quizzing_header
@@ -114,16 +118,17 @@ private fun VerticalOptionChip(label: String) {
     ) { Text(label, color = Neutral900, fontSize = 10.67.sp, modifier = Modifier.designNode("qs_voption_$label")) }
 }
 
-/** Radio indicator — `bg_disclose_radio_*`: 21.33dp circle, unchecked white+black ring,
- *  checked #4848F0 fill with a 9.33dp white center dot. */
+/** Radio indicator — `bg_disclose_radio_*`: a circle, unchecked white+black ring, checked #4848F0
+ *  fill with a white center dot. [size]/[dot] default to the disclose-square radio (21.33/9.33);
+ *  the text-variant option radio (`bg_mvb_text_quiz_option_radio_*`) is 24/9.78. */
 @Composable
-private fun RadioIndicator(checked: Boolean) {
+private fun RadioIndicator(checked: Boolean, size: Dp = 21.33.dp, dot: Dp = 9.33.dp) {
     if (checked) {
-        Box(Modifier.size(21.33.dp).clip(CircleShape).background(Violet4848F0), contentAlignment = Alignment.Center) {
-            Box(Modifier.size(9.33.dp).clip(CircleShape).background(Color.White))
+        Box(Modifier.size(size).clip(CircleShape).background(Violet4848F0), contentAlignment = Alignment.Center) {
+            Box(Modifier.size(dot).clip(CircleShape).background(Color.White))
         }
     } else {
-        Box(Modifier.size(21.33.dp).clip(CircleShape).background(Color.White).border(0.66.dp, Color.Black, CircleShape))
+        Box(Modifier.size(size).clip(CircleShape).background(Color.White).border(0.66.dp, Color.Black, CircleShape))
     }
 }
 
@@ -173,6 +178,76 @@ private fun DiscloseSelectorArea(options: List<String>, selected: Set<Int>, mult
             options.forEachIndexed { i, label ->
                 DiscloseOptionItem(label, checked = i in selected, multi = multi, onClick = { onToggle(i) }, modifier = Modifier.weight(1f))
             }
+        }
+    }
+}
+
+/** Text-variant disclose option (`view_mvb_text_quiz_disclose_option`). [content]/[reason] are the
+ *  option text (plain here; native renders LaTeX via a KatexView), [isSuggested] marks the AI/correct
+ *  answer whose reason + "Suggested answer" pill appear once the reveal button is tapped. */
+data class TextDiscloseOption(val content: String, val reason: String = "", val isSuggested: Boolean = false)
+
+/** One text-disclose option row: tappable card (selected = violet50 + 1.33 violet500 border, else
+ *  neutral100 + 0.66 neutral300 border) with a 24dp radio in the top-end corner, the content, and —
+ *  when [revealed] and this is the suggested answer — a "Suggested answer" pill + neutral650 reason. */
+@Composable
+private fun TextDiscloseOptionItem(option: TextDiscloseOption, selected: Boolean, revealed: Boolean, onClick: () -> Unit) {
+    val shape = RoundedCornerShape(10.66.dp)
+    val showSuggested = option.isSuggested && revealed
+    Box(
+        Modifier.fillMaxWidth().heightIn(min = 41.32.dp).clip(shape)
+            .background(if (selected) Violet100EDEDFD else Neutral100)
+            .border(if (selected) 1.33.dp else 0.66.dp, if (selected) Violet4848F0 else Neutral300, shape)
+            .clickable(onClick = onClick).designNode("qs_text_disclose_${option.content}"),
+    ) {
+        Box(Modifier.align(Alignment.TopEnd).padding(top = 8.66.dp, end = 10.66.dp)) { RadioIndicator(selected, 24.dp, 9.78.dp) }
+        Column(Modifier.fillMaxWidth().padding(horizontal = 10.66.dp).padding(bottom = 10.66.dp)) {
+            if (showSuggested) {
+                Row(
+                    Modifier.padding(top = 10.66.dp).clip(RoundedCornerShape(50)).background(Violet100DADAFC)
+                        .padding(horizontal = 5.33.dp, vertical = 2.66.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Image(painterResource(Res.drawable.ic_sparkles), null, Modifier.size(10.66.dp), colorFilter = ColorFilter.tint(Neutral900))
+                    Text("Suggested answer", color = Neutral900, fontSize = 8.sp, modifier = Modifier.padding(start = 2.66.dp))
+                }
+            }
+            Text(
+                option.content, color = Neutral900, fontSize = 10.67.sp,
+                modifier = Modifier.padding(top = if (showSuggested) 5.33.dp else 10.66.dp).designNode("qs_text_disclose_content_${option.content}"),
+            )
+            if (showSuggested && option.reason.isNotEmpty()) {
+                Text(option.reason, color = Neutral650, fontSize = 10.67.sp, modifier = Modifier.padding(top = 5.33.dp).designNode("qs_text_disclose_reason_${option.content}"))
+            }
+        }
+    }
+}
+
+/** Text-variant disclose area (`view_mvb_text_quiz_disclose_options_panel`): a header (checkmark +
+ *  "Select the correct answer") with a "Suggested answer"/"Applied" reveal button on the right, over
+ *  the vertical option rows. Tapping reveal shows every suggested option's reason + pill. */
+@Composable
+private fun TextDiscloseArea(options: List<TextDiscloseOption>, selected: Int?, revealed: Boolean, onSelect: (Int) -> Unit, onReveal: () -> Unit) {
+    Column(Modifier.fillMaxWidth()) {
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Image(painterResource(Res.drawable.ic_checkmark), null, Modifier.size(16.dp), colorFilter = ColorFilter.tint(Neutral900))
+            Text("Select the correct answer", color = Neutral900, fontSize = 10.67.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 2.66.dp))
+            Spacer(Modifier.weight(1f))
+            // Reveal button — enabled: white + violet500 outline/text; applied: white + neutral200/neutral500.
+            val tint = if (revealed) Neutral500 else Violet4848F0
+            Row(
+                Modifier.height(24.dp).clip(RoundedCornerShape(5.33.dp)).background(Color.White)
+                    .border(1.dp, if (revealed) Neutral200 else Violet4848F0, RoundedCornerShape(5.33.dp))
+                    .then(if (revealed) Modifier else Modifier.clickable(onClick = onReveal))
+                    .padding(horizontal = 8.dp).designNode("qs_text_disclose_reveal"),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Image(painterResource(Res.drawable.ic_sparkles), null, Modifier.size(10.66.dp), colorFilter = ColorFilter.tint(tint))
+                Text(if (revealed) "Applied" else "Suggested answer", color = tint, fontSize = 9.33.sp, modifier = Modifier.padding(start = 2.66.dp))
+            }
+        }
+        Column(Modifier.padding(top = 10.66.dp).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.66.dp)) {
+            options.forEachIndexed { i, opt -> TextDiscloseOptionItem(opt, selected == i, revealed) { onSelect(i) } }
         }
     }
 }
@@ -614,6 +689,9 @@ fun MvbQuizStartScreen(
     answerPopup: Boolean = false,
     audioMode: Boolean = false,
     startOnOverview: Boolean = true, // result: start on Overview tab (false = Student-responses; for previews)
+    textDiscloseOptions: List<TextDiscloseOption> = emptyList(), // TEXT_TRUE_FALSE disclose rows
+    startDiscloseRevealed: Boolean = false, // preview hook: start with the AI reason/pill revealed
+    startDiscloseSelected: Int? = null, // preview hook: pre-select a disclose option index
     responders: List<QuizResponder> = sampleResponders,
     resultBars: List<ResultBar> = sampleResultBars,
     screenshot: @Composable (Modifier) -> Unit = {},
@@ -626,7 +704,10 @@ fun MvbQuizStartScreen(
     // Text variants (TEXT_*) render the question as Compose text / a KatexView hole in a neutral100
     // box, vs the screenshot types' white framed bitmap. TEXT_TRUE_FALSE also uses vertical chips.
     val isTextType = type == MvbQuizType.TEXT_TRUE_FALSE || type == MvbQuizType.TEXT_SHORT_ANSWER
+    val useTextDisclose = type == MvbQuizType.TEXT_TRUE_FALSE && textDiscloseOptions.isNotEmpty()
     var discloseSelected by remember { mutableStateOf<Set<Int>>(emptySet()) }
+    var textDiscloseSelected by remember { mutableStateOf(startDiscloseSelected) }
+    var answersRevealed by remember { mutableStateOf(startDiscloseRevealed) }
     var resultOverview by remember { mutableStateOf(startOnOverview) } // result defaults to the Overview tab (pie), as in the original
     var highlightedBar by remember { mutableStateOf<Int?>(null) }
     var showNames by remember { mutableStateOf(true) }
@@ -679,11 +760,18 @@ fun MvbQuizStartScreen(
                 // Mid area: options (QUIZZING) / answer selector (DISCLOSE) / result bars (RESULT)
                 when (state) {
                     QuizPanelState.DISCLOSE -> Box(Modifier.padding(top = 10.66.dp)) {
-                        DiscloseSelectorArea(options, discloseSelected, multiSelectDisclose) { i ->
-                            discloseSelected = when {
-                                !multiSelectDisclose -> setOf(i)
-                                i in discloseSelected -> discloseSelected - i
-                                else -> discloseSelected + i
+                        if (useTextDisclose) {
+                            TextDiscloseArea(
+                                textDiscloseOptions, textDiscloseSelected, answersRevealed,
+                                onSelect = { textDiscloseSelected = it }, onReveal = { answersRevealed = true },
+                            )
+                        } else {
+                            DiscloseSelectorArea(options, discloseSelected, multiSelectDisclose) { i ->
+                                discloseSelected = when {
+                                    !multiSelectDisclose -> setOf(i)
+                                    i in discloseSelected -> discloseSelected - i
+                                    else -> discloseSelected + i
+                                }
                             }
                         }
                     }
@@ -708,11 +796,13 @@ fun MvbQuizStartScreen(
                 // Bottom action: End-and-review (QUIZZING) / Show-result (DISCLOSE) / none (RESULT)
                 when (state) {
                     QuizPanelState.DISCLOSE -> {
-                        val enabled = discloseSelected.isNotEmpty()
+                        val enabled = if (useTextDisclose) textDiscloseSelected != null else discloseSelected.isNotEmpty()
                         Box(
                             Modifier.padding(top = 10.66.dp).fillMaxWidth().height(37.33.dp)
                                 .clip(RoundedCornerShape(5.33.dp)).background(if (enabled) Violet4848F0 else Neutral200)
-                                .clickable(enabled = enabled) { onPublishDisclose(discloseSelected.sorted()) }
+                                .clickable(enabled = enabled) {
+                                    if (useTextDisclose) onPublishDisclose(listOfNotNull(textDiscloseSelected)) else onPublishDisclose(discloseSelected.sorted())
+                                }
                                 .designNode("qs_disclose_publish"),
                             contentAlignment = Alignment.Center,
                         ) { Text("Show question(s) result", color = if (enabled) Color.White else Neutral500, fontSize = 12.sp, fontWeight = FontWeight.Medium) }
