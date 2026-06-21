@@ -390,9 +390,13 @@ private fun PieChart(correct: Int, incorrect: Int, noAnswer: Int, modifier: Modi
             if (count <= 0) return@forEach
             val sweep = count.toFloat() / total * 360f
             drawArc(color, start, sweep, useCenter = true, topLeft = tl, size = sz)
-            val wedge = Path().apply { moveTo(center.x, center.y); arcTo(arcRect, start, sweep, false); close() }
-            clipPath(wedge) { drawWcag(style) }
-            drawPath(wedge, Neutral300, style = Stroke(width = border))
+            val slice = Path().apply { moveTo(center.x, center.y); arcTo(arcRect, start, sweep, false); close() }
+            // A 360° slice path (arc start == end) is degenerate → clipPath collapses and the WCAG
+            // fill vanishes (single 100% segment, e.g. all-not-submitted). Clip to an oval instead;
+            // the slice still draws the border so the top seam line is kept, matching the old build.
+            val clip = if (sweep >= 359.99f) Path().apply { addOval(arcRect) } else slice
+            clipPath(clip) { drawWcag(style) }
+            drawPath(slice, Neutral300, style = Stroke(width = border))
             start += sweep
         }
     }

@@ -32,6 +32,17 @@ fun main() {
     render("$dir/quiz_poll_result.png") {
         MvbQuizStartScreen(type = MvbQuizType.POLL, state = QuizPanelState.RESULT, pollMode = true, options = listOf("A", "B", "C", "D"), resultBars = pollBars)
     }
+    // All-not-submitted TF result → full gray crosshatch pie (apples-to-apples vs the old build).
+    render("$dir/quiz_tf_result_allns.png") {
+        MvbQuizStartScreen(
+            type = MvbQuizType.TRUE_FALSE, state = QuizPanelState.RESULT, joined = 0, capacity = 1,
+            resultBars = listOf(
+                ResultBar("T", 0, 1, true, BarStyle.CORRECT),
+                ResultBar("F", 0, 1, false, BarStyle.INCORRECT),
+                ResultBar("Not submitted", 1, 1, false, BarStyle.NEUTRAL),
+            ),
+        )
+    }
     println("SHOTS_DONE -> $dir")
 }
 
