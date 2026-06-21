@@ -19,9 +19,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,6 +41,7 @@ import com.viewsonic.classswift.core.ui.designNode
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.Res
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_arrow_clockwise_16
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_check_cross_circle
+import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_check_white
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_close
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_mvb_quizzing_header
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_mvb_quizzing_options
@@ -48,14 +54,17 @@ import org.jetbrains.compose.resources.painterResource
  *  type icon is the shared `ic_check_cross_circle`, per panel_mvb_quizzing.xml, not per-type.) */
 enum class MvbQuizType(val label: String, val chips: List<String>) {
     MULTIPLE_CHOICE("Multiple Selection", listOf("A", "B", "C", "D")),
-    TRUE_FALSE("True/False", listOf("True", "False")),
+    TRUE_FALSE("True/False", listOf("T", "F")),
     SHORT_ANSWER("Short Answer", emptyList()),
     POLL("Poll", listOf("A", "B", "C", "D")),
     AUDIO("Audio", emptyList()),
     SKETCH("Sketch Response", emptyList()),
     TEXT_SHORT_ANSWER("Short Answer (Text)", emptyList()),
-    TEXT_TRUE_FALSE("True/False (Text)", listOf("True", "False")),
+    TEXT_TRUE_FALSE("True/False (Text)", listOf("T", "F")),
 }
+
+/** Which sub-state the unified quizzing panel shows (`applyPanelVisibility`). RESULT = 2b-iii. */
+enum class QuizPanelState { QUIZZING, DISCLOSE, RESULT }
 
 @Composable
 private fun SectionLabel(icon: DrawableResource, text: String) {
@@ -71,6 +80,55 @@ private fun OptionChip(label: String, modifier: Modifier = Modifier) {
         modifier.fillMaxHeight().clip(RoundedCornerShape(5.33.dp)).background(Neutral100).border(1.dp, Neutral300, RoundedCornerShape(5.33.dp)),
         contentAlignment = Alignment.Center,
     ) { Text(label, color = Neutral900, fontSize = 12.sp, fontWeight = FontWeight.Medium) }
+}
+
+/** Radio indicator — `bg_disclose_radio_*`: 21.33dp circle, unchecked white+black ring,
+ *  checked #4848F0 fill with a 9.33dp white center dot. */
+@Composable
+private fun RadioIndicator(checked: Boolean) {
+    if (checked) {
+        Box(Modifier.size(21.33.dp).clip(CircleShape).background(Violet4848F0), contentAlignment = Alignment.Center) {
+            Box(Modifier.size(9.33.dp).clip(CircleShape).background(Color.White))
+        }
+    } else {
+        Box(Modifier.size(21.33.dp).clip(CircleShape).background(Color.White).border(0.66.dp, Color.Black, CircleShape))
+    }
+}
+
+/** A disclose answer option — `widget_disclose_answer_option_item`: big centered label with a
+ *  radio in the top-end corner; selected swaps to #EDEDFD card + #4848F0 border. */
+@Composable
+private fun DiscloseOptionItem(label: String, checked: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
+    val shape = RoundedCornerShape(10.66.dp)
+    Box(
+        modifier.fillMaxHeight().clip(shape)
+            .background(if (checked) Violet100EDEDFD else Neutral100)
+            .border(1.33.dp, if (checked) Violet4848F0 else Neutral300, shape)
+            .clickable(onClick = onClick).designNode("qs_disclose_$label"),
+    ) {
+        Text(label, color = Neutral900, fontSize = 27.sp, fontWeight = FontWeight.Bold, modifier = Modifier.align(Alignment.Center))
+        Box(Modifier.align(Alignment.TopEnd).padding(4.dp)) { RadioIndicator(checked) }
+    }
+}
+
+/** Disclose selector — `ll_disclose_selector_area`: titled white card over a row of single-select
+ *  answer options (mirrors `CSDiscloseAnswerOptionGroup`, SINGLE mode). */
+@Composable
+private fun DiscloseSelectorArea(options: List<String>, selected: Int?, onSelect: (Int) -> Unit) {
+    Column(
+        Modifier.fillMaxWidth().clip(RoundedCornerShape(8.dp)).background(Color.White).border(0.66.dp, Neutral300, RoundedCornerShape(8.dp))
+            .padding(horizontal = 6.66.dp).padding(top = 10.66.dp, bottom = 16.dp),
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Image(painterResource(Res.drawable.ic_check_white), null, Modifier.size(10.66.dp), colorFilter = ColorFilter.tint(Neutral900))
+            Text("Select the correct answer", color = Neutral900, fontSize = 10.67.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 2.66.dp))
+        }
+        Row(Modifier.padding(top = 10.66.dp).fillMaxWidth().height(67.33.dp), horizontalArrangement = Arrangement.spacedBy(10.66.dp)) {
+            options.forEachIndexed { i, label ->
+                DiscloseOptionItem(label, checked = selected == i, onClick = { onSelect(i) }, modifier = Modifier.weight(1f))
+            }
+        }
+    }
 }
 
 /** A student's answering status during a live quiz (mirrors `AnsweringState`). */
@@ -131,18 +189,20 @@ private fun AnsweringCell(r: QuizResponder, modifier: Modifier = Modifier) {
 }
 
 /**
- * CMP port of the 8 `Mvb*StartWindow` quiz-start variants (service path), quizzing state:
- * shared 853×480 shell + `panel_mvb_quizzing` — question section (type, stopwatch, screenshot,
- * option chips, End-and-review) and student responses. (Disclose & result modes are deferred.)
+ * CMP port of the 8 `Mvb*StartWindow` quiz-start variants (service path), shared 853×480 shell +
+ * `panel_mvb_quizzing`. [state] toggles the unified panel: QUIZZING (option chips + stopwatch +
+ * End-and-review) / DISCLOSE (answer selector + Show-result). RESULT mode is 2b-iii.
  */
 @Composable
 fun MvbQuizStartScreen(
     type: MvbQuizType = MvbQuizType.MULTIPLE_CHOICE,
+    state: QuizPanelState = QuizPanelState.QUIZZING,
     joined: Int = 21,
     capacity: Int = 30,
     responders: List<QuizResponder> = sampleResponders,
     onClose: () -> Unit = {},
 ) {
+    var discloseSelected by remember { mutableStateOf<Int?>(null) }
     Column(
         Modifier.size(853.dp, 480.dp).clip(RoundedCornerShape(10.66.dp)).background(Color.White).designNode("mvb_quiz_start"),
     ) {
@@ -161,8 +221,10 @@ fun MvbQuizStartScreen(
                     Image(painterResource(Res.drawable.ic_check_cross_circle), null, Modifier.size(16.dp), colorFilter = ColorFilter.tint(Neutral900))
                     Text(type.label, color = Neutral900, fontSize = 10.67.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 2.66.dp).designNode("qs_type"))
                     Spacer(Modifier.weight(1f))
-                    Image(painterResource(Res.drawable.ic_mvb_quizzing_stopwatch), null, Modifier.size(16.dp))
-                    Text("00:00", color = Neutral500, fontSize = 12.sp, fontWeight = FontWeight.Medium, modifier = Modifier.padding(start = 2.66.dp).designNode("qs_stopwatch"))
+                    if (state == QuizPanelState.QUIZZING) {
+                        Image(painterResource(Res.drawable.ic_mvb_quizzing_stopwatch), null, Modifier.size(16.dp))
+                        Text("00:00", color = Neutral500, fontSize = 12.sp, fontWeight = FontWeight.Medium, modifier = Modifier.padding(start = 2.66.dp).designNode("qs_stopwatch"))
+                    }
                 }
                 // Screenshot preview (empty capture frame)
                 Box(
@@ -170,33 +232,49 @@ fun MvbQuizStartScreen(
                         .clip(RoundedCornerShape(8.dp)).background(Color.White).border(0.66.dp, Neutral300, RoundedCornerShape(8.dp))
                         .designNode("qs_screenshot"),
                 )
-                // Options
-                if (type.chips.isNotEmpty()) {
+                // Options (QUIZZING) / answer selector (DISCLOSE)
+                if (state == QuizPanelState.DISCLOSE) {
+                    Box(Modifier.padding(top = 10.66.dp)) {
+                        DiscloseSelectorArea(type.chips, discloseSelected) { discloseSelected = it }
+                    }
+                } else if (type.chips.isNotEmpty()) {
                     Box(Modifier.padding(top = 10.66.dp)) { SectionLabel(Res.drawable.ic_mvb_quizzing_options, "Options") }
                     Row(Modifier.padding(top = 10.66.dp).fillMaxWidth().height(67.33.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         type.chips.forEach { OptionChip(it, Modifier.weight(1f).designNode("qs_chip_$it")) }
                     }
                 }
                 Spacer(Modifier.weight(1f))
-                // End and review
-                Box(
-                    Modifier.padding(top = 10.66.dp).fillMaxWidth().height(37.33.dp)
-                        .clip(RoundedCornerShape(5.33.dp)).background(Color.White).border(0.66.dp, RedDB0025, RoundedCornerShape(5.33.dp))
-                        .designNode("qs_end_review"),
-                    contentAlignment = Alignment.Center,
-                ) { Text("End and review question", color = RedDB0025, fontSize = 12.sp, fontWeight = FontWeight.Medium) }
+                // Bottom action: End-and-review (QUIZZING) / Show-result (DISCLOSE)
+                if (state == QuizPanelState.DISCLOSE) {
+                    val enabled = discloseSelected != null
+                    Box(
+                        Modifier.padding(top = 10.66.dp).fillMaxWidth().height(37.33.dp)
+                            .clip(RoundedCornerShape(5.33.dp)).background(if (enabled) Violet4848F0 else Neutral200)
+                            .designNode("qs_disclose_publish"),
+                        contentAlignment = Alignment.Center,
+                    ) { Text("Show question(s) result", color = if (enabled) Color.White else Neutral500, fontSize = 12.sp, fontWeight = FontWeight.Medium) }
+                } else {
+                    Box(
+                        Modifier.padding(top = 10.66.dp).fillMaxWidth().height(37.33.dp)
+                            .clip(RoundedCornerShape(5.33.dp)).background(Color.White).border(0.66.dp, RedDB0025, RoundedCornerShape(5.33.dp))
+                            .designNode("qs_end_review"),
+                        contentAlignment = Alignment.Center,
+                    ) { Text("End and review question", color = RedDB0025, fontSize = 12.sp, fontWeight = FontWeight.Medium) }
+                }
             }
             // Right: student responses
             Column(Modifier.weight(1f).fillMaxHeight().padding(end = 16.dp).padding(vertical = 16.dp)) {
                 Column(Modifier.fillMaxSize().clip(RoundedCornerShape(10.66.dp)).background(Neutral100).padding(10.66.dp)) {
                     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                         SectionLabel(Res.drawable.ic_mvb_quizzing_responses, "Responses")
-                        Row(
-                            Modifier.padding(start = 10.66.dp).height(21.33.dp).clip(RoundedCornerShape(5.33.dp)).border(0.66.dp, Neutral300, RoundedCornerShape(5.33.dp)).padding(horizontal = 8.dp).designNode("qs_refresh"),
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Image(painterResource(Res.drawable.ic_arrow_clockwise_16), null, Modifier.size(10.66.dp), colorFilter = ColorFilter.tint(Neutral900))
-                            Text("Refresh", color = Neutral900, fontSize = 10.sp, modifier = Modifier.padding(start = 2.66.dp))
+                        if (state == QuizPanelState.QUIZZING) {
+                            Row(
+                                Modifier.padding(start = 10.66.dp).height(21.33.dp).clip(RoundedCornerShape(5.33.dp)).border(0.66.dp, Neutral300, RoundedCornerShape(5.33.dp)).padding(horizontal = 8.dp).designNode("qs_refresh"),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Image(painterResource(Res.drawable.ic_arrow_clockwise_16), null, Modifier.size(10.66.dp), colorFilter = ColorFilter.tint(Neutral900))
+                                Text("Refresh", color = Neutral900, fontSize = 10.sp, modifier = Modifier.padding(start = 2.66.dp))
+                            }
                         }
                         Spacer(Modifier.weight(1f))
                         Text("$joined/$capacity", color = Neutral900, fontSize = 10.67.sp, fontWeight = FontWeight.Bold, modifier = Modifier.designNode("qs_count"))

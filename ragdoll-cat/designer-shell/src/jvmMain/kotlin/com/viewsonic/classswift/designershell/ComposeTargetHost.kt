@@ -22,6 +22,7 @@ import com.viewsonic.classswift.feature.servicescreens.ui.JoinClassScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.MvbQuizEditScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.MvbQuizStartScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.MvbQuizType
+import com.viewsonic.classswift.feature.servicescreens.ui.QuizPanelState
 import com.viewsonic.classswift.feature.servicescreens.ui.RandomDrawScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.SelectOrgAndClassScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.ToolbarScreen
@@ -70,6 +71,7 @@ fun main() = runDesignerTarget(
         DesignerPage("svc_spinner", "Service · Spinner") { Dialog { SpinnerHeader() } },
         DesignerPage("svc_toolbar", "Service · Toolbar") { Dialog { ToolbarScreen() } },
         DesignerPage("svc_quiz_mc", "Quiz Start · Multiple Choice") { Dialog { MvbQuizStartScreen(MvbQuizType.MULTIPLE_CHOICE) } },
+        DesignerPage("svc_quiz_tf_disclose", "Quiz Start · True/False (Disclose)") { Dialog { MvbQuizStartScreen(MvbQuizType.TRUE_FALSE, state = QuizPanelState.DISCLOSE) } },
         DesignerPage("svc_quiz_tf", "Quiz Start · True/False") { Dialog { MvbQuizStartScreen(MvbQuizType.TRUE_FALSE) } },
         DesignerPage("svc_quiz_sa", "Quiz Start · Short Answer") { Dialog { MvbQuizStartScreen(MvbQuizType.SHORT_ANSWER) } },
         DesignerPage("svc_quiz_poll", "Quiz Start · Poll") { Dialog { MvbQuizStartScreen(MvbQuizType.POLL) } },
