@@ -68,8 +68,8 @@ import kotlin.math.roundToInt
 /** The 8 service-path quiz-start variants — label + option-chip layout. (The quizzing panel's
  *  type icon is the shared `ic_check_cross_circle`, per panel_mvb_quizzing.xml, not per-type.) */
 enum class MvbQuizType(val label: String, val chips: List<String>) {
-    MULTIPLE_CHOICE("Multiple Selection", listOf("A", "B", "C", "D")),
-    TRUE_FALSE("True/False", listOf("T", "F")),
+    MULTIPLE_CHOICE("Multiple choice", listOf("A", "B", "C", "D")),
+    TRUE_FALSE("True or false", listOf("T", "F")),
     SHORT_ANSWER("Short Answer", emptyList()),
     POLL("Poll", listOf("A", "B", "C", "D")),
     AUDIO("Audio", emptyList()),
@@ -356,13 +356,18 @@ private fun CorrectAnswerBadge(label: String) {
     ) { Text(label, color = Neutral900, fontSize = 24.sp, fontWeight = FontWeight.Bold) }
 }
 
-/** One analytic chip — `CSResultAnalyticChip`: (icon +) label, big count, "students". */
+/** One analytic chip — `CSResultAnalyticChip`: header pill ((icon +) label in a `bg_result_chip_outline`
+ *  pill — transparent fill, neutral_300 hairline, full radius), big count, "students"; all centered. */
 @Composable
 private fun AnalyticChip(icon: DrawableResource?, label: String, count: Int, modifier: Modifier = Modifier) {
-    Column(modifier.padding(vertical = 5.33.dp, horizontal = 5.33.dp)) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+    val pill = RoundedCornerShape(50)
+    Column(modifier.padding(vertical = 5.33.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+        Row(
+            Modifier.height(13.33.dp).clip(pill).border(1.33.dp, Neutral300, pill).padding(horizontal = 5.33.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
             if (icon != null) Image(painterResource(icon), null, Modifier.padding(end = 2.66.dp).size(8.dp), colorFilter = ColorFilter.tint(Neutral900))
-            Text(label, color = Neutral900, fontSize = 8.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            Text(label, color = Neutral900, fontSize = 8.sp, fontWeight = FontWeight.Medium, maxLines = 1, overflow = TextOverflow.Ellipsis)
         }
         Text("$count", color = Neutral900, fontSize = 32.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(top = 5.33.dp))
         Text("students", color = Neutral900, fontSize = 8.sp)
