@@ -54,6 +54,7 @@ import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_check_white
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_close
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_cross
+import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_minus_32dp
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_mvb_quizzing_header
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_mvb_quizzing_options
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_mvb_quizzing_responses
@@ -434,6 +435,7 @@ fun MvbQuizStartScreen(
     resultBars: List<ResultBar> = sampleResultBars,
     screenshot: @Composable (Modifier) -> Unit = {},
     onClose: () -> Unit = {},
+    onMinimize: () -> Unit = {},
     onEndAndReview: () -> Unit = {},
     onPublishDisclose: (Int) -> Unit = {},
 ) {
@@ -447,6 +449,8 @@ fun MvbQuizStartScreen(
         Row(Modifier.fillMaxWidth().height(32.dp).background(Color.White).padding(horizontal = 10.66.dp), verticalAlignment = Alignment.CenterVertically) {
             Image(painterResource(Res.drawable.ic_mvb_quizzing_header), null, Modifier.size(21.33.dp))
             Text("Question", color = Neutral900, fontSize = 10.67.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 5.33.dp).weight(1f).designNode("qs_title"))
+            Image(painterResource(Res.drawable.ic_minus_32dp), "Minimize", Modifier.size(16.dp).clickable(onClick = onMinimize).designNode("qs_minimize"), colorFilter = ColorFilter.tint(Neutral900))
+            Spacer(Modifier.width(8.dp))
             Image(painterResource(Res.drawable.ic_close), "Close", Modifier.size(16.dp).clickable(onClick = onClose).designNode("qs_close"))
         }
         Box(Modifier.fillMaxWidth().height(1.dp).background(Color(0xFFE6E6E6)))
