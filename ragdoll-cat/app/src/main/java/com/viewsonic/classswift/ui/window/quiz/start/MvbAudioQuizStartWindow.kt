@@ -1,56 +1,87 @@
 package com.viewsonic.classswift.ui.window.quiz.start
 
 import android.content.Context
-import android.view.LayoutInflater
-import android.view.View
-import android.view.WindowManager
-import android.widget.LinearLayout
-import androidx.appcompat.view.ContextThemeWrapper
-import androidx.recyclerview.widget.GridLayoutManager
+import android.graphics.BitmapFactory
+import android.media.MediaMetadataRetriever
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
+import com.airbnb.lottie.LottieAnimationView
+import com.airbnb.lottie.LottieDrawable
 import com.viewsonic.classswift.R
 import com.viewsonic.classswift.api.body.UpdateQuizStatusType
 import com.viewsonic.classswift.data.enum.MissionType
 import com.viewsonic.classswift.data.info.AudioAnswerInfo
 import com.viewsonic.classswift.data.state.QuizSharedUiInfo
-import com.viewsonic.classswift.databinding.WindowMvbAudioStartBinding
+import com.viewsonic.classswift.feature.servicescreens.ui.BarStyle
+import com.viewsonic.classswift.feature.servicescreens.ui.MvbQuizStartScreen
+import com.viewsonic.classswift.feature.servicescreens.ui.MvbQuizType
+import com.viewsonic.classswift.feature.servicescreens.ui.QuizPanelState
+import com.viewsonic.classswift.feature.servicescreens.ui.QuizResponder
+import com.viewsonic.classswift.feature.servicescreens.ui.ResponderState
+import com.viewsonic.classswift.feature.servicescreens.ui.ResultBar
 import com.viewsonic.classswift.manager.CoroutineManager
 import com.viewsonic.classswift.manager.QuizManager
-import com.viewsonic.classswift.ui.helper.WindowControlButtonsUiHelper
 import com.viewsonic.classswift.ui.widget.quiz.enums.AnswerResultState
-import com.viewsonic.classswift.ui.widget.quiz.result.CSResultAnalyticChip
-import com.viewsonic.classswift.ui.widget.quiz.result.CSResultOptionBarItem
-import com.viewsonic.classswift.ui.window.adapter.AudioAnswerAdapter
-import com.viewsonic.classswift.ui.window.adapter.MvbAudioAnswerAdapter
-import com.viewsonic.classswift.ui.window.decoration.StudentAnswerResultItemDecoration
+import com.viewsonic.classswift.ui.window.compose.ComposeHostWindow
 import com.viewsonic.classswift.ui.windowmodel.quiz.AudioStartWindowModel
 import com.viewsonic.classswift.ui.windowmodel.quiz.QuizCommonWindowModel
 import com.viewsonic.classswift.ui.windowmodel.quiz.QuizStartWindowModel
+import com.viewsonic.classswift.ui.windowmodel.quiz.enums.AudioState
 import com.viewsonic.classswift.ui.windowmodel.quiz.enums.QuizState
 import com.viewsonic.classswift.uimanager.UnclosedMissionUiManager
 import com.viewsonic.classswift.utils.DateTimeUtils
-import com.viewsonic.classswift.utils.SpannableStringUtils
 import com.viewsonic.classswift.utils.TimeUtils
-import androidx.core.view.isVisible
-import com.viewsonic.classswift.utils.extension.show
+import com.viewsonic.classswift.utils.extension.dpToPx
+import com.viewsonic.classswift.utils.extension.milliSecondToTimerUnit
 import com.viewsonic.classswift.utils.extension.startTimerInMilliSec
 import com.viewsonic.classswift.windowframework.core.CSWindowManager
 import com.viewsonic.classswift.windowframework.core.data.SizeInPixels
 import com.viewsonic.classswift.windowframework.core.enums.WindowTag
-import com.viewsonic.classswift.windowframework.core.interfaces.IWindow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.java.KoinJavaComponent.inject
-import timber.log.Timber
 
-class MvbAudioQuizStartWindow(
-    private val context: Context,
-) : IWindow<WindowMvbAudioStartBinding>,
-    AudioAnswerAdapter.OnAudioAnswerItemEventListener {
+/**
+ * MvbAudioQuizStartWindow — CMP port (same WindowModel logic / socket actions; view is Compose via
+ * [ComposeHostWindow]). Audio specifics: NO disclose (End-and-review → results directly), NO option
+ * chips, submission overview with a check-icon Submitted chip ([MvbQuizStartScreen]'s audioMode); in
+ * result an answered cell shows a play/pause control + time (driven by [AudioStartWindowModel]).
+ */
+class MvbAudioQuizStartWindow(val context: Context) : ComposeHostWindow(context) {
 
     private val csWindowManager: CSWindowManager by inject(CSWindowManager::class.java)
     private val quizCommonWindowModel: QuizCommonWindowModel by inject(QuizCommonWindowModel::class.java)
@@ -62,48 +93,30 @@ class MvbAudioQuizStartWindow(
     private val coroutineScope: CoroutineScope = CoroutineManager.getScope(this)
     private var quizCancelJob: Job? = null
     private var stopwatchJob: Job? = null
-
-    private lateinit var studentAdapter: MvbAudioAnswerAdapter
-
-    private var currentResultTab: ResultTab = ResultTab.OVERVIEW
-    private var selectedHighlightOptionId: Int? = null
-    private var showStudentsName: Boolean = true
-    private var hasTriggeredResultState: Boolean = false
-    private val resultBarItems: MutableList<CSResultOptionBarItem> = mutableListOf()
-
-    private enum class ResultTab { OVERVIEW, STUDENT_RESPONSES }
+    private var hasTriggeredResultState = false
+    private var currentAudioInfos: List<AudioAnswerInfo> = emptyList()
+    private val durationFetching = mutableSetOf<Int>()
 
     override var tag: WindowTag = WindowTag.MVB_AUDIO_START_QUIZ
-    override var size: SizeInPixels = SizeInPixels(
-        WindowManager.LayoutParams.WRAP_CONTENT,
-        WindowManager.LayoutParams.WRAP_CONTENT,
-    )
+    override var size: SizeInPixels = SizeInPixels(869f.dpToPx().toInt(), 496f.dpToPx().toInt()) // 853×480 shell + 8dp shadow padding
+    override fun getCurrentSize(): SizeInPixels = size
 
-    override val binding: WindowMvbAudioStartBinding = WindowMvbAudioStartBinding.inflate(
-        LayoutInflater.from(
-            ContextThemeWrapper(
-                context,
-                com.google.android.material.R.style.Theme_MaterialComponents,
-            ),
-        ),
+    private data class Ui(
+        val state: QuizPanelState = QuizPanelState.QUIZZING,
+        val joined: Int = 0,
+        val capacity: Int = 0,
+        val stopwatch: String = "00:00",
+        val responders: List<QuizResponder> = emptyList(),
+        val resultBars: List<ResultBar> = emptyList(),
+        val hasNetwork: Boolean = true,
+        val closeConfirm: Boolean = false,
+        val closeLoading: Boolean = false,
+        val errorToast: String? = null,
     )
-
-    override fun getCurrentSize(): SizeInPixels {
-        if (binding.root.width <= 0 || binding.root.height <= 0) {
-            binding.root.measure(
-                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
-                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
-            )
-            return SizeInPixels(binding.root.measuredWidth, binding.root.measuredHeight)
-        }
-        return SizeInPixels(binding.root.width, binding.root.height)
-    }
+    private val ui = MutableStateFlow(Ui())
 
     override fun onCreate() {
-        super.onCreate()
-        if (!QuizSharedUiInfo.isOngoing) {
-            quizStartWindowModel.changeQuizState(QuizState.QUIZZING)
-        }
+        if (!QuizSharedUiInfo.isOngoing) quizStartWindowModel.changeQuizState(QuizState.QUIZZING)
         quizStartWindowModel.setStudentQuizzingList()
     }
 
@@ -111,115 +124,96 @@ class MvbAudioQuizStartWindow(
         super.onViewCreated()
         unclosedMissionUiManager.notifyMissionOngoingIfNeeded(MissionType.QUIZ)
         quizCommonWindowModel.addOpenedQuizWindowTag(tag)
-        initHeader()
-        initScreenshotImage()
-        initStudentList()
-        initResultPanel()
-        initOnClick()
         initCollection()
-        val currentState = quizStartWindowModel.quizzingUiState.value.quizState
-        applyStateUi(currentState)
-        // Match legacy changeUiStatusForOngoing: skip stopwatch when reopening in result state.
-        if (currentState == QuizState.QUIZZING) {
-            startStopwatch()
-        } else if (currentState == QuizState.QUIZ_RESULTS) {
-            // Reopening directly into Result: pre-bind UI and mark result state handled
-            // so the upcoming collect's first emission doesn't re-award points.
-            audioStartWindowModel.getCurrentStudentQuizAudioAnsweringInfoList()
-            val resultList = audioStartWindowModel.setQuizResult()
-            bindResultData(resultList)
-            hasTriggeredResultState = true
-        }
+        setRefreshErrorHandler()
+        // Match legacy: stopwatch only while quizzing (skip when reopening into result).
+        if (quizStartWindowModel.quizzingUiState.value.quizState == QuizState.QUIZZING) startStopwatch()
     }
 
-    private fun initHeader() {
-        WindowControlButtonsUiHelper.setup(
-            ivClose = binding.ivClose,
-            ivMinimizeWindow = binding.ivMinimizeWindow,
-            ivToolbarBringToFront = binding.ivToolbarBringToFront,
-            windowTag = tag,
-            isMvbBound = quizCommonWindowModel.isMyViewBoardBound(),
-            csWindowManager = csWindowManager,
-            coroutineScope = coroutineScope,
-            onCloseClick = ::onCloseClicked,
-            onAfterMinimize = {
-                unclosedMissionUiManager.notifyMissionMinimizedIfNeeded(MissionType.QUIZ)
-            },
-        )
-        // MvbAudioQuizStartWindow is MVB-only by design; always show minimize button per Figma.
-        binding.ivMinimizeWindow.visibility = View.VISIBLE
-        binding.ivToolbarBringToFront.visibility = View.GONE
-        binding.csSnackbar.setText(context.getString(R.string.mvb_network_disconnect_toast))
+    @Composable
+    private fun OT(text: String, color: Color, size: TextUnit, weight: FontWeight = FontWeight.Normal, modifier: Modifier = Modifier) {
+        BasicText(text, modifier = modifier, style = TextStyle(color = color, fontSize = size, fontWeight = weight))
     }
 
-    private fun initScreenshotImage() {
-        binding.csScreenshotImage.apply {
-            setImage(uri = quizCommonWindowModel.getScreenImageUri())
-            setCircleProgressbarVisibility(isShown = false)
-            setMaskVisibility(isShown = false)
-        }
-    }
-
-    private fun initStudentList() {
-        studentAdapter = MvbAudioAnswerAdapter(this)
-        binding.rvStudentList.apply {
-            layoutManager = GridLayoutManager(context, STUDENT_GRID_SPAN)
-            addItemDecoration(
-                StudentAnswerResultItemDecoration(
-                    STUDENT_GRID_SPAN,
-                    context.resources.getDimensionPixelSize(R.dimen.mvb_spacing_400),
-                    context.resources.getDimensionPixelSize(R.dimen.mvb_spacing_400),
-                ),
+    @Composable
+    override fun Content() {
+        val s by ui.collectAsState()
+        Box(Modifier.fillMaxSize()) {
+            MvbQuizStartScreen(
+                type = MvbQuizType.AUDIO,
+                state = s.state,
+                joined = s.joined,
+                capacity = s.capacity,
+                stopwatch = s.stopwatch,
+                options = emptyList(),
+                audioMode = true,
+                responders = s.responders,
+                resultBars = s.resultBars,
+                screenshot = { m -> Screenshot(m) },
+                onClose = { showCloseConfirmDialog() },
+                onMinimize = {
+                    csWindowManager.minimizeWindow(tag)
+                    unclosedMissionUiManager.notifyMissionMinimizedIfNeeded(MissionType.QUIZ)
+                },
+                onEndAndReview = { endQuiz() },
+                onAudioToggle = { r -> onAudioToggle(r) },
             )
-            adapter = studentAdapter
-        }
-    }
-
-    private fun initResultPanel() {
-        // Build the 2 option bars (Submitted / Not submitted) once; later setData updates them.
-        populateResultBars(binding.llResultBarsContainer) { handleBarClick(it) }
-
-        binding.llResultTabOverview.setOnClickListener { setActiveResultTab(ResultTab.OVERVIEW) }
-        binding.llResultTabStudent.setOnClickListener { setActiveResultTab(ResultTab.STUDENT_RESPONSES) }
-        binding.swShowStudentsName.setOnCheckedChangeListener { _, isChecked ->
-            showStudentsName = isChecked
-            studentAdapter.setShowStudentsName(isChecked)
-        }
-    }
-
-    private fun populateResultBars(
-        container: LinearLayout,
-        onClick: (Int) -> Unit,
-    ) {
-        if (resultBarItems.size == BAR_COUNT) return
-        container.removeAllViews()
-        resultBarItems.clear()
-        val gap = context.resources.getDimensionPixelSize(R.dimen.mvb_spacing_200)
-        repeat(BAR_COUNT) { index ->
-            val bar = CSResultOptionBarItem(context).apply {
-                onBarClick = onClick
+            if (!s.hasNetwork) {
+                Box(Modifier.align(Alignment.BottomCenter).fillMaxWidth().padding(16.dp).clip(RoundedCornerShape(8.dp)).background(Color(0xFF2E3133)).padding(horizontal = 16.dp, vertical = 10.dp)) {
+                    OT(context.getString(R.string.mvb_network_disconnect_toast), Color.White, 12.sp)
+                }
             }
-            val lp = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-            )
-            if (index > 0) lp.topMargin = gap
-            container.addView(bar, lp)
-            resultBarItems += bar
+            s.errorToast?.let { msg ->
+                Box(Modifier.align(Alignment.TopCenter).padding(top = 8.dp).clip(RoundedCornerShape(8.dp)).background(Color(0xFFF02B2B)).padding(horizontal = 16.dp, vertical = 8.dp)) {
+                    OT(msg, Color.White, 12.sp)
+                }
+            }
+            if (s.closeConfirm) CloseConfirmDialog()
+            if (s.closeLoading) {
+                Box(Modifier.fillMaxSize().background(Color(0x99000000)), contentAlignment = Alignment.Center) {
+                    AndroidView(factory = { ctx ->
+                        LottieAnimationView(ctx).apply {
+                            setAnimation("ani_loading.json")
+                            repeatCount = LottieDrawable.INFINITE
+                            playAnimation()
+                        }
+                    }, modifier = Modifier.width(80.dp))
+                }
+            }
         }
     }
 
-    private fun initOnClick() {
-        binding.buttonEndAndReview.setOnClickListener {
-            // Legacy AudioQuizStartWindow used buttonEndQuiz.setLoading() to gate double-clicks
-            // while the FINISH API call was in flight. The MVB layout uses a plain AppCompatButton
-            // (no loading indicator), so disable the button to preserve the same single-shot
-            // semantics; endQuiz re-enables on failure.
-            binding.buttonEndAndReview.isEnabled = false
-            endQuiz()
+    @Composable
+    private fun Screenshot(modifier: Modifier) {
+        val path = quizCommonWindowModel.getScreenImageUri()
+        val bitmap by produceState<ImageBitmap?>(null, path) {
+            value = withContext(Dispatchers.IO) {
+                runCatching {
+                    val file = path.removePrefix("file://")
+                    if (file.isBlank()) null else BitmapFactory.decodeFile(file)?.asImageBitmap()
+                }.getOrNull()
+            }
         }
-        binding.llRefreshButton.setOnClickListener {
-            quizStartWindowModel.refreshOngoingQuizState()
+        bitmap?.let { Image(it, contentDescription = null, modifier = modifier) }
+    }
+
+    @Composable
+    private fun CloseConfirmDialog() {
+        Box(Modifier.fillMaxSize().background(Color(0x99000000)).clickable(enabled = false) {}, contentAlignment = Alignment.Center) {
+            Column(Modifier.width(360.dp).clip(RoundedCornerShape(12.dp)).background(Color.White).padding(24.dp)) {
+                OT(context.getString(R.string.quiz_disclose_close_confirm_title), Color(0xFF2E3133), 18.sp, FontWeight.Bold)
+                OT(context.getString(R.string.quiz_disclose_close_confirm_body), Color(0xFF2E3133), 14.sp, modifier = Modifier.padding(top = 12.dp))
+                Row(Modifier.fillMaxWidth().padding(top = 20.dp), horizontalArrangement = Arrangement.End) {
+                    OT(
+                        context.getString(R.string.quiz_disclose_close_confirm_negative), Color(0xFF5C6266), 14.sp, FontWeight.Medium,
+                        modifier = Modifier.clickable { onCloseConfirmNegative() }.padding(horizontal = 16.dp, vertical = 8.dp),
+                    )
+                    OT(
+                        context.getString(R.string.quiz_disclose_close_confirm_positive), Color(0xFFF02B2B), 14.sp, FontWeight.Bold,
+                        modifier = Modifier.clickable { onCloseConfirmPositive() }.padding(horizontal = 16.dp, vertical = 8.dp),
+                    )
+                }
+            }
         }
     }
 
@@ -227,299 +221,171 @@ class MvbAudioQuizStartWindow(
         coroutineScope.launch(Dispatchers.IO) {
             quizStartWindowModel.quizzingUiState.collect { uiState ->
                 withContext(Dispatchers.Main) {
-                    binding.tvResponseCount.text =
-                        "${uiState.answerCount} / ${uiState.attendanceCount}"
-                    applyStateUi(uiState.quizState)
-                    // setQuizResult() mutates audioAnswerInfos in place — populate it
-                    // first so reopening straight into Result doesn't act on an empty list.
                     val infos = audioStartWindowModel.getCurrentStudentQuizAudioAnsweringInfoList()
-                    if (uiState.quizState == QuizState.QUIZ_RESULTS) {
-                        if (!hasTriggeredResultState) {
-                            hasTriggeredResultState = true
-                            val resultList = audioStartWindowModel.setQuizResult()
-                            bindResultData(resultList)
-                            val submittedStudentIds = resultList
-                                .filter { it.answerResultState == AnswerResultState.ANSWERED }
-                                .map { it.studentId }
-                            coroutineScope.launch(Dispatchers.IO) {
-                                quizStartWindowModel.updateStudentsPoint(submittedStudentIds, 1)
-                            }
-                        } else {
-                            // Subsequent result-state emissions: re-render UI but don't re-award points.
-                            bindResultData(infos)
-                        }
+                    if (uiState.quizState == QuizState.QUIZ_RESULTS && !hasTriggeredResultState) {
+                        hasTriggeredResultState = true
+                        val resultList = audioStartWindowModel.setQuizResult()
+                        render(resultList)
+                        val submittedIds = resultList.filter { it.answerResultState == AnswerResultState.ANSWERED }.map { it.studentId }
+                        coroutineScope.launch(Dispatchers.IO) { quizStartWindowModel.updateStudentsPoint(submittedIds, 1) }
                     } else {
-                        submitListWithHighlight(infos)
+                        render(infos)
                     }
                 }
             }
         }
         coroutineScope.launch(Dispatchers.IO) {
             audioStartWindowModel.audioInfosSharedFlow.collect { infos ->
-                withContext(Dispatchers.Main) {
-                    submitListWithHighlight(infos)
-                }
-            }
-        }
-        coroutineScope.launch(Dispatchers.IO) {
-            quizStartWindowModel.refreshFailedFlow.collectLatest {
-                withContext(Dispatchers.Main) {
-                    if (!binding.csSnackbar.isVisible) {
-                        binding.mtCloseErrorToast.setText(context.getString(R.string.common_error_general))
-                        binding.mtCloseErrorToast.show(coroutineScope)
-                    }
-                }
-            }
-        }
-        coroutineScope.launch(Dispatchers.IO) {
-            quizStartWindowModel.updateStudentsPointErrorFlow.collectLatest { message ->
-                withContext(Dispatchers.Main) {
-                    Timber.d("[updateStudentsPointErrorFlow]: $message")
-                    val spannable = SpannableStringUtils.replaceStringFirstArgAsBoldStyle(
-                        message,
-                        context.getString(R.string.quiz_all_correct_students),
-                    )
-                    binding.mtCloseErrorToast.setText(spannable)
-                    binding.mtCloseErrorToast.show(coroutineScope)
-                }
+                withContext(Dispatchers.Main) { render(infos) }
             }
         }
         coroutineScope.launch(Dispatchers.IO) {
             quizCommonWindowModel.networkAvailabilityState.collect { hasNetwork ->
                 withContext(Dispatchers.Main) {
-                    if (!hasNetwork) binding.msdvCloseConfirm.dismiss()
-                    binding.csSnackbar.isVisible = !hasNetwork
+                    ui.update { it.copy(hasNetwork = hasNetwork) }
+                    if (!hasNetwork) ui.update { it.copy(closeConfirm = false) }
                 }
             }
         }
     }
 
-    private fun applyStateUi(state: QuizState) {
-        val isQuizzing = state == QuizState.QUIZZING
-        val isResult = state == QuizState.QUIZ_RESULTS
-
-        // Quizzing-only chrome
-        binding.llStopwatchGroup.visibility = if (isQuizzing) View.VISIBLE else View.GONE
-        binding.buttonEndAndReview.visibility = if (isQuizzing) View.VISIBLE else View.GONE
-        binding.llRefreshButton.visibility = if (isQuizzing) View.VISIBLE else View.GONE
-
-        // Result-only chrome
-        binding.llResultOptionsArea.visibility = if (isResult) View.VISIBLE else View.GONE
-        binding.llResultTabs.visibility = if (isResult) View.VISIBLE else View.GONE
-
-        // Right-side body content visibility depends on current tab when in result.
-        applyResultTabVisibility(isResult)
-
-        // Adapter applies the green Submitted palette only in QUIZ_RESULTS;
-        // Quizzing keeps the existing purple styling.
-        studentAdapter.setIsResult(isResult)
-    }
-
-    private fun applyResultTabVisibility(isResult: Boolean) {
-        val showOverview = isResult && currentResultTab == ResultTab.OVERVIEW
-        val showStudentResponses = isResult && currentResultTab == ResultTab.STUDENT_RESPONSES
-        // In Quizzing, the student grid stays visible (used for live answering view).
-        val showStudentGrid = !isResult || showStudentResponses
-        binding.svResultOverviewContent.visibility = if (showOverview) View.VISIBLE else View.GONE
-        binding.rvStudentList.visibility = if (showStudentGrid) View.VISIBLE else View.GONE
-        binding.llShowStudentsName.visibility = if (showStudentResponses) View.VISIBLE else View.GONE
-    }
-
-    private fun setActiveResultTab(tab: ResultTab) {
-        currentResultTab = tab
-        val isOverview = tab == ResultTab.OVERVIEW
-        binding.tvResultTabOverview.setTextColor(
-            context.getColor(if (isOverview) R.color.color_4848F0 else R.color.neutral_900),
-        )
-        binding.tvResultTabStudent.setTextColor(
-            context.getColor(if (!isOverview) R.color.color_4848F0 else R.color.neutral_900),
-        )
-        binding.vResultTabIndicatorOverview.visibility =
-            if (isOverview) View.VISIBLE else View.INVISIBLE
-        binding.vResultTabIndicatorStudent.visibility =
-            if (!isOverview) View.VISIBLE else View.INVISIBLE
-        applyResultTabVisibility(
-            isResult = quizStartWindowModel.quizzingUiState.value.quizState == QuizState.QUIZ_RESULTS,
-        )
-    }
-
-    private fun handleBarClick(optionId: Int) {
-        selectedHighlightOptionId = if (selectedHighlightOptionId == optionId) null else optionId
-        // Auto-switch to Student responses tab when a bar is highlighted in Overview, mirroring T/F.
-        if (currentResultTab == ResultTab.OVERVIEW && selectedHighlightOptionId != null) {
-            setActiveResultTab(ResultTab.STUDENT_RESPONSES)
-        }
-        bindResultData(audioStartWindowModel.getCurrentStudentQuizAudioAnsweringInfoList())
-    }
-
-    private fun bindResultData(resultList: List<AudioAnswerInfo>) {
-        val activeStudents = resultList.filter { it.answerResultState != AnswerResultState.ABSENT }
-        val submitted = resultList.count { it.answerResultState == AnswerResultState.ANSWERED }
-        val notSubmitted = resultList.count { it.answerResultState == AnswerResultState.NO_ANSWER }
-        val attendance = activeStudents.size
-
-        bindOptionBars(submitted, notSubmitted, attendance)
-        bindOverview(submitted, notSubmitted, attendance)
-        submitListWithHighlight(resultList)
-    }
-
-    private fun bindOptionBars(submitted: Int, notSubmitted: Int, attendance: Int) {
-        if (resultBarItems.size < BAR_COUNT) return
-        val maxCount = attendance.coerceAtLeast(1)
-        resultBarItems[0].setData(
-            CSResultOptionBarItem.Data(
-                optionId = OPTION_ID_SUBMITTED,
-                label = context.getString(R.string.quiz_mvb_cell_submitted),
-                isCorrect = false,
-                responseCount = submitted,
-                maxCount = maxCount,
-                style = CSResultOptionBarItem.BarStyle.CORRECT,
-                isHighlighted = selectedHighlightOptionId == null ||
-                    selectedHighlightOptionId == OPTION_ID_SUBMITTED,
-            ),
-        )
-        resultBarItems[1].setData(
-            CSResultOptionBarItem.Data(
-                optionId = OPTION_ID_NOT_SUBMITTED,
-                label = context.getString(R.string.quiz_mvb_cell_not_submitted),
-                isCorrect = false,
-                responseCount = notSubmitted,
-                maxCount = maxCount,
-                style = CSResultOptionBarItem.BarStyle.NEUTRAL,
-                isHighlighted = selectedHighlightOptionId == null ||
-                    selectedHighlightOptionId == OPTION_ID_NOT_SUBMITTED,
-            ),
-        )
-    }
-
-    private fun bindOverview(submitted: Int, notSubmitted: Int, attendance: Int) {
-        binding.csracSubmitted.setData(
-            CSResultAnalyticChip.Data(
-                iconRes = R.drawable.ic_check_white,
-                label = context.getString(R.string.quiz_mvb_cell_submitted),
-                count = submitted,
-            ),
-        )
-        binding.csracNotSubmitted.setData(
-            CSResultAnalyticChip.Data(
-                iconRes = null,
-                label = context.getString(R.string.quiz_mvb_cell_not_submitted),
-                count = notSubmitted,
-            ),
-        )
-
-        // Pie chart reuses the T/F 3-segment widget; pass 0 for "incorrect" so only
-        // submitted (green) and not-submitted (gray) segments render.
-        val submittedRate = if (attendance == 0) 0 else submitted * 100 / attendance
-        val notSubmittedRate = (100 - submittedRate).coerceAtLeast(0)
-        binding.csapcResultPieChart.setData(submitted, 0, notSubmitted)
-        binding.tvResultLegendSubmitted.text =
-            context.getString(R.string.quiz_mvb_result_submitted_rate, submittedRate)
-        binding.tvResultLegendNotSubmitted.text =
-            context.getString(R.string.quiz_mvb_result_not_submitted_rate, notSubmittedRate)
-    }
-
-    /**
-     * In the MVB adapter, isPartiallyVisible drives card dim alpha:
-     *  - false = full color (active / highlighted)
-     *  - true  = dimmed (highlight-excluded)
-     *
-     * Note: AudioAnswerInfo.isPartiallyVisible defaults to true (legacy semantics =
-     * "name hidden"). We MUST set it explicitly on every submit, otherwise every
-     * freshly-bound or recycled ViewHolder lands at alpha 0.3.
-     *
-     * QUIZZING: no highlight concept — force all cards to full color.
-     * QUIZ_RESULTS: dim only the cards that don't match the selected highlight bar.
-     */
-    private fun submitListWithHighlight(infos: List<AudioAnswerInfo>) {
+    private fun render(infos: List<AudioAnswerInfo>) {
+        currentAudioInfos = infos
         val state = quizStartWindowModel.quizzingUiState.value.quizState
-        val transformed = if (state == QuizState.QUIZ_RESULTS) {
-            val selected = selectedHighlightOptionId
-            infos.map { info ->
-                val matches = when (selected) {
-                    null -> true
-                    OPTION_ID_SUBMITTED -> info.answerResultState == AnswerResultState.ANSWERED
-                    OPTION_ID_NOT_SUBMITTED -> info.answerResultState == AnswerResultState.NO_ANSWER
-                    else -> true
-                }
-                info.copy(isPartiallyVisible = !matches)
-            }
-        } else {
-            infos.map { it.copy(isPartiallyVisible = false) }
+        val uiState = quizStartWindowModel.quizzingUiState.value
+        val submitted = infos.count { it.answerResultState == AnswerResultState.ANSWERED }
+        val notSubmitted = infos.count { it.answerResultState == AnswerResultState.NO_ANSWER }
+        val attendance = submitted + notSubmitted
+        val responders = infos.map { toResponder(it) }
+        val bars = listOf(
+            ResultBar(context.getString(R.string.quiz_mvb_cell_submitted), submitted, attendance, isCorrect = false, BarStyle.CORRECT),
+            ResultBar(context.getString(R.string.quiz_mvb_cell_not_submitted), notSubmitted, attendance, isCorrect = false, BarStyle.NEUTRAL),
+        )
+        ui.update {
+            it.copy(
+                state = if (state == QuizState.QUIZ_RESULTS) QuizPanelState.RESULT else QuizPanelState.QUIZZING,
+                joined = uiState.answerCount,
+                capacity = uiState.attendanceCount,
+                responders = responders,
+                resultBars = bars,
+            )
         }
-        studentAdapter.submitList(transformed)
+        // Pre-fetch durations for revealed recordings so the cell shows the time before play
+        // (the legacy ViewHolder did this per-card via MediaMetadataRetriever).
+        infos.filter { it.answerResultState == AnswerResultState.ANSWERED && it.canShowAnswer && it.audioDuration == null && it.audioUrl.isNotBlank() }
+            .forEach { fetchDuration(it) }
+    }
+
+    private fun toResponder(info: AudioAnswerInfo): QuizResponder = QuizResponder(
+        seat = info.displaySeatNumber,
+        name = info.displayName,
+        state = when (info.answerResultState) {
+            AnswerResultState.ANSWERED -> ResponderState.ANSWERED
+            AnswerResultState.NO_ANSWER -> ResponderState.NOT_SUBMITTED
+            else -> ResponderState.ABSENT
+        },
+        correct = if (info.answerResultState == AnswerResultState.ANSWERED) true else null,
+        audioPlaying = info.audioState == AudioState.PLAY,
+        audioLoading = info.canShowAnswer && info.audioDuration == null,
+        audioTime = info.audioDuration?.let { d ->
+            (if (info.audioState == AudioState.INIT) d else info.audioRemainTime).milliSecondToTimerUnit()
+        },
+    )
+
+    private fun onAudioToggle(r: QuizResponder) {
+        val info = currentAudioInfos.firstOrNull { it.displaySeatNumber == r.seat } ?: return
+        if (info.audioState == AudioState.PLAY) audioStartWindowModel.setPause() else audioStartWindowModel.setPlay(info)
+    }
+
+    private fun fetchDuration(info: AudioAnswerInfo) {
+        if (info.serialNumber in durationFetching) return
+        durationFetching += info.serialNumber
+        coroutineScope.launch(Dispatchers.IO) {
+            val retriever = MediaMetadataRetriever()
+            val duration = try {
+                retriever.setDataSource(info.audioUrl)
+                retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toLongOrNull() ?: 0L
+            } catch (e: Exception) {
+                0L
+            } finally {
+                runCatching { retriever.release() }
+            }
+            audioStartWindowModel.setDuration(info.copy(audioDuration = duration))
+            withContext(Dispatchers.Main) {
+                durationFetching -= info.serialNumber
+                render(audioStartWindowModel.getCurrentStudentQuizAudioAnsweringInfoList())
+            }
+        }
     }
 
     private fun startStopwatch() {
         if (stopwatchJob?.isActive == true) return
-        val startTimeInMillis = if (quizManager.quizStartTimeInMillis > 0) {
-            quizManager.quizStartTimeInMillis
-        } else {
-            System.currentTimeMillis()
-        }
+        val startTimeInMillis = if (quizManager.quizStartTimeInMillis > 0) quizManager.quizStartTimeInMillis else System.currentTimeMillis()
         val timeDiffInMillis = TimeUtils.getTimeDiffFromCurrentTimeInMillis(startTimeInMillis)
-        stopwatchJob = coroutineScope.startTimerInMilliSec(
-            startTimeInMillis,
-            timeDiffInMillis,
-        ) { tickMs ->
+        stopwatchJob = coroutineScope.startTimerInMilliSec(startTimeInMillis, timeDiffInMillis) { tickMs ->
             val (minutes, seconds) = DateTimeUtils.formatToMinuteSecondPair(tickMs)
-            withContext(Dispatchers.Main) {
-                binding.tvStopwatch.text = String.format("%02d:%02d", minutes, seconds)
-            }
+            withContext(Dispatchers.Main) { ui.update { it.copy(stopwatch = String.format("%02d:%02d", minutes, seconds)) } }
         }
     }
 
-    private fun stopStopwatch() {
-        stopwatchJob?.cancel()
-        stopwatchJob = null
-    }
-
-    private fun endQuiz() {
+    private fun setRefreshErrorHandler() {
         coroutineScope.launch(Dispatchers.IO) {
-            if (quizStartWindowModel.updateQuizStatus(UpdateQuizStatusType.FINISH)) {
-                withContext(Dispatchers.Main) {
-                    audioStartWindowModel.setStop()
-                    stopStopwatch()
-                }
-                quizStartWindowModel.changeQuizState(QuizState.QUIZ_RESULTS)
-            } else {
-                withContext(Dispatchers.Main) {
-                    binding.buttonEndAndReview.isEnabled = true
-                    binding.mtCloseErrorToast.setText(context.getString(R.string.quiz_error_msg_end_quiz))
-                    binding.mtCloseErrorToast.show(coroutineScope)
-                }
+            quizStartWindowModel.refreshFailedFlow.collectLatest {
+                withContext(Dispatchers.Main) { if (ui.value.hasNetwork) showErrorToast(context.getString(R.string.common_error_general)) }
             }
         }
     }
 
-    private fun onCloseClicked() {
-        showCloseConfirmDialog()
+    private fun showErrorToast(message: String) {
+        coroutineScope.launch(Dispatchers.Main) {
+            ui.update { it.copy(errorToast = message) }
+            withContext(Dispatchers.IO) { kotlinx.coroutines.delay(3000) }
+            ui.update { it.copy(errorToast = null) }
+        }
+    }
+
+    private fun onCloseConfirmPositive() {
+        ui.update { it.copy(closeConfirm = false) }
+        if (!ui.value.hasNetwork) {
+            quizManager.clearCurrentQuizInfo()
+            csWindowManager.removeWindow(tag)
+            unclosedMissionUiManager.notifyMissionClosedIfNeeded(MissionType.QUIZ)
+        } else if (quizStartWindowModel.quizzingUiState.value.quizState == QuizState.QUIZ_RESULTS) {
+            closeQuiz()
+        } else {
+            ui.update { it.copy(closeLoading = true) }
+            cancelQuiz()
+        }
+    }
+
+    private fun onCloseConfirmNegative() {
+        ui.update { it.copy(closeConfirm = false) }
+        quizCancelJob?.cancel()
     }
 
     private fun showCloseConfirmDialog() {
-        binding.msdvCloseConfirm.setup(
-            title = context.getString(R.string.quiz_disclose_close_confirm_title),
-            message = context.getString(R.string.quiz_disclose_close_confirm_body),
-            positiveText = context.getString(R.string.quiz_disclose_close_confirm_positive),
-            onPositive = {
-                binding.msdvCloseConfirm.dismiss()
-                if (binding.csSnackbar.isVisible) {
-                    quizManager.clearCurrentQuizInfo()
-                    csWindowManager.removeWindow(tag)
-                    unclosedMissionUiManager.notifyMissionClosedIfNeeded(MissionType.QUIZ)
+        ui.update { it.copy(closeConfirm = true) }
+    }
+
+    private fun closeQuiz() {
+        quizCancelJob?.cancel()
+        quizCancelJob = coroutineScope.launch(Dispatchers.Main) {
+            ui.update { it.copy(closeLoading = true) }
+            withContext(Dispatchers.IO) {
+                val success = quizStartWindowModel.updateQuizStatus(UpdateQuizStatusType.CLOSE)
+                if (success) {
+                    withContext(Dispatchers.Main) {
+                        csWindowManager.removeWindow(tag)
+                        unclosedMissionUiManager.notifyMissionClosedIfNeeded(MissionType.QUIZ)
+                    }
                 } else {
-                    val isResult = quizStartWindowModel.quizzingUiState.value.quizState == QuizState.QUIZ_RESULTS
-                    if (isResult) {
-                        closeQuiz()
-                    } else {
-                        showCloseLoadingUi()
-                        cancelQuiz()
+                    withContext(Dispatchers.Main) {
+                        ui.update { it.copy(closeLoading = false) }
+                        showErrorToast(context.getString(R.string.quiz_error_msg_close_quiz))
                     }
                 }
-            },
-            negativeText = context.getString(R.string.quiz_disclose_close_confirm_negative),
-            onNegative = { quizCancelJob?.cancel() },
-        ).show()
+            }
+        }
     }
 
     private fun cancelQuiz() {
@@ -532,81 +398,36 @@ class MvbAudioQuizStartWindow(
                 }
             } else {
                 withContext(Dispatchers.Main) {
-                    dismissCloseLoadingUi()
-                    binding.mtCloseErrorToast.apply {
-                        setText(context.getString(R.string.quiz_error_msg_close_quiz))
-                        show(coroutineScope)
-                    }
+                    ui.update { it.copy(closeLoading = false) }
+                    showErrorToast(context.getString(R.string.quiz_error_msg_close_quiz))
                 }
             }
         }
     }
 
-    private fun closeQuiz() {
-        quizCancelJob?.cancel()
-        quizCancelJob = coroutineScope.launch(Dispatchers.Main) {
-            showCloseLoadingUi()
-            withContext(Dispatchers.IO) {
-                val success = quizStartWindowModel.updateQuizStatus(UpdateQuizStatusType.CLOSE)
-                if (success) {
-                    withContext(Dispatchers.Main) {
-                        csWindowManager.removeWindow(tag)
-                        unclosedMissionUiManager.notifyMissionClosedIfNeeded(MissionType.QUIZ)
-                    }
-                } else {
-                    withContext(Dispatchers.Main) {
-                        dismissCloseLoadingUi()
-                        binding.mtCloseErrorToast.setText(context.getString(R.string.quiz_error_msg_close_quiz))
-                        binding.mtCloseErrorToast.show(coroutineScope)
-                    }
+    /** Audio skips DISCLOSE_ANSWER — End-and-review goes straight to results; stop any playback. */
+    private fun endQuiz() {
+        coroutineScope.launch(Dispatchers.IO) {
+            if (quizStartWindowModel.updateQuizStatus(UpdateQuizStatusType.FINISH)) {
+                withContext(Dispatchers.Main) {
+                    audioStartWindowModel.setStop()
+                    stopwatchJob?.cancel()
+                    stopwatchJob = null
                 }
+                quizStartWindowModel.changeQuizState(QuizState.QUIZ_RESULTS)
+            } else {
+                withContext(Dispatchers.Main) { showErrorToast(context.getString(R.string.quiz_error_msg_end_quiz)) }
             }
-        }
-    }
-
-    private fun showCloseLoadingUi() {
-        binding.flCloseLoadingOverlay.visibility = View.VISIBLE
-        binding.lavLoading.playAnimation()
-    }
-
-    private fun dismissCloseLoadingUi() {
-        binding.flCloseLoadingOverlay.visibility = View.GONE
-        binding.lavLoading.cancelAnimation()
-    }
-
-    override fun onAudioAnswerItemEvent(event: AudioAnswerAdapter.AudioAnswerItemEventListener) {
-        when (event) {
-            is AudioAnswerAdapter.AudioAnswerItemEventListener.ItemClick -> {
-                // Result already auto-reveals every recording's play state, so tapping
-                // the card must not collapse it back. Only allow toggle in Quizzing.
-                if (quizStartWindowModel.quizzingUiState.value.quizState != QuizState.QUIZ_RESULTS) {
-                    audioStartWindowModel.setCanShowAnswer(event.info)
-                }
-            }
-            is AudioAnswerAdapter.AudioAnswerItemEventListener.PauseAudio ->
-                audioStartWindowModel.setPause()
-            is AudioAnswerAdapter.AudioAnswerItemEventListener.PlayAudio ->
-                audioStartWindowModel.setPlay(event.info)
-            is AudioAnswerAdapter.AudioAnswerItemEventListener.UpdateDuration ->
-                audioStartWindowModel.setDuration(event.info)
         }
     }
 
     override fun onDestroy() {
-        Timber.d("[onDestroy] MvbAudioQuizStartWindow")
         super.onDestroy()
-        stopStopwatch()
+        stopwatchJob?.cancel()
         quizCommonWindowModel.removeOpenedQuizWindowTag(tag)
         quizCommonWindowModel.onCleared()
         quizStartWindowModel.onCleared()
         audioStartWindowModel.onCleared()
         coroutineScope.cancel()
-    }
-
-    companion object {
-        private const val STUDENT_GRID_SPAN = 4
-        private const val BAR_COUNT = 2
-        private const val OPTION_ID_SUBMITTED = 0
-        private const val OPTION_ID_NOT_SUBMITTED = 1
     }
 }
