@@ -95,19 +95,11 @@ import com.viewsonic.classswift.ui.widgetmodel.quizcollection.CSCreateQuizCollec
 import com.viewsonic.classswift.ui.widgetmodel.records.RecordsTaskWidgetModel
 import com.viewsonic.classswift.ui.widgetmodel.task.ContentTaskWidgetModel
 import com.viewsonic.classswift.ui.widgetmodel.task.UrlMetaPreviewDialogWidgetModel
-import com.viewsonic.classswift.ui.window.ClassManagementMenuWindow
 import com.viewsonic.classswift.ui.window.ComingSoonPromptWindow
-import com.viewsonic.classswift.ui.window.InAppTutorialWindow
-import com.viewsonic.classswift.ui.window.MyClassWindow
 import com.viewsonic.classswift.ui.window.SelectOrgAndSelectClassWindow
 import com.viewsonic.classswift.ui.window.QuizCollectionWindow
-import com.viewsonic.classswift.ui.window.QuizMenuWindow
-import com.viewsonic.classswift.ui.window.SelectOrgWindow
-import com.viewsonic.classswift.ui.window.SettingMenuWindow
 import com.viewsonic.classswift.ui.window.JoinClassWindow
 import com.viewsonic.classswift.ui.window.StudentManagementWindow
-import com.viewsonic.classswift.ui.window.ToolbarWindow
-import com.viewsonic.classswift.ui.window.ToolsMenuWindow
 import com.viewsonic.classswift.ui.window.TutorialWindow
 import com.viewsonic.classswift.ui.window.UnderMaintenanceWindow
 import com.viewsonic.classswift.ui.window.UpcomingMaintenanceCornerPromptWindow
@@ -139,12 +131,9 @@ import com.viewsonic.classswift.ui.window.quiz.start.TextShortAnswerStartWindow
 import com.viewsonic.classswift.ui.window.quiz.start.TextTrueFalseStartWindow
 import com.viewsonic.classswift.ui.window.quiz.start.TrueFalseStartWindow
 import com.viewsonic.classswift.ui.window.task.PushRespondWindow
-import com.viewsonic.classswift.ui.windowmodel.InAppTutorialWindowModel
 import com.viewsonic.classswift.ui.windowmodel.LeaderboardWindowModel
-import com.viewsonic.classswift.ui.windowmodel.MyClassWindowModel
 import com.viewsonic.classswift.ui.windowmodel.QuizCollectionWindowModel
 import com.viewsonic.classswift.ui.windowmodel.SelectOrgAndSelectClassWindowModel
-import com.viewsonic.classswift.ui.windowmodel.SelectOrgWindowModel
 import com.viewsonic.classswift.ui.windowmodel.JoinClassWindowModel
 import com.viewsonic.classswift.ui.windowmodel.StudentManagementWindowModel
 import com.viewsonic.classswift.ui.windowmodel.ToolbarManager
@@ -171,7 +160,6 @@ import com.viewsonic.classswift.ui.windowmodel.quiz.TrueFalseWindowModel
 import com.viewsonic.classswift.ui.windowmodel.task.PushRespondWindowModel
 import com.viewsonic.classswift.ui.windowmodel.tool.BuzzerWindowModel
 import com.viewsonic.classswift.ui.windowmodel.tool.RandomDrawWindowModel
-import com.viewsonic.classswift.ui.windowmodel.tool.SettingsWindowModel
 import com.viewsonic.classswift.ui.windowmodel.tool.TimerToolWindowModel
 import com.viewsonic.classswift.ui.windowmodel.tool.UnderMaintenanceWindowModel
 import com.viewsonic.classswift.ui.windowmodel.tool.spinner.SpinnerWindowModel
@@ -347,17 +335,10 @@ object KoinModules {
 
     // ui using applicationContext, please using factory not single,
     private val windowModule = module {
-        factory { SelectOrgWindow(androidContext().localizedContext()) }
         factory { ComingSoonPromptWindow(androidContext().localizedContext()) }
         factory { UpgradePromptWindow(androidContext().localizedContext()) }
-        factory { SettingMenuWindow(androidContext().localizedContext()) }
-        factory { ClassManagementMenuWindow(androidContext().localizedContext()) }
-        factory { QuizMenuWindow(androidContext().localizedContext()) }
-        factory { ToolsMenuWindow(androidContext().localizedContext()) }
-        factory { ToolbarWindow(androidContext().localizedContext()) }
         factory { StudentManagementWindow(androidContext().localizedContext()) }
         factory { JoinClassWindow(androidContext().localizedContext()) }
-        factory { MyClassWindow(androidContext().localizedContext()) }
         factory { SelectOrgAndSelectClassWindow(androidContext().localizedContext()) }
         factory { ShortAnswerEditWindow(androidContext().localizedContext()) }
         factory { MvbShortAnswerEditWindow(androidContext().localizedContext()) }
@@ -380,7 +361,6 @@ object KoinModules {
         factory { ShortAnswerStartWindow(androidContext().localizedContext()) }
         factory { AudioQuizStartWindow(androidContext().localizedContext()) }
         factory { MvbAudioQuizStartWindow(androidContext().localizedContext()) }
-        factory { (isFromSettingsWindow: Boolean) -> InAppTutorialWindow(androidContext().localizedContext(), isFromSettingsWindow) }
         factory { PushRespondWindow(androidContext().localizedContext()) }
         factory { UpcomingMaintenanceWindow(androidContext().localizedContext()) }
         factory { UpcomingMaintenanceCornerPromptWindow(androidContext().localizedContext()) }
@@ -414,8 +394,6 @@ object KoinModules {
     }
 
     private val windowModelModule = module {
-        factory { SelectOrgWindowModel(get(), get(), get(), get()) }
-        factory { MyClassWindowModel(androidContext().localizedContext(), get(), get(), get(), get(), get(), get(), get()) }
         factory { SelectOrgAndSelectClassWindowModel(androidContext().localizedContext(), get(), get(), get(), get(), get(), get()) }
         factory { StudentManagementWindowModel(get(), get(), get(), get(), get(), get(), get(), get()) }
         factory { JoinClassWindowModel(get(), get(), get(), get(), get(), get(), get(), get()) }
@@ -430,8 +408,6 @@ object KoinModules {
         factory { BuzzerWindowModel(get(), get(), get(), get(), get(), get()) }
         factory { SpinnerWindowModel(get(), get(), get()) }
         factory { MvbSpinnerWindowModel(get(), get(), get(), get(), get()) }
-        factory { SettingsWindowModel(get(), get(), get(), get()) }
-        factory { InAppTutorialWindowModel(get(), get(), get(), get()) }
         factory { ShortAnswerWindowModel(get()) }
         factory {
             val accountManager: com.viewsonic.classswift.manager.AccountManager = get()

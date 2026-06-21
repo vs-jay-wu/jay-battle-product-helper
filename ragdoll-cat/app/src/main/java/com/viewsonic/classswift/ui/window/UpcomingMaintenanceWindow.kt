@@ -37,7 +37,8 @@ class UpcomingMaintenanceWindow(androidContext: Context) : ComposeHostWindow(and
     }
 
     private fun dismissToSelectOrg() {
+        // Standalone SelectOrgWindow removed — ragdoll is MVB-bound only, route to the MVB class window.
         csWindowManager.removeWindow(tag)
-        csWindowManager.createWindow(get(SelectOrgWindow::class.java), Gravity.CENTER)
+        csWindowManager.createWindow(get(SelectOrgAndSelectClassWindow::class.java), Gravity.CENTER)
     }
 }

@@ -23,7 +23,6 @@ import com.viewsonic.classswift.manager.PendingClassEntryWindowManager
 import com.viewsonic.classswift.ui.helper.JoinClassWindowOpener
 import com.viewsonic.classswift.ui.window.JoinClassWindow
 import com.viewsonic.classswift.ui.window.SelectOrgAndSelectClassWindow
-import com.viewsonic.classswift.ui.window.SelectOrgWindow
 import com.viewsonic.classswift.ui.window.UpcomingMaintenanceWindow
 import com.viewsonic.classswift.uimanager.maintenance.MaintenanceAnnouncementsUiManager
 import com.viewsonic.classswift.utils.extension.dump
@@ -208,8 +207,9 @@ class ClassSwiftService : Service() {
                 get(UpcomingMaintenanceWindow::class.java),
                 Gravity.CENTER
             )
-        } else if (myViewBoardConnectionStateProvider.isBound()) {
-            // CLSWAN-1256: MVB bound → auto-select org, go directly to SelectOrgAndSelectClassWindow
+        } else {
+            // Standalone (not-bound) path removed — ragdoll runs MVB-bound only. Auto-select org,
+            // then go to SelectOrgAndSelectClassWindow (guest → JoinClass). (CLSWAN-1256)
             if (accountManager.selectedOrg == null) {
                 val orgs = accountManager.getUserOrganizationInfo().organizations
                 accountManager.selectedOrg = orgs?.firstOrNull { it.notExpiredOrg } ?: orgs?.firstOrNull()
@@ -222,11 +222,6 @@ class ClassSwiftService : Service() {
                     Gravity.CENTER
                 )
             }
-        } else {
-            CSWindowManager.createWindow(
-                get(SelectOrgWindow::class.java),
-                Gravity.CENTER
-            )
         }
     }
 
