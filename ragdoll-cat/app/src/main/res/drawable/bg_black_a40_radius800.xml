@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Rounded 40%-black dim for the Sketch review overlay, so it clips to the card's rounded corners
+     (the hybrid window has no clipToOutline shell card; mirrors the old fl_shell_root dim). -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/black_a40" />
+    <corners android:radius="@dimen/radius_800" />
+</shape>

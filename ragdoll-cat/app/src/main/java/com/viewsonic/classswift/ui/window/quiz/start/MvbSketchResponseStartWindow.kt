@@ -101,11 +101,11 @@ class MvbSketchResponseStartWindow(val context: Context) : IWindow<WindowMvbSket
     private val ui = MutableStateFlow(Ui())
 
     override var tag: WindowTag = WindowTag.MVB_SKETCH_RESPONSE_START_QUIZ
-    override var size: SizeInPixels = SizeInPixels(WRAP, WRAP)
-    private val answeringSize = SizeInPixels(869f.dpToPx().toInt(), 496f.dpToPx().toInt())
+    // Fixed per-state size (like the other quiz windows) so the ComposeView gets exact bounds and the
+    // Compose scrims align with the card; grows on the answering→result transition (see resizeWindow).
+    override var size: SizeInPixels = SizeInPixels(869f.dpToPx().toInt(), 496f.dpToPx().toInt())
     private val resultSize = SizeInPixels(869f.dpToPx().toInt(), 538.67f.dpToPx().toInt())
-    override fun getCurrentSize(): SizeInPixels =
-        if (ui.value.panel == SketchPanelState.RESULT) resultSize else answeringSize
+    override fun getCurrentSize(): SizeInPixels = size
 
     private val screenUri: String get() = quizCommonWindowModel.getScreenImageUri()
 
@@ -173,7 +173,9 @@ class MvbSketchResponseStartWindow(val context: Context) : IWindow<WindowMvbSket
 
     @Composable
     private fun CloseConfirmDialog() {
-        Box(Modifier.fillMaxSize().background(Color(0x99000000)).clickable(enabled = false) {}, contentAlignment = Alignment.Center) {
+        // Inset the 8dp shadow padding + clip to the card's rounded corners so the dim matches the
+        // card (mirrors the old fl_shell_root clipToOutline); black_a35, like the native MvbSystemDialogView.
+        Box(Modifier.fillMaxSize().padding(8.dp).clip(RoundedCornerShape(10.66.dp)).background(Color(0x59000000)).clickable(enabled = false) {}, contentAlignment = Alignment.Center) {
             Column(Modifier.width(360.dp).clip(RoundedCornerShape(12.dp)).background(Color.White).padding(24.dp)) {
                 OT(context.getString(R.string.quiz_disclose_close_confirm_title), Color(0xFF2E3133), 18.sp, FontWeight.Bold)
                 OT(context.getString(R.string.quiz_disclose_close_confirm_body), Color(0xFF2E3133), 14.sp, modifier = Modifier.padding(top = 12.dp))
@@ -227,6 +229,7 @@ class MvbSketchResponseStartWindow(val context: Context) : IWindow<WindowMvbSket
                 val panel = if (state == SketchState.RESULT) SketchPanelState.RESULT else SketchPanelState.ANSWERING
                 ui.update { it.copy(panel = panel) }
                 if (state == SketchState.RESULT) {
+                    size = resultSize
                     resizeWindow()
                     transitionToResult()
                 }
@@ -437,8 +440,4 @@ class MvbSketchResponseStartWindow(val context: Context) : IWindow<WindowMvbSket
     override val binding: WindowMvbSketchQuizBinding = WindowMvbSketchQuizBinding.inflate(
         LayoutInflater.from(androidx.appcompat.view.ContextThemeWrapper(context, com.google.android.material.R.style.Theme_MaterialComponents)),
     )
-
-    private companion object {
-        val WRAP = android.view.WindowManager.LayoutParams.WRAP_CONTENT
-    }
 }

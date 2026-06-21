@@ -174,7 +174,7 @@ class MvbTextShortAnswerStartWindow(val context: Context) : IWindow<WindowMvbTex
             }
             if (s.closeConfirm) CloseConfirmDialog()
             if (s.closeLoading) {
-                Box(Modifier.fillMaxSize().background(Color(0x99000000)), contentAlignment = Alignment.Center) {
+                Box(Modifier.fillMaxSize().padding(8.dp).clip(RoundedCornerShape(10.66.dp)).background(Color(0x99000000)), contentAlignment = Alignment.Center) {
                     AndroidView(factory = { ctx ->
                         LottieAnimationView(ctx).apply {
                             setAnimation("ani_loading.json")
@@ -203,7 +203,7 @@ class MvbTextShortAnswerStartWindow(val context: Context) : IWindow<WindowMvbTex
 
     @Composable
     private fun CloseConfirmDialog() {
-        Box(Modifier.fillMaxSize().background(Color(0x99000000)).clickable(enabled = false) {}, contentAlignment = Alignment.Center) {
+        Box(Modifier.fillMaxSize().padding(8.dp).clip(RoundedCornerShape(10.66.dp)).background(Color(0x59000000)).clickable(enabled = false) {}, contentAlignment = Alignment.Center) {
             Column(Modifier.width(360.dp).clip(RoundedCornerShape(12.dp)).background(Color.White).padding(24.dp)) {
                 OT(context.getString(R.string.quiz_disclose_close_confirm_title), Color(0xFF2E3133), 18.sp, FontWeight.Bold)
                 OT(context.getString(R.string.quiz_disclose_close_confirm_body), Color(0xFF2E3133), 14.sp, modifier = Modifier.padding(top = 12.dp))
