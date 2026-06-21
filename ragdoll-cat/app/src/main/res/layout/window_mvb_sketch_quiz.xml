@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Sketch Response (service path) hybrid shell. The two panels are the Compose MvbSketchResponseScreen
+     in cv_body; srw_sketch_review is the native marking widget (PaintView stroke + bitmap pipeline),
+     overlaid on the card area (margin = 8dp shadow padding) and shown on a student-card click. The
+     marking canvas stays native — its drawing surface can't live inside the ComposeView. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fl_root"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:clipChildren="false"
+    android:clipToPadding="false">
+
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/cv_body"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <com.viewsonic.classswift.ui.widget.quiz.result.SketchReviewWidget
+        android:id="@+id/srw_sketch_review"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/mvb_spacing_300"
+        android:visibility="gone" />
+
+</FrameLayout>

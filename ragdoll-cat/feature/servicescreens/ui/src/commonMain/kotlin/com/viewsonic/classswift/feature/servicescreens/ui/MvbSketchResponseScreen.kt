@@ -61,8 +61,9 @@ enum class SketchPanelState { ANSWERING, RESULT }
 enum class SketchCardStatus { CLICK_TO_VIEW, HANDED_BACK, NOT_SUBMITTED, ABSENT }
 
 /** One student in the sketch result student-responses grid. [status] drives the card; the handwriting
- *  itself opens in the native review widget on click (step 3). */
-data class SketchResponder(val seat: String, val name: String, val status: SketchCardStatus)
+ *  itself opens in the native review widget on click. [id] (studentId) lets the window map a clicked
+ *  card back to its source record. */
+data class SketchResponder(val seat: String, val name: String, val status: SketchCardStatus, val id: String = "")
 
 internal val sampleSketchResponders: List<SketchResponder> = List(14) { i ->
     val seat = "%02d".format(i + 1)
@@ -272,7 +273,7 @@ private fun AnsweringPanel(
 @Composable
 private fun ResponsesWrapper(modifier: Modifier, responders: List<QuizResponder>, onRefresh: () -> Unit) {
     val submitted = responders.count { it.state == ResponderState.ANSWERED }
-    val total = responders.count { it.state != ResponderState.ABSENT }
+    val total = responders.size // mirrors uiState.totalCount (all polled students, incl. absent)
     Column(modifier.padding(end = 16.dp).padding(vertical = 16.dp)) {
         Column(Modifier.fillMaxSize().clip(RoundedCornerShape(10.66.dp)).background(Neutral100).padding(10.66.dp)) {
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
