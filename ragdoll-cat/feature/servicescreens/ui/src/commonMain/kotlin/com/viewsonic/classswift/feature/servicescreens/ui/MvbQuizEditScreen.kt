@@ -17,9 +17,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,12 +36,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.viewsonic.classswift.core.ui.designNode
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.Res
+import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_add
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_arrow_clockwise
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_camera_viewfinder
+import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_chevron_down
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_cross
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_image_corners
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_minus_32dp
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_quiz_v2
+import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_trash_can
 import org.jetbrains.compose.resources.painterResource
 
 /** Image-upload lifecycle of the quiz editor (mirrors MvbImageUploadView's progress/uploaded/failed states). */
@@ -94,6 +103,85 @@ private fun EditImageArea(
     }
 }
 
+/** One editor option box (`view_option_box`): a 106.67dp neutral100 tile (radius 8, neutral300 border)
+ *  with a big centered label and a trash icon (removable only above the 2-option minimum). */
+@Composable
+private fun OptionBox(label: String, removable: Boolean, onRemove: () -> Unit, modifier: Modifier = Modifier) {
+    val shape = RoundedCornerShape(8.dp)
+    Box(modifier.height(106.67.dp).clip(shape).background(Neutral100).border(1.33.dp, Neutral300, shape).designNode("edit_opt_$label")) {
+        Text(label, color = Neutral900, fontSize = 26.67.sp, fontWeight = FontWeight.Bold, modifier = Modifier.align(Alignment.Center))
+        if (removable) {
+            Image(
+                painterResource(Res.drawable.ic_trash_can), "Remove option",
+                Modifier.align(Alignment.TopEnd).padding(5.33.dp).size(20.dp).clip(RoundedCornerShape(50)).clickable(onClick = onRemove).padding(2.66.dp),
+                colorFilter = ColorFilter.tint(Neutral900),
+            )
+        }
+    }
+}
+
+/** A labelled settings dropdown (`cl_answer_types` / `cl_answer_options`): value + chevron over a
+ *  neutral0 input, opening a menu of [options]. */
+@Composable
+private fun EditDropdown(label: String, value: String, options: List<String>, nodeId: String, onSelect: (String) -> Unit, modifier: Modifier = Modifier) {
+    var expanded by remember { mutableStateOf(false) }
+    Column(modifier) {
+        Text(label, color = Neutral900, fontSize = 9.33.sp, modifier = Modifier.padding(start = 2.66.dp))
+        Box {
+            Row(
+                Modifier.padding(top = 2.66.dp).fillMaxWidth().height(37.33.dp).clip(RoundedCornerShape(5.33.dp))
+                    .background(Color.White).border(0.66.dp, if (expanded) Violet4848F0 else Neutral300, RoundedCornerShape(5.33.dp))
+                    .clickable { expanded = true }.padding(horizontal = 10.66.dp).designNode(nodeId),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(value, color = Neutral900, fontSize = 10.67.sp, modifier = Modifier.weight(1f))
+                Image(painterResource(Res.drawable.ic_chevron_down), null, Modifier.size(10.66.dp), colorFilter = ColorFilter.tint(Neutral900))
+            }
+            DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                options.forEach { opt ->
+                    DropdownMenuItem(text = { Text(opt, fontSize = 10.67.sp) }, onClick = { onSelect(opt); expanded = false })
+                }
+            }
+        }
+    }
+}
+
+/** Editor option panel (`MvbOptionPanel`, MC / Poll): a row of option boxes (+ add, 2–6) over a
+ *  neutral100 settings card with the Answer-types (ABC/123) and Answer-options dropdowns. */
+@Composable
+private fun EditOptionPanel(
+    count: Int,
+    letters: Boolean,
+    answerOptionsValue: String,
+    answerOptions: List<String>,
+    onAdd: () -> Unit,
+    onRemove: () -> Unit,
+    onLettersChange: (Boolean) -> Unit,
+    onAnswerOptionsChange: (String) -> Unit,
+) {
+    Column(Modifier.padding(top = 16.dp)) {
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            repeat(count) { i ->
+                val label = if (letters) ('A' + i).toString() else (i + 1).toString()
+                OptionBox(label, removable = count > 2, onRemove = onRemove, modifier = Modifier.weight(1f).padding(end = 10.67.dp))
+            }
+            if (count < 6) {
+                Box(
+                    Modifier.size(24.dp).clip(RoundedCornerShape(5.33.dp)).background(Neutral100).clickable(onClick = onAdd).designNode("edit_add_option"),
+                    contentAlignment = Alignment.Center,
+                ) { Image(painterResource(Res.drawable.ic_add), "Add option", Modifier.size(16.dp), colorFilter = ColorFilter.tint(Neutral900)) }
+            }
+        }
+        Row(
+            Modifier.padding(top = 10.66.dp).fillMaxWidth().clip(RoundedCornerShape(8.dp)).background(Neutral100).padding(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.66.dp),
+        ) {
+            EditDropdown("Answer types", if (letters) "ABC" else "123", listOf("ABC", "123"), "edit_answer_type", { onLettersChange(it == "ABC") }, Modifier.width(133.33.dp))
+            EditDropdown("Answer options", answerOptionsValue, answerOptions, "edit_answer_options", onAnswerOptionsChange, Modifier.width(133.33.dp))
+        }
+    }
+}
+
 /**
  * CMP port of the `Mvb*EditWindow` quiz editors (service path): a 541.33×426.66 card — header,
  * the question-image upload area, and a Cancel / Start-question action bar. This image-only variant
@@ -114,9 +202,14 @@ fun MvbQuizEditScreen(
     onCancel: () -> Unit = {},
     onStart: () -> Unit = {},
 ) {
-    @Suppress("UNUSED_EXPRESSION") type // image-only editor is type-agnostic; option panel uses it (step 2)
+    val hasOptions = type == MvbQuizType.MULTIPLE_CHOICE || type == MvbQuizType.POLL
+    val isPoll = type == MvbQuizType.POLL
+    val answerOptionsList = if (isPoll) listOf("Poll") else listOf("Single answer", "Multiple answers")
+    var optionCount by remember { mutableStateOf(4) }
+    var letters by remember { mutableStateOf(true) }
+    var answerOptionsValue by remember { mutableStateOf(if (isPoll) "Poll" else "Single answer") }
     val cardShape = RoundedCornerShape(5.33.dp)
-    Box(Modifier.size(541.33.dp, 426.66.dp).padding(8.dp)) {
+    Box(Modifier.size(541.33.dp, if (hasOptions) 626.dp else 426.66.dp).padding(8.dp)) {
         Column(
             Modifier.fillMaxSize().clip(cardShape).background(Color.White).border(0.66.dp, Neutral300, cardShape).designNode("mvb_quiz_edit"),
         ) {
@@ -130,6 +223,18 @@ fun MvbQuizEditScreen(
             Box(Modifier.fillMaxWidth().height(0.66.dp).background(Color(0xFFE6E6E6)))
             Column(Modifier.fillMaxSize().padding(16.dp)) {
                 EditImageArea(imageState, progress, image, onCaptureAgain, onTryAgain)
+                if (hasOptions) {
+                    EditOptionPanel(
+                        count = optionCount,
+                        letters = letters,
+                        answerOptionsValue = answerOptionsValue,
+                        answerOptions = answerOptionsList,
+                        onAdd = { if (optionCount < 6) optionCount++ },
+                        onRemove = { if (optionCount > 2) optionCount-- },
+                        onLettersChange = { letters = it },
+                        onAnswerOptionsChange = { answerOptionsValue = it },
+                    )
+                }
                 Spacer(Modifier.weight(1f))
                 // Action bar
                 Row(Modifier.padding(top = 16.dp).fillMaxWidth().height(37.33.dp), horizontalArrangement = Arrangement.spacedBy(10.66.dp)) {

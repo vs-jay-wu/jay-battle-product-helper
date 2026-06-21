@@ -200,12 +200,36 @@ fun main() {
     renderEdit("$dir/quiz_edit_failed.png") {
         MvbQuizEditScreen(imageState = EditImageState.FAILED)
     }
+    // MC / Poll editor (step 2): adds the option panel (boxes + add/trash, answer-type/options dropdowns).
+    renderEditTall("$dir/quiz_edit_mc.png") {
+        MvbQuizEditScreen(
+            type = MvbQuizType.MULTIPLE_CHOICE, imageState = EditImageState.UPLOADED, startEnabled = true,
+            image = { m -> Box(m.background(Color(0xFFDFE3E6))) },
+        )
+    }
+    renderEditTall("$dir/quiz_edit_poll.png") {
+        MvbQuizEditScreen(
+            type = MvbQuizType.POLL, imageState = EditImageState.UPLOADED, startEnabled = true,
+            image = { m -> Box(m.background(Color(0xFFDFE3E6))) },
+        )
+    }
     println("SHOTS_DONE -> $dir")
 }
 
 /** Quiz editor card is 541.33×426.66dp (incl. its own 8dp shadow padding). */
 private fun renderEdit(path: String, content: @Composable () -> Unit) {
     val scene = ImageComposeScene(width = 1083, height = 854, density = Density(2f), content = content)
+    try {
+        val data = scene.render().encodeToData(EncodedImageFormat.PNG) ?: error("PNG encode failed")
+        File(path).writeBytes(data.bytes)
+    } finally {
+        scene.close()
+    }
+}
+
+/** MC / Poll editor card is taller (541.33×626dp) for the option panel. */
+private fun renderEditTall(path: String, content: @Composable () -> Unit) {
+    val scene = ImageComposeScene(width = 1083, height = 1252, density = Density(2f), content = content)
     try {
         val data = scene.render().encodeToData(EncodedImageFormat.PNG) ?: error("PNG encode failed")
         File(path).writeBytes(data.bytes)
