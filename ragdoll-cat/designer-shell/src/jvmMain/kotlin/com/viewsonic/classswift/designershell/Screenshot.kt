@@ -56,17 +56,25 @@ fun main() {
     }
     // Audio result → submission overview with a check-icon Submitted chip + "Submitted" legend;
     // answered cells show a play/pause control + time (Student-responses tab).
+    // Mixed cell states: 0 playing (pause icon), 1-3 paused/init (play icon), 4 loading (spinner), 6 not submitted.
     val audioResponders = saNames.take(5).mapIndexed { i, n ->
-        QuizResponder("%02d".format(i + 1), n, ResponderState.ANSWERED, audioTime = "0:1${i}", audioPlaying = i == 0)
+        QuizResponder("%02d".format(i + 1), n, ResponderState.ANSWERED, audioTime = "0:1$i", audioPlaying = i == 0, audioLoading = i == 4)
     } + QuizResponder("06", "Olivia Yang", ResponderState.NOT_SUBMITTED)
+    val audioBars = listOf(
+        ResultBar("Submitted", 5, 6, false, BarStyle.CORRECT),
+        ResultBar("Not submitted", 1, 6, false, BarStyle.NEUTRAL),
+    )
     render("$dir/quiz_audio_result.png") {
         MvbQuizStartScreen(
             type = MvbQuizType.AUDIO, state = QuizPanelState.RESULT, audioMode = true, options = emptyList(),
-            joined = 5, capacity = 6, responders = audioResponders,
-            resultBars = listOf(
-                ResultBar("Submitted", 5, 6, false, BarStyle.CORRECT),
-                ResultBar("Not submitted", 1, 6, false, BarStyle.NEUTRAL),
-            ),
+            joined = 5, capacity = 6, responders = audioResponders, resultBars = audioBars,
+        )
+    }
+    // Student-responses tab → the audio player cells (play/pause + time, spinner while loading).
+    render("$dir/quiz_audio_cells.png") {
+        MvbQuizStartScreen(
+            type = MvbQuizType.AUDIO, state = QuizPanelState.RESULT, audioMode = true, options = emptyList(),
+            startOnOverview = false, joined = 5, capacity = 6, responders = audioResponders, resultBars = audioBars,
         )
     }
     // All-not-submitted TF result → full gray crosshatch pie (apples-to-apples vs the old build).

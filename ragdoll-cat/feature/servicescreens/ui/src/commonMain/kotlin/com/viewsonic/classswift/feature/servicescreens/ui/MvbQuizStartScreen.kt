@@ -226,9 +226,10 @@ private fun AnsweringCell(r: QuizResponder, modifier: Modifier = Modifier, resul
     when (r.state) {
         ResponderState.ANSWERED -> {
             // Quizzing: violet "Submitted". Result: green/red by correctness, showing the answer.
+            // Audio has no correctness — the card stays violet in result too (item_mvb_quiz_audio_answering).
             val ok = r.correct == true
-            cardBg = if (!resultMode) Violet100EDEDFD else if (ok) GreenE7F7D0 else RedFFECEF
-            headerBg = if (!resultMode) Violet4848F0 else if (ok) Green48720F else RedDB0025
+            cardBg = if (!resultMode || audio) Violet100EDEDFD else if (ok) GreenE7F7D0 else RedFFECEF
+            headerBg = if (!resultMode || audio) Violet4848F0 else if (ok) Green48720F else RedDB0025
             headerText = Color.White
             bodyText = if (resultMode) r.answer ?: "Submitted" else "Submitted"; bodyColor = Neutral900
         }
@@ -599,6 +600,7 @@ fun MvbQuizStartScreen(
     submissionMode: Boolean = false,
     answerPopup: Boolean = false,
     audioMode: Boolean = false,
+    startOnOverview: Boolean = true, // result: start on Overview tab (false = Student-responses; for previews)
     responders: List<QuizResponder> = sampleResponders,
     resultBars: List<ResultBar> = sampleResultBars,
     screenshot: @Composable (Modifier) -> Unit = {},
@@ -609,7 +611,7 @@ fun MvbQuizStartScreen(
     onAudioToggle: (QuizResponder) -> Unit = {},
 ) {
     var discloseSelected by remember { mutableStateOf<Set<Int>>(emptySet()) }
-    var resultOverview by remember { mutableStateOf(true) } // result defaults to the Overview tab (pie), as in the original
+    var resultOverview by remember { mutableStateOf(startOnOverview) } // result defaults to the Overview tab (pie), as in the original
     var highlightedBar by remember { mutableStateOf<Int?>(null) }
     var showNames by remember { mutableStateOf(true) }
     var popupResponder by remember { mutableStateOf<QuizResponder?>(null) }
