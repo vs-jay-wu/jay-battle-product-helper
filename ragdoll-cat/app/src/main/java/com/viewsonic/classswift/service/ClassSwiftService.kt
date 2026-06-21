@@ -26,7 +26,7 @@ import com.viewsonic.classswift.manager.AccountManager
 import com.viewsonic.classswift.manager.PendingClassEntryWindowManager
 import com.viewsonic.classswift.ui.helper.JoinClassWindowOpener
 import com.viewsonic.classswift.ui.window.JoinClassWindow
-import com.viewsonic.classswift.ui.window.quiz.start.DebugTextTrueFalseQuizWindow
+import com.viewsonic.classswift.ui.window.quiz.start.DebugTextQuizWindow
 import com.viewsonic.classswift.ui.window.SelectOrgAndSelectClassWindow
 import com.viewsonic.classswift.ui.window.UpcomingMaintenanceWindow
 import com.viewsonic.classswift.uimanager.maintenance.MaintenanceAnnouncementsUiManager
@@ -53,8 +53,8 @@ class ClassSwiftService : Service() {
     companion object {
         const val CHANNEL_ID = "ClassSwiftServiceChannel"
         const val NOTIFICATION_ID = 1
-        // DEBUG-only adb hook to open the Text True/False panel with sample data (see registerDebugQuizReceiver).
-        private const val DEBUG_ACTION_OPEN_TEXT_TF = "com.viewsonic.classswift.DEBUG_OPEN_TEXT_TF"
+        // DEBUG-only adb hook to open a Text quiz panel with sample data (see registerDebugQuizReceiver).
+        private const val DEBUG_ACTION_OPEN_TEXT_QUIZ = "com.viewsonic.classswift.DEBUG_OPEN_TEXT_QUIZ"
         private var _currentBoundClientSet: MutableSet<ClientAppInfo> = mutableSetOf()
         private val _isServiceStartedFlow = MutableStateFlow(false)
         val isServiceStartedFlow: StateFlow<Boolean> = _isServiceStartedFlow.asStateFlow()
@@ -118,9 +118,10 @@ class ClassSwiftService : Service() {
     }
 
     /**
-     * DEBUG ONLY — opens [DebugTextTrueFalseQuizWindow] (CMP Text True/False panel + native KatexView
-     * overlay) on an adb broadcast, for eyeballing the rendering without dispatching a real quiz:
-     *   adb shell am broadcast -a com.viewsonic.classswift.DEBUG_OPEN_TEXT_TF -p <applicationId>
+     * DEBUG ONLY — opens [DebugTextQuizWindow] (CMP Text quiz panel + native KatexView overlay) on an
+     * adb broadcast, for eyeballing the rendering without dispatching a real quiz. `--es type sa`
+     * opens Text Short Answer; anything else (default) opens Text True/False:
+     *   adb shell am broadcast -a com.viewsonic.classswift.DEBUG_OPEN_TEXT_QUIZ -p <applicationId> [--es type sa]
      * Registered only in debug builds and torn down in [onDestroy]; never present in release.
      */
     private var debugQuizReceiver: BroadcastReceiver? = null
@@ -129,15 +130,16 @@ class ClassSwiftService : Service() {
         if (!BuildConfig.DEBUG) return
         val receiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
-                Timber.d("[debugQuizReceiver] opening DebugTextTrueFalseQuizWindow")
-                CSWindowManager.createWindow(DebugTextTrueFalseQuizWindow(this@ClassSwiftService), Gravity.CENTER)
+                val shortAnswer = intent?.getStringExtra("type") == "sa"
+                Timber.d("[debugQuizReceiver] opening DebugTextQuizWindow(shortAnswer=$shortAnswer)")
+                CSWindowManager.createWindow(DebugTextQuizWindow(this@ClassSwiftService, shortAnswer), Gravity.CENTER)
             }
         }
         debugQuizReceiver = receiver
         ContextCompat.registerReceiver(
             this,
             receiver,
-            IntentFilter(DEBUG_ACTION_OPEN_TEXT_TF),
+            IntentFilter(DEBUG_ACTION_OPEN_TEXT_QUIZ),
             ContextCompat.RECEIVER_EXPORTED,
         )
     }
