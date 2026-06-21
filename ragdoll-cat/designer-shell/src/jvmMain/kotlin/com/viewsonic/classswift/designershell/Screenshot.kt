@@ -2,10 +2,13 @@
 
 package com.viewsonic.classswift.designershell
 
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.ImageComposeScene
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.sp
 import com.viewsonic.classswift.feature.servicescreens.ui.BarStyle
 import com.viewsonic.classswift.feature.servicescreens.ui.MvbQuizStartScreen
 import com.viewsonic.classswift.feature.servicescreens.ui.MvbQuizType
@@ -75,6 +78,23 @@ fun main() {
         MvbQuizStartScreen(
             type = MvbQuizType.AUDIO, state = QuizPanelState.RESULT, audioMode = true, options = emptyList(),
             startOnOverview = false, joined = 5, capacity = 6, responders = audioResponders, resultBars = audioBars,
+        )
+    }
+    // Text True/False (step 1): neutral100 question box holding plain Compose text (slot), full-width
+    // vertical True/False chips in quizzing; result reuses the TF bars (T/F/Not submitted).
+    val textTfQuestion = "Which statement below is sometimes used by historians to refer to the time period of the Tang Dynasty?"
+    val textTfSlot: @Composable (androidx.compose.ui.Modifier) -> Unit = { m ->
+        Text(textTfQuestion, color = Color(0xFF333333), fontSize = 10.67.sp, modifier = m)
+    }
+    render("$dir/quiz_text_tf_quizzing.png") {
+        MvbQuizStartScreen(
+            type = MvbQuizType.TEXT_TRUE_FALSE, state = QuizPanelState.QUIZZING,
+            options = listOf("True", "False"), screenshot = textTfSlot,
+        )
+    }
+    render("$dir/quiz_text_tf_result.png") {
+        MvbQuizStartScreen(
+            type = MvbQuizType.TEXT_TRUE_FALSE, state = QuizPanelState.RESULT, screenshot = textTfSlot,
         )
     }
     // All-not-submitted TF result → full gray crosshatch pie (apples-to-apples vs the old build).

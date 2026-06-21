@@ -102,6 +102,18 @@ private fun OptionChip(label: String, modifier: Modifier = Modifier) {
     ) { Text(label, color = Neutral900, fontSize = 12.sp, fontWeight = FontWeight.Medium) }
 }
 
+/** Text-variant quizzing option — `bg_neutral100_radius800_line_neutral300_border200`: a full-width
+ *  38.66dp neutral100 chip (radius 10.66, 0.66 neutral300 border) with its label left-aligned. */
+@Composable
+private fun VerticalOptionChip(label: String) {
+    val shape = RoundedCornerShape(10.66.dp)
+    Box(
+        Modifier.fillMaxWidth().height(38.66.dp).clip(shape).background(Neutral100).border(0.66.dp, Neutral300, shape)
+            .padding(horizontal = 10.66.dp),
+        contentAlignment = Alignment.CenterStart,
+    ) { Text(label, color = Neutral900, fontSize = 10.67.sp, modifier = Modifier.designNode("qs_voption_$label")) }
+}
+
 /** Radio indicator — `bg_disclose_radio_*`: 21.33dp circle, unchecked white+black ring,
  *  checked #4848F0 fill with a 9.33dp white center dot. */
 @Composable
@@ -611,6 +623,9 @@ fun MvbQuizStartScreen(
     onPublishDisclose: (List<Int>) -> Unit = {},
     onAudioToggle: (QuizResponder) -> Unit = {},
 ) {
+    // Text variants (TEXT_*) render the question as Compose text / a KatexView hole in a neutral100
+    // box, vs the screenshot types' white framed bitmap. TEXT_TRUE_FALSE also uses vertical chips.
+    val isTextType = type == MvbQuizType.TEXT_TRUE_FALSE || type == MvbQuizType.TEXT_SHORT_ANSWER
     var discloseSelected by remember { mutableStateOf<Set<Int>>(emptySet()) }
     var resultOverview by remember { mutableStateOf(startOnOverview) } // result defaults to the Overview tab (pie), as in the original
     var highlightedBar by remember { mutableStateOf<Int?>(null) }
@@ -646,12 +661,21 @@ fun MvbQuizStartScreen(
                         Text(stopwatch, color = Neutral500, fontSize = 12.sp, fontWeight = FontWeight.Medium, modifier = Modifier.padding(start = 2.66.dp).designNode("qs_stopwatch"))
                     }
                 }
-                // Screenshot of the captured question — injected by the window (slot); empty frame in preview.
+                // Question area (slot, injected by the window). Screenshot types: white framed box holding
+                // the captured bitmap. Text types: a neutral100 box holding Compose text / a hole for the
+                // native KatexView (`fl_text_preview` → bg_mvb_neutral100_radius300, 10.66dp inner padding).
+                val boxShape = RoundedCornerShape(8.dp)
                 Box(
-                    Modifier.padding(top = 10.66.dp).fillMaxWidth().height(169.dp)
-                        .clip(RoundedCornerShape(8.dp)).background(Color.White).border(0.66.dp, Neutral300, RoundedCornerShape(8.dp))
+                    Modifier.padding(top = 10.66.dp).fillMaxWidth().height(169.dp).clip(boxShape)
+                        .background(if (isTextType) Neutral100 else Color.White)
+                        .then(if (isTextType) Modifier else Modifier.border(0.66.dp, Neutral300, boxShape))
                         .designNode("qs_screenshot"),
-                ) { screenshot(Modifier.fillMaxSize().clip(RoundedCornerShape(8.dp))) }
+                ) {
+                    screenshot(
+                        if (isTextType) Modifier.fillMaxSize().padding(10.66.dp)
+                        else Modifier.fillMaxSize().clip(boxShape),
+                    )
+                }
                 // Mid area: options (QUIZZING) / answer selector (DISCLOSE) / result bars (RESULT)
                 when (state) {
                     QuizPanelState.DISCLOSE -> Box(Modifier.padding(top = 10.66.dp)) {
@@ -668,8 +692,15 @@ fun MvbQuizStartScreen(
                     }
                     QuizPanelState.QUIZZING -> if (options.isNotEmpty()) {
                         Box(Modifier.padding(top = 10.66.dp)) { SectionLabel(Res.drawable.ic_mvb_quizzing_options, "Options") }
-                        Row(Modifier.padding(top = 10.66.dp).fillMaxWidth().height(67.33.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            options.forEach { OptionChip(it, Modifier.weight(1f).designNode("qs_chip_$it")) }
+                        if (type == MvbQuizType.TEXT_TRUE_FALSE) {
+                            // Text TF: full-width vertical chips (True / False), not the side-by-side squares.
+                            Column(Modifier.padding(top = 10.66.dp).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.66.dp)) {
+                                options.forEach { VerticalOptionChip(it) }
+                            }
+                        } else {
+                            Row(Modifier.padding(top = 10.66.dp).fillMaxWidth().height(67.33.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                options.forEach { OptionChip(it, Modifier.weight(1f).designNode("qs_chip_$it")) }
+                            }
                         }
                     }
                 }
