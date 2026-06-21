@@ -27,6 +27,7 @@ import com.viewsonic.classswift.manager.PendingClassEntryWindowManager
 import com.viewsonic.classswift.ui.helper.JoinClassWindowOpener
 import com.viewsonic.classswift.ui.window.JoinClassWindow
 import com.viewsonic.classswift.ui.window.quiz.start.DebugTextQuizWindow
+import com.viewsonic.classswift.ui.window.quiz.start.MvbSketchResponseStartWindow
 import com.viewsonic.classswift.ui.window.SelectOrgAndSelectClassWindow
 import com.viewsonic.classswift.ui.window.UpcomingMaintenanceWindow
 import com.viewsonic.classswift.uimanager.maintenance.MaintenanceAnnouncementsUiManager
@@ -130,9 +131,19 @@ class ClassSwiftService : Service() {
         if (!BuildConfig.DEBUG) return
         val receiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
-                val shortAnswer = intent?.getStringExtra("type") == "sa"
-                Timber.d("[debugQuizReceiver] opening DebugTextQuizWindow(shortAnswer=$shortAnswer)")
-                CSWindowManager.createWindow(DebugTextQuizWindow(this@ClassSwiftService, shortAnswer), Gravity.CENTER)
+                when (val type = intent?.getStringExtra("type")) {
+                    "sketch" -> {
+                        // Opens the REAL sketch window (its model polls; no active task → empty answering grid),
+                        // to smoke-test the hybrid hosting + Compose-in-overlay on device.
+                        Timber.d("[debugQuizReceiver] opening MvbSketchResponseStartWindow")
+                        CSWindowManager.createWindow(get<MvbSketchResponseStartWindow>(MvbSketchResponseStartWindow::class.java), Gravity.CENTER)
+                    }
+                    else -> {
+                        val shortAnswer = type == "sa"
+                        Timber.d("[debugQuizReceiver] opening DebugTextQuizWindow(shortAnswer=$shortAnswer)")
+                        CSWindowManager.createWindow(DebugTextQuizWindow(this@ClassSwiftService, shortAnswer), Gravity.CENTER)
+                    }
+                }
             }
         }
         debugQuizReceiver = receiver
