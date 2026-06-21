@@ -1,9 +1,9 @@
 package com.viewsonic.classswift.feature.servicescreens.ui
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,75 +14,109 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.viewsonic.classswift.core.ui.designNode
-import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.Res
-import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_close
-import org.jetbrains.compose.resources.painterResource
 
-/** Per-question tally: correct / incorrect / no-answer counts. */
-private data class QResult(val correct: Int, val incorrect: Int, val noAnswer: Int)
+/**
+ * One per-question column for [BatchQuizResultList], mirrors `item_batch_quiz_result.xml`:
+ * a clickable title card (quiz no + category), three vertical bars (correct/incorrect/no-answer),
+ * an accuracy percent, and a right divider. [submitted] is the per-question denominator that scales
+ * the bars (matches `CSBatchQuizBarChart.setAnswerStatusCount(count, submittedStudentCount)`).
+ */
+data class BatchQuizResultItemUi(
+    val quizNo: String,
+    val category: String,
+    val correct: Int,
+    val incorrect: Int,
+    val noAnswer: Int,
+    val percent: String,
+    val sequence: Int,
+) {
+    val submitted: Int get() = correct + incorrect + noAnswer
+}
 
-private val sampleResults = listOf(
-    QResult(24, 4, 2), QResult(18, 9, 3), QResult(27, 2, 1), QResult(15, 12, 3),
-    QResult(21, 6, 3), QResult(12, 14, 4), QResult(25, 3, 2), QResult(19, 8, 3),
-)
+// batch_quiz_chart_bar_max_height
+private val BarMaxHeight = 330.dp
+// batch_quiz_result_item_width / batch_quiz_result_title_height
+private val ItemWidth = 154.66.dp
+private val TitleHeight = 53.33.dp
 
+/**
+ * CMP port of `BatchQuizResultWindow`'s RecyclerView (`rv_result_list`) — a horizontal list of
+ * per-question result columns. Window chrome (title, legend, frozen Quiz/Bar Chart/Accuracy labels)
+ * and the overlays (loading, retry, detail popup, toast, masks, offline) stay native around it.
+ */
 @Composable
-private fun LegendDot(color: Color, label: String) {
-    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(start = 12.dp)) {
-        Box(Modifier.size(16.dp).clip(RoundedCornerShape(1.33.dp)).background(color))
-        Text(label, color = Dark2E3133, fontSize = 11.sp, modifier = Modifier.padding(start = 4.dp))
+fun BatchQuizResultList(
+    items: List<BatchQuizResultItemUi> = emptyList(),
+    onItemClick: (Int) -> Unit = {},
+    modifier: Modifier = Modifier,
+) {
+    Row(modifier.fillMaxSize().horizontalScroll(rememberScrollState()).designNode("batch_quiz_result_list")) {
+        items.forEach { item -> BatchQuizResultItemView(item, onItemClick) }
     }
 }
 
-/** CMP port of `BatchQuizResultWindow` (service path): per-question stacked accuracy bars + legend. */
 @Composable
-fun BatchQuizResultScreen(results: List<Triple<Int, Int, Int>> = sampleResults.map { Triple(it.correct, it.incorrect, it.noAnswer) }, onClose: () -> Unit = {}) {
-    val rs = results.map { QResult(it.first, it.second, it.third) }
-    Box(
-        Modifier.size(933.33.dp, 569.33.dp).clip(RoundedCornerShape(10.66.dp)).background(Neutral100).border(0.66.dp, Neutral400, RoundedCornerShape(10.66.dp)).designNode("batch_quiz_result"),
-    ) {
-        Image(
-            painterResource(Res.drawable.ic_close), "Close",
-            Modifier.align(Alignment.TopEnd).padding(top = 12.dp, end = 12.dp).size(21.3.dp).clickable(onClick = onClose).designNode("bqr_close"),
-            colorFilter = ColorFilter.tint(Neutral900),
-        )
-        Column(Modifier.fillMaxSize().padding(24.dp)) {
-            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                Text("Quiz Builder", color = Neutral900, fontSize = 24.sp, fontWeight = FontWeight.Bold, modifier = Modifier.designNode("bqr_title"))
-                Spacer(Modifier.weight(1f))
-                LegendDot(Green500, "Correct")
-                LegendDot(Red400, "Incorrect")
-                LegendDot(BorderC2C2C2, "No Answer")
-            }
-            // Bars: one column per question, stacked correct/incorrect/no-answer.
-            Row(Modifier.padding(top = 24.dp).weight(1f).fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp), verticalAlignment = Alignment.Bottom) {
-                rs.forEachIndexed { i, r ->
-                    val total = (r.correct + r.incorrect + r.noAnswer).coerceAtLeast(1).toFloat()
-                    Column(Modifier.weight(1f).fillMaxHeight(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Bottom) {
-                        Text("${(r.correct / total * 100).toInt()}%", color = Dark2E3133, fontSize = 11.sp, fontWeight = FontWeight.Bold)
-                        Column(Modifier.padding(top = 4.dp).width(40.dp).weight(1f).clip(RoundedCornerShape(4.dp)).designNode("bqr_bar_${i + 1}")) {
-                            if (r.noAnswer > 0) Box(Modifier.fillMaxWidth().weight(r.noAnswer / total).background(BorderC2C2C2))
-                            if (r.incorrect > 0) Box(Modifier.fillMaxWidth().weight(r.incorrect / total).background(Red400))
-                            if (r.correct > 0) Box(Modifier.fillMaxWidth().weight(r.correct / total).background(Green500))
-                        }
-                        Text("Q${i + 1}", color = Neutral500, fontSize = 11.sp, modifier = Modifier.padding(top = 6.dp))
-                    }
+private fun BatchQuizResultItemView(item: BatchQuizResultItemUi, onItemClick: (Int) -> Unit) {
+    Row(Modifier.fillMaxHeight().designNode("bqr_item_${item.sequence}")) {
+        Spacer(Modifier.width(6.66.dp))
+        Column(Modifier.width(ItemWidth).fillMaxHeight(), horizontalAlignment = Alignment.CenterHorizontally) {
+            // CSBatchQuizItemTitle: white rounded card (radius_400, neutral_500 border_200), clickable.
+            Box(
+                Modifier.fillMaxWidth().height(TitleHeight)
+                    .clip(RoundedCornerShape(5.33.dp)).background(Color.White)
+                    .border(0.66.dp, Neutral500, RoundedCornerShape(5.33.dp))
+                    .clickable { onItemClick(item.sequence) }.designNode("bqr_title_${item.sequence}"),
+                contentAlignment = Alignment.TopCenter,
+            ) {
+                Column(Modifier.padding(top = 6.66.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(item.quizNo, color = Neutral900, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                    Text(item.category, color = Neutral900, fontSize = 12.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(top = 1.66.dp))
                 }
             }
+            // Bars: correct / incorrect / no-answer, 36dp wide, 10.66dp apart, bottom-aligned.
+            Row(
+                Modifier.weight(1f).fillMaxWidth().clipToBounds(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.Bottom,
+            ) {
+                Bar(item.correct, item.submitted, Green500)
+                Spacer(Modifier.width(10.66.dp))
+                Bar(item.incorrect, item.submitted, Red400)
+                Spacer(Modifier.width(10.66.dp))
+                Bar(item.noAnswer, item.submitted, BorderC2C2C2)
+            }
+            // tv_answer_percent
+            Box(Modifier.fillMaxWidth().height(TitleHeight), contentAlignment = Alignment.Center) {
+                Text(item.percent, color = Neutral900, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+            }
         }
+        Spacer(Modifier.width(6.66.dp))
+        // view_divider: 0.66dp, neutral_500, full height
+        Box(Modifier.width(0.66.dp).fillMaxHeight().background(Neutral500))
+    }
+}
+
+@Composable
+private fun Bar(count: Int, submitted: Int, color: Color) {
+    Column(Modifier.width(36.dp).fillMaxHeight(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Bottom) {
+        val barHeight = if (count >= 1 && submitted >= 1) (count * BarMaxHeight.value / submitted) else 0f
+        if (barHeight > 0f) Box(Modifier.fillMaxWidth().height(barHeight.dp).background(color))
+        Spacer(Modifier.height(6.66.dp))
+        Text("$count", color = Neutral900, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+        Spacer(Modifier.height(6.66.dp))
     }
 }

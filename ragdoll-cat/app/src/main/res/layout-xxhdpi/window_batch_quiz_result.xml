@@ -207,20 +207,12 @@
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_result_list"
+    <!-- Per-question result list — Compose (BatchQuizResultList) replaces the RecyclerView + the
+         CSBatchQuizItemTitle / CSBatchQuizBarChart item widgets. Same constraints as rv_result_list. -->
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/cv_list"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:clipToPadding="false"
-        android:fadeScrollbars="true"
-        android:paddingBottom="@dimen/batch_quiz_result_scrollbar_padding"
-        android:scrollbarDefaultDelayBeforeFade="500"
-        android:scrollbarFadeDuration="300"
-        android:scrollbarSize="4dp"
-        android:scrollbarStyle="outsideOverlay"
-        android:scrollbarThumbHorizontal="@drawable/shape_batch_quiz_scrollbar"
-        android:scrollbars="horizontal"
-        app:fastScrollEnabled="false"
         app:layout_constraintBottom_toBottomOf="@id/cl_accuracy"
         app:layout_constraintEnd_toEndOf="@id/tv_no_answer"
         app:layout_constraintStart_toEndOf="@id/tv_quiz"
@@ -233,10 +225,10 @@
         android:layout_height="0dp"
         android:gravity="center"
         android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="@id/rv_result_list"
-        app:layout_constraintEnd_toEndOf="@id/rv_result_list"
-        app:layout_constraintStart_toStartOf="@id/rv_result_list"
-        app:layout_constraintTop_toTopOf="@id/rv_result_list">
+        app:layout_constraintBottom_toBottomOf="@id/cv_list"
+        app:layout_constraintEnd_toEndOf="@id/cv_list"
+        app:layout_constraintStart_toStartOf="@id/cv_list"
+        app:layout_constraintTop_toTopOf="@id/cv_list">
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/lav_loading_animation"
@@ -263,10 +255,10 @@
         android:gravity="center"
         android:orientation="vertical"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/rv_result_list"
-        app:layout_constraintEnd_toEndOf="@id/rv_result_list"
-        app:layout_constraintStart_toStartOf="@id/rv_result_list"
-        app:layout_constraintTop_toTopOf="@id/rv_result_list"
+        app:layout_constraintBottom_toBottomOf="@id/cv_list"
+        app:layout_constraintEnd_toEndOf="@id/cv_list"
+        app:layout_constraintStart_toStartOf="@id/cv_list"
+        app:layout_constraintTop_toTopOf="@id/cv_list"
         tools:visibility="gone">
 
         <TextView
