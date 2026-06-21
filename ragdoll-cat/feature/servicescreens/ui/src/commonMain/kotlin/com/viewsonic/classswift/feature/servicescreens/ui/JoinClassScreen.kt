@@ -131,6 +131,7 @@ fun JoinClassScreen(
     onExpandQr: () -> Unit = {},
     onSwitchClass: () -> Unit = {},
     onRemoveStudent: (String) -> Unit = {},
+    onSpinnerClick: () -> Unit = {},
 ) {
     Column(
         Modifier.width(333.33.dp).height(565.33.dp)
@@ -203,7 +204,7 @@ fun JoinClassScreen(
             Row(Modifier.fillMaxWidth().padding(bottom = 8.dp), verticalAlignment = Alignment.CenterVertically) {
                 Text("Whole Class", color = Neutral900, fontSize = 10.7.sp, fontWeight = FontWeight.Bold)
                 if (spinnerVisible) {
-                    Image(painterResource(Res.drawable.ic_mvb_join_class_spinner), "Spinner", Modifier.padding(start = 5.33.dp).size(24.dp).designNode("jc_spinner"))
+                    Image(painterResource(Res.drawable.ic_mvb_join_class_spinner), "Spinner", Modifier.padding(start = 5.33.dp).size(24.dp).clickable(onClick = onSpinnerClick).designNode("jc_spinner"))
                 }
                 Spacer(Modifier.weight(1f))
                 val countText = if (showFractionCount) "$joinedCount joined / $capacity students" else "$joinedCount joined"

@@ -15,6 +15,7 @@ import com.viewsonic.classswift.feature.servicescreens.ui.JoinAttendee
 import com.viewsonic.classswift.feature.servicescreens.ui.JoinClassScreen
 import com.viewsonic.classswift.manager.AccountManager
 import com.viewsonic.classswift.manager.CoroutineManager
+import com.viewsonic.classswift.ui.helper.MvbSpinnerWindowOpener
 import com.viewsonic.classswift.ui.window.compose.ComposeHostWindow
 import com.viewsonic.classswift.ui.windowmodel.JoinClassWindowModel
 import com.viewsonic.classswift.utils.QRCodeUtils
@@ -109,6 +110,8 @@ class JoinClassWindow(val context: Context) : ComposeHostWindow(context) {
             onCopyLink = { wModel.onCopyLink() },
             onSwitchClass = { wModel.onSwitchClass() },
             onRemoveStudent = { studentId -> confirmRemoveStudent(studentId) },
+            // Spinner entry point (VSFT-8437) — opens MvbSpinnerWindow per VSFT-8430 behavior.
+            onSpinnerClick = { coroutineScope.launch(Dispatchers.Main) { MvbSpinnerWindowOpener.open() } },
         )
     }
 
