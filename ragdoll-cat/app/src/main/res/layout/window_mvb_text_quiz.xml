@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Text True/False (service path) hybrid shell. The quiz panel is the Compose MvbQuizStartScreen
+     hosted in cv_body; cskv_question is a native KatexView overlaid on the Compose question box when
+     the question is LaTeX. This overlay window is not hardware-accelerated, so a WebView only paints
+     as a direct native child (not nested inside the ComposeView) — hence the KatexView is a sibling
+     here, positioned at runtime from the Compose box's reported bounds. Plain-text questions stay
+     pure Compose and cskv_question is never shown. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fl_root"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/cv_body"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <com.viewsonic.classswift.ui.widget.KatexView
+        android:id="@+id/cskv_question"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="start|top"
+        android:textColor="@color/neutral_900"
+        android:textSize="@dimen/quiz_mvb_text_md"
+        android:visibility="gone" />
+
+</FrameLayout>
