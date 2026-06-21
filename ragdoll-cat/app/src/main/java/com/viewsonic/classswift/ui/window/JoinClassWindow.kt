@@ -35,6 +35,7 @@ class JoinClassWindow(val context: Context) : ComposeHostWindow(context) {
     private val wModel: JoinClassWindowModel by inject(JoinClassWindowModel::class.java)
     private val accountManager: AccountManager by inject(AccountManager::class.java)
     private val coroutineScope: CoroutineScope = CoroutineManager.getScope(this)
+    private var dialogWindow: CSSystemDialogWindow? = null
 
     override var tag: WindowTag = WindowTag.JOIN_CLASS
     override var size: SizeInPixels = SizeInPixels(WINDOW_WIDTH_DP.dpToPx().toInt(), WINDOW_HEIGHT_DP.dpToPx().toInt())
@@ -87,6 +88,7 @@ class JoinClassWindow(val context: Context) : ComposeHostWindow(context) {
                     state = state,
                     // Mirrors AvatarPicker.pick: studentId hash → one of the 4 joined avatars.
                     avatarIndex = if (it.studentId.isNotEmpty()) it.studentId.hashCode().mod(4) else it.serialNumber.mod(4),
+                    id = it.studentId,
                 )
             },
             joinedCount = joined,
@@ -106,7 +108,25 @@ class JoinClassWindow(val context: Context) : ComposeHostWindow(context) {
             onClose = { csWindowManager.removeWindow(tag) },
             onCopyLink = { wModel.onCopyLink() },
             onSwitchClass = { wModel.onSwitchClass() },
+            onRemoveStudent = { studentId -> confirmRemoveStudent(studentId) },
         )
+    }
+
+    /** ⊖ on a joined student → confirm, then remove (mirrors the native remove-student dialog). */
+    private fun confirmRemoveStudent(studentId: String) {
+        if (studentId.isEmpty()) return
+        dialogWindow = CSSystemDialogWindow.Builder(context)
+            .setTitle(context.getString(R.string.join_class_remove_title))
+            .setMessage(context.getString(R.string.join_class_remove_message))
+            .setNegativeButton(context.getString(R.string.common_cancel), context.getColor(R.color.color_2E3133)) {
+                dialogWindow?.dismiss()
+            }
+            .setPositiveButton(context.getString(R.string.common_remove), context.getColor(R.color.color_F02B2B)) {
+                coroutineScope.launch { wModel.removeStudent(studentId) }
+                dialogWindow?.dismiss()
+            }
+            .build()
+        dialogWindow?.show()
     }
 
     override fun onDestroy() {

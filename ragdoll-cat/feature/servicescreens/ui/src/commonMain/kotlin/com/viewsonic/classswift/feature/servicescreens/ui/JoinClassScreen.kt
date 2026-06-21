@@ -44,6 +44,7 @@ import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_join_class_empty
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_minus_32dp
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_mvb_join_class_spinner
+import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_remove_circle_outline
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_toolbar_bring_to_front_64dp
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_toolbar_irs_sign_out
 import com.viewsonic.classswift.feature.servicescreens.ui.generated.resources.ic_user_document
@@ -61,7 +62,7 @@ private val joinedAvatars = listOf(
 enum class AttendeeState { JOINED, NOT_JOINED, JOINING }
 
 /** A class member; mirrors `item_join_class_student.xml`: name on top + avatar illustration below. */
-data class JoinAttendee(val name: String, val state: AttendeeState = AttendeeState.JOINED, val avatarIndex: Int = 0)
+data class JoinAttendee(val name: String, val state: AttendeeState = AttendeeState.JOINED, val avatarIndex: Int = 0, val id: String = "")
 
 /** `item_class_code_tile.xml`: 18×34.66dp, neutral_300 bg radius 5.33, #333333 14.4sp bold. */
 @Composable
@@ -75,7 +76,7 @@ private fun CodeTile(ch: Char) {
 
 /** `item_join_class_student.xml`: 69.33dp white card, name (10sp, 2 lines, top) + avatar (42×24, bottom). */
 @Composable
-private fun AttendeeCell(attendee: JoinAttendee, modifier: Modifier = Modifier) {
+private fun AttendeeCell(attendee: JoinAttendee, onRemove: (String) -> Unit, modifier: Modifier = Modifier) {
     val avatar = when (attendee.state) {
         AttendeeState.JOINED -> joinedAvatars[attendee.avatarIndex.mod(joinedAvatars.size)]
         AttendeeState.NOT_JOINED -> Res.drawable.ic_avatar_student_not_joined
@@ -86,18 +87,24 @@ private fun AttendeeCell(attendee: JoinAttendee, modifier: Modifier = Modifier) 
         AttendeeState.NOT_JOINED -> Neutral400Grey
         AttendeeState.JOINING -> Neutral600Grey
     }
-    // Layout per item_join_class_student.xml: empty top, then name (bottom-anchored to the avatar),
-    // then the avatar flush to the card bottom.
-    Column(
-        modifier.padding(2.dp).height(69.33.dp).clip(RoundedCornerShape(5.33.dp)).background(Color.White),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Spacer(Modifier.weight(1f))
-        Text(
-            attendee.name, color = nameColor, fontSize = 10.sp, maxLines = 2, overflow = TextOverflow.Ellipsis,
-            textAlign = TextAlign.Center, modifier = Modifier.width(54.dp).height(24.67.dp),
-        )
-        Image(painterResource(avatar), null, Modifier.width(42.dp).height(24.dp))
+    // Per item_join_class_student.xml: empty top, name (gravity top|start, anchored above the avatar),
+    // avatar flush to the card bottom, and a remove (⊖) icon top-right for JOINED students.
+    Box(modifier.padding(2.dp).height(69.33.dp).clip(RoundedCornerShape(5.33.dp)).background(Color.White)) {
+        Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+            Spacer(Modifier.weight(1f))
+            Text(
+                attendee.name, color = nameColor, fontSize = 10.sp, maxLines = 2, overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.Start, modifier = Modifier.width(54.dp).height(24.67.dp),
+            )
+            Image(painterResource(avatar), null, Modifier.width(42.dp).height(24.dp))
+        }
+        if (attendee.state == AttendeeState.JOINED) {
+            Image(
+                painterResource(Res.drawable.ic_remove_circle_outline), "Remove",
+                Modifier.align(Alignment.TopEnd).size(21.33.dp).clickable { onRemove(attendee.id) }.padding(4.dp),
+                colorFilter = ColorFilter.tint(Neutral900),
+            )
+        }
     }
 }
 
@@ -123,6 +130,7 @@ fun JoinClassScreen(
     onCopyLink: () -> Unit = {},
     onExpandQr: () -> Unit = {},
     onSwitchClass: () -> Unit = {},
+    onRemoveStudent: (String) -> Unit = {},
 ) {
     Column(
         Modifier.width(333.33.dp).height(565.33.dp)
@@ -211,7 +219,7 @@ fun JoinClassScreen(
                 Column(Modifier.padding(top = 4.dp).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                     attendees.chunked(4).forEach { rowAttendees ->
                         Row(Modifier.fillMaxWidth()) {
-                            rowAttendees.forEach { a -> AttendeeCell(a, Modifier.weight(1f)) }
+                            rowAttendees.forEach { a -> AttendeeCell(a, onRemoveStudent, Modifier.weight(1f)) }
                             repeat(4 - rowAttendees.size) { Spacer(Modifier.weight(1f)) }
                         }
                     }
