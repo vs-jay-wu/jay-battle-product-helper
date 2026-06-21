@@ -4,6 +4,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,7 +18,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,6 +28,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.viewsonic.classswift.core.ui.designNode
@@ -72,13 +76,60 @@ private fun OptionChip(label: String, modifier: Modifier = Modifier) {
     ) { Text(label, color = Neutral900, fontSize = 12.sp, fontWeight = FontWeight.Medium) }
 }
 
+/** A student's answering status during a live quiz (mirrors `AnsweringState`). */
+enum class ResponderState { ANSWERED, NOT_SUBMITTED, ABSENT }
+
+/** One student in the quizzing responses grid; [answer] shown only when answers are disclosed. */
+data class QuizResponder(val seat: String, val name: String, val state: ResponderState, val answer: String? = null)
+
+internal val sampleResponders: List<QuizResponder> = List(18) { i ->
+    val name = sampleStudentNames[i % sampleStudentNames.size]
+    val state = when {
+        i == 4 -> ResponderState.ABSENT
+        i % 6 == 5 -> ResponderState.NOT_SUBMITTED
+        else -> ResponderState.ANSWERED
+    }
+    QuizResponder(seat = "%02d".format(i + 1), name = name, state = state)
+}
+
+/** One answering cell — `item_mvb_quiz_answering.xml`: number+name header over a state body
+ *  (Submitted / Not submitted / Absent), colored per [QuizResponder.state]. */
 @Composable
-private fun ResponseCell(name: String, index: Int, modifier: Modifier = Modifier) {
-    Column(modifier.padding(4.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-        Box(Modifier.size(40.dp).clip(CircleShape).background(Color(0xFFE5E5E5)), contentAlignment = Alignment.Center) {
-            Text("${index + 1}", color = CloseGray, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+private fun AnsweringCell(r: QuizResponder, modifier: Modifier = Modifier) {
+    val shape = RoundedCornerShape(8.dp)
+    val cardBg: Color
+    val headerBg: Color
+    val headerText: Color
+    val bodyText: String
+    val bodyColor: Color
+    var border: Pair<Color, Boolean> = Color.Transparent to false
+    when (r.state) {
+        ResponderState.ANSWERED -> {
+            cardBg = Violet100EDEDFD; headerBg = Violet4848F0; headerText = Color.White
+            bodyText = r.answer ?: "Submitted"; bodyColor = Neutral900
         }
-        Text(name, color = Dark2E3133, fontSize = 9.sp, maxLines = 1, modifier = Modifier.padding(top = 2.dp))
+        ResponderState.NOT_SUBMITTED -> {
+            cardBg = Color.White; headerBg = Color.White; headerText = Neutral900
+            bodyText = "Not submitted"; bodyColor = Gray999; border = Neutral300 to true
+        }
+        ResponderState.ABSENT -> {
+            cardBg = Neutral200; headerBg = Neutral200; headerText = Neutral500
+            bodyText = "Absent"; bodyColor = Neutral500; border = Neutral300 to true
+        }
+    }
+    Column(
+        modifier.height(66.67.dp).clip(shape).background(cardBg)
+            .then(if (border.second) Modifier.border(0.66.dp, border.first, shape) else Modifier)
+            .designNode("qs_responder_${r.seat}"),
+    ) {
+        Text(
+            "${r.seat}  ${r.name}", color = headerText, fontSize = 8.sp, fontWeight = FontWeight.Medium,
+            textAlign = TextAlign.Center, maxLines = 1, overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.fillMaxWidth().height(23.33.dp).background(headerBg).padding(horizontal = 4.dp).wrapContentHeight(Alignment.CenterVertically),
+        )
+        Box(Modifier.fillMaxSize().padding(horizontal = 10.66.dp, vertical = 4.dp), contentAlignment = Alignment.Center) {
+            Text(bodyText, color = bodyColor, fontSize = 9.33.sp, textAlign = TextAlign.Center, maxLines = 3, overflow = TextOverflow.Ellipsis)
+        }
     }
 }
 
@@ -92,7 +143,7 @@ fun MvbQuizStartScreen(
     type: MvbQuizType = MvbQuizType.MULTIPLE_CHOICE,
     joined: Int = 21,
     capacity: Int = 30,
-    responders: List<String> = sampleStudentNames.take(21),
+    responders: List<QuizResponder> = sampleResponders,
     onClose: () -> Unit = {},
 ) {
     Column(
@@ -153,11 +204,14 @@ fun MvbQuizStartScreen(
                         Spacer(Modifier.weight(1f))
                         Text("$joined/$capacity", color = Neutral900, fontSize = 10.67.sp, fontWeight = FontWeight.Bold, modifier = Modifier.designNode("qs_count"))
                     }
-                    Column(Modifier.padding(top = 10.66.dp).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        responders.chunked(7).forEachIndexed { rowIdx, rowNames ->
-                            Row(Modifier.fillMaxWidth()) {
-                                rowNames.forEachIndexed { i, n -> ResponseCell(n, rowIdx * 7 + i, Modifier.weight(1f)) }
-                                repeat(7 - rowNames.size) { Spacer(Modifier.weight(1f)) }
+                    Column(
+                        Modifier.padding(top = 10.66.dp).fillMaxWidth().weight(1f).verticalScroll(rememberScrollState()),
+                        verticalArrangement = Arrangement.spacedBy(10.66.dp),
+                    ) {
+                        responders.chunked(4).forEach { rowItems ->
+                            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.66.dp)) {
+                                rowItems.forEach { r -> AnsweringCell(r, Modifier.weight(1f)) }
+                                repeat(4 - rowItems.size) { Spacer(Modifier.weight(1f)) }
                             }
                         }
                     }
