@@ -28,6 +28,7 @@ import com.viewsonic.classswift.ui.helper.JoinClassWindowOpener
 import com.viewsonic.classswift.ui.window.JoinClassWindow
 import com.viewsonic.classswift.ui.window.quiz.edit.MvbMultipleChoiceEditWindow
 import com.viewsonic.classswift.ui.window.quiz.edit.MvbTrueFalseEditWindow
+import com.viewsonic.classswift.ui.window.quiz.mvb.MvbSketchResponseEditWindow
 import com.viewsonic.classswift.ui.window.quiz.start.DebugTextQuizWindow
 import com.viewsonic.classswift.ui.window.quiz.start.MvbSketchResponseStartWindow
 import com.viewsonic.classswift.ui.window.SelectOrgAndSelectClassWindow
@@ -142,6 +143,7 @@ class ClassSwiftService : Service() {
                     }
                     "edit_tf" -> CSWindowManager.createWindow(get<MvbTrueFalseEditWindow>(MvbTrueFalseEditWindow::class.java), Gravity.CENTER)
                     "edit_mc" -> CSWindowManager.createWindow(get<MvbMultipleChoiceEditWindow>(MvbMultipleChoiceEditWindow::class.java), Gravity.CENTER)
+                    "edit_sketch" -> CSWindowManager.createWindow(get<MvbSketchResponseEditWindow>(MvbSketchResponseEditWindow::class.java), Gravity.CENTER)
                     else -> {
                         val shortAnswer = type == "sa"
                         Timber.d("[debugQuizReceiver] opening DebugTextQuizWindow(shortAnswer=$shortAnswer)")
