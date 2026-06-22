@@ -23,6 +23,7 @@ internal val Violet4848F0 = Color(0xFF4848F0) // color_4848F0 — enter button /
 internal val Violet100EDEDFD = Color(0xFFEDEDFD) // color_EDEDFD (violet_50) — answered student cell / selected option bg
 internal val Violet100DADAFC = Color(0xFFDADAFC) // color_DADAFC (violet_100) — "Suggested answer" pill bg
 internal val Neutral650 = Color(0xFF797979) // color_797979 — secondary text (disclose reason)
+internal val WhiteA80 = Color(0xCCFFFFFF) // white_a80 — image-upload mask while uploading
 internal val RedDB0025 = Color(0xFFDB0025) // color_DB0025 — on-going pill
 internal val Neutral500 = Color(0xFFB2B2B2) // neutral_500 / color_B2B2B2 — my-class sub text
 internal val Green78CB3D = Color(0xFF78CB3D) // color_78CB3D — +New Class

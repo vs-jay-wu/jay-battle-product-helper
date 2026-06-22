@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Shared hybrid shell for the Mvb*EditWindow quiz editors. The editor card is the Compose
+     MvbQuizEditScreen in cv_body; cs_message_dialog is the native CSMessageDialog overlay reused by
+     handleQuizStartWithOngoingMission (shown on Start when another mission is ongoing). The simpler
+     close-confirm / toast / loading are drawn in Compose. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/fl_root"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:clipChildren="false"
+    android:clipToPadding="false">
+
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/cv_body"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <com.viewsonic.classswift.ui.widget.CSMessageDialog
+        android:id="@+id/cs_message_dialog"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/mvb_spacing_200"
+        android:visibility="gone"
+        app:csmdMaskBackground="@drawable/bg_mask_radius800" />
+
+</FrameLayout>

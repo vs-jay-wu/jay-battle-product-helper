@@ -77,15 +77,20 @@ private fun EditImageArea(
                     Text("Capture again", color = Neutral900, fontSize = 10.66.sp, fontWeight = FontWeight.Medium, modifier = Modifier.padding(start = 5.33.dp))
                 }
             }
-            EditImageState.UPLOADING -> Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                CircularProgressIndicator(Modifier.size(32.dp), color = Violet4848F0, strokeWidth = 2.dp)
-                LinearProgressIndicator(
-                    progress = { progress / 100f },
-                    modifier = Modifier.padding(top = 10.66.dp).width(200.dp).height(4.dp).clip(RoundedCornerShape(50)),
-                    color = Violet4848F0,
-                    trackColor = Neutral100,
-                )
-                Text("Preparing question $progress%", color = Neutral900, fontSize = 10.66.sp, modifier = Modifier.padding(top = 10.66.dp))
+            EditImageState.UPLOADING -> {
+                // The captured screenshot shows under a white_a80 mask while it uploads.
+                image(Modifier.fillMaxSize().padding(2.66.dp).clip(shape))
+                Box(Modifier.fillMaxSize().padding(2.66.dp).clip(shape).background(WhiteA80))
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    CircularProgressIndicator(Modifier.size(32.dp), color = Violet4848F0, strokeWidth = 2.dp)
+                    LinearProgressIndicator(
+                        progress = { progress / 100f },
+                        modifier = Modifier.padding(top = 10.66.dp).width(200.dp).height(4.dp).clip(RoundedCornerShape(50)),
+                        color = Violet4848F0,
+                        trackColor = Neutral100,
+                    )
+                    Text("Preparing question $progress%", color = Neutral900, fontSize = 10.66.sp, modifier = Modifier.padding(top = 10.66.dp))
+                }
             }
             EditImageState.FAILED -> Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Image(painterResource(Res.drawable.ic_image_corners), null, Modifier.size(21.33.dp))
@@ -195,6 +200,10 @@ fun MvbQuizEditScreen(
     progress: Int = 0,
     startEnabled: Boolean = false,
     image: @Composable (Modifier) -> Unit = {},
+    initialOptionCount: Int = 4,
+    initialLetters: Boolean = true,
+    initialSingle: Boolean = true,
+    onOptionConfigChanged: (count: Int, letters: Boolean, single: Boolean) -> Unit = { _, _, _ -> },
     onClose: () -> Unit = {},
     onMinimize: () -> Unit = {},
     onCaptureAgain: () -> Unit = {},
@@ -204,10 +213,11 @@ fun MvbQuizEditScreen(
 ) {
     val hasOptions = type == MvbQuizType.MULTIPLE_CHOICE || type == MvbQuizType.POLL
     val isPoll = type == MvbQuizType.POLL
-    val answerOptionsList = if (isPoll) listOf("Poll") else listOf("Single answer", "Multiple answers")
-    var optionCount by remember { mutableStateOf(4) }
-    var letters by remember { mutableStateOf(true) }
-    var answerOptionsValue by remember { mutableStateOf(if (isPoll) "Poll" else "Single answer") }
+    val singleLabel = if (isPoll) "Single vote" else "Single-select"
+    val multiLabel = if (isPoll) "Multiple votes" else "Multi-select"
+    var optionCount by remember { mutableStateOf(initialOptionCount) }
+    var letters by remember { mutableStateOf(initialLetters) }
+    var single by remember { mutableStateOf(initialSingle) }
     val cardShape = RoundedCornerShape(5.33.dp)
     Box(Modifier.size(541.33.dp, if (hasOptions) 626.dp else 426.66.dp).padding(8.dp)) {
         Column(
@@ -227,12 +237,12 @@ fun MvbQuizEditScreen(
                     EditOptionPanel(
                         count = optionCount,
                         letters = letters,
-                        answerOptionsValue = answerOptionsValue,
-                        answerOptions = answerOptionsList,
-                        onAdd = { if (optionCount < 6) optionCount++ },
-                        onRemove = { if (optionCount > 2) optionCount-- },
-                        onLettersChange = { letters = it },
-                        onAnswerOptionsChange = { answerOptionsValue = it },
+                        answerOptionsValue = if (single) singleLabel else multiLabel,
+                        answerOptions = listOf(singleLabel, multiLabel),
+                        onAdd = { if (optionCount < 6) { optionCount++; onOptionConfigChanged(optionCount, letters, single) } },
+                        onRemove = { if (optionCount > 2) { optionCount--; onOptionConfigChanged(optionCount, letters, single) } },
+                        onLettersChange = { letters = it; onOptionConfigChanged(optionCount, it, single) },
+                        onAnswerOptionsChange = { single = it == singleLabel; onOptionConfigChanged(optionCount, letters, single) },
                     )
                 }
                 Spacer(Modifier.weight(1f))
