@@ -30,8 +30,8 @@ import androidx.compose.ui.tooling.data.UiToolingDataApi
 import androidx.compose.ui.tooling.data.asTree
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.window.singleWindowApplication
-import com.viewsonic.classswift.core.ui.DesignNodeRegistry
-import com.viewsonic.classswift.core.ui.LocalDesignNodeRegistry
+import com.viewsonic.designer.node.DesignNodeRegistry
+import com.viewsonic.designer.node.LocalDesignNodeRegistry
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.json.Json

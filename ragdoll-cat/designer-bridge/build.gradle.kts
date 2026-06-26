@@ -17,7 +17,7 @@ kotlin {
             implementation(compose.uiTooling)
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.kotlinx.coroutines.swing)
-            implementation(project(":core:ui")) // Modifier.designNode + DesignNodeRegistry
+            implementation(project(":designer-node")) // Modifier.designNode + DesignNodeRegistry (no app coupling)
         }
     }
 }

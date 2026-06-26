@@ -5,6 +5,11 @@ plugins {
     alias(libs.plugins.compose.compiler)
 }
 
+// The Designer Shell's design-node primitive: Modifier.designNode + the registry the
+// shell reads to hit-test taps. Dependency-light and multiplatform on purpose — both
+// the (multiplatform) app/feature UI and the (desktop) :designer-bridge depend on it,
+// so it must carry no app-specific or desktop-only baggage. Any repo can adopt the
+// bridge by tagging its components with Modifier.designNode from this module.
 kotlin {
     jvmToolchain(17)
     androidTarget()
@@ -14,17 +19,13 @@ kotlin {
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.foundation)
-            implementation(compose.material3)
             implementation(compose.ui)
-            implementation(project(":core:designsystem"))
-            api(project(":designer-node")) // re-exported by the DesignNode shim
-
         }
     }
 }
 
 android {
-    namespace = "com.viewsonic.classswift.core.ui"
+    namespace = "com.viewsonic.designer.node"
     compileSdk = 35
     defaultConfig {
         minSdk = 28
