@@ -18,14 +18,11 @@ import com.viewsonic.classswift.ui.helper.MvbSpinnerWindowOpener
 import com.viewsonic.classswift.ui.window.JoinClassWindow
 import com.viewsonic.classswift.ui.window.quiz.mvb.MvbQuizCollectionWindow
 import com.viewsonic.classswift.ui.window.ToastWindow
-import com.viewsonic.classswift.ui.window.quiz.edit.AudioQuizEditWindow
 import com.viewsonic.classswift.ui.window.quiz.edit.MvbAudioQuizEditWindow
 import com.viewsonic.classswift.ui.window.quiz.edit.MvbMultipleChoiceEditWindow
 import com.viewsonic.classswift.ui.window.quiz.edit.MvbPollQuizEditWindow
 import com.viewsonic.classswift.ui.window.quiz.edit.MvbShortAnswerEditWindow
 import com.viewsonic.classswift.ui.window.quiz.edit.MvbTrueFalseEditWindow
-import com.viewsonic.classswift.ui.window.quiz.edit.PollQuizEditWindow
-import com.viewsonic.classswift.ui.window.quiz.edit.ShortAnswerEditWindow
 import com.viewsonic.classswift.ui.window.quiz.mvb.MvbSketchResponseEditWindow
 import com.viewsonic.classswift.uimanager.UnclosedMissionUiManager
 import com.viewsonic.classswift.windowframework.core.CSWindowManager
@@ -432,10 +429,7 @@ class MyViewBoardMessageHandler(
         WindowTag.MVB_POLL_EDIT_QUIZ -> get(MvbPollQuizEditWindow::class.java)
         WindowTag.MVB_SHORT_ANSWER_EDIT_QUIZ -> get(MvbShortAnswerEditWindow::class.java)
         WindowTag.MVB_SKETCH_RESPONSE_EDIT_QUIZ -> get(MvbSketchResponseEditWindow::class.java)
-        WindowTag.SHORT_ANSWER_EDIT_QUIZ -> get(ShortAnswerEditWindow::class.java)
         WindowTag.MVB_AUDIO_EDIT_QUIZ -> get(MvbAudioQuizEditWindow::class.java)
-        WindowTag.AUDIO_EDIT_QUIZ -> get(AudioQuizEditWindow::class.java)
-        WindowTag.POLL_EDIT_QUIZ -> get(PollQuizEditWindow::class.java)
         else -> null
     }
 }

@@ -97,7 +97,6 @@ import com.viewsonic.classswift.ui.widgetmodel.task.ContentTaskWidgetModel
 import com.viewsonic.classswift.ui.widgetmodel.task.UrlMetaPreviewDialogWidgetModel
 import com.viewsonic.classswift.ui.window.ComingSoonPromptWindow
 import com.viewsonic.classswift.ui.window.SelectOrgAndSelectClassWindow
-import com.viewsonic.classswift.ui.window.QuizCollectionWindow
 import com.viewsonic.classswift.ui.window.JoinClassWindow
 import com.viewsonic.classswift.ui.window.TutorialWindow
 import com.viewsonic.classswift.ui.window.UnderMaintenanceWindow
@@ -105,8 +104,6 @@ import com.viewsonic.classswift.ui.window.UpcomingMaintenanceCornerPromptWindow
 import com.viewsonic.classswift.ui.window.UpcomingMaintenanceWindow
 import com.viewsonic.classswift.ui.window.UpgradePromptWindow
 import com.viewsonic.classswift.ui.window.leaderboard.LeaderboardWindow
-import com.viewsonic.classswift.ui.window.quiz.edit.AudioQuizEditWindow
-import com.viewsonic.classswift.ui.window.quiz.edit.MultipleChoiceEditWindow
 import com.viewsonic.classswift.ui.window.quiz.edit.MvbAudioQuizEditWindow
 import com.viewsonic.classswift.ui.window.quiz.edit.MvbMultipleChoiceEditWindow
 import com.viewsonic.classswift.ui.window.quiz.edit.MvbPollQuizEditWindow
@@ -115,23 +112,12 @@ import com.viewsonic.classswift.ui.window.quiz.start.MvbSketchResponseStartWindo
 import com.viewsonic.classswift.ui.window.quiz.start.MvbShortAnswerStartWindow
 import com.viewsonic.classswift.ui.window.quiz.mvb.MvbSketchResponseEditWindow
 import com.viewsonic.classswift.ui.window.quiz.edit.MvbTrueFalseEditWindow
-import com.viewsonic.classswift.ui.window.quiz.edit.PollQuizEditWindow
-import com.viewsonic.classswift.ui.window.quiz.edit.ShortAnswerEditWindow
-import com.viewsonic.classswift.ui.window.quiz.edit.TrueFalseEditWindow
 import com.viewsonic.classswift.ui.window.quiz.result.BatchQuizResultWindow
-import com.viewsonic.classswift.ui.window.quiz.start.AudioQuizStartWindow
 import com.viewsonic.classswift.ui.window.quiz.start.BatchQuizStartWindow
 import com.viewsonic.classswift.ui.window.quiz.start.MvbAudioQuizStartWindow
-import com.viewsonic.classswift.ui.window.quiz.start.MultipleChoiceStartWindow
-import com.viewsonic.classswift.ui.window.quiz.start.PollQuizStartWindow
-import com.viewsonic.classswift.ui.window.quiz.start.ShortAnswerStartWindow
 import com.viewsonic.classswift.ui.window.quiz.start.TextMultipleChoiceStartWindow
-import com.viewsonic.classswift.ui.window.quiz.start.TextShortAnswerStartWindow
-import com.viewsonic.classswift.ui.window.quiz.start.TextTrueFalseStartWindow
-import com.viewsonic.classswift.ui.window.quiz.start.TrueFalseStartWindow
 import com.viewsonic.classswift.ui.window.task.PushRespondWindow
 import com.viewsonic.classswift.ui.windowmodel.LeaderboardWindowModel
-import com.viewsonic.classswift.ui.windowmodel.QuizCollectionWindowModel
 import com.viewsonic.classswift.ui.windowmodel.SelectOrgAndSelectClassWindowModel
 import com.viewsonic.classswift.ui.windowmodel.JoinClassWindowModel
 import com.viewsonic.classswift.ui.windowmodel.ToolbarManager
@@ -148,12 +134,10 @@ import com.viewsonic.classswift.ui.window.quiz.start.MvbTextShortAnswerStartWind
 import com.viewsonic.classswift.ui.window.quiz.start.MvbTextTrueFalseStartWindow
 import com.viewsonic.classswift.ui.window.quiz.start.MvbTrueFalseStartWindow
 import com.viewsonic.classswift.ui.window.tool.mvb.MvbSpinnerWindow
-import com.viewsonic.classswift.ui.windowmodel.quiz.PollAnswerWindowModel
 import com.viewsonic.classswift.ui.windowmodel.quiz.QuizCommonWindowModel
 import com.viewsonic.classswift.ui.windowmodel.quiz.QuizEditWindowModel
 import com.viewsonic.classswift.ui.windowmodel.quiz.MvbSketchResponseEditWindowModel
 import com.viewsonic.classswift.ui.windowmodel.quiz.QuizStartWindowModel
-import com.viewsonic.classswift.ui.windowmodel.quiz.ShortAnswerWindowModel
 import com.viewsonic.classswift.ui.windowmodel.quiz.TrueFalseWindowModel
 import com.viewsonic.classswift.ui.windowmodel.task.PushRespondWindowModel
 import com.viewsonic.classswift.ui.windowmodel.tool.BuzzerWindowModel
@@ -337,41 +321,28 @@ object KoinModules {
         factory { UpgradePromptWindow(androidContext().localizedContext()) }
         factory { JoinClassWindow(androidContext().localizedContext()) }
         factory { SelectOrgAndSelectClassWindow(androidContext().localizedContext()) }
-        factory { ShortAnswerEditWindow(androidContext().localizedContext()) }
         factory { MvbShortAnswerEditWindow(androidContext().localizedContext()) }
         factory { MvbTrueFalseEditWindow(androidContext().localizedContext()) }
-        factory { TrueFalseEditWindow(androidContext().localizedContext()) }
-        factory { TrueFalseStartWindow(androidContext().localizedContext()) }
         factory { MvbMultipleChoiceEditWindow(androidContext().localizedContext()) }
         factory { MvbTrueFalseStartWindow(androidContext().localizedContext()) }
         factory { MvbTextTrueFalseStartWindow(androidContext().localizedContext()) }
-        factory { MultipleChoiceEditWindow(androidContext().localizedContext()) }
-        factory { MultipleChoiceStartWindow(androidContext().localizedContext()) }
         factory { MvbMultipleChoiceStartWindow(androidContext().localizedContext()) }
         factory { MvbShortAnswerStartWindow(androidContext().localizedContext()) }
         factory { MvbTextShortAnswerStartWindow(androidContext().localizedContext()) }
         factory { MvbSketchResponseEditWindow(androidContext().localizedContext()) }
         factory { MvbSketchResponseStartWindow(androidContext().localizedContext()) }
-        factory { AudioQuizEditWindow(androidContext().localizedContext()) }
         factory { MvbAudioQuizEditWindow(androidContext().localizedContext()) }
         factory { TutorialWindow(androidContext().localizedContext()) }
-        factory { ShortAnswerStartWindow(androidContext().localizedContext()) }
-        factory { AudioQuizStartWindow(androidContext().localizedContext()) }
         factory { MvbAudioQuizStartWindow(androidContext().localizedContext()) }
         factory { PushRespondWindow(androidContext().localizedContext()) }
         factory { UpcomingMaintenanceWindow(androidContext().localizedContext()) }
         factory { UpcomingMaintenanceCornerPromptWindow(androidContext().localizedContext()) }
         factory { UnderMaintenanceWindow(androidContext().localizedContext()) }
         factory { LeaderboardWindow(androidContext().localizedContext()) }
-        factory { QuizCollectionWindow(androidContext().localizedContext()) }
         factory { MvbQuizCollectionWindow(androidContext().localizedContext()) }
         factory { MvbSpinnerWindow(androidContext().localizedContext()) }
         factory { MvbPollQuizEditWindow(androidContext().localizedContext()) }
         factory { MvbPollQuizStartWindow(androidContext().localizedContext()) }
-        factory { PollQuizEditWindow(androidContext().localizedContext()) }
-        factory { PollQuizStartWindow(androidContext().localizedContext()) }
-        factory { TextTrueFalseStartWindow(androidContext().localizedContext()) }
-        factory { TextShortAnswerStartWindow(androidContext().localizedContext()) }
         factory { TextMultipleChoiceStartWindow(androidContext().localizedContext()) }
         factory { BatchQuizStartWindow(androidContext().localizedContext()) }
         factory { BatchQuizResultWindow(androidContext().localizedContext()) }
@@ -404,7 +375,6 @@ object KoinModules {
         factory { BuzzerWindowModel(get(), get(), get(), get(), get(), get()) }
         factory { SpinnerWindowModel(get(), get(), get()) }
         factory { MvbSpinnerWindowModel(get(), get(), get(), get(), get()) }
-        factory { ShortAnswerWindowModel(get()) }
         factory {
             val accountManager: com.viewsonic.classswift.manager.AccountManager = get()
             val classroomManager: com.viewsonic.classswift.manager.ClassroomManager = get()
@@ -420,7 +390,6 @@ object KoinModules {
         factory { AudioStartWindowModel(get(), get()) }
         factory { PushRespondWindowModel(get(), get(), get(), get()) }
         factory { UnderMaintenanceWindowModel(get()) }
-        factory { QuizCollectionWindowModel(androidContext().localizedContext(), get(), get(), get(), get(), get(), get(), get(), get()) }
         factory {
             MvbQuizCollectionWindowModel(
                 androidContext().localizedContext(),
@@ -434,7 +403,6 @@ object KoinModules {
             )
         }
         factory { LeaderboardWindowModel(get(), get(), get()) }
-        factory { PollAnswerWindowModel(get()) }
         factory { BatchQuizStartWindowModel(get(), get(), get(), get(), get(), get()) }
         factory { BatchQuizResultWindowModel(get(), get(), get(), get()) }
     }
