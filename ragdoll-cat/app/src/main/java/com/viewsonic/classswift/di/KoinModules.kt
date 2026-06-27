@@ -88,9 +88,7 @@ import com.viewsonic.classswift.ui.viewmodel.LoginViewModel
 import com.viewsonic.classswift.ui.viewmodel.SettingLanguageViewModel
 import com.viewsonic.classswift.ui.widgetmodel.RandomDrawWidgetModel
 import com.viewsonic.classswift.ui.widgetmodel.RecordMarkWidgetModel
-import com.viewsonic.classswift.ui.widgetmodel.batchquiz.CSBatchQuizDetailsResultWidgetModel
 import com.viewsonic.classswift.ui.widgetmodel.quiz.SketchReviewWidgetModel
-import com.viewsonic.classswift.ui.widgetmodel.quizcollection.CSBatchQuizListWidgetModel
 import com.viewsonic.classswift.ui.widgetmodel.quizcollection.CSCreateQuizCollectionFolderWidgetModel
 import com.viewsonic.classswift.ui.widgetmodel.records.RecordsTaskWidgetModel
 import com.viewsonic.classswift.ui.widgetmodel.task.ContentTaskWidgetModel
@@ -112,8 +110,6 @@ import com.viewsonic.classswift.ui.window.quiz.start.MvbSketchResponseStartWindo
 import com.viewsonic.classswift.ui.window.quiz.start.MvbShortAnswerStartWindow
 import com.viewsonic.classswift.ui.window.quiz.mvb.MvbSketchResponseEditWindow
 import com.viewsonic.classswift.ui.window.quiz.edit.MvbTrueFalseEditWindow
-import com.viewsonic.classswift.ui.window.quiz.result.BatchQuizResultWindow
-import com.viewsonic.classswift.ui.window.quiz.start.BatchQuizStartWindow
 import com.viewsonic.classswift.ui.window.quiz.start.MvbAudioQuizStartWindow
 import com.viewsonic.classswift.ui.window.quiz.start.TextMultipleChoiceStartWindow
 import com.viewsonic.classswift.ui.window.task.PushRespondWindow
@@ -122,8 +118,6 @@ import com.viewsonic.classswift.ui.windowmodel.SelectOrgAndSelectClassWindowMode
 import com.viewsonic.classswift.ui.windowmodel.JoinClassWindowModel
 import com.viewsonic.classswift.ui.windowmodel.ToolbarManager
 import com.viewsonic.classswift.ui.windowmodel.quiz.AudioStartWindowModel
-import com.viewsonic.classswift.ui.windowmodel.quiz.BatchQuizResultWindowModel
-import com.viewsonic.classswift.ui.windowmodel.quiz.BatchQuizStartWindowModel
 import com.viewsonic.classswift.ui.windowmodel.quiz.MultipleChoiceWindowModel
 import com.viewsonic.classswift.ui.windowmodel.quiz.MvbSketchResponseStartWindowModel
 import com.viewsonic.classswift.ui.window.quiz.start.MvbMultipleChoiceStartWindow
@@ -344,8 +338,6 @@ object KoinModules {
         factory { MvbPollQuizEditWindow(androidContext().localizedContext()) }
         factory { MvbPollQuizStartWindow(androidContext().localizedContext()) }
         factory { TextMultipleChoiceStartWindow(androidContext().localizedContext()) }
-        factory { BatchQuizStartWindow(androidContext().localizedContext()) }
-        factory { BatchQuizResultWindow(androidContext().localizedContext()) }
     }
 
     private val widgetModelModule = module {
@@ -357,8 +349,6 @@ object KoinModules {
         // VSFT-8454 Sketch Response 批改 widget model
         factory { SketchReviewWidgetModel(androidContext(), get(), get()) }
         factory { CSCreateQuizCollectionFolderWidgetModel(get(), get()) }
-        factory { CSBatchQuizListWidgetModel(get(), get(), get()) }
-        factory { CSBatchQuizDetailsResultWidgetModel(get(), get(), get(), get(), get()) }
     }
 
     private val windowModelModule = module {
@@ -403,8 +393,6 @@ object KoinModules {
             )
         }
         factory { LeaderboardWindowModel(get(), get(), get()) }
-        factory { BatchQuizStartWindowModel(get(), get(), get(), get(), get(), get()) }
-        factory { BatchQuizResultWindowModel(get(), get(), get(), get()) }
     }
 
     /**
