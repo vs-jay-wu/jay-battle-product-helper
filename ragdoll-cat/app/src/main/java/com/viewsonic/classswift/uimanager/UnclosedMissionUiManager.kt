@@ -8,8 +8,6 @@ import com.viewsonic.classswift.data.state.QuizSharedUiInfo
 import com.viewsonic.classswift.manager.BatchQuizManager
 import com.viewsonic.classswift.manager.ClassroomManager
 import com.viewsonic.classswift.manager.QuizManager
-import com.viewsonic.classswift.ui.window.quiz.result.BatchQuizResultWindow
-import com.viewsonic.classswift.ui.window.quiz.start.BatchQuizStartWindow
 import com.viewsonic.classswift.windowframework.core.CSWindowManager
 import com.viewsonic.classswift.windowframework.core.enums.Gravity
 import com.viewsonic.classswift.windowframework.core.enums.WindowTag
@@ -246,46 +244,6 @@ class UnclosedMissionUiManager {
                 return@withContext isStopped
             }
             else -> return@withContext true
-        }
-    }
-
-    suspend fun recoverMissionState() = withContext(Dispatchers.Main) {
-        if (shouldCheckUnclosedMission) {
-            when (classroomManager.getUnclosedMission()) {
-                MissionType.QUIZ -> {
-                    // TODO: Temporary workaround; should be refactored in a future update if time allows.
-                    QuizSharedUiInfo.setOngoingFlag(true)
-                    quizManager.startOngoingProcess()
-                    notifyMissionOngoingIfNeeded(MissionType.QUIZ)
-                }
-
-                MissionType.BATCH_QUIZZES -> {
-                    when (batchQuizManager.startOngoingProcess()) {
-                        BatchQuizManager.OngoingResult.START_BATCH_QUIZ_START_WINDOW -> {
-                            batchQuizManager.setSkipResultPointUpdateInCurrentWindow(false)
-                            csWindowManager.createWindow(
-                                get(BatchQuizStartWindow::class.java) as BatchQuizStartWindow,
-                                Gravity.CENTER
-                            )
-                            notifyMissionOngoingIfNeeded(MissionType.BATCH_QUIZZES)
-                        }
-
-                        BatchQuizManager.OngoingResult.START_BATCH_QUIZ_RESULT_WINDOW -> {
-                            batchQuizManager.setSkipResultPointUpdateInCurrentWindow(true)
-                            csWindowManager.createWindow(
-                                get(BatchQuizResultWindow::class.java) as BatchQuizResultWindow,
-                                Gravity.CENTER
-                            )
-                            notifyMissionOngoingIfNeeded(MissionType.BATCH_QUIZZES)
-                        }
-
-                        else -> {}
-                    }
-                }
-
-                else -> {}
-            }
-            shouldCheckUnclosedMission = false
         }
     }
 

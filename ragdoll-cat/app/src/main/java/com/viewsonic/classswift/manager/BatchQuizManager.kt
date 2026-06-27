@@ -83,33 +83,6 @@ class BatchQuizManager(
             }
         }
 
-    suspend fun startOngoingProcess(): OngoingResult {
-        val response = batchQuizApiService.getLatestBatchQuiz(accountManager.getBearerToken(), classroomManager.classroomDataStateFlow.value.selectedClassroomInfo.lessonId)
-        when (response) {
-            is ApiResponse.Success -> {
-                batchQuizzesId = response.data.data.batchQuizzesId
-                startTimeInMillis = response.data.data.startTime * 1000L
-                amplitudeQuizDetailJsonArray = JSONArray()
-                response.data.data.quizzes.forEach { quiz ->
-                    amplitudeQuizDetailJsonArray.put(
-                        JSONObject()
-                            .put("quiz_id", quiz.quizId)
-                            .put("quiz_type", quiz.quizType)
-                    )
-                }
-                val quizStatus = QuizStatus.safeValueOf(response.data.data.status)
-                return when (quizStatus) {
-                    QuizStatus.OPEN -> OngoingResult.START_BATCH_QUIZ_START_WINDOW
-                    QuizStatus.DISCLOSED,
-                    QuizStatus.FINISH -> OngoingResult.START_BATCH_QUIZ_RESULT_WINDOW
-                    else -> OngoingResult.NONE
-                }
-            }
-            else -> {}
-        }
-        return OngoingResult.NONE
-    }
-
     suspend fun finishBatchQuiz(): Boolean = withContext(Dispatchers.IO) {
         val response = batchQuizApiService.updateBatchQuizStatus(
             accountManager.getBearerToken(),
@@ -167,11 +140,5 @@ class BatchQuizManager(
         batchQuizzesId = ""
         startTimeInMillis = 0
         skipResultPointUpdateInCurrentWindow = false
-    }
-
-    enum class OngoingResult {
-        NONE,
-        START_BATCH_QUIZ_START_WINDOW,
-        START_BATCH_QUIZ_RESULT_WINDOW
     }
 }

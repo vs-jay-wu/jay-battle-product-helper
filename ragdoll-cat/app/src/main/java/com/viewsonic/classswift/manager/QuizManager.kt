@@ -34,14 +34,6 @@ import com.viewsonic.classswift.data.state.SelectionOptionType
 import com.viewsonic.classswift.factory.AmplitudeFactory
 import com.viewsonic.classswift.manager.StudentManager.StudentChangeReason
 import com.viewsonic.classswift.ui.widget.quiz.enums.AnsweringState
-import com.viewsonic.classswift.ui.window.quiz.start.AudioQuizStartWindow
-import com.viewsonic.classswift.ui.window.quiz.start.MultipleChoiceStartWindow
-import com.viewsonic.classswift.ui.window.quiz.start.PollQuizStartWindow
-import com.viewsonic.classswift.ui.window.quiz.start.ShortAnswerStartWindow
-import com.viewsonic.classswift.ui.window.quiz.start.TextMultipleChoiceStartWindow
-import com.viewsonic.classswift.ui.window.quiz.start.TextShortAnswerStartWindow
-import com.viewsonic.classswift.ui.window.quiz.start.TextTrueFalseStartWindow
-import com.viewsonic.classswift.ui.window.quiz.start.TrueFalseStartWindow
 import com.viewsonic.classswift.ui.windowmodel.quiz.MultipleChoiceWindowModel.Companion.DEFAULT_OPTION_COUNT
 import com.viewsonic.classswift.ui.windowmodel.quiz.MultipleChoiceWindowModel.Companion.DEFAULT_OPTION_TYPE
 import com.viewsonic.classswift.ui.windowmodel.quiz.MultipleChoiceWindowModel.Companion.DEFAULT_SELECTION_TYPE
@@ -515,25 +507,6 @@ class QuizManager(
         }
     }
 
-    // only isGoing quiz need call this function
-    private fun getLastMultipleOptionInfos() {
-        coroutineScope.launch(Dispatchers.IO) {
-            val quizOptionCountString = quizDataStore.getOptionCount()
-            QuizSharedUiInfo.quizOptionCount =
-                if (quizOptionCountString != 0) quizOptionCountString else DEFAULT_OPTION_COUNT
-
-            val quizOptionString = quizDataStore.getOptionType()
-            QuizSharedUiInfo.quizOptionType =
-                if (quizOptionString != "") QuizOptionType.valueOf(quizOptionString) else DEFAULT_OPTION_TYPE
-
-            val quizSelectionString = quizDataStore.getSelectionType()
-            QuizSharedUiInfo.singleOrMultipleSelectionType =
-                if (quizSelectionString != "") SelectionOptionType.safeValueOf(quizSelectionString) else DEFAULT_SELECTION_TYPE
-        }
-        Timber.d("[startOngoingProcess]: getLastMultipleOptionInfos, quizOptionCount: ${QuizSharedUiInfo.quizOptionCount}, " +
-                "quizOptionType: ${QuizSharedUiInfo.quizOptionType}, quizSelectionString: ${QuizSharedUiInfo.singleOrMultipleSelectionType}")
-    }
-
     // leave class should reset multiple choice option info in data store
     fun resetMultipleOptionInfos() {
         Timber.d("[startOngoingProcess]: resetMultipleOptionInfos")
@@ -941,22 +914,6 @@ class QuizManager(
         quizResultInfoList = batchQuizResults
     }
 
-    suspend fun startOngoingProcess() {
-        if (!QuizSharedUiInfo.isOngoing) {
-            Timber.d("[startOngoingProcess] - isOngoing: false")
-            return
-        }
-        Timber.d("[startOngoingProcess] - start")
-        getLastMultipleOptionInfos()
-        getUnclosedQuiz()?.let {
-            Timber.d("unclosedQuizData: ${it.unclosedQuizData}")
-            recoverQuizWindow(it.unclosedQuizData)
-        } ?: run {
-            Timber.d("[startOngoingProcess] - failed: unclosedQuizData is null")
-        }
-        QuizSharedUiInfo.setOngoingFlag(false)
-    }
-
     fun getPollAnswerResultInfos(multipleQuizOptionType: QuizOptionType): List<QuizAnswerResultInfo> {
         val studentQuizAnsweringInfoList = _quizzingUiState.value.studentQuizzingInfoList.map {
             var answeringState = AnsweringState.ABSENT
@@ -981,125 +938,6 @@ class QuizManager(
     }
 
 
-    private suspend fun recoverQuizWindow(unclosedQuizData: UnclosedQuizResponse.Data) = withContext(Dispatchers.Main) {
-        if (unclosedQuizData.quizId.isBlank()) {
-            Timber.d("[recoverQuizWindow] - failed: ${unclosedQuizData.quizId.isBlank()}")
-            return@withContext
-        }
-
-        Timber.d("[recoverQuizWindow] - start")
-        // region QuizManager 中設定 quizId, quizType startTime, imgUrl
-        quizId = unclosedQuizData.quizId
-        quizImageKey = unclosedQuizData.imgUrl.split("/").lastOrNull() ?: ""
-        quizStatus = unclosedQuizData.status
-        quizStartTimeInMillis = unclosedQuizData.startTime.toLong() * 1000L
-        QuizSharedUiInfo.updateQuizType(QuizType.valueOf(unclosedQuizData.quizType))
-        QuizSharedUiInfo.screenshotImageUri = unclosedQuizData.imgUrl
-        QuizSharedUiInfo.quizContent = unclosedQuizData.content
-        QuizSharedUiInfo.quizOptionList.clear()
-        QuizSharedUiInfo.quizOptionList.addAll(unclosedQuizData.optionList.map {
-            QuizOption(
-                content = it.content,
-                isAiAnswer = it.isAiAnswer,
-                isAnswer = it.isAnswer,
-                optionId = it.optionId,
-                reason = it.reason
-            )
-        })
-        // endregion
-
-        // region 設定 Quiz 階段: OPEN, FINISH, DISCLOSED
-        val stateOfQuizWindow = when (unclosedQuizData.status) {
-            QuizStatus.UNSPECIFIED,
-            QuizStatus.OPEN -> {
-                QuizState.QUIZZING
-            }
-            QuizStatus.DISCLOSED -> {
-                QuizState.QUIZ_RESULTS
-            }
-            QuizStatus.FINISH -> {
-                if (QuizSharedUiInfo.isNonStandardAnswerType) {
-                    QuizState.QUIZ_RESULTS
-                } else {
-                    QuizState.DISCLOSE_ANSWER
-                }
-            }
-            else -> {
-                QuizState.QUIZZING
-            }
-        }
-
-        // region 設定 discloseAnswerData 資料
-        if (stateOfQuizWindow != QuizState.QUIZZING) {
-            setDiscloseAnswerData(unclosedQuizData.optionList)
-        }
-
-        // endregion
-        changeQuizState(stateOfQuizWindow)
-        // endregion
-
-        // region 開啟對應題型 Window: TRUE_FALSE, SINGLE_SELECT...and change its UI status
-        val isTextQuiz = unclosedQuizData.imgUrl.isBlank()
-        if (isTextQuiz) {
-            when (QuizSharedUiInfo.quizType) {
-                QuizType.TRUE_FALSE -> {
-                    val textTrueFalseStartWindow: TextTrueFalseStartWindow =
-                        get(TextTrueFalseStartWindow::class.java)
-                    csWindowManager.createWindow(textTrueFalseStartWindow, Gravity.CENTER)
-                }
-                QuizType.SINGLE_SELECT,
-                QuizType.MULTIPLE_SELECT -> {
-                    val textMultipleChoiceStartWindow: TextMultipleChoiceStartWindow =
-                        get(TextMultipleChoiceStartWindow::class.java)
-                    csWindowManager.createWindow(textMultipleChoiceStartWindow, Gravity.CENTER)
-                }
-                QuizType.SHORT_ANSWER -> {
-                    val textShortAnswerStartWindow: TextShortAnswerStartWindow =
-                        get(TextShortAnswerStartWindow::class.java)
-                    csWindowManager.createWindow(textShortAnswerStartWindow, Gravity.CENTER)
-                }
-                else -> {}
-            }
-        } else {
-            when (QuizSharedUiInfo.quizType) {
-                QuizType.TRUE_FALSE -> {
-                    val trueFalseStartWindow: TrueFalseStartWindow =
-                        get(TrueFalseStartWindow::class.java)
-                    csWindowManager.createWindow(trueFalseStartWindow, Gravity.CENTER)
-                }
-
-                QuizType.SINGLE_SELECT,
-                QuizType.MULTIPLE_SELECT -> {
-                    val multipleChoiceStartWindow: MultipleChoiceStartWindow =
-                        get(MultipleChoiceStartWindow::class.java)
-                    csWindowManager.createWindow(multipleChoiceStartWindow, Gravity.CENTER)
-                }
-
-                QuizType.SHORT_ANSWER -> {
-                    val shortAnswerStartWindow: ShortAnswerStartWindow =
-                        get(ShortAnswerStartWindow::class.java)
-                    csWindowManager.createWindow(shortAnswerStartWindow, Gravity.CENTER)
-                }
-
-                QuizType.RECORD -> {
-                    val audioQuizStartWindow: AudioQuizStartWindow =
-                        get(AudioQuizStartWindow::class.java)
-                    csWindowManager.createWindow(audioQuizStartWindow, Gravity.CENTER)
-                }
-
-                QuizType.SINGLE_POLL,
-                QuizType.MULTIPLE_POLL -> {
-                    val pollQuizStartWindow: PollQuizStartWindow =
-                        get(PollQuizStartWindow::class.java)
-                    csWindowManager.createWindow(pollQuizStartWindow, Gravity.CENTER)
-                }
-
-                else -> {}
-            }
-        }
-        // endregion
-    }
-    // endregion
 
     data class QuizzingUiState(
         val quizState: QuizState = QuizState.QUIZZING,
