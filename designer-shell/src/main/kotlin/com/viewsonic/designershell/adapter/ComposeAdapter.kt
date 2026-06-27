@@ -21,7 +21,8 @@ import java.net.Socket
  */
 class ComposeAdapter(
     private val projectDir: String,
-    private val module: String = ":designer-shell",
+    private val runCmd: String = "./gradlew :designer-shell:hotRunJvm",
+    private val reloadCmd: String? = "./gradlew :designer-shell:reload",
 ) : TargetAdapter {
 
     override val displayName: String = "Compose · ${File(projectDir).name}"
@@ -46,7 +47,7 @@ class ComposeAdapter(
     }
 
     private fun launchHost(): Int? {
-        val p = ProcessBuilder("/bin/zsh", "-lc", "./gradlew $module:hotRunJvm --console=plain")
+        val p = ProcessBuilder("/bin/zsh", "-lc", "$runCmd --console=plain")
             .directory(File(projectDir)).redirectErrorStream(true).start()
         process = p
         val reader = p.inputStream.bufferedReader()
@@ -138,8 +139,9 @@ class ComposeAdapter(
 
     override fun hotReload() {
         // CHR explicit reload: recompiles changed sources + hot-swaps into the host.
+        val cmd = reloadCmd ?: return
         runCatching {
-            ProcessBuilder("/bin/zsh", "-lc", "./gradlew $module:reload --console=plain")
+            ProcessBuilder("/bin/zsh", "-lc", "$cmd --console=plain")
                 .directory(File(projectDir))
                 .redirectOutput(ProcessBuilder.Redirect.DISCARD)
                 .redirectError(ProcessBuilder.Redirect.DISCARD)

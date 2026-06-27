@@ -15,7 +15,10 @@ import java.io.File
  * the Dart VM Service, drives the ext.designer.* design-mode bridge, and triggers
  * hot reload by writing `r` to the flutter tool's stdin.
  */
-class FlutterAdapter(private val projectDir: String) : TargetAdapter {
+class FlutterAdapter(
+    private val projectDir: String,
+    private val runCmd: String = "fvm flutter run -d macos --no-version-check",
+) : TargetAdapter {
 
     override val displayName: String = "Flutter · ${File(projectDir).name}"
     override val workingDir: File = File(projectDir)
@@ -109,7 +112,7 @@ class FlutterAdapter(private val projectDir: String) : TargetAdapter {
     }
 
     private fun startFlutter(): String? {
-        val p = ProcessBuilder("/bin/zsh", "-lc", "fvm flutter run -d macos --no-version-check")
+        val p = ProcessBuilder("/bin/zsh", "-lc", runCmd)
             .directory(File(projectDir)).redirectErrorStream(true).start()
         process = p
         stdin = p.outputStream.bufferedWriter()

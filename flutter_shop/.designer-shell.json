@@ -1,0 +1,5 @@
+{
+  "name": "flutter_shop",
+  "sdk": "flutter",
+  "run": "fvm flutter run -d macos --no-version-check"
+}

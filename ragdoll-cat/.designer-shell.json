@@ -1,0 +1,7 @@
+{
+  "name": "ragdoll-cat",
+  "sdk": "compose",
+  "run": "./gradlew :designer-shell:hotRunJvm",
+  "reload": "./gradlew :designer-shell:reload",
+  "sourceDirs": ["feature", "core"]
+}

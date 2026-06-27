@@ -48,16 +48,30 @@ import com.viewsonic.designershell.adapter.PageInfo
 import com.viewsonic.designershell.adapter.SelectedNode
 import com.viewsonic.designershell.adapter.TargetAdapter
 import com.viewsonic.designershell.adapter.TreeNode
+import java.io.File
+import javax.swing.JFileChooser
 
-private const val BASE = "/Users/jay.wj.wu/ProjectsWork_GitHub/Battle/jay-battle-product-helper"
-private const val FLUTTER_SHOP = "$BASE/flutter_shop"
-private const val RAGDOLL_CAT = "$BASE/ragdoll-cat"
+/** Build the right out-of-process adapter for a project from its descriptor. */
+private fun adapterFor(d: ProjectDescriptor): TargetAdapter =
+    when (d.sdk) {
+        "flutter" -> FlutterAdapter(d.projectDir, d.run)
+        else -> ComposeAdapter(d.projectDir, d.run, d.reload)
+    }
 
-private fun adapterFor(target: String): TargetAdapter =
-    if (target == "flutter") FlutterAdapter(FLUTTER_SHOP) else ComposeAdapter(RAGDOLL_CAT)
-
-private fun repoLabel(target: String): String =
-    if (target == "flutter") "Flutter · flutter_shop" else "Compose · ragdoll-cat"
+/**
+ * Prompt for a folder and read its descriptor. Returns the descriptor if the folder
+ * supports the Designer Shell, or null (caller surfaces "unsupported"). Runs the
+ * Swing chooser on the calling thread — invoke from a click handler.
+ */
+private fun openProject(): Pair<File, ProjectDescriptor?>? {
+    val chooser = JFileChooser().apply {
+        fileSelectionMode = JFileChooser.DIRECTORIES_ONLY
+        dialogTitle = "選擇一個專案資料夾"
+    }
+    if (chooser.showOpenDialog(null) != JFileChooser.APPROVE_OPTION) return null
+    val dir = chooser.selectedFile
+    return dir to readDescriptor(dir)
+}
 
 private fun sessionPreview(s: Session): String =
     if (s.transcript.isEmpty()) "尚無對話"
@@ -72,31 +86,68 @@ fun main() = application {
     val store = remember { SessionStore() }
     val state = rememberWindowState(width = 560.dp, height = 880.dp)
     Window(onCloseRequest = ::exitApplication, state = state, title = "Designer Shell") {
-        var repo by remember { mutableStateOf<String?>(null) }
+        // Default: projects discovered in the workspace (sibling repos with a
+        // .designer-shell.json). Plus any folder the user opens at runtime.
+        var projects by remember {
+            val workspace = defaultWorkspace()
+            val found = scanWorkspace(workspace)
+            println("[designer-shell] workspace=$workspace discovered=${found.map { it.name }}")
+            mutableStateOf(found)
+        }
+        var project by remember { mutableStateOf<ProjectDescriptor?>(null) }
+        var openError by remember { mutableStateOf<String?>(null) }
+
+        fun pickOpened() {
+            val (dir, d) = openProject() ?: return
+            if (d == null) {
+                openError = "「${dir.name}」沒有 $DESCRIPTOR_FILENAME 或不支援 Designer Shell"
+                return
+            }
+            openError = null
+            if (projects.none { it.projectDir == d.projectDir }) projects = projects + d
+            project = d
+        }
+
         MenuBar {
             Menu("專案", mnemonic = 'P') {
-                Item("Flutter · flutter_shop") { repo = "flutter" }
-                Item("Compose · ragdoll-cat") { repo = "compose" }
+                projects.forEach { d -> Item(d.label) { project = d } }
                 Separator()
-                if (repo != null) Item("切換專案(回到選擇)") { repo = null }
+                Item("Open 其他專案…") { pickOpened() }
+                if (project != null) Item("切換專案(回到選擇)") { project = null }
             }
         }
-        when (val r = repo) {
-            null -> RepoPicker(onPick = { repo = it })
-            else -> key(r) { RepoWorkspace(r, store) }
+        when (val p = project) {
+            null -> RepoPicker(projects, openError, onPick = { project = it }, onOpen = { pickOpened() })
+            else -> key(p.projectDir) { RepoWorkspace(p, store) }
         }
     }
 }
 
 @Composable
-private fun RepoPicker(onPick: (String) -> Unit) {
+private fun RepoPicker(
+    projects: List<ProjectDescriptor>,
+    error: String?,
+    onPick: (ProjectDescriptor) -> Unit,
+    onOpen: () -> Unit,
+) {
     Column(Modifier.fillMaxSize().background(Color(0xFFF4F4F6)).padding(24.dp)) {
         Text("Designer Shell", fontWeight = FontWeight.Bold, fontSize = 18.sp, color = Color(0xFF1A1A1A))
         Text("選擇一個專案 — 選了就會啟動該 app", color = Color(0xFF797979), fontSize = 12.sp)
         Spacer(Modifier.height(20.dp))
-        Button(onClick = { onPick("flutter") }, modifier = Modifier.fillMaxWidth()) { Text(repoLabel("flutter")) }
-        Spacer(Modifier.height(8.dp))
-        Button(onClick = { onPick("compose") }, modifier = Modifier.fillMaxWidth()) { Text(repoLabel("compose")) }
+        if (projects.isEmpty()) {
+            Text("workspace 內找不到支援的專案($DESCRIPTOR_FILENAME)", color = Color(0xFF797979), fontSize = 12.sp)
+            Spacer(Modifier.height(8.dp))
+        }
+        projects.forEach { d ->
+            Button(onClick = { onPick(d) }, modifier = Modifier.fillMaxWidth()) { Text(d.label) }
+            Spacer(Modifier.height(8.dp))
+        }
+        Spacer(Modifier.height(4.dp))
+        TextButton(onClick = onOpen) { Text("＋ Open 其他專案…") }
+        error?.let {
+            Spacer(Modifier.height(8.dp))
+            Text(it, color = Color(0xFFB00020), fontSize = 12.sp)
+        }
     }
 }
 
@@ -105,8 +156,9 @@ private fun RepoPicker(onPick: (String) -> Unit) {
  * the active Claude session only swaps the conversation — the app is untouched.
  */
 @Composable
-private fun RepoWorkspace(repo: String, store: SessionStore) {
-    val adapter = remember { adapterFor(repo) }
+private fun RepoWorkspace(project: ProjectDescriptor, store: SessionStore) {
+    val adapter = remember { adapterFor(project) }
+    val repo = project.name // session-store key for this project
     var status by remember { mutableStateOf("啟動中…") }
     var designMode by remember { mutableStateOf(false) }
     var selection by remember { mutableStateOf<SelectedNode?>(null) }
@@ -184,7 +236,7 @@ private fun RepoWorkspace(repo: String, store: SessionStore) {
     }
 
     Column(Modifier.fillMaxSize().background(Color(0xFFF4F4F6)).padding(16.dp)) {
-        Text(repoLabel(repo), color = Color(0xFF1A1A1A), fontWeight = FontWeight.Bold, fontSize = 16.sp)
+        Text(project.label, color = Color(0xFF1A1A1A), fontWeight = FontWeight.Bold, fontSize = 16.sp)
         Text("app：$status", color = Color(0xFF797979), fontSize = 12.sp)
         Spacer(Modifier.height(10.dp))
 
