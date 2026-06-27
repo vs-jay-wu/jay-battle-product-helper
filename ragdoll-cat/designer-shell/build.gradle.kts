@@ -46,18 +46,6 @@ compose.desktop {
     }
 }
 
-// Alternate entry point: the Flutter Designer Shell (docks a native flutter app).
-// Run: ./gradlew :designer-shell:runFlutterShell -Dflutter.vm=http://127.0.0.1:PORT/TOKEN=/
-tasks.register<JavaExec>("runFlutterShell") {
-    group = "application"
-    description = "Run the Flutter Designer Shell (docks a native flutter app)."
-    dependsOn("jvmMainClasses")
-    val mainComp = kotlin.targets.getByName("jvm").compilations.getByName("main")
-    classpath(mainComp.output.allOutputs, mainComp.runtimeDependencyFiles)
-    mainClass.set("com.viewsonic.classswift.designershell.flutter.FlutterShellKt")
-    System.getProperty("flutter.vm")?.let { systemProperty("flutter.vm", it) }
-}
-
 // Headless screenshot of quiz-start states to PNGs (dev verification).
 // Run: ./gradlew :designer-shell:screenshotQuiz -Dshot.dir=/abs/dir
 tasks.register<JavaExec>("screenshotQuiz") {
