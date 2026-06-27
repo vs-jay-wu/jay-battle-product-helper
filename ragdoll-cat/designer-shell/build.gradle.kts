@@ -19,7 +19,7 @@ kotlin {
             implementation(compose.material3)
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.kotlinx.coroutines.swing)
-            implementation(project(":designer-bridge"))
+            implementation("com.viewsonic.designer:designer-bridge:0.1.0") // root build (includeBuild)
             implementation(project(":core:designsystem"))
             implementation(project(":core:ui"))
             implementation(project(":feature:quizcollection:ui"))

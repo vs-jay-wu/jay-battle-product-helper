@@ -24,6 +24,13 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "ClassSwift"
+
+// The Compose Designer Shell bridge lives at the repo root as a standalone, reusable
+// Gradle build; pull it in source-level (Gradle's equivalent of a path dependency).
+// Gradle auto-substitutes `com.viewsonic.designer:designer-node` / `:designer-bridge`
+// with the included build's projects (see those modules' group/version).
+includeBuild("../designer-compose-bridge")
+
 include(":app")
 
 // --- Compose Multiplatform modules (dev-only desktop preview; see docs/desktop-app-architecture.md) ---
@@ -32,6 +39,4 @@ include(":core:ui")
 include(":fixtures")
 include(":feature:quizcollection:ui")
 include(":feature:servicescreens:ui")
-include(":designer-node")
-include(":designer-bridge")
 include(":designer-shell")

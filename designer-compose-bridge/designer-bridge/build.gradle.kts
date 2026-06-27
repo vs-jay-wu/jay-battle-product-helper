@@ -4,6 +4,11 @@ plugins {
     alias(libs.plugins.compose.compiler)
 }
 
+// Coordinates so consumers can declare `com.viewsonic.designer:designer-bridge` and
+// Gradle auto-substitutes this project across the includeBuild boundary.
+group = "com.viewsonic.designer"
+version = "0.1.0"
+
 kotlin {
     jvmToolchain(17)
     jvm()

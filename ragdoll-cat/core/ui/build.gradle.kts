@@ -17,7 +17,7 @@ kotlin {
             implementation(compose.material3)
             implementation(compose.ui)
             implementation(project(":core:designsystem"))
-            api(project(":designer-node")) // re-exported by the DesignNode shim
+            api("com.viewsonic.designer:designer-node:0.1.0") // root build (includeBuild); re-exported by the DesignNode shim
 
         }
     }

@@ -5,6 +5,11 @@ plugins {
     alias(libs.plugins.compose.compiler)
 }
 
+// Coordinates so consumers can declare `com.viewsonic.designer:designer-node` and
+// Gradle auto-substitutes this project across the includeBuild boundary.
+group = "com.viewsonic.designer"
+version = "0.1.0"
+
 // The Designer Shell's design-node primitive: Modifier.designNode + the registry the
 // shell reads to hit-test taps. Dependency-light and multiplatform on purpose — both
 // the (multiplatform) app/feature UI and the (desktop) :designer-bridge depend on it,
