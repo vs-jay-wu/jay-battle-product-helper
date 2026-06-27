@@ -1,0 +1,19 @@
+# Self-contained catalog for the Compose Designer Shell bridge. Kept minimal and
+# independent of any example app (a reusable bridge must not depend on a consumer).
+# Keep these versions in step with the Kotlin/Compose/AGP a consumer app uses.
+[versions]
+versionAndroidGradlePlugin = "8.8.2"
+versionKotlinAndroidPlugin = "2.1.20"
+versionComposeMultiplatform = "1.8.2"
+versionKotlinxSerialization = "1.7.3"
+versionKotlinxCoroutines = "1.8.0"
+
+[libraries]
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "versionKotlinxSerialization" }
+kotlinx-coroutines-swing = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-swing", version.ref = "versionKotlinxCoroutines" }
+
+[plugins]
+android-library = { id = "com.android.library", version.ref = "versionAndroidGradlePlugin" }
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "versionKotlinAndroidPlugin" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "versionKotlinAndroidPlugin" }
+compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "versionComposeMultiplatform" }

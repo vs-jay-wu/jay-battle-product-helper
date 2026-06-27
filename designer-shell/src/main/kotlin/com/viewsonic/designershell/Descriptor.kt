@@ -58,6 +58,12 @@ fun scanWorkspace(workspace: File): List<ProjectDescriptor> =
         .mapNotNull { readDescriptor(it) }
         .sortedBy { it.name }
 
-/** Default workspace to scan: the parent of the shell module (the repo root that holds the sibling apps). */
-fun defaultWorkspace(): File =
-    File(System.getProperty("designer.workspace") ?: File(System.getProperty("user.dir")).parent ?: ".")
+/**
+ * Default workspace to scan: the repo's `examples/` dir (sibling to the shell module),
+ * where adopter apps live. Override with -Ddesigner.workspace=/abs/dir.
+ */
+fun defaultWorkspace(): File {
+    System.getProperty("designer.workspace")?.let { return File(it) }
+    val repoRoot = File(System.getProperty("user.dir")).parentFile ?: File(".")
+    return File(repoRoot, "examples")
+}

@@ -29,7 +29,12 @@ keystore.properties
 
 # Keystore files
 cs_release.keystore
+*.keystore
 *.jks
+
+# Local/agent config (never commit secrets)
+.env
+.mcp.json
 
 # Google Services (e.g. APIs or Firebase)
 google-services.json

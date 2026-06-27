@@ -1,6 +1,6 @@
 # jay-battle-product-helper
 
-Demo / 紀錄用的 helper repo。`ragdoll-cat/` 是 demo sandbox（見 `ragdoll-cat/DEMO_NOTICE.md`）。
+Demo / 紀錄用的 helper repo。結構分三層:**核心** `designer-shell/`(通用 Designer Shell)、**橋接** `bridges/`(各 SDK 接入函式庫:`bridges/compose`、`bridges/flutter`)、**範例** `examples/`(採用 shell 的 app:`examples/ragdoll-cat` 是 demo sandbox,見其 `DEMO_NOTICE.md`;`examples/flutter_shop`)。
 
 ## Git 規則：可自動 commit，但**禁止主動 push**
 
@@ -13,4 +13,4 @@ Demo / 紀錄用的 helper repo。`ragdoll-cat/` 是 demo sandbox（見 `ragdoll
 - 改動本身需要使用者決策、或結果模稜兩可、或牽涉 repo 以外的對外動作 → 先確認。
 - 機敏檔由 `.gitignore` 把關;commit 前確認沒有未加密金鑰 / 憑證被加入。
 
-此規則對本 repo(含 `ragdoll-cat/`)持續有效,直到使用者另行指示。
+此規則對本 repo(含 `examples/ragdoll-cat/`)持續有效,直到使用者另行指示。

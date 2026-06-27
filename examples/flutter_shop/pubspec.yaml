@@ -38,7 +38,7 @@ dependencies:
   # Designer Shell bridge — debug-only inspector + window docking. Any app that
   # depends on this package becomes connectable to the Designer Shell.
   designer_shell_bridge:
-    path: ../designer_shell_bridge
+    path: ../../bridges/flutter
 
 dev_dependencies:
   flutter_test:

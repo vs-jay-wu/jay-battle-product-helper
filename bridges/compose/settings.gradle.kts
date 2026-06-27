@@ -22,13 +22,8 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
     }
-    // Reuse the host app's version catalog rather than duplicating versions, so the
-    // bridge always builds with the same Kotlin/Compose/AGP versions as its consumer.
-    versionCatalogs {
-        create("libs") {
-            from(files("../ragdoll-cat/gradle/libs.versions.toml"))
-        }
-    }
+    // `libs` is auto-loaded from gradle/libs.versions.toml — a self-contained catalog
+    // so this reusable bridge has no dependency on any example app.
 }
 
 // Standalone, reusable Compose Designer Shell bridge. Consumed by app repos via

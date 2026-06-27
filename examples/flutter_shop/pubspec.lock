@@ -52,7 +52,7 @@ packages:
   designer_shell_bridge:
     dependency: "direct main"
     description:
-      path: "../designer_shell_bridge"
+      path: "../../bridges/flutter"
       relative: true
     source: path
     version: "0.1.0"

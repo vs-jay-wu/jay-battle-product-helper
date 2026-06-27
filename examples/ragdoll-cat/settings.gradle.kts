@@ -29,7 +29,7 @@ rootProject.name = "ClassSwift"
 // Gradle build; pull it in source-level (Gradle's equivalent of a path dependency).
 // Gradle auto-substitutes `com.viewsonic.designer:designer-node` / `:designer-bridge`
 // with the included build's projects (see those modules' group/version).
-includeBuild("../designer-compose-bridge")
+includeBuild("../../bridges/compose")
 
 include(":app")
 
