@@ -110,6 +110,13 @@ void registerDesignNodeTree() {
     return developer.ServiceExtensionResponse.result(jsonEncode(_buildDesignTree()));
   });
 
+  // Clear the current selection / highlight box.
+  registerExt('ext.designer.clearSelection',
+      (String m, Map<String, String> params) async {
+    kDesignHighlight.value = null;
+    return developer.ServiceExtensionResponse.result(jsonEncode(<String, dynamic>{'ok': true}));
+  });
+
   // Select a design node by id (used when the shell picks a row in the clean
   // tree): highlight it in the inspector and report it back to the shell.
   registerExt('ext.designer.selectNode',

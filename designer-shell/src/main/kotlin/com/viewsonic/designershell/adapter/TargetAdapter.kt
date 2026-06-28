@@ -74,6 +74,9 @@ interface TargetAdapter {
     /** Select a node picked from the structure tree (highlights it in the target). */
     fun selectNode(node: TreeNode)
 
+    /** Clear the current selection / highlight in the target. */
+    fun clearSelection()
+
     /** Ask the target for its switchable pages (answered via [onPages]). */
     fun requestPages()
 

@@ -150,6 +150,10 @@ class ComposeAdapter(
         }
     }
 
+    override fun clearSelection() {
+        // Compose target has no explicit clear; the highlight clears on next select.
+    }
+
     override fun requestDesignTree() {
         // Compose targets already expose only app-authored design nodes, so the
         // clean tree is the same as the full tree here.

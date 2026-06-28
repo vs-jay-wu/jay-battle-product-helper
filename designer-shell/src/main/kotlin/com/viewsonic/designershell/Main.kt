@@ -26,6 +26,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountTree
 import androidx.compose.material.icons.filled.Bolt
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.FilterAlt
 import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.MyLocation
@@ -345,7 +346,7 @@ private fun RepoWorkspace(project: ProjectDescriptor, store: SessionStore) {
                     Spacer(Modifier.height(10.dp))
                     controls()
                     Spacer(Modifier.height(12.dp))
-                    InspectorCard(selection)
+                    InspectorCard(selection, onClear = { selection = null; adapter.clearSelection() })
                     Spacer(Modifier.height(12.dp))
                     StructureCard(tree, selection, cleanTree, onToggleTree = { cleanTree = !cleanTree; refreshTree() }, onRefresh = refreshTree, onSelect = { adapter.selectNode(it) }, Modifier.weight(1f))
                 }
@@ -358,7 +359,7 @@ private fun RepoWorkspace(project: ProjectDescriptor, store: SessionStore) {
                 Spacer(Modifier.height(10.dp))
                 controls()
                 Spacer(Modifier.height(12.dp))
-                InspectorCard(selection)
+                InspectorCard(selection, onClear = { selection = null; adapter.clearSelection() })
                 Spacer(Modifier.height(12.dp))
                 StructureCard(tree, selection, cleanTree, onToggleTree = { cleanTree = !cleanTree; refreshTree() }, onRefresh = refreshTree, onSelect = { adapter.selectNode(it) }, Modifier.weight(1f))
                 Spacer(Modifier.height(12.dp))
@@ -439,9 +440,19 @@ private fun PagePicker(pages: List<PageInfo>, currentId: String?, onSelect: (Str
 }
 
 @Composable
-private fun InspectorCard(selection: SelectedNode?) {
+private fun InspectorCard(selection: SelectedNode?, onClear: () -> Unit) {
     Column(Modifier.fillMaxWidth().background(Color.White).padding(14.dp)) {
-        Text("Inspector", fontWeight = FontWeight.SemiBold, color = Color(0xFF1A1A1A))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text("Inspector", fontWeight = FontWeight.SemiBold, color = Color(0xFF1A1A1A))
+            Spacer(Modifier.weight(1f))
+            if (selection != null) {
+                Tooltip("取消選取") {
+                    IconButton(onClick = onClear) {
+                        Icon(Icons.Filled.Close, contentDescription = "取消選取")
+                    }
+                }
+            }
+        }
         Spacer(Modifier.height(6.dp))
         if (selection == null) {
             Text("切到「設計」模式，點目標 app 上的元件", color = Color(0xFF797979), fontSize = 12.sp)

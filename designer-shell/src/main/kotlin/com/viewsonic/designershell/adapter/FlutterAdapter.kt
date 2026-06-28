@@ -98,6 +98,12 @@ class FlutterAdapter(
         }.apply { isDaemon = true }.start()
     }
 
+    override fun clearSelection() {
+        val service = vm ?: return
+        Thread { runCatching { service.ext("ext.designer.clearSelection") } }
+            .apply { isDaemon = true }.start()
+    }
+
     override fun requestDesignTree() {
         val service = vm ?: return
         Thread {
