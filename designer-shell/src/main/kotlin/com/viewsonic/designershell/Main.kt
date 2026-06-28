@@ -7,9 +7,13 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -95,6 +99,8 @@ fun main() = application {
     val store = remember { SessionStore() }
     val state = rememberWindowState(width = 560.dp, height = 880.dp)
     Window(onCloseRequest = ::exitApplication, state = state, title = "Designer Shell") {
+        // Keep the panel usable: stop it from being shrunk below a workable size.
+        LaunchedEffect(Unit) { window.minimumSize = java.awt.Dimension(380, 560) }
         // Default: projects discovered in the workspace (sibling repos with a
         // .designer-shell.json). Plus any folder the user opens at runtime.
         var projects by remember {
@@ -164,6 +170,7 @@ private fun RepoPicker(
  * One running app (per repo). The adapter is started once and persists; switching
  * the active Claude session only swaps the conversation — the app is untouched.
  */
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun RepoWorkspace(project: ProjectDescriptor, store: SessionStore) {
     val adapter = remember { adapterFor(project) }
@@ -246,11 +253,14 @@ private fun RepoWorkspace(project: ProjectDescriptor, store: SessionStore) {
         }, onDismiss = { renaming = false })
     }
 
-    Column(Modifier.fillMaxSize().background(Color(0xFFF4F4F6)).padding(16.dp)) {
+    // Header + control cluster are layout-agnostic, so both the narrow (single
+    // column) and wide (two-pane) arrangements reuse them.
+    val header: @Composable () -> Unit = {
         Text(project.label, color = Color(0xFF1A1A1A), fontWeight = FontWeight.Bold, fontSize = 16.sp)
         Text("app：$status", color = Color(0xFF797979), fontSize = 12.sp)
-        Spacer(Modifier.height(10.dp))
+    }
 
+    val controls: @Composable () -> Unit = {
         SessionSwitcher(
             sessions = sessions,
             active = active,
@@ -274,7 +284,11 @@ private fun RepoWorkspace(project: ProjectDescriptor, store: SessionStore) {
             Spacer(Modifier.height(8.dp))
         }
 
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        // Chips + action buttons wrap onto new rows when the panel is narrow.
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
             FilterChip(selected = designMode, label = { Text("設計") }, onClick = {
                 designMode = true
                 adapter.setDesignMode(true)
@@ -284,10 +298,6 @@ private fun RepoWorkspace(project: ProjectDescriptor, store: SessionStore) {
                 designMode = false
                 adapter.setDesignMode(false)
             })
-        }
-        Spacer(Modifier.height(8.dp))
-
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
             Tooltip("熱重載") {
                 IconButton(enabled = status == "已連線", onClick = { adapter.hotReload() }) {
                     Icon(Icons.Filled.Bolt, contentDescription = "熱重載")
@@ -313,13 +323,37 @@ private fun RepoWorkspace(project: ProjectDescriptor, store: SessionStore) {
                 }
             }
         }
-        Spacer(Modifier.height(12.dp))
+    }
 
-        InspectorCard(selection)
-        Spacer(Modifier.height(12.dp))
-        StructureCard(tree, onRefresh = { adapter.requestTree() }, onSelect = { adapter.selectNode(it) }, Modifier.weight(1f))
-        Spacer(Modifier.height(12.dp))
-        ClaudeCard(active.name, claude, onSend, Modifier.weight(1f))
+    BoxWithConstraints(Modifier.fillMaxSize().background(Color(0xFFF4F4F6))) {
+        if (maxWidth >= 900.dp) {
+            // Wide: controls + inspector + structure on the left, chat fills the right.
+            Row(Modifier.fillMaxSize().padding(16.dp), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                Column(Modifier.weight(1f).fillMaxHeight()) {
+                    header()
+                    Spacer(Modifier.height(10.dp))
+                    controls()
+                    Spacer(Modifier.height(12.dp))
+                    InspectorCard(selection)
+                    Spacer(Modifier.height(12.dp))
+                    StructureCard(tree, onRefresh = { adapter.requestTree() }, onSelect = { adapter.selectNode(it) }, Modifier.weight(1f))
+                }
+                ClaudeCard(active.name, claude, onSend, Modifier.weight(1f).fillMaxHeight())
+            }
+        } else {
+            // Narrow: everything stacked in one scrolling-ish column.
+            Column(Modifier.fillMaxSize().padding(16.dp)) {
+                header()
+                Spacer(Modifier.height(10.dp))
+                controls()
+                Spacer(Modifier.height(12.dp))
+                InspectorCard(selection)
+                Spacer(Modifier.height(12.dp))
+                StructureCard(tree, onRefresh = { adapter.requestTree() }, onSelect = { adapter.selectNode(it) }, Modifier.weight(1f))
+                Spacer(Modifier.height(12.dp))
+                ClaudeCard(active.name, claude, onSend, Modifier.weight(1f))
+            }
+        }
     }
 }
 
@@ -340,6 +374,7 @@ private fun Tooltip(text: String, content: @Composable () -> Unit) {
     ) { content() }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun SessionSwitcher(
     sessions: List<Session>,
@@ -349,7 +384,7 @@ private fun SessionSwitcher(
     onRename: () -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
-    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    FlowRow(verticalArrangement = Arrangement.spacedBy(4.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         Box {
             Button(onClick = { expanded = true }) { Text("對話：${active.name}  ▾") }
             DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
