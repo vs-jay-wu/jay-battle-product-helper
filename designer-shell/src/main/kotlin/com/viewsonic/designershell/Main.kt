@@ -459,19 +459,22 @@ private fun StructureCard(
     // overrides hold individual toggles applied on top of the baseline.
     val overrides = remember { mutableStateMapOf<String, Boolean>() }
     var baseline by remember { mutableStateOf<Boolean?>(null) }
+    var allExpanded by remember { mutableStateOf(false) }
     Column(modifier.fillMaxWidth().background(Color.White).padding(14.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text("Structure", fontWeight = FontWeight.SemiBold, color = Color(0xFF1A1A1A))
             Spacer(Modifier.weight(1f))
             if (tree.isNotEmpty()) {
-                Tooltip("全部展開") {
-                    IconButton(onClick = { baseline = true; overrides.clear() }) {
-                        Icon(Icons.Filled.UnfoldMore, contentDescription = "全部展開")
-                    }
-                }
-                Tooltip("全部收合") {
-                    IconButton(onClick = { baseline = false; overrides.clear() }) {
-                        Icon(Icons.Filled.UnfoldLess, contentDescription = "全部收合")
+                Tooltip(if (allExpanded) "全部收合" else "全部展開") {
+                    IconButton(onClick = {
+                        allExpanded = !allExpanded
+                        baseline = allExpanded
+                        overrides.clear()
+                    }) {
+                        Icon(
+                            if (allExpanded) Icons.Filled.UnfoldLess else Icons.Filled.UnfoldMore,
+                            contentDescription = if (allExpanded) "全部收合" else "全部展開",
+                        )
                     }
                 }
             }
