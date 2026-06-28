@@ -106,6 +106,11 @@ class FlutterAdapter(
         runCatching { stdin?.apply { write("r"); newLine(); flush() } }
     }
 
+    override fun hotRestart() {
+        // `R` is the flutter tool's full hot-restart (re-runs main, drops state).
+        runCatching { stdin?.apply { write("R"); newLine(); flush() } }
+    }
+
     override fun stop() {
         runCatching { vm?.close() }
         process?.destroy()

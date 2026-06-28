@@ -149,6 +149,13 @@ class ComposeAdapter(
         }
     }
 
+    override fun hotRestart() {
+        // Compose Hot Reload has no separate "restart" channel; its reload already
+        // recompiles + hot-swaps changed sources, so we fall back to that. (A true
+        // process restart would mean stop() + start() and re-opening the window.)
+        hotReload()
+    }
+
     override fun stop() {
         runCatching { socket?.close() }
         process?.destroy()

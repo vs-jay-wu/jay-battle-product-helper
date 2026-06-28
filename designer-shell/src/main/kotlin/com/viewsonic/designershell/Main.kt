@@ -274,6 +274,16 @@ private fun RepoWorkspace(project: ProjectDescriptor, store: SessionStore) {
                 adapter.setDesignMode(false)
             })
         }
+        Spacer(Modifier.height(8.dp))
+
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            TextButton(enabled = status == "已連線", onClick = { adapter.hotReload() }) {
+                Text("🔄 熱重載")
+            }
+            TextButton(enabled = status == "已連線", onClick = { adapter.hotRestart() }) {
+                Text("♻️ 熱重啟")
+            }
+        }
         Spacer(Modifier.height(12.dp))
 
         InspectorCard(selection)

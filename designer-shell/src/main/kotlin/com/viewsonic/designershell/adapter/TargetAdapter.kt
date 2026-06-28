@@ -72,5 +72,11 @@ interface TargetAdapter {
     /** Apply the latest source edits to the running target (hot reload). */
     fun hotReload()
 
+    /**
+     * Restart the running target from scratch, re-running its entry point and
+     * dropping app state (hot restart). Heavier than [hotReload].
+     */
+    fun hotRestart()
+
     fun stop()
 }
