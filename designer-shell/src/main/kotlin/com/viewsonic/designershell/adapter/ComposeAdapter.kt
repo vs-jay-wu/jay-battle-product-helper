@@ -150,6 +150,12 @@ class ComposeAdapter(
         }
     }
 
+    override fun requestDesignTree() {
+        // Compose targets already expose only app-authored design nodes, so the
+        // clean tree is the same as the full tree here.
+        requestTree()
+    }
+
     override fun hotRestart() {
         // Compose Hot Reload has no separate "restart" channel; its reload already
         // recompiles + hot-swaps changed sources, so we fall back to that. (A true

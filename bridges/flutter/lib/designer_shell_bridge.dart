@@ -10,10 +10,12 @@ library;
 
 import 'package:flutter/foundation.dart';
 
+import 'src/design_node.dart';
 import 'src/designer_docking.dart';
 import 'src/designer_inspector.dart';
 
 export 'src/design_mode_scope.dart' show DesignModeScope;
+export 'src/design_node.dart' show DesignNode;
 export 'src/designer_inspector.dart' show kDesignMode;
 
 /// Entry points for wiring a Flutter app to the Designer Shell.
@@ -29,5 +31,6 @@ abstract final class DesignerBridge {
     if (!kDebugMode) return;
     registerDesignerInspector();
     registerDesignerDocking();
+    registerDesignNodeTree();
   }
 }

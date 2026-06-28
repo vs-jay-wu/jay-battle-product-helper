@@ -114,35 +114,48 @@ class _StorefrontPageState extends State<StorefrontPage> {
           const SizedBox(width: 8),
         ],
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          _CategoryBar(
-            categories: kCategories,
-            selected: _category,
-            onSelected: (String c) => setState(() => _category = c),
-          ),
-          Expanded(
-            child: GridView.builder(
-              padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
-              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 280,
-                mainAxisExtent: 296,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
+      body: DesignNode(
+        name: 'Storefront',
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            DesignNode(
+              name: 'CategoryBar',
+              child: _CategoryBar(
+                categories: kCategories,
+                selected: _category,
+                onSelected: (String c) => setState(() => _category = c),
               ),
-              itemCount: _visible.length,
-              itemBuilder: (BuildContext context, int index) {
-                final Product p = _visible[index];
-                return ProductCard(
-                  product: p,
-                  onAdd: () => _addToCart(p),
-                  onTap: () => _openDetail(p),
-                );
-              },
             ),
-          ),
-        ],
+            Expanded(
+              child: DesignNode(
+                name: 'ProductGrid',
+                child: GridView.builder(
+                  padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
+                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent: 280,
+                    mainAxisExtent: 296,
+                    crossAxisSpacing: 16,
+                    mainAxisSpacing: 16,
+                  ),
+                  itemCount: _visible.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    final Product p = _visible[index];
+                    return DesignNode(
+                      name: 'ProductCard',
+                      id: 'product-${p.id}',
+                      child: ProductCard(
+                        product: p,
+                        onAdd: () => _addToCart(p),
+                        onTap: () => _openDetail(p),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

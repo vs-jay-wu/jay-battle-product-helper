@@ -24,7 +24,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountTree
 import androidx.compose.material.icons.filled.Bolt
+import androidx.compose.material.icons.filled.FilterAlt
 import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material.icons.filled.Refresh
@@ -190,6 +192,8 @@ private fun RepoWorkspace(project: ProjectDescriptor, store: SessionStore) {
     var pages by remember { mutableStateOf<List<PageInfo>>(emptyList()) }
     var currentPageId by remember { mutableStateOf<String?>(null) }
     var lastError by remember { mutableStateOf<String?>(null) }
+    // Clean = app-authored design-node tree; full = the framework widget tree.
+    var cleanTree by remember { mutableStateOf(true) }
 
     var sessions by remember { mutableStateOf(store.list().filter { it.target == repo }) }
     var active by remember {
@@ -235,10 +239,13 @@ private fun RepoWorkspace(project: ProjectDescriptor, store: SessionStore) {
         }
     }
 
+    // Refresh the structure panel using whichever tree mode is selected.
+    val refreshTree: () -> Unit = { if (cleanTree) adapter.requestDesignTree() else adapter.requestTree() }
+
     // Auto-refresh the structure tree while in design mode (manual ↻ still forces it).
     LaunchedEffect(designMode) {
         while (designMode) {
-            adapter.requestTree()
+            refreshTree()
             kotlinx.coroutines.delay(1500)
         }
     }
@@ -283,7 +290,7 @@ private fun RepoWorkspace(project: ProjectDescriptor, store: SessionStore) {
                 currentPageId = id
                 adapter.setPage(id)
                 selection = null
-                if (designMode) adapter.requestTree()
+                if (designMode) refreshTree()
             })
             Spacer(Modifier.height(8.dp))
         }
@@ -296,7 +303,7 @@ private fun RepoWorkspace(project: ProjectDescriptor, store: SessionStore) {
             FilterChip(selected = designMode, label = { Text("設計") }, onClick = {
                 designMode = true
                 adapter.setDesignMode(true)
-                adapter.requestTree()
+                refreshTree()
             })
             FilterChip(selected = !designMode, label = { Text("互動") }, onClick = {
                 designMode = false
@@ -340,7 +347,7 @@ private fun RepoWorkspace(project: ProjectDescriptor, store: SessionStore) {
                     Spacer(Modifier.height(12.dp))
                     InspectorCard(selection)
                     Spacer(Modifier.height(12.dp))
-                    StructureCard(tree, selection, onRefresh = { adapter.requestTree() }, onSelect = { adapter.selectNode(it) }, Modifier.weight(1f))
+                    StructureCard(tree, selection, cleanTree, onToggleTree = { cleanTree = !cleanTree; refreshTree() }, onRefresh = refreshTree, onSelect = { adapter.selectNode(it) }, Modifier.weight(1f))
                 }
                 ClaudeCard(sessions, active, claude, onSend, onSwitch, onNew, onRename, Modifier.weight(1f).fillMaxHeight())
             }
@@ -353,7 +360,7 @@ private fun RepoWorkspace(project: ProjectDescriptor, store: SessionStore) {
                 Spacer(Modifier.height(12.dp))
                 InspectorCard(selection)
                 Spacer(Modifier.height(12.dp))
-                StructureCard(tree, selection, onRefresh = { adapter.requestTree() }, onSelect = { adapter.selectNode(it) }, Modifier.weight(1f))
+                StructureCard(tree, selection, cleanTree, onToggleTree = { cleanTree = !cleanTree; refreshTree() }, onRefresh = refreshTree, onSelect = { adapter.selectNode(it) }, Modifier.weight(1f))
                 Spacer(Modifier.height(12.dp))
                 ClaudeCard(sessions, active, claude, onSend, onSwitch, onNew, onRename, Modifier.weight(1f))
             }
@@ -463,6 +470,8 @@ private fun findPath(nodes: List<TreeNode>, prefix: String, match: (TreeNode) ->
 private fun StructureCard(
     tree: List<TreeNode>,
     selection: SelectedNode?,
+    cleanTree: Boolean,
+    onToggleTree: () -> Unit,
     onRefresh: () -> Unit,
     onSelect: (TreeNode) -> Unit,
     modifier: Modifier = Modifier,
@@ -487,14 +496,27 @@ private fun StructureCard(
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text("Structure", fontWeight = FontWeight.SemiBold, color = Color(0xFF1A1A1A))
             Spacer(Modifier.weight(1f))
+            Tooltip(if (cleanTree) "設計樹(點切換完整樹)" else "完整樹(點切換設計樹)") {
+                IconButton(onClick = onToggleTree) {
+                    Icon(
+                        if (cleanTree) Icons.Filled.FilterAlt else Icons.Filled.AccountTree,
+                        contentDescription = if (cleanTree) "設計樹" else "完整樹",
+                    )
+                }
+            }
             Tooltip(if (selection == null) "先選取一個元件" else "定位選取的元件") {
                 IconButton(
                     enabled = selection != null && tree.isNotEmpty(),
                     onClick = {
                         val sel = selection ?: return@IconButton
-                        val p = findPath(tree, "") { n ->
-                            n.label == sel.desc && n.line == sel.line &&
-                                (n.file == sel.file || n.file == null)
+                        // Prefer the app-authored id (exact); else match by label+line+file.
+                        val p = if (sel.id != null) {
+                            findPath(tree, "") { it.id == sel.id }
+                        } else {
+                            findPath(tree, "") { n ->
+                                n.label == sel.desc && n.line == sel.line &&
+                                    (n.file == sel.file || n.file == null)
+                            }
                         }
                         if (p != null) {
                             // Expand every ancestor (and the node itself) so it's visible.

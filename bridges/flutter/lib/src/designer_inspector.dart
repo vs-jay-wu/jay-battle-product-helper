@@ -5,6 +5,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
+import 'design_node.dart';
+
 /// True while the Designer Shell has put the app in "design mode": a tap selects
 /// the widget under the pointer (and reports it to the shell) instead of acting.
 final ValueNotifier<bool> kDesignMode = ValueNotifier<bool>(false);
@@ -41,6 +43,25 @@ void registerDesignerInspector() {
 /// Hit-test [globalPosition], set the inspector selection, post a
 /// `designer:selection` event for the shell, and return the hit.
 Map<String, dynamic> selectAndReport(Offset globalPosition, RenderBox content) {
+  // Prefer an app-authored design node under the pointer (clean, named); fall
+  // back to the raw render-tree hit-test when nothing is tagged there.
+  final DesignNodeState? dn = hitTestDesignNode(globalPosition);
+  if (dn != null) {
+    final Element el = dn.context as Element;
+    // ignore: invalid_use_of_protected_member
+    WidgetInspectorService.instance.setSelection(el, 'designer-shell');
+    final Rect? r = dn.bounds();
+    final Map<String, dynamic> res = <String, dynamic>{
+      'found': true,
+      'node': dn.nodeId,
+      'name': dn.widget.name,
+      'type': dn.widget.child.runtimeType.toString(),
+      if (r != null)
+        ...<String, dynamic>{'x': r.left, 'y': r.top, 'w': r.width, 'h': r.height},
+    };
+    developer.postEvent('designer:selection', res);
+    return res;
+  }
   final Map<String, dynamic> res = selectAt(globalPosition, content: content);
   if (res['found'] == true) developer.postEvent('designer:selection', res);
   return res;

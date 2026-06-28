@@ -3,7 +3,9 @@ package com.viewsonic.designershell.adapter
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.intOrNull
+import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.put
@@ -48,7 +50,18 @@ class FlutterAdapter(
             }
             service.onEvent = { event ->
                 if (event["extensionKind"]?.jsonPrimitive?.content == "designer:selection") {
-                    readSelection(service)?.let(onSelection)
+                    // Design-node selections carry their name + id in the event data;
+                    // file:line still comes from the inspector (readSelection).
+                    val data = event["extensionData"]?.jsonObject
+                    val nodeId = data?.get("node")?.jsonPrimitive?.contentOrNull
+                    val name = data?.get("name")?.jsonPrimitive?.contentOrNull
+                    val base = readSelection(service)
+                    val merged = when {
+                        base != null -> base.copy(desc = name ?: base.desc, id = nodeId ?: base.id)
+                        name != null -> SelectedNode(desc = name, file = "?", line = 0, col = 0, id = nodeId)
+                        else -> null
+                    }
+                    merged?.let(onSelection)
                 }
             }
             onStatus("已連線")
@@ -81,13 +94,40 @@ class FlutterAdapter(
         }.apply { isDaemon = true }.start()
     }
 
+    override fun requestDesignTree() {
+        val service = vm ?: return
+        Thread {
+            val r = runCatching { service.ext("ext.designer.getDesignTree") }.getOrNull()
+            val roots = r?.get("result")?.jsonObject?.get("roots")?.jsonArray
+            onTree(roots?.mapNotNull { (it as? JsonObject)?.let(::parseDesignNode) } ?: emptyList())
+        }.apply { isDaemon = true }.start()
+    }
+
+    private fun parseDesignNode(o: JsonObject): TreeNode = TreeNode(
+        label = o["name"]?.jsonPrimitive?.content ?: "?",
+        file = null,
+        line = 0,
+        id = o["id"]?.jsonPrimitive?.content,
+        x = o["x"]?.jsonPrimitive?.content?.toFloatOrNull() ?: 0f,
+        y = o["y"]?.jsonPrimitive?.content?.toFloatOrNull() ?: 0f,
+        w = o["w"]?.jsonPrimitive?.content?.toFloatOrNull() ?: 0f,
+        h = o["h"]?.jsonPrimitive?.content?.toFloatOrNull() ?: 0f,
+        children = (o["children"] as? JsonArray)?.mapNotNull { (it as? JsonObject)?.let(::parseDesignNode) } ?: emptyList(),
+    )
+
     override fun selectNode(node: TreeNode) {
         val service = vm ?: return
         val id = node.id ?: return
         Thread {
-            runCatching {
-                service.ext("ext.flutter.inspector.setSelectionById", mapOf("arg" to id, "objectGroup" to "tree"))
-                readSelection(service)?.let(onSelection)
+            // Clean tree: select by design-node id (the bridge posts the selection
+            // event itself). Fall back to the inspector's valueId for the full tree.
+            val r = runCatching { service.ext("ext.designer.selectNode", mapOf("id" to id)) }.getOrNull()
+            val found = r?.get("result")?.jsonObject?.get("found")?.jsonPrimitive?.content == "true"
+            if (!found) {
+                runCatching {
+                    service.ext("ext.flutter.inspector.setSelectionById", mapOf("arg" to id, "objectGroup" to "tree"))
+                    readSelection(service)?.let(onSelection)
+                }
             }
         }.apply { isDaemon = true }.start()
     }

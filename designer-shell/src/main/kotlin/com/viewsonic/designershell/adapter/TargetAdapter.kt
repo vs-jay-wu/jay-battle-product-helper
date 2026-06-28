@@ -9,6 +9,8 @@ data class SelectedNode(
     val line: Int,
     val col: Int,
     val bounds: String = "",
+    /** App-authored design-node id, when the selection came from a DesignNode. */
+    val id: String? = null,
 )
 
 /** A switchable page/screen the target exposes. */
@@ -60,8 +62,14 @@ interface TargetAdapter {
     /** Toggle "design mode": taps select instead of (only) acting. */
     fun setDesignMode(on: Boolean)
 
-    /** Ask the target for its current structure tree (answered via [onTree]). */
+    /** Ask the target for its full (framework) structure tree (answered via [onTree]). */
     fun requestTree()
+
+    /**
+     * Ask the target for its clean, app-authored design-node tree (answered via
+     * [onTree]). Targets without design nodes may return an empty tree.
+     */
+    fun requestDesignTree()
 
     /** Select a node picked from the structure tree (highlights it in the target). */
     fun selectNode(node: TreeNode)
