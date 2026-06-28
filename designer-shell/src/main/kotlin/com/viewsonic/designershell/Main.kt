@@ -17,11 +17,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bolt
+import androidx.compose.material.icons.filled.LocalFireDepartment
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -283,13 +289,13 @@ private fun RepoWorkspace(project: ProjectDescriptor, store: SessionStore) {
 
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
             Tooltip("熱重載") {
-                TextButton(enabled = status == "已連線", onClick = { adapter.hotReload() }) {
-                    Text("⚡", fontSize = 18.sp)
+                IconButton(enabled = status == "已連線", onClick = { adapter.hotReload() }) {
+                    Icon(Icons.Filled.Bolt, contentDescription = "熱重載")
                 }
             }
             Tooltip("熱重啟") {
-                TextButton(enabled = status == "已連線", onClick = { adapter.hotRestart() }) {
-                    Text("🔥", fontSize = 18.sp)
+                IconButton(enabled = status == "已連線", onClick = { adapter.hotRestart() }) {
+                    Icon(Icons.Filled.LocalFireDepartment, contentDescription = "熱重啟")
                 }
             }
             if (lastError != null) {
@@ -300,7 +306,9 @@ private fun RepoWorkspace(project: ProjectDescriptor, store: SessionStore) {
                         }
                         lastError = null
                     }) {
-                        Text("⚠️ 回報錯誤給 AI", color = Color(0xFFC62828), fontSize = 13.sp)
+                        Icon(Icons.Filled.Warning, contentDescription = null, tint = Color(0xFFC62828))
+                        Spacer(Modifier.width(4.dp))
+                        Text("回報錯誤給 AI", color = Color(0xFFC62828), fontSize = 13.sp)
                     }
                 }
             }
