@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'design_node.dart';
 import 'designer_inspector.dart';
 
 /// Wrap your app's content with this (typically via `MaterialApp.builder`).
@@ -17,19 +18,12 @@ class DesignModeScope extends StatefulWidget {
 
 class _DesignModeScopeState extends State<DesignModeScope> {
   final GlobalKey _contentKey = GlobalKey();
-  Rect? _highlight;
 
   void _onTapDown(PointerDownEvent e) {
     final RenderObject? ro = _contentKey.currentContext?.findRenderObject();
     if (ro is! RenderBox) return;
-    final Map<String, dynamic> res = selectAndReport(e.position, ro);
-    if (res['found'] != true) return;
-    final num? x = res['x'] as num?, y = res['y'] as num?, w = res['w'] as num?, h = res['h'] as num?;
-    setState(() {
-      _highlight = (x != null && y != null && w != null && h != null)
-          ? Rect.fromLTWH(x.toDouble(), y.toDouble(), w.toDouble(), h.toDouble())
-          : null;
-    });
+    // selectAndReport sets kDesignHighlight (the box) and posts to the shell.
+    selectAndReport(e.position, ro);
   }
 
   @override
@@ -48,21 +42,26 @@ class _DesignModeScopeState extends State<DesignModeScope> {
                 child: const SizedBox.expand(),
               ),
             ),
-            if (_highlight != null)
-              Positioned(
-                left: _highlight!.left,
-                top: _highlight!.top,
-                width: _highlight!.width,
-                height: _highlight!.height,
-                child: IgnorePointer(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: const Color(0xFF4848F0), width: 2),
-                      color: const Color(0x224848F0),
+            ValueListenableBuilder<Rect?>(
+              valueListenable: kDesignHighlight,
+              builder: (BuildContext context, Rect? hl, Widget? _) {
+                if (hl == null) return const SizedBox.shrink();
+                return Positioned(
+                  left: hl.left,
+                  top: hl.top,
+                  width: hl.width,
+                  height: hl.height,
+                  child: IgnorePointer(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: const Color(0xFF4848F0), width: 2),
+                        color: const Color(0x224848F0),
+                      ),
                     ),
                   ),
-                ),
-              ),
+                );
+              },
+            ),
             Positioned.fill(
               child: IgnorePointer(
                 child: Container(

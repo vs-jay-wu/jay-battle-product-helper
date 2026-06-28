@@ -559,7 +559,7 @@ private fun StructureCard(
         } else {
             Column(Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState())) {
                 tree.forEachIndexed { i, node ->
-                    TreeRow(node, 0, "$i", baseline, overrides, targetPath, requester, onSelect)
+                    TreeRow(node, 0, "$i", baseline, overrides, targetPath, requester, selection?.id, onSelect)
                 }
             }
         }
@@ -576,17 +576,20 @@ private fun TreeRow(
     overrides: MutableMap<String, Boolean>,
     targetPath: String?,
     requester: BringIntoViewRequester,
+    selectedId: String?,
     onSelect: (TreeNode) -> Unit,
 ) {
     val isExpanded = overrides[path] ?: baseline ?: (depth < 2)
     val isTarget = path == targetPath
+    val isSelected = node.id != null && node.id == selectedId
     Row(
         Modifier.fillMaxWidth()
-            .then(
-                if (isTarget) {
-                    Modifier.bringIntoViewRequester(requester).background(Color(0xFFFFF3CD))
-                } else {
-                    Modifier
+            .let { if (isTarget) it.bringIntoViewRequester(requester) else it }
+            .background(
+                when {
+                    isSelected -> Color(0x334848F0)
+                    isTarget -> Color(0xFFFFF3CD)
+                    else -> Color.Transparent
                 },
             )
             .clickable { onSelect(node) }
@@ -609,7 +612,7 @@ private fun TreeRow(
     }
     if (isExpanded) {
         node.children.forEachIndexed { i, child ->
-            TreeRow(child, depth + 1, "$path.$i", baseline, overrides, targetPath, requester, onSelect)
+            TreeRow(child, depth + 1, "$path.$i", baseline, overrides, targetPath, requester, selectedId, onSelect)
         }
     }
 }

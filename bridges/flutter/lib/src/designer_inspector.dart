@@ -21,6 +21,7 @@ void registerDesignerInspector() {
 
   developer.registerExtension('ext.designer.setDesignMode', (String m, Map<String, String> params) async {
     kDesignMode.value = (params['on'] ?? 'true') == 'true';
+    if (!kDesignMode.value) kDesignHighlight.value = null;
     return developer.ServiceExtensionResponse.result(jsonEncode(<String, dynamic>{'on': kDesignMode.value}));
   });
 
@@ -51,6 +52,7 @@ Map<String, dynamic> selectAndReport(Offset globalPosition, RenderBox content) {
     // ignore: invalid_use_of_protected_member
     WidgetInspectorService.instance.setSelection(el, 'designer-shell');
     final Rect? r = dn.bounds();
+    kDesignHighlight.value = r;
     final Map<String, dynamic> res = <String, dynamic>{
       'found': true,
       'node': dn.nodeId,
@@ -63,8 +65,20 @@ Map<String, dynamic> selectAndReport(Offset globalPosition, RenderBox content) {
     return res;
   }
   final Map<String, dynamic> res = selectAt(globalPosition, content: content);
-  if (res['found'] == true) developer.postEvent('designer:selection', res);
+  if (res['found'] == true) {
+    kDesignHighlight.value = _rectFromRes(res);
+    developer.postEvent('designer:selection', res);
+  }
   return res;
+}
+
+/// Build a [Rect] from a selection result's x/y/w/h (null if absent).
+Rect? _rectFromRes(Map<String, dynamic> res) {
+  final Object? x = res['x'], y = res['y'], w = res['w'], h = res['h'];
+  if (x is num && y is num && w is num && h is num) {
+    return Rect.fromLTWH(x.toDouble(), y.toDouble(), w.toDouble(), h.toDouble());
+  }
+  return null;
 }
 
 /// Hit-test [globalPosition] and select the widget under it. When [content] is

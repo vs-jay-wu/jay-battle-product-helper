@@ -9,6 +9,10 @@ import 'package:flutter/widgets.dart';
 /// inspector tree.
 final Set<DesignNodeState> kDesignNodes = <DesignNodeState>{};
 
+/// Global-coordinate bounds of the currently selected node, drawn as the design
+/// highlight box. Driven both by in-app taps and by shell-initiated selection.
+final ValueNotifier<Rect?> kDesignHighlight = ValueNotifier<Rect?>(null);
+
 int _designSeq = 0;
 
 /// Carries the enclosing [DesignNode]'s id down the tree so a nested node finds
@@ -123,6 +127,7 @@ void registerDesignNodeTree() {
     // ignore: invalid_use_of_protected_member
     WidgetInspectorService.instance.setSelection(el, 'designer-shell');
     final Rect? r = found.bounds();
+    kDesignHighlight.value = r; // draw the highlight box in the app
     final Map<String, dynamic> res = <String, dynamic>{
       'found': true,
       'node': found.nodeId,
