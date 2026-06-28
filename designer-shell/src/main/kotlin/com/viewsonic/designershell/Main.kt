@@ -24,6 +24,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.LocalFireDepartment
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.UnfoldLess
+import androidx.compose.material.icons.filled.UnfoldMore
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -442,6 +445,7 @@ private fun InspectorCard(selection: SelectedNode?) {
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun StructureCard(
     tree: List<TreeNode>,
@@ -449,35 +453,66 @@ private fun StructureCard(
     onSelect: (TreeNode) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    // Expansion is lifted here so "expand/collapse all" can drive every row, and
+    // so per-node state survives the design-mode auto-refresh. Keyed by tree path.
+    // baseline: null = per-depth default, true = all open, false = all closed;
+    // overrides hold individual toggles applied on top of the baseline.
+    val overrides = remember { mutableStateMapOf<String, Boolean>() }
+    var baseline by remember { mutableStateOf<Boolean?>(null) }
     Column(modifier.fillMaxWidth().background(Color.White).padding(14.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text("Structure", fontWeight = FontWeight.SemiBold, color = Color(0xFF1A1A1A))
             Spacer(Modifier.weight(1f))
-            TextButton(onClick = onRefresh) { Text("↻ 重新整理") }
+            if (tree.isNotEmpty()) {
+                Tooltip("全部展開") {
+                    IconButton(onClick = { baseline = true; overrides.clear() }) {
+                        Icon(Icons.Filled.UnfoldMore, contentDescription = "全部展開")
+                    }
+                }
+                Tooltip("全部收合") {
+                    IconButton(onClick = { baseline = false; overrides.clear() }) {
+                        Icon(Icons.Filled.UnfoldLess, contentDescription = "全部收合")
+                    }
+                }
+            }
+            Tooltip("重新整理") {
+                IconButton(onClick = onRefresh) {
+                    Icon(Icons.Filled.Refresh, contentDescription = "重新整理")
+                }
+            }
         }
         Spacer(Modifier.height(4.dp))
         if (tree.isEmpty()) {
             Text("切到「設計」模式後顯示元件樹", color = Color(0xFF797979), fontSize = 12.sp)
         } else {
             Column(Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState())) {
-                tree.forEach { TreeRow(it, 0, onSelect) }
+                tree.forEachIndexed { i, node ->
+                    TreeRow(node, 0, "$i", baseline, overrides, onSelect)
+                }
             }
         }
     }
 }
 
 @Composable
-private fun TreeRow(node: TreeNode, depth: Int, onSelect: (TreeNode) -> Unit) {
-    var expanded by remember { mutableStateOf(depth < 2) }
+private fun TreeRow(
+    node: TreeNode,
+    depth: Int,
+    path: String,
+    baseline: Boolean?,
+    overrides: MutableMap<String, Boolean>,
+    onSelect: (TreeNode) -> Unit,
+) {
+    val isExpanded = overrides[path] ?: baseline ?: (depth < 2)
     Row(
         Modifier.fillMaxWidth().clickable { onSelect(node) }.padding(start = (depth * 14).dp, top = 2.dp, bottom = 2.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (node.children.isNotEmpty()) {
             Text(
-                if (expanded) "▾ " else "▸ ",
+                if (isExpanded) "▾ " else "▸ ",
                 fontSize = 11.sp, color = Color(0xFF797979),
-                modifier = Modifier.clickable { expanded = !expanded },
+                modifier = Modifier.clickable { overrides[path] = !isExpanded },
             )
         } else {
             Text("  ", fontSize = 11.sp)
@@ -487,7 +522,11 @@ private fun TreeRow(node: TreeNode, depth: Int, onSelect: (TreeNode) -> Unit) {
             Text("  :${node.line}", fontSize = 11.sp, color = Color(0xFF9AA0A6), fontFamily = FontFamily.Monospace)
         }
     }
-    if (expanded) node.children.forEach { TreeRow(it, depth + 1, onSelect) }
+    if (isExpanded) {
+        node.children.forEachIndexed { i, child ->
+            TreeRow(child, depth + 1, "$path.$i", baseline, overrides, onSelect)
+        }
+    }
 }
 
 @Composable
