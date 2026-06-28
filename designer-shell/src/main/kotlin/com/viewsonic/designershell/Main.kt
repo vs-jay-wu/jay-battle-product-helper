@@ -4,6 +4,8 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.TooltipArea
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,6 +26,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.LocalFireDepartment
+import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.UnfoldLess
 import androidx.compose.material.icons.filled.UnfoldMore
@@ -337,7 +340,7 @@ private fun RepoWorkspace(project: ProjectDescriptor, store: SessionStore) {
                     Spacer(Modifier.height(12.dp))
                     InspectorCard(selection)
                     Spacer(Modifier.height(12.dp))
-                    StructureCard(tree, onRefresh = { adapter.requestTree() }, onSelect = { adapter.selectNode(it) }, Modifier.weight(1f))
+                    StructureCard(tree, selection, onRefresh = { adapter.requestTree() }, onSelect = { adapter.selectNode(it) }, Modifier.weight(1f))
                 }
                 ClaudeCard(sessions, active, claude, onSend, onSwitch, onNew, onRename, Modifier.weight(1f).fillMaxHeight())
             }
@@ -350,7 +353,7 @@ private fun RepoWorkspace(project: ProjectDescriptor, store: SessionStore) {
                 Spacer(Modifier.height(12.dp))
                 InspectorCard(selection)
                 Spacer(Modifier.height(12.dp))
-                StructureCard(tree, onRefresh = { adapter.requestTree() }, onSelect = { adapter.selectNode(it) }, Modifier.weight(1f))
+                StructureCard(tree, selection, onRefresh = { adapter.requestTree() }, onSelect = { adapter.selectNode(it) }, Modifier.weight(1f))
                 Spacer(Modifier.height(12.dp))
                 ClaudeCard(sessions, active, claude, onSend, onSwitch, onNew, onRename, Modifier.weight(1f))
             }
@@ -445,10 +448,21 @@ private fun InspectorCard(selection: SelectedNode?) {
     }
 }
 
+/** Depth-first search for the path (e.g. "0.3.1") of the first node matching [match]. */
+private fun findPath(nodes: List<TreeNode>, prefix: String, match: (TreeNode) -> Boolean): String? {
+    nodes.forEachIndexed { i, n ->
+        val p = if (prefix.isEmpty()) "$i" else "$prefix.$i"
+        if (match(n)) return p
+        findPath(n.children, p, match)?.let { return it }
+    }
+    return null
+}
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun StructureCard(
     tree: List<TreeNode>,
+    selection: SelectedNode?,
     onRefresh: () -> Unit,
     onSelect: (TreeNode) -> Unit,
     modifier: Modifier = Modifier,
@@ -460,16 +474,49 @@ private fun StructureCard(
     val overrides = remember { mutableStateMapOf<String, Boolean>() }
     var baseline by remember { mutableStateOf<Boolean?>(null) }
     var allExpanded by remember { mutableStateOf(false) }
+    // Path of the node located via "定位"; highlighted and scrolled into view.
+    var targetPath by remember { mutableStateOf<String?>(null) }
+    val requester = remember { BringIntoViewRequester() }
+    LaunchedEffect(targetPath) {
+        if (targetPath != null) {
+            kotlinx.coroutines.delay(50) // let newly-expanded rows compose first
+            runCatching { requester.bringIntoView() }
+        }
+    }
     Column(modifier.fillMaxWidth().background(Color.White).padding(14.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text("Structure", fontWeight = FontWeight.SemiBold, color = Color(0xFF1A1A1A))
             Spacer(Modifier.weight(1f))
+            Tooltip(if (selection == null) "先選取一個元件" else "定位選取的元件") {
+                IconButton(
+                    enabled = selection != null && tree.isNotEmpty(),
+                    onClick = {
+                        val sel = selection ?: return@IconButton
+                        val p = findPath(tree, "") { n ->
+                            n.label == sel.desc && n.line == sel.line &&
+                                (n.file == sel.file || n.file == null)
+                        }
+                        if (p != null) {
+                            // Expand every ancestor (and the node itself) so it's visible.
+                            var acc = ""
+                            p.split('.').forEach { part ->
+                                acc = if (acc.isEmpty()) part else "$acc.$part"
+                                overrides[acc] = true
+                            }
+                            targetPath = p
+                        }
+                    },
+                ) {
+                    Icon(Icons.Filled.MyLocation, contentDescription = "定位選取的元件")
+                }
+            }
             if (tree.isNotEmpty()) {
                 Tooltip(if (allExpanded) "全部收合" else "全部展開") {
                     IconButton(onClick = {
                         allExpanded = !allExpanded
                         baseline = allExpanded
                         overrides.clear()
+                        targetPath = null
                     }) {
                         Icon(
                             if (allExpanded) Icons.Filled.UnfoldLess else Icons.Filled.UnfoldMore,
@@ -490,13 +537,14 @@ private fun StructureCard(
         } else {
             Column(Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState())) {
                 tree.forEachIndexed { i, node ->
-                    TreeRow(node, 0, "$i", baseline, overrides, onSelect)
+                    TreeRow(node, 0, "$i", baseline, overrides, targetPath, requester, onSelect)
                 }
             }
         }
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun TreeRow(
     node: TreeNode,
@@ -504,11 +552,23 @@ private fun TreeRow(
     path: String,
     baseline: Boolean?,
     overrides: MutableMap<String, Boolean>,
+    targetPath: String?,
+    requester: BringIntoViewRequester,
     onSelect: (TreeNode) -> Unit,
 ) {
     val isExpanded = overrides[path] ?: baseline ?: (depth < 2)
+    val isTarget = path == targetPath
     Row(
-        Modifier.fillMaxWidth().clickable { onSelect(node) }.padding(start = (depth * 14).dp, top = 2.dp, bottom = 2.dp),
+        Modifier.fillMaxWidth()
+            .then(
+                if (isTarget) {
+                    Modifier.bringIntoViewRequester(requester).background(Color(0xFFFFF3CD))
+                } else {
+                    Modifier
+                },
+            )
+            .clickable { onSelect(node) }
+            .padding(start = (depth * 14).dp, top = 2.dp, bottom = 2.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (node.children.isNotEmpty()) {
@@ -527,7 +587,7 @@ private fun TreeRow(
     }
     if (isExpanded) {
         node.children.forEachIndexed { i, child ->
-            TreeRow(child, depth + 1, "$path.$i", baseline, overrides, onSelect)
+            TreeRow(child, depth + 1, "$path.$i", baseline, overrides, targetPath, requester, onSelect)
         }
     }
 }
