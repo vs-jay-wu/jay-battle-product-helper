@@ -534,11 +534,9 @@ private fun ClaudeCard(
     }
 }
 
-/** A user prompt rendered as a collapsible row: one-line preview when collapsed. */
+/** A user prompt rendered as a collapsible row: up to 5 lines when collapsed. */
 @Composable
 private fun CollapsibleUserMessage(text: String, expanded: Boolean, onToggle: () -> Unit) {
-    val firstLine = text.trim().lineSequence().firstOrNull().orEmpty()
-    val hasMore = !expanded && (text.trim().length > firstLine.length || text.contains('\n'))
     Row(
         Modifier.fillMaxWidth().clickable(onClick = onToggle),
         verticalAlignment = Alignment.Top,
@@ -548,10 +546,10 @@ private fun CollapsibleUserMessage(text: String, expanded: Boolean, onToggle: ()
             fontSize = 12.sp, color = Color(0xFF4848F0), fontWeight = FontWeight.Bold,
         )
         Text(
-            "你：" + (if (expanded) text else firstLine) + (if (hasMore) " …" else ""),
+            "你：$text",
             fontSize = 12.sp,
             color = Color(0xFF4848F0),
-            maxLines = if (expanded) Int.MAX_VALUE else 1,
+            maxLines = if (expanded) Int.MAX_VALUE else 5,
             overflow = if (expanded) TextOverflow.Clip else TextOverflow.Ellipsis,
         )
     }
