@@ -26,6 +26,7 @@ class FlutterAdapter(
     override var onSelection: (SelectedNode) -> Unit = {}
     override var onTree: (List<TreeNode>) -> Unit = {}
     override var onPages: (List<PageInfo>) -> Unit = {}
+    override var onError: (String) -> Unit = {}
 
     @Volatile private var vm: VmService? = null
     private var process: Process? = null
@@ -130,9 +131,44 @@ class FlutterAdapter(
             regex.find(line)?.let { uri = it.groupValues[1].trimEnd() }
             if (uri != null) break
         }
-        // Keep draining so flutter never blocks on a full stdout pipe.
-        Thread { runCatching { reader.forEachLine { } } }.apply { isDaemon = true }.start()
+        // Keep draining so flutter never blocks on a full stdout pipe; while we
+        // drain, watch the stream for exceptions / compile errors.
+        Thread { runCatching { reader.forEachLine { scanForError(it) } } }.apply { isDaemon = true }.start()
         return uri
+    }
+
+    // ---- Error capture -------------------------------------------------------
+
+    private val ansi = Regex("\\[[;\\d]*m")
+    private val errEnd = Regex("^[═=]{8,}\\s*$") // closing rule of a Flutter error box
+    private val errBlock = StringBuilder()
+    private var capturing = false
+    private var errLines = 0
+
+    /** Scan one output line, accumulating Flutter error blocks and emitting them. */
+    private fun scanForError(raw: String) {
+        val line = raw.replace(ansi, "")
+        if (!capturing) {
+            if (line.contains("EXCEPTION CAUGHT BY")) {
+                // Boxed framework exception: capture through to its closing rule.
+                capturing = true
+                errLines = 1
+                errBlock.setLength(0)
+                errBlock.appendLine(line)
+            } else if (line.contains("Another exception was thrown") ||
+                line.contains(": Error:") || line.contains("Error (Xcode)")
+            ) {
+                // Single-line compile / build / repeat error — report on its own.
+                onError(line.trim())
+            }
+        } else {
+            errBlock.appendLine(line)
+            errLines++
+            if (errEnd.matches(line.trim()) || errLines > 200) {
+                capturing = false
+                onError(errBlock.toString().trim())
+            }
+        }
     }
 
     private fun readSelection(service: VmService): SelectedNode? {

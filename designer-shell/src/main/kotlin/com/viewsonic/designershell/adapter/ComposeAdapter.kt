@@ -31,6 +31,7 @@ class ComposeAdapter(
     override var onSelection: (SelectedNode) -> Unit = {}
     override var onTree: (List<TreeNode>) -> Unit = {}
     override var onPages: (List<PageInfo>) -> Unit = {}
+    override var onError: (String) -> Unit = {}
 
     private val json = Json { ignoreUnknownKeys = true }
     private var process: Process? = null

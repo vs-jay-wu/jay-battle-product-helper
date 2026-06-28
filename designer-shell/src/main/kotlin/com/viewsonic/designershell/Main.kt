@@ -1,7 +1,10 @@
 package com.viewsonic.designershell
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.TooltipArea
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -165,6 +168,7 @@ private fun RepoWorkspace(project: ProjectDescriptor, store: SessionStore) {
     var tree by remember { mutableStateOf<List<TreeNode>>(emptyList()) }
     var pages by remember { mutableStateOf<List<PageInfo>>(emptyList()) }
     var currentPageId by remember { mutableStateOf<String?>(null) }
+    var lastError by remember { mutableStateOf<String?>(null) }
 
     var sessions by remember { mutableStateOf(store.list().filter { it.target == repo }) }
     var active by remember {
@@ -180,6 +184,7 @@ private fun RepoWorkspace(project: ProjectDescriptor, store: SessionStore) {
         adapter.onSelection = { selection = it }
         adapter.onTree = { tree = it }
         adapter.onPages = { pages = it; if (currentPageId == null) currentPageId = it.firstOrNull()?.id }
+        adapter.onError = { lastError = it }
         adapter.start()
     }
     DisposableEffect(Unit) { onDispose { runCatching { adapter.stop() } } }
@@ -276,12 +281,28 @@ private fun RepoWorkspace(project: ProjectDescriptor, store: SessionStore) {
         }
         Spacer(Modifier.height(8.dp))
 
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            TextButton(enabled = status == "已連線", onClick = { adapter.hotReload() }) {
-                Text("🔄 熱重載")
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+            Tooltip("熱重載") {
+                TextButton(enabled = status == "已連線", onClick = { adapter.hotReload() }) {
+                    Text("⚡", fontSize = 18.sp)
+                }
             }
-            TextButton(enabled = status == "已連線", onClick = { adapter.hotRestart() }) {
-                Text("♻️ 熱重啟")
+            Tooltip("熱重啟") {
+                TextButton(enabled = status == "已連線", onClick = { adapter.hotRestart() }) {
+                    Text("🔥", fontSize = 18.sp)
+                }
+            }
+            if (lastError != null) {
+                Tooltip("把錯誤訊息傳給 AI") {
+                    TextButton(onClick = {
+                        lastError?.let { err ->
+                            onSend("App 跑出這個錯誤,請幫我找出原因並修正:\n\n```\n$err\n```")
+                        }
+                        lastError = null
+                    }) {
+                        Text("⚠️ 回報錯誤給 AI", color = Color(0xFFC62828), fontSize = 13.sp)
+                    }
+                }
             }
         }
         Spacer(Modifier.height(12.dp))
@@ -292,6 +313,23 @@ private fun RepoWorkspace(project: ProjectDescriptor, store: SessionStore) {
         Spacer(Modifier.height(12.dp))
         ClaudeCard(active.name, claude, onSend, Modifier.weight(1f))
     }
+}
+
+/** Wraps [content] with a hover tooltip showing [text] (Compose Desktop). */
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun Tooltip(text: String, content: @Composable () -> Unit) {
+    TooltipArea(
+        tooltip = {
+            Box(
+                Modifier
+                    .background(Color(0xFF222222), RoundedCornerShape(4.dp))
+                    .padding(horizontal = 8.dp, vertical = 4.dp),
+            ) {
+                Text(text, color = Color.White, fontSize = 12.sp)
+            }
+        },
+    ) { content() }
 }
 
 @Composable

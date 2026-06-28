@@ -51,6 +51,9 @@ interface TargetAdapter {
     /** Receives the target's switchable pages after [requestPages]. */
     var onPages: (List<PageInfo>) -> Unit
 
+    /** Receives an error / exception block detected in the target's output. */
+    var onError: (String) -> Unit
+
     /** Launch (if needed) and connect to the target. */
     fun start()
 
