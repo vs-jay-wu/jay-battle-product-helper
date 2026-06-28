@@ -40,6 +40,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -49,6 +50,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.MenuBar
@@ -253,6 +255,15 @@ private fun RepoWorkspace(project: ProjectDescriptor, store: SessionStore) {
         }, onDismiss = { renaming = false })
     }
 
+    // Session actions live with the chat (see ConversationCard), not up top.
+    val onSwitch: (Session) -> Unit = { active = it }
+    val onNew: () -> Unit = {
+        val s = store.create("對話 ${sessions.size + 1}", repo)
+        sessions = store.list().filter { it.target == repo }
+        active = s
+    }
+    val onRename: () -> Unit = { renaming = true }
+
     // Header + control cluster are layout-agnostic, so both the narrow (single
     // column) and wide (two-pane) arrangements reuse them.
     val header: @Composable () -> Unit = {
@@ -261,19 +272,6 @@ private fun RepoWorkspace(project: ProjectDescriptor, store: SessionStore) {
     }
 
     val controls: @Composable () -> Unit = {
-        SessionSwitcher(
-            sessions = sessions,
-            active = active,
-            onSwitch = { active = it },
-            onNew = {
-                val s = store.create("對話 ${sessions.size + 1}", repo)
-                sessions = store.list().filter { it.target == repo }
-                active = s
-            },
-            onRename = { renaming = true },
-        )
-        Spacer(Modifier.height(10.dp))
-
         if (pages.size > 1) {
             PagePicker(pages, currentPageId, onSelect = { id ->
                 currentPageId = id
@@ -338,7 +336,7 @@ private fun RepoWorkspace(project: ProjectDescriptor, store: SessionStore) {
                     Spacer(Modifier.height(12.dp))
                     StructureCard(tree, onRefresh = { adapter.requestTree() }, onSelect = { adapter.selectNode(it) }, Modifier.weight(1f))
                 }
-                ClaudeCard(active.name, claude, onSend, Modifier.weight(1f).fillMaxHeight())
+                ClaudeCard(sessions, active, claude, onSend, onSwitch, onNew, onRename, Modifier.weight(1f).fillMaxHeight())
             }
         } else {
             // Narrow: everything stacked in one scrolling-ish column.
@@ -351,7 +349,7 @@ private fun RepoWorkspace(project: ProjectDescriptor, store: SessionStore) {
                 Spacer(Modifier.height(12.dp))
                 StructureCard(tree, onRefresh = { adapter.requestTree() }, onSelect = { adapter.selectNode(it) }, Modifier.weight(1f))
                 Spacer(Modifier.height(12.dp))
-                ClaudeCard(active.name, claude, onSend, Modifier.weight(1f))
+                ClaudeCard(sessions, active, claude, onSend, onSwitch, onNew, onRename, Modifier.weight(1f))
             }
         }
     }
@@ -493,18 +491,34 @@ private fun TreeRow(node: TreeNode, depth: Int, onSelect: (TreeNode) -> Unit) {
 }
 
 @Composable
-private fun ClaudeCard(sessionName: String, session: ClaudeSession, onSend: (String) -> Unit, modifier: Modifier = Modifier) {
+private fun ClaudeCard(
+    sessions: List<Session>,
+    active: Session,
+    session: ClaudeSession,
+    onSend: (String) -> Unit,
+    onSwitch: (Session) -> Unit,
+    onNew: () -> Unit,
+    onRename: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     var prompt by remember { mutableStateOf("") }
+    // Per-message expand state for collapsible user prompts; reset per session.
+    val expanded = remember(active.id) { mutableStateMapOf<Int, Boolean>() }
     Column(modifier.fillMaxWidth().background(Color.White).padding(14.dp)) {
-        Text("Claude · $sessionName", fontWeight = FontWeight.SemiBold, color = Color(0xFF1A1A1A))
-        Spacer(Modifier.height(6.dp))
+        // Conversation controls sit with the chat (select / new / rename).
+        SessionSwitcher(sessions, active, onSwitch, onNew, onRename)
+        Spacer(Modifier.height(8.dp))
         Column(Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState())) {
-            session.transcript.takeLast(40).forEach { msg ->
-                Text(
-                    "${msg.role}: ${msg.text}",
-                    fontSize = 12.sp,
-                    color = if (msg.role.name == "USER") Color(0xFF4848F0) else Color(0xFF333333),
-                )
+            session.transcript.withIndex().toList().takeLast(40).forEach { (idx, msg) ->
+                if (msg.role.name == "USER") {
+                    CollapsibleUserMessage(
+                        text = msg.text,
+                        expanded = expanded[idx] ?: false,
+                        onToggle = { expanded[idx] = !(expanded[idx] ?: false) },
+                    )
+                } else {
+                    Text("Claude：${msg.text}", fontSize = 12.sp, color = Color(0xFF333333))
+                }
                 Spacer(Modifier.height(4.dp))
             }
         }
@@ -517,6 +531,29 @@ private fun ClaudeCard(sessionName: String, session: ClaudeSession, onSend: (Str
         )
         Spacer(Modifier.height(8.dp))
         Button(onClick = { onSend(prompt); prompt = "" }, enabled = prompt.isNotBlank()) { Text("送出") }
+    }
+}
+
+/** A user prompt rendered as a collapsible row: one-line preview when collapsed. */
+@Composable
+private fun CollapsibleUserMessage(text: String, expanded: Boolean, onToggle: () -> Unit) {
+    val firstLine = text.trim().lineSequence().firstOrNull().orEmpty()
+    val hasMore = !expanded && (text.trim().length > firstLine.length || text.contains('\n'))
+    Row(
+        Modifier.fillMaxWidth().clickable(onClick = onToggle),
+        verticalAlignment = Alignment.Top,
+    ) {
+        Text(
+            if (expanded) "▾ " else "▸ ",
+            fontSize = 12.sp, color = Color(0xFF4848F0), fontWeight = FontWeight.Bold,
+        )
+        Text(
+            "你：" + (if (expanded) text else firstLine) + (if (hasMore) " …" else ""),
+            fontSize = 12.sp,
+            color = Color(0xFF4848F0),
+            maxLines = if (expanded) Int.MAX_VALUE else 1,
+            overflow = if (expanded) TextOverflow.Clip else TextOverflow.Ellipsis,
+        )
     }
 }
 
