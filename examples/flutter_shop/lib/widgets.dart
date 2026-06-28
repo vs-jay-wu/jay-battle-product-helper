@@ -1,7 +1,59 @@
 import 'package:flutter/material.dart';
 
+import 'screens/account_page.dart';
 import 'screens/cart_page.dart';
 import 'shop_store.dart';
+
+/// Up-to-two-letter initials from a display name, for avatars.
+String initialsOf(String name) {
+  final List<String> parts =
+      name.trim().split(RegExp(r'\s+')).where((String s) => s.isNotEmpty).toList();
+  if (parts.isEmpty) return '?';
+  if (parts.length == 1) return parts.first[0].toUpperCase();
+  return (parts.first[0] + parts.last[0]).toUpperCase();
+}
+
+/// Circular avatar showing a user's initials.
+class InitialsAvatar extends StatelessWidget {
+  const InitialsAvatar({super.key, required this.name, this.radius = 18});
+
+  final String name;
+  final double radius;
+
+  @override
+  Widget build(BuildContext context) {
+    final ColorScheme scheme = Theme.of(context).colorScheme;
+    return CircleAvatar(
+      radius: radius,
+      backgroundColor: scheme.primaryContainer,
+      child: Text(
+        initialsOf(name),
+        style: TextStyle(
+          color: scheme.onPrimaryContainer,
+          fontWeight: FontWeight.w700,
+          fontSize: radius * 0.8,
+        ),
+      ),
+    );
+  }
+}
+
+/// App-bar avatar button that opens the account page.
+class AccountButton extends StatelessWidget {
+  const AccountButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final String name = ShopScope.of(context).userName ?? 'Guest';
+    return IconButton(
+      tooltip: 'Account',
+      onPressed: () => Navigator.of(context).push(
+        MaterialPageRoute<void>(builder: (_) => const AccountPage()),
+      ),
+      icon: InitialsAvatar(name: name, radius: 15),
+    );
+  }
+}
 
 /// A network image with the same loading / error treatment used across the app.
 class ShopImage extends StatelessWidget {

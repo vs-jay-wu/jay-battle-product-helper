@@ -83,6 +83,30 @@ class ShopStore extends ChangeNotifier {
   final Map<String, int> _cart = <String, int>{};
   final List<Order> _orders = <Order>[];
   int _orderSeq = 0;
+  String? _userName;
+  String? _userEmail;
+
+  // ---- Auth (fake) ---------------------------------------------------------
+
+  bool get isLoggedIn => _userEmail != null;
+  String? get userName => _userName;
+  String? get userEmail => _userEmail;
+
+  /// Fake sign-in — accepts anything and just records the session in memory.
+  void login({required String name, required String email}) {
+    _userName = name;
+    _userEmail = email;
+    notifyListeners();
+  }
+
+  /// Sign out and end the session: clears the in-memory cart. Order history is
+  /// kept for the lifetime of the app so a re-login still shows past orders.
+  void logout() {
+    _userName = null;
+    _userEmail = null;
+    _cart.clear();
+    notifyListeners();
+  }
 
   // ---- Cart ----------------------------------------------------------------
 

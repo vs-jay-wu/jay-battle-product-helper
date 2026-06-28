@@ -13,7 +13,7 @@ class CheckoutPage extends StatefulWidget {
 
 class _CheckoutPageState extends State<CheckoutPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController _name = TextEditingController(text: 'Demo User');
+  final TextEditingController _name = TextEditingController();
   final TextEditingController _address =
       TextEditingController(text: '123 Demo Street, Sample City');
   final TextEditingController _card =
@@ -22,6 +22,13 @@ class _CheckoutPageState extends State<CheckoutPage> {
   final TextEditingController _cvc = TextEditingController(text: '123');
 
   bool _processing = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Prefill the recipient with the signed-in user's name.
+    _name.text = ShopScope.of(context).userName ?? 'Demo User';
+  }
 
   @override
   void dispose() {

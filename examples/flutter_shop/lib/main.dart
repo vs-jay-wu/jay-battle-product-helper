@@ -2,7 +2,7 @@ import 'package:designer_shell_bridge/designer_shell_bridge.dart';
 import 'package:flutter/material.dart';
 
 import 'products.dart';
-import 'screens/orders_page.dart';
+import 'screens/login_page.dart';
 import 'screens/product_detail_page.dart';
 import 'shop_store.dart';
 import 'widgets.dart';
@@ -41,10 +41,23 @@ class _ShopDemoAppState extends State<ShopDemoApp> {
           colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF4848F0)),
           useMaterial3: true,
         ),
-        home: const StorefrontPage(),
+        home: const AuthGate(),
         builder: (BuildContext context, Widget? child) => DesignModeScope(child: child!),
       ),
     );
+  }
+}
+
+/// Shows the login screen until the user signs in, then the storefront. Because
+/// it reads the store via [ShopScope], it rebuilds automatically on login and
+/// logout — no manual navigation needed.
+class AuthGate extends StatelessWidget {
+  const AuthGate({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final bool loggedIn = ShopScope.of(context).isLoggedIn;
+    return loggedIn ? const StorefrontPage() : const LoginPage();
   }
 }
 
@@ -96,13 +109,7 @@ class _StorefrontPageState extends State<StorefrontPage> {
           ],
         ),
         actions: <Widget>[
-          IconButton(
-            tooltip: 'Order history',
-            onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(builder: (_) => const OrdersPage()),
-            ),
-            icon: const Icon(Icons.receipt_long_outlined),
-          ),
+          const AccountButton(),
           const CartButton(),
           const SizedBox(width: 8),
         ],
