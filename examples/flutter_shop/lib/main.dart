@@ -57,7 +57,9 @@ class AuthGate extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool loggedIn = ShopScope.of(context).isLoggedIn;
-    return loggedIn ? const StorefrontPage() : const LoginPage();
+    return loggedIn
+        ? const StorefrontPage()
+        : const DesignNode(name: 'LoginPage', child: LoginPage());
   }
 }
 

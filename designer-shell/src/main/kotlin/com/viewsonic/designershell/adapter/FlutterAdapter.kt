@@ -55,13 +55,17 @@ class FlutterAdapter(
                     val data = event["extensionData"]?.jsonObject
                     val nodeId = data?.get("node")?.jsonPrimitive?.contentOrNull
                     val name = data?.get("name")?.jsonPrimitive?.contentOrNull
-                    val base = readSelection(service)
-                    val merged = when {
-                        base != null -> base.copy(desc = name ?: base.desc, id = nodeId ?: base.id)
-                        name != null -> SelectedNode(desc = name, file = "?", line = 0, col = 0, id = nodeId)
-                        else -> null
-                    }
-                    merged?.let(onSelection)
+                    // Resolve file:line off the WS reader thread — calling ext() here
+                    // would block the socket so its own response can't arrive (deadlock).
+                    Thread {
+                        val base = readSelection(service)
+                        val merged = when {
+                            base != null -> base.copy(desc = name ?: base.desc, id = nodeId ?: base.id)
+                            name != null -> SelectedNode(desc = name, file = "?", line = 0, col = 0, id = nodeId)
+                            else -> null
+                        }
+                        merged?.let(onSelection)
+                    }.apply { isDaemon = true }.start()
                 }
             }
             onStatus("已連線")

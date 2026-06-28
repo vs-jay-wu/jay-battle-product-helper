@@ -6,6 +6,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
 import 'design_node.dart';
+import 'ext_util.dart';
 
 /// True while the Designer Shell has put the app in "design mode": a tap selects
 /// the widget under the pointer (and reports it to the shell) instead of acting.
@@ -19,19 +20,19 @@ int _drillIndex = 0;
 void registerDesignerInspector() {
   if (!kDebugMode) return;
 
-  developer.registerExtension('ext.designer.setDesignMode', (String m, Map<String, String> params) async {
+  registerExt('ext.designer.setDesignMode', (String m, Map<String, String> params) async {
     kDesignMode.value = (params['on'] ?? 'true') == 'true';
     if (!kDesignMode.value) kDesignHighlight.value = null;
     return developer.ServiceExtensionResponse.result(jsonEncode(<String, dynamic>{'on': kDesignMode.value}));
   });
 
-  developer.registerExtension('ext.designer.selectAt', (String m, Map<String, String> params) async {
+  registerExt('ext.designer.selectAt', (String m, Map<String, String> params) async {
     final double x = double.tryParse(params['x'] ?? '') ?? 0;
     final double y = double.tryParse(params['y'] ?? '') ?? 0;
     return developer.ServiceExtensionResponse.result(jsonEncode(selectAt(Offset(x, y))));
   });
 
-  developer.registerExtension('ext.designer.viewSize', (String m, Map<String, String> params) async {
+  registerExt('ext.designer.viewSize', (String m, Map<String, String> params) async {
     final RenderView view = RendererBinding.instance.renderViews.first;
     final Size s = view.size;
     final double dpr = view.flutterView.devicePixelRatio;

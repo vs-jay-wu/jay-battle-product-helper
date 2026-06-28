@@ -555,7 +555,15 @@ private fun StructureCard(
         }
         Spacer(Modifier.height(4.dp))
         if (tree.isEmpty()) {
-            Text("切到「設計」模式後顯示元件樹", color = Color(0xFF797979), fontSize = 12.sp)
+            Text(
+                if (cleanTree) {
+                    "此畫面沒有 DesignNode。切到「設計」模式操作,或用右上切換「完整樹」。"
+                } else {
+                    "切到「設計」模式後顯示元件樹"
+                },
+                color = Color(0xFF797979),
+                fontSize = 12.sp,
+            )
         } else {
             Column(Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState())) {
                 tree.forEachIndexed { i, node ->

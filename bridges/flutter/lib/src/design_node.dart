@@ -4,6 +4,8 @@ import 'dart:developer' as developer;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
+import 'ext_util.dart';
+
 /// Live registry of mounted [DesignNode]s. Debug-only; the Designer Shell builds
 /// its clean, app-authored structure tree from this instead of the raw widget
 /// inspector tree.
@@ -103,14 +105,14 @@ DesignNodeState? hitTestDesignNode(Offset global) {
 /// tree as `{ "roots": [ {id, name, type, x, y, w, h, children: [...] } ] }`.
 void registerDesignNodeTree() {
   if (!kDebugMode) return;
-  developer.registerExtension('ext.designer.getDesignTree',
+  registerExt('ext.designer.getDesignTree',
       (String m, Map<String, String> params) async {
     return developer.ServiceExtensionResponse.result(jsonEncode(_buildDesignTree()));
   });
 
   // Select a design node by id (used when the shell picks a row in the clean
   // tree): highlight it in the inspector and report it back to the shell.
-  developer.registerExtension('ext.designer.selectNode',
+  registerExt('ext.designer.selectNode',
       (String m, Map<String, String> params) async {
     final String? id = params['id'];
     DesignNodeState? found;

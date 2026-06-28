@@ -6,6 +6,8 @@ import 'dart:ui' show Rect;
 import 'package:flutter/foundation.dart';
 import 'package:window_manager/window_manager.dart';
 
+import 'ext_util.dart';
+
 bool get _enabled => kDebugMode && !kIsWeb && (Platform.isMacOS || Platform.isWindows || Platform.isLinux);
 
 /// Must run in main() before runApp (desktop debug only).
@@ -19,7 +21,7 @@ Future<void> initDesignerWindow() async {
 void registerDesignerDocking() {
   if (!_enabled) return;
 
-  developer.registerExtension('ext.designer.dockMode', (String m, Map<String, String> params) async {
+  registerExt('ext.designer.dockMode', (String m, Map<String, String> params) async {
     final bool on = (params['on'] ?? 'true') == 'true';
     if (on) {
       await windowManager.setAsFrameless();
@@ -34,7 +36,7 @@ void registerDesignerDocking() {
     return developer.ServiceExtensionResponse.result(jsonEncode(<String, dynamic>{'ok': true}));
   });
 
-  developer.registerExtension('ext.designer.setBounds', (String m, Map<String, String> params) async {
+  registerExt('ext.designer.setBounds', (String m, Map<String, String> params) async {
     final double x = double.tryParse(params['x'] ?? '') ?? 0;
     final double y = double.tryParse(params['y'] ?? '') ?? 0;
     final double w = double.tryParse(params['w'] ?? '') ?? 400;
@@ -43,7 +45,7 @@ void registerDesignerDocking() {
     return developer.ServiceExtensionResponse.result(jsonEncode(<String, dynamic>{'ok': true}));
   });
 
-  developer.registerExtension('ext.designer.getBounds', (String m, Map<String, String> params) async {
+  registerExt('ext.designer.getBounds', (String m, Map<String, String> params) async {
     final Rect b = await windowManager.getBounds();
     return developer.ServiceExtensionResponse.result(
       jsonEncode(<String, dynamic>{'x': b.left, 'y': b.top, 'w': b.width, 'h': b.height}),
