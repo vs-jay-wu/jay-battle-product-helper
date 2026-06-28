@@ -1,10 +1,12 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.compose.reload.gradle.ComposeHotRun
 
 plugins {
     kotlin("jvm") version "2.1.20"
     kotlin("plugin.serialization") version "2.1.20"
     id("org.jetbrains.kotlin.plugin.compose") version "2.1.20"
     id("org.jetbrains.compose") version "1.8.2"
+    id("org.jetbrains.compose.hot-reload") version "1.1.1"
 }
 
 kotlin {
@@ -15,6 +17,13 @@ kotlin {
 // composable back to its source file + line (used by the Compose target adapter).
 composeCompiler {
     includeSourceInformation = true
+}
+
+// Develop the shell's own UI with Compose Hot Reload: `./gradlew hotRun --auto`
+// edits its Compose code and hot-swaps into the running window. Pre-set the entry
+// point so neither hotRun nor reload needs --mainClass each time.
+tasks.withType<ComposeHotRun>().configureEach {
+    mainClass.set("com.viewsonic.designershell.MainKt")
 }
 
 dependencies {
